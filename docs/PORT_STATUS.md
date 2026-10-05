@@ -50,3 +50,15 @@ GalleryReader, MusicPlayerPatches, MusicPlayerReader. All names exist in all fiv
 - FF4: `ExtraSoundListContentInfo.playTime` is a float there (read as float, fraction dropped).
 - `shop_data.cpp` reads master data from MasterManager's own tables (core helper candidate,
   like FF1's `master_get()`).
+
+## Core: waypoints, audio loops, map transitions (`src/core/fieldnav`)
+
+WaypointController/Manager/Navigator/Entity, WaypointHandler, AudioLoopManager,
+MapTransitionPatches, VehicleLandingPatches, MoveStateHelper, NavigationTargetTracker,
+LocationMessageTracker; teleport and beacon restarts from the main mod class.
+- Waypoints stay in `<game>\UserData\waypoints.json`, same format as the C# mod.
+- Hooks: SubSceneManagerMainGame.ChangeState, MapUIManager.SwitchLandable, FieldPlayer.GetOn
+  (2 args in FF1/FF2/FF4, 3 in FF3/FF5: two masked refs), FieldPlayer.GetOff. None folded.
+- FF1 never played a landing sound (only "Can land"), so no landing ping is played.
+- Vehicle names follow FF1's table in every game: FF3/FF5 Boko and Magical Armor are not
+  announced yet (game modules).
