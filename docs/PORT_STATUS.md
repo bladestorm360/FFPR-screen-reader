@@ -41,3 +41,12 @@ PuzzleGameState (7). Phase 1 proof hook: NewGameWindowController.
 - Shared engine classes masked to FF1 for now (candidates for the core): the KeyInput
   Character/Name/Job content list controllers, `Last.Data.NewGameSelectData`;
   `master_get()` (master-data row without `MasterManager.GetData<T>`).
+
+## Core: shops, gallery, music player (`src/core/shop`, `src/core/extras`)
+
+ShopPatches, ShopMagicPatches, ShopMenuTracker (+ ShopDetailsAnnouncer), GalleryPatches,
+GalleryReader, MusicPlayerPatches, MusicPlayerReader. All names exist in all five games
+(29 classes, 31 fields, 22 methods); 14 hooks, none folded.
+- FF4: `ExtraSoundListContentInfo.playTime` is a float there (read as float, fraction dropped).
+- `shop_data.cpp` reads master data from MasterManager's own tables (core helper candidate,
+  like FF1's `master_get()`).
