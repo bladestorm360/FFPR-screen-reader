@@ -91,3 +91,22 @@ Item/ItemDescription/MagicDetails/UsableBy announcers, CharacterSelectionReader.
   three areas now have their own reader (FF1 module, shop, menus) - merge into one core
   helper.
 - Two `condition_name` copies (menus, battle) - keep one.
+
+## Core: field entities and pathfinder (`src/core/field`) — FINISHED
+
+EntityScanner + all 13 detectors, EntityDetectionHelpers, NavigableEntity, FieldEntityState,
+FilterContext, Filters, MapNameResolver, FieldNavigationHelper, EntityNavigationManager,
+CategoryManager, EntityTranslator, GameObjectCache; the main mod's entity and map actions.
+38 classes, 31 fields, 25 methods, all in all five games (`kAll`).
+- FF3's HiddenPassageRouting runs when `has_hidden_passages`; FF2's vehicle-pad merge when
+  `has_vehicle_pads`. Vehicle names: each game keeps its old mod's table (FF4/FF5 try the
+  official message name first).
+- Fires `events::Kind::SceneLoaded` from `SceneManager.Internal_SceneLoaded` (postfix).
+  One rescan path: fieldnav schedules `field::request_rescan()` 0.5 s after it.
+- Differences from FF1, for the user to judge:
+  1. Detectors see the real class name (the C# mostly saw "FieldEntity"), so
+     `SavePointEventEntity` objects now count as save points by type.
+  2. Chest contents were never spoken in FF1 (lookup missed); still "Treasure Chest".
+  3. The vehicle-type map drops entries for objects no longer on the map.
+  4. Step counts always use "." as the decimal point.
+- A fourth master-data reader (`masterList`) - merge with the others.
