@@ -4,11 +4,12 @@
 
 // The hook registry.
 //
-// One detour per native address. Folded method bodies are shared between methods (see
-// OPEN_ISSUES.md, "Cross-cutting lessons"), and MinHook can detour an address only once, so a
-// second request for an address that is already detoured is REFUSED and logged with both
-// owners. The fix is never a second detour: the first detour class-checks `self` with
-// ref::Class::is and serves both.
+// One detour per native address, and every subscriber still runs. Harmony allowed several
+// patches on one method, and folded method bodies are shared between methods (see
+// OPEN_ISSUES.md, "Cross-cutting lessons"), but MinHook can detour an address only once. So a
+// second request for an address that is already detoured is CHAINED: the new detour is put on
+// the previous detour function, and each detour calls its own original. Where a body is
+// folded, every subscriber class-checks `self` with ref::Class::is and ignores other classes.
 //
 // Per-game switches: a game module's configure() calls hooks::disable("Class.Method") for a
 // core hook that is folded or inlined in that game; attach() then skips it and logs that.

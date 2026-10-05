@@ -100,9 +100,11 @@ core::Install s_install{"MessageWindow", &install, 100};
   count, find another hook point or resolve with `il2cpp::find_method_overload_param` in your
   install() and use `hooks::attach_addr`.
 - **Folded bodies:** before adding a hook, grep its `// RVA: 0x…` in `dump.cs` and count the hits
-  for every game it applies to; the count must be 1. If shared, the registry refuses a second
-  detour on the same address — hook once and class-check `self` with `ref::Class::is`.
-  OPEN_ISSUES.md "Cross-cutting lessons" lists known traps.
+  for every game it applies to. If the count is above 1 the body is shared with other methods:
+  the registry chains detours on one address (every subscriber runs), so your detour MUST
+  class-check `self` with `ref::Class::is` and do nothing for other classes. Report every such
+  hook. OPEN_ISSUES.md "Cross-cutting lessons" lists known traps. Two areas hooking the same
+  method is fine for the same reason (Harmony allowed it too); always call your original.
 - **Typed property reads** (`instance.Foo`) → `ref::Field` on the backing field
   (`<Foo>k__BackingField`) or the plain field, or `ref::call<T>(mGetFoo, obj)` for a computed getter.
 - **IL2CppOffsets / raw pointer offsets** → a `ref::Field` by NAME. Find the field name in

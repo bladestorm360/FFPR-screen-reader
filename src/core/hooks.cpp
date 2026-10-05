@@ -3,13 +3,17 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 #include "hooks.h"
 #include "minhook_dyn.h"
 
 namespace hooks {
 namespace {
 
-struct Owner { std::string label; };
+struct Owner {
+    std::string label;
+    std::vector<void*> detours;   // every detour on this address, oldest first
+};
 std::unordered_map<void*, Owner>* g_owners = nullptr;    // created on first attach (boot thread)
 std::unordered_set<std::string>* g_disabled = nullptr;
 int g_installed = 0;
@@ -22,17 +26,8 @@ std::unordered_map<void*, Owner>& owners()
     return *g_owners;
 }
 
-bool create(void* target, const std::string& label, void* detour, void** original)
+bool detour_one(void* target, const std::string& label, void* detour, void** original)
 {
-    auto& map = owners();
-    auto it = map.find(target);
-    if (it != map.end()) {
-        LOGF("hook: REFUSED %s: address %p already detoured by %s (folded body: serve both from "
-             "the first detour and class-check self)", label.c_str(), target, it->second.label.c_str());
-        ++g_failed;
-        return false;
-    }
-    if (!mh::available()) { LOGF("hook: MinHook unavailable: %s", label.c_str()); ++g_failed; return false; }
     if (mh::create(target, detour, original) != MH_OK) {
         LOGF("hook: create failed: %s @ %p", label.c_str(), target);
         ++g_failed;
@@ -43,7 +38,30 @@ bool create(void* target, const std::string& label, void* detour, void** origina
         ++g_failed;
         return false;
     }
-    map.emplace(target, Owner{label});
+    return true;
+}
+
+bool create(void* target, const std::string& label, void* detour, void** original)
+{
+    if (!mh::available()) { LOGF("hook: MinHook unavailable: %s", label.c_str()); ++g_failed; return false; }
+    auto& map = owners();
+    auto it = map.find(target);
+    if (it != map.end()) {
+        // A second subscriber on the same address (two readers on one method, or a folded
+        // body shared by two methods). MinHook can detour an address once, so the new detour
+        // goes on the previous TOP detour instead: game -> newest -> ... -> oldest -> game.
+        // Every detour calls its own original, so every subscriber runs; each class-checks
+        // `self` where the body is folded.
+        void* top = it->second.detours.back();
+        if (!detour_one(top, label, detour, original)) return false;
+        it->second.detours.push_back(detour);
+        LOGF("hook: %-48s -> %p (chained after %s)", label.c_str(), target, it->second.label.c_str());
+        it->second.label += " + " + label;
+        ++g_installed;
+        return true;
+    }
+    if (!detour_one(target, label, detour, original)) return false;
+    map.emplace(target, Owner{label, {detour}});
     LOGF("hook: %-48s -> %p", label.c_str(), target);
     ++g_installed;
     return true;
