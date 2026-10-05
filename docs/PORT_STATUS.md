@@ -143,3 +143,13 @@ BattlePausePatches, BattleResultPatches, BattleStartPatches. All names checked i
 - FF4/FF5 (ATB) gaps: "X's turn" interrupts may cut action lines; FF5's extra damage types fall
   back to "damage"; FF4/FF5 ability lists, steal results, FF5 enemy letters, results log and
   action-announcement hook are not in the core (game modules).
+
+## Lead integration notes (open)
+
+- `src/core/glue/scene_glue.cpp`: FF1's "left a battle scene" clear on SceneLoaded.
+- ClearMenuFlagsForMapTransition runs twice on a map change (fieldnav and system): remove one.
+- MainMenuController Show/Close is hooked by battle and possibly menus/system: check MAIN_MENU
+  handling does not run twice.
+- Four master-data readers and two `condition_name` copies: merge into core helpers.
+- Not yet done: first full build with every area, smoke test, wiring_check clean-up, the
+  FF2–FF5 game modules (running), FF5 navigation additions, release zip (Phase 5).
