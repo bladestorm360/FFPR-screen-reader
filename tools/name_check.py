@@ -34,7 +34,7 @@ GAME_BITS = {"kFF1": "ff1", "kFF2": "ff2", "kFF3": "ff3", "kFF4": "ff4", "kFF5":
 CLASS_RE = re.compile(r'^(?:\[.*?\]\s*)?(?:(?:public|private|protected|internal|static|sealed|abstract|readonly|ref|unsafe|partial)\s+)*'
                       r'(class|struct|interface|enum)\s+([^\s:]+)(?:\s*:\s*([^/{]+?))?\s*(?://.*)?$')
 METHOD_RE = re.compile(r'^\t(?:\[.*?\]\s*)?(?:(?:public|private|protected|internal|static|virtual|override|abstract|sealed|extern|new|unsafe|async)\s+)+'
-                       r'.*?\b([\w<>.|`]+)\((.*)\)\s*\{\s*\}')
+                       r'.*?\s([\w<>.|`$]+)\((.*)\)\s*(?:\{\s*\}|;)')
 FIELD_RE = re.compile(r'^\t(?:\[.*?\]\s*)?(?:(?:public|private|protected|internal|static|readonly|const|volatile|new)\s+)+'
                       r'[^()]*?\s([\w<>.`$|]+)(?:\s*=\s*[^;]*)?;')
 
