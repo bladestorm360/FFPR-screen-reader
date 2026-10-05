@@ -1,7 +1,7 @@
 # Port status
 
-Areas marked FINISHED are complete in the repo. Still running: dialogue/system, status/
-config/bestiary, battle (FF2–FF5 game modules started after the field area).
+Areas marked FINISHED are complete in the repo. Still running: status/
+config/bestiary (FF2–FF5 game modules started after the field area).
 
 What each area of the native mod ports, and what the port found. Nothing here is tested in a
 game yet. "Parity finding" = the C# mod behaved this way; the port keeps it, nothing fixed.
@@ -126,3 +126,20 @@ FieldMenuPatches; the main mod's ManualPatches (cursor routing) and menu-state c
 - Fires DialogueClosed. Subscribes to SceneLoaded (title detection by scene name) and
   MapChanged (ClearMenuFlagsForMapTransition - fieldnav also does this: one should go).
 - `FieldMap.<InitMenu>b__N_0` differs per game; name_check cannot read "<" names (false miss).
+
+## Core: battle (`src/core/battle`) — FINISHED
+
+BattlePatches (with BattleStateHelper and the MainMenuController Show/Close hooks),
+BattleCommandPatches, BattleItemPatches, BattleMagicPatches, BattleMessagePatches,
+BattlePausePatches, BattleResultPatches, BattleStartPatches. All names checked in all five.
+- BattleStart fires at StartPreeMptiveMes; BattleEnd at a real end and on ForceClearBattleState.
+- Status removal ("X: Poison removed"): FF1 `<RemoveFunction>b__0`, FF2 UpdateTempParamter,
+  FF3/FF4 RemoveFunction (prefix), FF5 RemoveFunction + StateChange, each game-masked with its
+  mod's rules. Multi-hit only where `multi_hit_setting`.
+- Battle magic list: FF1 only (class exists only in FF1).
+- Gil/EXP numbers use a comma separator (FF1 used the system culture).
+- Shared bodies, class-checked: BattleTargetSelectController.ShowWindow (10 methods),
+  ResultMenuController.EndWaitInit (2).
+- FF4/FF5 (ATB) gaps: "X's turn" interrupts may cut action lines; FF5's extra damage types fall
+  back to "damage"; FF4/FF5 ability lists, steal results, FF5 enemy letters, results log and
+  action-announcement hook are not in the core (game modules).
