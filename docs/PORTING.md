@@ -140,6 +140,15 @@ name per argument (`Mod.TeleportNorth` … `Mod.TeleportWest`).
 
 ## Shared state between areas
 
+- `queries::define("MessageWindowPatches.IsInDialogue", [] { return g_in_dialogue; })` publishes a
+  state; `queries::is("MessageWindowPatches.IsInDialogue")` reads it anywhere (false when nobody
+  defines it). Text queries: `queries::define_text` / `queries::text`. Same naming rule as
+  actions: the C# member it ports. Define every `Is…` / `IsActive` property of your C# files
+  that another area reads (grep the old mod for `YourClass.` uses outside your files).
+- After toggling a setting, run `actions::run("Settings.Changed.<Key>")` only if
+  `actions::defined(...)`; the area that reacts (audio loops, entity filters) defines it.
+- `sound::` (`src/core/audio/sound.h`) is the sound-effect contract (FF1 SoundPlayer); call it
+  from any area.
 - `menu_state::` — which menu is active (FF1 keys in core.h).
 - `events::fire(events::Kind::BattleStart)` etc. Fire from the hook that knows it happened;
   subscribe with `events::on`.

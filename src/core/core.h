@@ -46,6 +46,20 @@ bool defined(const char* name);
 
 } // namespace actions
 
+// Named state queries, the read-only twin of actions: an area that owns a state publishes it
+// ("MessageWindowPatches.IsInDialogue", "BattleStateHelper.IsInBattle", "ModMenu.IsOpen") and
+// any other area asks by name without including that area's headers. Same naming as actions:
+// the C# member it ports. An undefined query answers false / empty.
+namespace queries {
+
+void define(const char* name, std::function<bool()> fn);
+bool is(const char* name);
+bool defined(const char* name);
+void define_text(const char* name, std::function<std::wstring()> fn);
+std::wstring text(const char* name);
+
+} // namespace queries
+
 namespace menu_state {
 
 // The keys FF1 uses (MenuStateRegistry.cs). Other games add their own string keys.

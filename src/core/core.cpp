@@ -64,6 +64,36 @@ bool defined(const char* name) { return table().count(name) != 0; }
 
 } // namespace actions
 
+namespace queries {
+namespace {
+std::map<std::string, std::function<bool()>>* g_bool = nullptr;
+std::map<std::string, std::function<std::wstring()>>* g_text = nullptr;
+std::map<std::string, std::function<bool()>>& bools() { if (!g_bool) g_bool = new std::map<std::string, std::function<bool()>>(); return *g_bool; }
+std::map<std::string, std::function<std::wstring()>>& texts() { if (!g_text) g_text = new std::map<std::string, std::function<std::wstring()>>(); return *g_text; }
+}
+
+void define(const char* name, std::function<bool()> fn) { bools()[name] = std::move(fn); }
+
+bool is(const char* name)
+{
+    auto it = bools().find(name);
+    if (it == bools().end() || !it->second) return false;
+    return hooks::guarded_r(name, false, [&] { return it->second(); });
+}
+
+bool defined(const char* name) { return bools().count(name) != 0 || texts().count(name) != 0; }
+
+void define_text(const char* name, std::function<std::wstring()> fn) { texts()[name] = std::move(fn); }
+
+std::wstring text(const char* name)
+{
+    auto it = texts().find(name);
+    if (it == texts().end() || !it->second) return {};
+    return hooks::guarded_r(name, std::wstring(), [&] { return it->second(); });
+}
+
+} // namespace queries
+
 namespace menu_state {
 namespace {
 std::map<std::string, bool>* g_states = nullptr;
