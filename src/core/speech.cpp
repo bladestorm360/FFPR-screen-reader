@@ -1,0 +1,214 @@
+#include <windows.h>
+#include <cwchar>
+#include <atomic>
+#include "speech.h"
+#include "speech_queue.h"
+#include "settings.h"
+#include "log.h"
+
+// ---------------------------------------------------------------------------
+// Tolk lives on ONE thread of ours: the boot thread, which loads it (wait_and_load) and then
+// spends the rest of the process's life in pump(), speaking whatever the queue holds.
+//
+// WHY A QUEUE (2026-09-25). Tolk_Output was called straight from the game's hooks, on the
+// game's main thread. With NVDA that call is an RPC into another process, answered on
+// NVDA's side only when its interpreter is free - so a keypress cost the game thread
+// however long NVDA took, and the wait grew whenever NVDA was busy with the previous line.
+// The user heard it as lag while browsing battle menus and after every route key. Now a
+// hook copies its line into a fixed ring (a memcpy under a lock, no allocation) and
+// signals; the RPC happens here, and the game thread never waits for a screen reader.
+//
+// ORDER AND INTERRUPTION are preserved: the pump sends the lines in the order they were
+// queued, each with its own interrupt flag, exactly as they were sent before. The one
+// deliberate difference: a line queued with interrupt=true DROPS whatever is still waiting
+// in the ring - those lines were about to be cancelled by it anyway, so this only saves
+// the RPCs (and Tolk_Output with interrupt already silences first). That is an EVENT
+// decision (a newer interrupting line arrived), not a text comparison: two identical lines
+// queued one after the other are both spoken (CLAUDE.md rule 13).
+//
+// The same ring also holds anything spoken BEFORE Tolk is up (it replaces the old one-slot
+// pending buffer): the pump starts draining the moment the load completes, so the first
+// lines are never lost.
+// ---------------------------------------------------------------------------
+
+namespace {
+
+HMODULE g_tolk = nullptr;
+
+using fn_load    = void (*)();
+using fn_unload  = void (*)();
+using fn_output  = bool (*)(const wchar_t*, bool);
+using fn_silence = bool (*)();
+using fn_detect  = const wchar_t* (*)();
+
+fn_load    p_load    = nullptr;
+fn_unload  p_unload  = nullptr;
+fn_output  p_output  = nullptr;
+fn_silence p_silence = nullptr;
+fn_detect  p_detect  = nullptr;
+using fn_braille=bool(*)(const wchar_t*);
+using fn_has_braille=bool(*)();
+fn_braille p_braille=nullptr;
+fn_has_braille p_has_braille=nullptr;
+std::atomic<bool> g_braille_available{false},g_stopping{false};
+
+volatile LONG g_requested = 0;
+volatile LONG g_ready     = 0;
+HANDLE g_event = nullptr, g_ring_event = nullptr;
+INIT_ONCE g_events_once = INIT_ONCE_STATIC_INIT;
+SRWLOCK g_ring_lock = SRWLOCK_INIT;
+speech::Queue g_ring;
+
+BOOL CALLBACK create_events(PINIT_ONCE, PVOID, PVOID*) {
+    g_event = CreateEventW(nullptr,TRUE,FALSE,nullptr);
+    g_ring_event = CreateEventW(nullptr,FALSE,FALSE,nullptr);
+    // Complete initialization even on failure: no busy retry loop on the game thread.
+    if (!g_event || !g_ring_event) LOGF("speech: event creation failed (err=%lu); running silent",GetLastError());
+    return TRUE;
+}
+void ensure_ring() { InitOnceExecuteOnce(&g_events_once,create_events,nullptr,nullptr); }
+
+void enqueue(const wchar_t* text, bool interrupt, bool silence) {
+    if(g_stopping.load()) return;
+    ensure_ring();
+    if (!g_ring_event) return;
+    AcquireSRWLockExclusive(&g_ring_lock);
+    if (silence) g_ring.silence();
+    else g_ring.say(text,interrupt);
+    ReleaseSRWLockExclusive(&g_ring_lock);
+    SetEvent(g_ring_event);
+}
+bool dequeue(speech::Line* out) {
+    AcquireSRWLockExclusive(&g_ring_lock);
+    const bool have = g_ring.pop(*out);
+    ReleaseSRWLockExclusive(&g_ring_lock);
+    return have;
+}
+
+} // namespace
+
+namespace speech {
+
+void init()
+{
+    ensure_ring();
+}
+
+void request_load()
+{
+    // First caller wins; every subsequent hook call is a single interlocked read.
+    if (InterlockedCompareExchange(&g_requested, 1, 0) != 0) return;
+    ensure_ring();
+    if (g_event) SetEvent(g_event);
+}
+
+bool wait_and_load(int timeout_ms)
+{
+    ensure_ring();
+    if (!g_event || !g_ring_event) return false;
+
+    // If a hook already fired before we got here, the flag is set and we proceed at once.
+    if (!InterlockedCompareExchange(&g_requested, 1, 1)) {
+        LOGF("speech: waiting for the game to prove it is running (a hook firing)...");
+        WaitForSingleObject(g_event, timeout_ms);
+    }
+    if (!InterlockedCompareExchange(&g_requested, 1, 1)) {
+        // No hook fired at all — something is wrong with the hooks, not with speech.
+        // Load anyway so the user is not left in total silence.
+        LOGF("speech: no hook fired within %d ms; loading anyway", timeout_ms);
+    }
+
+    if(g_stopping.load()) return false;
+    g_tolk = LoadLibraryW(L"Tolk.dll");
+    if (!g_tolk) {
+        LOGF("speech: Tolk.dll not found (err=%lu) — running silent", GetLastError());
+        return false;
+    }
+    p_load    = reinterpret_cast<fn_load>   (GetProcAddress(g_tolk, "Tolk_Load"));
+    p_unload  = reinterpret_cast<fn_unload> (GetProcAddress(g_tolk, "Tolk_Unload"));
+    p_output  = reinterpret_cast<fn_output> (GetProcAddress(g_tolk, "Tolk_Output"));
+    p_silence = reinterpret_cast<fn_silence>(GetProcAddress(g_tolk, "Tolk_Silence"));
+    p_detect  = reinterpret_cast<fn_detect> (GetProcAddress(g_tolk, "Tolk_DetectScreenReader"));
+    if (!p_load || !p_output) {
+        LOGF("speech: Tolk exports missing — running silent");
+        FreeLibrary(g_tolk);
+        g_tolk = nullptr;
+        return false;
+    }
+    p_braille=reinterpret_cast<fn_braille>(GetProcAddress(g_tolk,"Tolk_Braille"));
+    p_has_braille=reinterpret_cast<fn_has_braille>(GetProcAddress(g_tolk,"Tolk_HasBraille"));
+    p_load();
+    g_braille_available=p_braille && p_has_braille && p_has_braille();
+    InterlockedExchange(&g_ready, 1);
+    const wchar_t* sr = p_detect ? p_detect() : nullptr;
+    LOGF("speech: Tolk ready, screen reader = %ls", sr ? sr : L"(none detected)");
+    // Whatever the first hooks wanted to say while we were loading is in the ring; the pump
+    // (this thread, a moment from now) speaks it.
+    AcquireSRWLockShared(&g_ring_lock);
+    const int queued = g_ring.size();
+    ReleaseSRWLockShared(&g_ring_lock);
+    if (queued > 0) LOGF("speech: %d line(s) queued during load",queued);
+    return true;
+}
+
+bool available() { return InterlockedCompareExchange(&g_ready, 1, 1) != 0; }
+
+void say(const wchar_t* text, bool interrupt)
+{
+    if (!text || !*text) return;
+    enqueue(text, interrupt, false);
+}
+
+void silence()
+{
+    enqueue(nullptr, true, true);
+}
+
+void pump()
+{
+    // Even without Tolk this detached worker saves settings and parks on the event.
+    if(!g_ring_event) return;
+    LOGF("speech: pump running on thread %lu", GetCurrentThreadId());
+    Line l;
+    for (;;) {
+        if (WaitForSingleObject(g_ring_event,INFINITE) != WAIT_OBJECT_0) {
+            LOGF("speech: queue wait failed (err=%lu); running silent",GetLastError());
+            InterlockedExchange(&g_ready,0);
+            return;
+        }
+        settings::save_pending();
+        if(g_stopping.load()) { shutdown(); LOGF("shutdown: speech backend unloaded"); return; }
+        if(p_has_braille) g_braille_available=p_has_braille();
+        while (dequeue(&l)) {
+            if (l.silence) { if (p_silence) p_silence(); }
+            else if (l.text[0]) {
+                // Logging and screen-reader RPCs belong to this worker, never a UI hook.
+                LOGW(l.interrupt ? L"say: " : L"say (queued): ",l.text);
+                if(l.kind==Kind::Braille) { if(p_braille) p_braille(l.text); }
+                else if(p_output) p_output(l.text,l.interrupt);
+            }
+        }
+    }
+}
+
+void wake_worker() { ensure_ring(); if(g_ring_event) SetEvent(g_ring_event); }
+bool has_braille() { return g_braille_available.load(); }
+void braille(const wchar_t* text) {
+    if(!text || !*text) return;
+    if(g_stopping.load()) return;
+    ensure_ring(); if(!g_ring_event) return;
+    AcquireSRWLockExclusive(&g_ring_lock); g_ring.braille(text); ReleaseSRWLockExclusive(&g_ring_lock);
+    SetEvent(g_ring_event);
+}
+
+void request_shutdown() { g_stopping=true; if(g_event) SetEvent(g_event); wake_worker(); }
+void shutdown()
+{
+    if (!g_tolk) return;
+    if (p_unload) p_unload();
+    FreeLibrary(g_tolk);
+    g_tolk = nullptr;
+    InterlockedExchange(&g_ready, 0);
+}
+
+} // namespace speech
