@@ -75,3 +75,19 @@ WindowsFocusHelper; the main mod's toggles, gil and character status. Tables:
 - Hooks: InputSystemManager GetKeyDown/GetKey/GetKeyUp/GetAnyKey,
   CheatSettingsClient.SetIsEnableEncount, ConfigClient.SetIsAutoDash,
   BattleCommandSelectController.SetCommandData (current actor for H in battle). None folded.
+
+## Core: item, equipment and magic menus (`src/core/menus`)
+
+ItemMenuPatches, EquipMenuPatches, MagicMenuPatches, MagicMenuState, MagicTargetPatches,
+Item/ItemDescription/MagicDetails/UsableBy announcers, CharacterSelectionReader.
+43 classes, 42 fields, 68 methods checked in every game they apply to.
+- Item, equipment, I and U, character selection: all five games. The magic spell list and
+  spell targets: FF1 only (each game has its own Serial.FFn magic classes) - game modules.
+- FF1's magic SetNextState shares its body with 8 other methods: the port class-checks
+  (FF1's Harmony patch reset the magic state on all of them).
+  `ItemUseController.SelectContent` shares its body with SetCursor in all five games (as FF1).
+- The repeated-spell text check ("Magic.List") now also resets on menu open/close.
+- Master data (weapons, armour, jobs, items) is read from MasterManager's own tables:
+  three areas now have their own reader (FF1 module, shop, menus) - merge into one core
+  helper.
+- Two `condition_name` copies (menus, battle) - keep one.
