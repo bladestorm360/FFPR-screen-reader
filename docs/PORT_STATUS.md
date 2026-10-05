@@ -62,3 +62,16 @@ LocationMessageTracker; teleport and beacon restarts from the main mod class.
 - FF1 never played a landing sound (only "Can land"), so no landing ping is played.
 - Vehicle names follow FF1's table in every game: FF3/FF5 Boko and Magical Armor are not
   announced yet (game modules).
+
+## Core: input, gamepad, controller router (`src/core/input`)
+
+InputManager, KeyBinding(+Registry), ControllerRouter, GamepadManager, ControllerLabels,
+GlobalHotkeyHandler, GameToggleAnnouncer, InputHelper, InputPassthroughPatches,
+WindowsFocusHelper; the main mod's toggles, gil and character status. Tables:
+`INPUT_BINDINGS.md`. Game modules add keys with `input::add_binding`.
+- Not ported: FieldInputHandler (FF1 never called it), FeedLeftStickToGame (unused).
+- Keys are read only while the game window has focus.
+- `Input.ResetInputAxes` resolved as an internal call (FF3's dump lacks the managed method).
+- Hooks: InputSystemManager GetKeyDown/GetKey/GetKeyUp/GetAnyKey,
+  CheatSettingsClient.SetIsEnableEncount, ConfigClient.SetIsAutoDash,
+  BattleCommandSelectController.SetCommandData (current actor for H in battle). None folded.
