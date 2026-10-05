@@ -7,6 +7,7 @@
 #include <SDL3/SDL_audio.h>
 #include <SDL3/SDL_hints.h>
 #include <SDL3/SDL_version.h>
+#include <SDL3/SDL_keyboard.h>
 // Header types only. Every call is through GetProcAddress; no SDL import library.
 #define SDL_DYNAMIC_FUNCTIONS(X) \
     X(SDL_SetMainReady) X(SDL_GetVersion) X(SDL_GetError) X(SDL_SetHint) \
@@ -17,7 +18,10 @@
     X(SDL_OpenAudioDeviceStream) X(SDL_ResumeAudioStreamDevice) \
     X(SDL_DestroyAudioStream) X(SDL_PutAudioStreamData) X(SDL_GetAudioStreamDevice) \
     X(SDL_GetAudioDeviceFormat) X(SDL_GetAudioStreamFormat) \
-    X(SDL_CreateAudioStream) X(SDL_GetAudioStreamData) X(SDL_FlushAudioStream)
+    X(SDL_CreateAudioStream) X(SDL_GetAudioStreamData) X(SDL_FlushAudioStream) \
+    X(SDL_BindAudioStream) X(SDL_ClearAudioStream) X(SDL_CloseAudioDevice) X(SDL_GetAudioStreamQueued) \
+    X(SDL_OpenAudioDevice) X(SDL_ResumeAudioDevice) X(SDL_SetAudioStreamGain) X(SDL_PollEvent) \
+    X(SDL_GetGamepadID) X(SDL_GetKeyboardState)
 namespace sdl {
 #define DECLARE_SDL(name) extern decltype(&name) name;
 SDL_DYNAMIC_FUNCTIONS(DECLARE_SDL)
