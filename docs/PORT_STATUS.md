@@ -1,5 +1,8 @@
 # Port status
 
+Areas marked FINISHED are complete in the repo. Still running: dialogue/system, status/
+config/bestiary, battle (FF2–FF5 game modules started after the field area).
+
 What each area of the native mod ports, and what the port found. Nothing here is tested in a
 game yet. "Parity finding" = the C# mod behaved this way; the port keeps it, nothing fixed.
 
@@ -14,7 +17,7 @@ game yet. "Parity finding" = the C# mod behaved this way; the port keeps it, not
   - overrides are not checked against the games' own text (FF5 French "Slow" = "Somni"?);
   - proposals to turn text checks into index checks change behaviour and need an OK.
 
-## Core: mod UI (`src/core/ui`)
+## Core: mod UI (`src/core/ui`) — FINISHED
 
 ModMenu, TextInputWindow, ConfirmationDialog, NavigationBuffer, PreferencesManager.
 - Item names are translated when spoken (FF1 translated them once at start).
@@ -22,13 +25,13 @@ ModMenu, TextInputWindow, ConfirmationDialog, NavigationBuffer, PreferencesManag
 - Not added: FF5's extra menu items (Landing Pings, Enemy Letters).
 - Settings import maps FF2–FF4's `AutoDetailOnFocus` to `AutoDetail`.
 
-## Core: audio (`src/core/audio`)
+## Core: audio (`src/core/audio`) — FINISHED
 
 AudioEngine, ToneGenerator (all nine tones match FF1 sample for sample), SoundPlayer,
 SoundConstants, MovementSoundPatches. Hook: `FieldPlayerKeyController.OnTouchPadCallback`.
 - Landing ping has no FF1 source: built from FF5's constants (660 Hz, 80 ms in 250 ms).
 
-## FF1 module (`src/games/ff1`)
+## FF1 module (`src/games/ff1`) — FINISHED
 
 NewGamePatches + NewGameHelpers (8 hooks), JobSelectionPatches (1), PuzzlePatches +
 PuzzleGameState (7). Phase 1 proof hook: NewGameWindowController.
@@ -42,7 +45,7 @@ PuzzleGameState (7). Phase 1 proof hook: NewGameWindowController.
   Character/Name/Job content list controllers, `Last.Data.NewGameSelectData`;
   `master_get()` (master-data row without `MasterManager.GetData<T>`).
 
-## Core: shops, gallery, music player (`src/core/shop`, `src/core/extras`)
+## Core: shops, gallery, music player (`src/core/shop`, `src/core/extras`) — FINISHED
 
 ShopPatches, ShopMagicPatches, ShopMenuTracker (+ ShopDetailsAnnouncer), GalleryPatches,
 GalleryReader, MusicPlayerPatches, MusicPlayerReader. All names exist in all five games
@@ -51,7 +54,7 @@ GalleryReader, MusicPlayerPatches, MusicPlayerReader. All names exist in all fiv
 - `shop_data.cpp` reads master data from MasterManager's own tables (core helper candidate,
   like FF1's `master_get()`).
 
-## Core: waypoints, audio loops, map transitions (`src/core/fieldnav`)
+## Core: waypoints, audio loops, map transitions (`src/core/fieldnav`) — FINISHED
 
 WaypointController/Manager/Navigator/Entity, WaypointHandler, AudioLoopManager,
 MapTransitionPatches, VehicleLandingPatches, MoveStateHelper, NavigationTargetTracker,
@@ -63,7 +66,7 @@ LocationMessageTracker; teleport and beacon restarts from the main mod class.
 - Vehicle names follow FF1's table in every game: FF3/FF5 Boko and Magical Armor are not
   announced yet (game modules).
 
-## Core: input, gamepad, controller router (`src/core/input`)
+## Core: input, gamepad, controller router (`src/core/input`) — FINISHED
 
 InputManager, KeyBinding(+Registry), ControllerRouter, GamepadManager, ControllerLabels,
 GlobalHotkeyHandler, GameToggleAnnouncer, InputHelper, InputPassthroughPatches,
@@ -76,7 +79,7 @@ WindowsFocusHelper; the main mod's toggles, gil and character status. Tables:
   CheatSettingsClient.SetIsEnableEncount, ConfigClient.SetIsAutoDash,
   BattleCommandSelectController.SetCommandData (current actor for H in battle). None folded.
 
-## Core: item, equipment and magic menus (`src/core/menus`)
+## Core: item, equipment and magic menus (`src/core/menus`) — FINISHED
 
 ItemMenuPatches, EquipMenuPatches, MagicMenuPatches, MagicMenuState, MagicTargetPatches,
 Item/ItemDescription/MagicDetails/UsableBy announcers, CharacterSelectionReader.
