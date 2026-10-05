@@ -113,3 +113,16 @@ CategoryManager, EntityTranslator, GameObjectCache; the main mod's entity and ma
   3. The vehicle-type map drops entries for objects no longer on the map.
   4. Step counts always use "." as the decimal point.
 - A fourth master-data reader (`masterList`) - merge with the others.
+
+## Core: dialogue, popups, title, save, game state, cursor routing (`src/core/dialogue`, `src/core/system`) — FINISHED
+
+MessageWindowPatches, ScrollMessagePatches, PopupPatches + PopupState, TitleMenuPatches,
+TitleScreenPatches, SaveLoadPatches, SaveListPatches, SaveSlotReader, GameStatePatches,
+CursorNavigationPatches, MenuTextDiscovery, KeyHelpReader, CommandBarPatches + Reader,
+FieldMenuPatches; the main mod's ManualPatches (cursor routing) and menu-state clears.
+- Title prompt fallback is always T("Press any button") (FF1's reflection lookup never
+  resolved). Scroll-text pacing uses real time. FF1's 20-coroutine cap is not ported.
+- The magic command bar uses Serial.FF1 classes: FF1 only.
+- Fires DialogueClosed. Subscribes to SceneLoaded (title detection by scene name) and
+  MapChanged (ClearMenuFlagsForMapTransition - fieldnav also does this: one should go).
+- `FieldMap.<InitMenu>b__N_0` differs per game; name_check cannot read "<" names (false miss).
