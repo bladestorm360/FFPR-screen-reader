@@ -48,7 +48,8 @@ src/core/            shared by all games (no include path to src/games)
   input/ audio/ ui/ field/ fieldnav/ dialogue/ system/ menus/ status/ bestiary/ battle/
   shop/ extras/       the ported features
 src/games/ffN/       one game's own screens and flags (module.cpp)
-data/                mod_text (shared + overrides), translation.json, EntityNames.json
+data/                mod_text (shared + overrides) and translation.json per game (no mod
+                     loads an EntityNames.json; CMake embeds one only if it is added)
 tools/               smoke host, import/name checks, compile check, merge_modtext
 docs/                PORTING.md, FEATURES.md, DEDUP_INVENTORY.md, INPUT_BINDINGS.md
 ```

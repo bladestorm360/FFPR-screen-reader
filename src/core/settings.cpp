@@ -122,6 +122,13 @@ void init()
         if (read_file(melon, buf)) {
             AcquireSRWLockExclusive(&g_lock);
             parse(buf, m->settings_category, values());
+            // FF2-FF4 named FF1's "AutoDetail" entry "AutoDetailOnFocus".
+            auto& v = values();
+            auto old = v.find("AutoDetailOnFocus");
+            if (old != v.end()) {
+                if (!v.count("AutoDetail")) v["AutoDetail"] = old->second;
+                v.erase(old);
+            }
             ReleaseSRWLockExclusive(&g_lock);
             g_imported = !values().empty();
             LOGF("settings: imported %zu entries from MelonPreferences [%s]", values().size(), m->settings_category);
