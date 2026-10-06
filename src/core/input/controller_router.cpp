@@ -389,7 +389,8 @@ bool suppress_game_input()
 {
     return g_state == RouterState::ModMode
         || g_state == RouterState::ModMenu
-        || ui::any_modal_open();   // ModMenu.IsOpen || TextInputWindow.IsOpen || ConfirmationDialog.IsOpen
+        || ui::any_modal_open()    // ModMenu.IsOpen || TextInputWindow.IsOpen || ConfirmationDialog.IsOpen
+        || queries::is("BattleResultNavigator.IsOpen");   // FF5's results log (game module)
 }
 
 /// Keeps the router in step with the mod menu however it was opened or closed (F8 / Escape /

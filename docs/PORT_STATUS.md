@@ -212,3 +212,45 @@ battle targets ("All allies/enemies"), results log on L (points page only).
   `field::find_path_to` past the game searcher's ~31 tiles; max 6 legs + "and N more"),
   landing pings (audio loop on ship-type vehicles using CheckLandingList/CheckOkList), exit
   grouping (nearest member represents the group, next to `dedupe_vehicle_pads`).
+
+## FF4 module (`src/games/ff4`) — FINISHED (first pass)
+
+Ability menu (FF4's magic lists; Phase 1 proof hook AbilityCharaStatusController.UpdateView),
+status details (17 stats), party setting and rows (row appended to character-slot reads),
+naming, timers (T, Shift+T), battle spell list with I, battle targets ("All allies/enemies"),
+FF4 vehicle words (boarding speech and V). Key 9 = beacons.
+- Disabled in configure(): FieldPlayer.GetOn/GetOff (re-attached with FF4's words).
+- Folded, class-checked: StatusDetailsController.ExitDisplay (8),
+  AbilityUseContentListController.SelectContent, BattleTargetSelectController.ShowWindow (10).
+- Covered by the core, not ported: MainMenuPatches, TitleMenuReader, KeyboardGamepadReader,
+  GameTogglePatches, footsteps, wall bumps, GameAnnouncementHelper, MenuState.
+- Pending, for the user: steal results (would repeat the core's action line); choice lists
+  ("Choices: …") and system message windows (left out to match FF1); the status character
+  list has no MP or row; Falcon and Lunar Whale are spoken as "airship"; item/equip, shop,
+  popup, save/load, gallery/music, config and bestiary not compared file by file.
+- Missing mod_text keys: "hovercraft", "yellow chocobo" (need translations).
+- Navigation gaps against FF4's old mod: Moon pathfinding (map 3 step checks); rescan 0.5 s after
+  scene load instead of on MainGame.set_FieldReady; clear-all waypoints asks once, not twice.
+
+## FF2 module (`src/games/ff2`) — FINISHED (first pass)
+
+Keywords (Ask/Learn/Key Items, Words menu), naming, shop command reader, field magic
+(Use/Forget, "Fire lv3, 45 percent", targets with HP/MP), battle spell list with levels and I,
+battle results (gil, weapon skills, spell level-ups, stat gains; no EXP), status details
+(23 stats with weapon skills), H with MP, U ("Any character can equip this").
+- Disabled in configure(): ResultMenuController.ShowPointsInit and ShowStatusUpInit (FF1's EXP
+  and level-up phases). Folded, class-checked: StatusDetailsController.ExitDisplay (10).
+- The keyword state also clears at SecretWordController.NoneInit/Close (a leftover state would
+  block every field key).
+- Not ported: MovementSpeech's ChangeTransportation (it calls FieldPlayer.GetOn, which the core
+  already speaks); the touch battle spell list (never worked in the C# mod).
+- Pending: FF2 shows MP but the core's status character list, item-use targets and battle
+  player targets say HP only (suggest a `Flags::has_mp`). Config, bestiary, dialogue, popup,
+  title, save, shop, item and equip compared by feature only.
+
+## Lead changes after the game modules
+
+- Core hotkeys and game input pause while FF5's results log is open
+  (`BattleResultNavigator.IsOpen`).
+- `hooks::disable` now also applies to address hooks with a "Class.Method" label (FF5 can switch
+  off the core's BattleTargetSelectController.SelectContent hooks for its own target reader).

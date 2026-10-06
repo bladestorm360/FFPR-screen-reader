@@ -85,6 +85,18 @@ bool attach_raw(ref::Method& m, void* detour, void** original)
 bool attach_addr(void* target, const char* label, void* detour, void** original)
 {
     if (!target) { LOGF("hook: unresolved: %s", label ? label : "?"); ++g_failed; return false; }
+    // A "Class.Method" label (anything after '(' ignored) honours hooks::disable too, so a game
+    // module can switch off a core hook that was resolved by address.
+    if (label) {
+        std::string l(label);
+        size_t paren = l.find('(');
+        if (paren != std::string::npos) l.resize(paren);
+        size_t dot = l.find('.');
+        if (dot != std::string::npos && is_disabled(l.substr(0, dot).c_str(), l.substr(dot + 1).c_str())) {
+            LOGF("hook: disabled for %s: %s", game::label(), label);
+            return false;
+        }
+    }
     return create(target, label ? label : "?", detour, original);
 }
 

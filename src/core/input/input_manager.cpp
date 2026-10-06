@@ -387,6 +387,8 @@ void update()
 
     // The mod's modal windows take all keyboard input while open.
     if (ui::handle_modal_input()) return;
+    // A game module's own modal window (FF5's battle-results log) reads its own keys.
+    if (queries::is("BattleResultNavigator.IsOpen")) return;
 
     // Game-context hotkeys only while the game window is the foreground window.
     if (!game_window_focused()) return;
