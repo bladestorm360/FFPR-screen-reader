@@ -141,8 +141,15 @@ BattlePausePatches, BattleResultPatches, BattleStartPatches. All names checked i
 - Shared bodies, class-checked: BattleTargetSelectController.ShowWindow (10 methods),
   ResultMenuController.EndWaitInit (2).
 - FF4/FF5 (ATB) gaps: "X's turn" interrupts may cut action lines; FF5's extra damage types fall
-  back to "damage"; FF4/FF5 ability lists, steal results, FF5 enemy letters, results log and
+  back to "damage"; FF4/FF5 ability lists, FF5 enemy letters, results log and
   action-announcement hook are not in the core (game modules).
+- Steal results (FF3, FF4, FF5; FF1/FF2 data has no steal command or function 52): the game
+  writes its own line ("Stole Potion!", "Couldn't steal.") to the command message window once
+  per steal - BattleFunction52.ViewEntity (FF3/FF4), BattleFunction52FF5.IsFunctionEnd (FF5) ->
+  BattleUIManager.SetCommadnMessage -> KeyInput BattleMenuController.SetCommadnMessage, a tail
+  jump into BattleCommandMessageController.SetMessage - so the system-message reader above
+  speaks it. No separate steal reader: it would repeat that line. Binary evidence only; not yet
+  heard in game.
 
 ## Lead integration notes (open)
 
@@ -201,8 +208,10 @@ battle targets ("All allies/enemies"), results log on L (points page only).
   2. The results log reads its own keys while open and blocks the game's input itself.
 - Pending: FF5's own target reader (enemy letters, target statuses) - the core's SelectContent
   target hooks would double it; results-log pages for level-ups, abilities, items; battle
-  totals with ABP, FF5 names for unnamed statuses ("Enemy: Float"), ability lists, steal
-  results; mod-mode + B for the results log; Boko and transport types 11/12 in the vehicle table (to verify).
+  totals with ABP, FF5 names for unnamed statuses ("Enemy: Float"), ability lists; mod-mode + B
+  for the results log; Boko and transport types 11/12 in the vehicle table (to verify).
+- Not ported: BattleStealItemPlug.StealItem ("Stole {0}"). It repeated the game's own result
+  line, which the core speaks (see "Core: battle").
 - Kept as the core has them (FF1 behaviour): StatusMenuFocusPatches, GameTogglePatches,
   KeyboardGamepadReader, MessagePatches, the H key.
 - Missing mod_text key: "No data available" (line unreachable for now). English kept from the
@@ -220,8 +229,10 @@ FF4 vehicle words (boarding speech and V). Key 9 = beacons.
   AbilityUseContentListController.SelectContent, BattleTargetSelectController.ShowWindow (10).
 - Covered by the core, not ported: MainMenuPatches, TitleMenuReader, KeyboardGamepadReader,
   GameTogglePatches, footsteps, wall bumps, GameAnnouncementHelper, MenuState.
-- Pending, for the user: steal results (would repeat the core's action line); choice lists
-  ("Choices: …") and system message windows (left out to match FF1); the status character
+- Steal results: spoken by the core (see "Core: battle"); the old SetCommadnMessage hook is not
+  ported because SetCommadnMessage tail-jumps into the SetMessage the core already hooks.
+- Pending, for the user: choice lists ("Choices: …") and system message windows (left out to
+  match FF1); the status character
   list has no MP or row; Falcon and Lunar Whale are spoken as "airship"; item/equip, shop,
   popup, save/load, gallery/music, config and bestiary not compared file by file.
 - Missing mod_text keys: "hovercraft", "yellow chocobo" (need translations).

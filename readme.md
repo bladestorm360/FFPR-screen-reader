@@ -418,6 +418,7 @@ Closes the mod menu.
 - Whose turn it is, the commands, and targets with their status. "All allies" and "All enemies" in FINAL FANTASY IV and V.
 - Item and spell lists, with descriptions.
 - Actions, damage, healing, misses, and statuses added and removed.
+- Steal results, in FINAL FANTASY III, IV and V: the game's own line, such as "Stole Potion!".
 - Multi-hit attacks as "14x1552 damage", in FINAL FANTASY, II and III.
 - The pause menu.
 - Results: gil, EXP, level-ups and items. In FINAL FANTASY II: gil, weapon skills, spell levels and stat gains.
@@ -473,7 +474,6 @@ Closes the mod menu.
 ### FINAL FANTASY IV and FINAL FANTASY V
 
 - When a new turn is announced, it can cut off the line before it.
-- Steal results are not read yet.
 
 ### FINAL FANTASY IV
 

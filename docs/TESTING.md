@@ -60,6 +60,9 @@ Shift, LB/RB. 4. Name change. 5. Shift+T, then T. 6. After a battle: L, arrows, 
 
 ## Known gaps (details in `PORT_STATUS.md`)
 
-- Pending per game: FF3 battle system messages; FF4 steal results and choice lists; FF5's own
+- Steal (FF3, FF4, FF5): the result is the game's own line in the battle message box ("Stole
+  Potion!"), read by the shared battle-message reader after "Edge: Steal". Check it is heard
+  once and not cut off by the next "X's turn".
+- Pending per game: FF3 battle system messages; FF4 choice lists; FF5's own
   target reader, results-log pages beyond points, ABP totals.
 - Missing translations: "hovercraft", "yellow chocobo" (FF4), "No data available" (FF5).
