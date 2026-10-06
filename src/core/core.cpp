@@ -97,9 +97,9 @@ std::wstring text(const char* name)
 namespace menu_state {
 namespace {
 std::map<std::string, bool>* g_states = nullptr;
-std::map<std::string, std::function<void()>>* g_resets = nullptr;
+std::map<std::string, std::vector<std::function<void()>>>* g_resets = nullptr;
 std::map<std::string, bool>& states() { if (!g_states) g_states = new std::map<std::string, bool>(); return *g_states; }
-std::map<std::string, std::function<void()>>& resets() { if (!g_resets) g_resets = new std::map<std::string, std::function<void()>>(); return *g_resets; }
+std::map<std::string, std::vector<std::function<void()>>>& resets() { if (!g_resets) g_resets = new std::map<std::string, std::vector<std::function<void()>>>(); return *g_resets; }
 }
 
 void set_active(const char* key, bool active) { states()[key] = active; }
@@ -129,19 +129,22 @@ std::vector<std::string> active_states()
     return out;
 }
 
-void register_reset(const char* key, std::function<void()> handler) { resets()[key] = std::move(handler); }
+// Additive: a game module registering a handler for a core key runs alongside the core's.
+void register_reset(const char* key, std::function<void()> handler) { if (handler) resets()[key].push_back(std::move(handler)); }
 
 void reset(const char* key)
 {
     states()[key] = false;
     auto it = resets().find(key);
-    if (it != resets().end() && it->second) hooks::guarded(key, [&] { it->second(); });
+    if (it != resets().end())
+        for (auto& h : it->second) hooks::guarded(key, [&] { h(); });
 }
 
 void reset_all()
 {
     for (auto& kv : states()) kv.second = false;
-    for (auto& kv : resets()) if (kv.second) hooks::guarded(kv.first.c_str(), [&] { kv.second(); });
+    for (auto& kv : resets())
+        for (auto& h : kv.second) hooks::guarded(kv.first.c_str(), [&] { h(); });
 }
 
 void reset_all_except(const char* key)
@@ -149,7 +152,8 @@ void reset_all_except(const char* key)
     std::string keep = key ? key : "";
     for (auto& kv : states()) if (kv.first != keep) kv.second = false;
     for (auto& kv : resets())
-        if (kv.first != keep && kv.second) hooks::guarded(kv.first.c_str(), [&] { kv.second(); });
+        if (kv.first != keep)
+            for (auto& h : kv.second) hooks::guarded(kv.first.c_str(), [&] { h(); });
 }
 
 } // namespace menu_state

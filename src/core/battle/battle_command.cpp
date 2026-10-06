@@ -437,6 +437,8 @@ void d_PlayerInit(void* self, const void* mi)
 int install()
 {
     actions::define("BattleCommandPatches.ClearCachedTargetController", [] { clear_cached_target_controller(); });
+    // Game modules with their own battle submenus (FF3's spell list) call this on open.
+    actions::define("BattleCommandPatches.NotifyCommandSubmenuActive", [] { notify_command_submenu_active(); });
 
     int n = 0;
     n += hooks::attach(mSetCommandData, &d_SetCommandData, &o_SetCommandData) ? 1 : 0;

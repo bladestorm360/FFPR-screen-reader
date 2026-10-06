@@ -166,3 +166,25 @@ BestiaryNavigationReader.
   (`bestiary::config_handle_state_change(int)`).
 - `StatusDetailsController.ExitDisplay` shares its body with 10 methods in FF1: class-checked.
 - Language names ("English", "Japanese"…) stay English literals, as in FF1.
+
+## FF3 module (`src/games/ff3`) — FINISHED (first pass)
+
+Job change (Phase 1 proof hook JobChangeWindowController), Onion Knight naming, NPC item
+select, line-fade story text, vehicles (Boko, Magical Armor; content 5 no longer "canoe"),
+magic command bar (Learn, Use, Remove, Forget, Exchange, tomes, targets), battle spell list
+(hooks SelectContent: FF1's SetCursor is a stub folded with ~2,500 methods in FF3), status
+details with FF3's 26 stats. Keys: 9 toggles beacons; R on the status screen repeats the stat.
+- Disabled in configure(): LineFadeMessageWindowController.SetData, FieldPlayer.GetOn/GetOff
+  (FF3 replacements). Folded, class-checked: AbilityWindowController.SetNextState (9),
+  StatusDetailsController.ExitDisplay (10).
+- Superseded by the core, not ported: GameOverPatches, ShopCommandReader, GameInfoAnnouncer,
+  CursorSuppressionCheck, BattleDamagePatches, BattleStatePatches, helpers.
+- Pending:
+  1. BattleSystemMessagePatches: FF3 shared one text check with the battle-message hooks; adding
+     it without that check risks double speech. Decide after an in-game test.
+  2. Key 0 (dump untranslated names) needs a dump function in the core field area.
+  3. Status Attack reads "Attack: {0}"; FF3's "hits x power" is not ported.
+  4. Item, equip, shop, config, bestiary, save, title, popups, gallery, music and the field
+     scanner were not compared file by file against FF3's old mod (all names resolve in FF3).
+- Lead: menu_state reset handlers are now additive (a game's handler runs with the core's);
+  battle exposes "BattleCommandPatches.NotifyCommandSubmenuActive".
