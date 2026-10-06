@@ -1,7 +1,7 @@
 # Port status
 
-Areas marked FINISHED are complete in the repo. Still running: status/
-config/bestiary (FF2–FF5 game modules started after the field area).
+Areas marked FINISHED are complete in the repo. Every core area is finished.
+FF2–FF5 game modules: see the end of this file.
 
 What each area of the native mod ports, and what the port found. Nothing here is tested in a
 game yet. "Parity finding" = the C# mod behaved this way; the port keeps it, nothing fixed.
@@ -153,3 +153,15 @@ BattlePausePatches, BattleResultPatches, BattleStartPatches. All names checked i
 - Four master-data readers and two `condition_name` copies: merge into core helpers.
 - Not yet done: first full build with every area, smoke test, wiring_check clean-up, the
   FF2–FF5 game modules (running), FF5 navigation additions, release zip (Phase 5).
+
+## Core: status, config, bestiary (`src/core/status`, `src/core/bestiary`) — FINISHED
+
+StatusMenuPatches, StatusNavigationReader, StatusDetailsReader, StatusStatDefinitions,
+StatusNavigationHandler, ConfigMenuPatches, ConfigMenuReader, BestiaryPatches, BestiaryReader,
+BestiaryNavigationReader.
+- The status details screen is FF1 only (FF1's own controller and stat list). FF2–FF5 need
+  their own controller hooks and stat lists: listed at the top of `status_navigation.cpp`.
+- Config library states: 19/20 in FF1, 18/19 in FF2, 17/18 in FF3–FF5
+  (`bestiary::config_handle_state_change(int)`).
+- `StatusDetailsController.ExitDisplay` shares its body with 10 methods in FF1: class-checked.
+- Language names ("English", "Japanese"…) stay English literals, as in FF1.
