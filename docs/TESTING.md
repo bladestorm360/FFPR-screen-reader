@@ -7,8 +7,12 @@ and attach `ffpr_screen_reader.log` from that game's folder if something is wron
 
 1. Close the game.
 2. Move the old screen reader out of the game's `Mods` folder (for example to a `Mods-off`
-   folder): `FFI_ScreenReader.dll` … `FFV_ScreenReader.dll`. MelonLoader itself can stay.
-   If you forget, the new mod says "Old screen reader still installed" at start.
+   folder): `FFI_ScreenReader.dll` … `FFV_ScreenReader.dll`. If you forget, the new mod says
+   "Old screen reader still installed" at start.
+   **Remove MelonLoader too** (`version.dll` and the `MelonLoader` folder; keep `UserData`).
+   With MelonLoader installed, the game crashes at the first scene load: MelonLoader and the
+   mod both hook `SceneManager.Internal_SceneLoaded` (FF1 test, 2026-10-06; see
+   `..\OPEN_ISSUES.md`).
 3. From `ffpr-screen-reader`: `deploy.bat ff1` (or ff2 … ff5, or no argument for all five).
    It copies `hid.dll`, `MinHook.x64.dll`, `Tolk.dll`, `nvdaControllerClient64.dll` and
    `SDL3.dll` into the game folder.
