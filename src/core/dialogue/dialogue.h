@@ -48,6 +48,11 @@ void read_current_button(void* cursor);
 /// PopupPatches.ReadFocusedButton: the focused button label of a Cursor-driven button popup
 /// (e.g. SavePopup), markup stripped, or empty.
 std::wstring read_focused_button(void* popup, ref::Field& select_cursor, ref::Field& command_list);
+/// Counts ChangeNamePopup opens (the name-entry popup; its description, "Enter a name for X", is
+/// spoken one frame later). The naming screens compare it around their input-state Init
+/// (KeyboardManager.ShowKeyboard opens the popup inside it) and drop their own entry line when
+/// the game's popup text is being read: an event identity, not a text comparison.
+int change_name_popup_opens();
 
 // --- TitleMenuPatches / TitleScreenPatches -----------------------------------------------
 /// TitleMenuReader.TryGetActiveCommandCount: visible title commands when `cursor` is the title

@@ -14,6 +14,7 @@
 #include "ui_util.h"
 #include "unity.h"
 #include "dialogue/dialogue.h"
+#include "system/cursor_event.h"
 
 namespace ffpr::dialogue {
 namespace {
@@ -80,6 +81,30 @@ bool g_suppress_next_common_focus = false;
 
 // Frames a game-over button read may wait for the popup's button text (open only).
 constexpr int kGameOverButtonMaxFrames = 3;
+
+// The game-over load popup ("Start from recent save data?"), identity only (re-checked with
+// unity::alive). It is a MonoBehaviour, not a Popup: Popup.Open never registers it, and choosing
+// Load closes the select popup (Popup.Close clears PopupState) before InitSaveLoadPopup opens it.
+// Its moves run Cursor.NextIndex/PrevIndex (GameOverLoadPopup.<UpdateSelect>b__32_0) with
+// SetCommandSelectCursor as the callback, so each button was spoken by the focus reader below
+// and again one frame later by the generic cursor reader. The generic reader now skips exactly
+// this popup's cursor (identity, not text); the focus reader keeps the game's button label.
+void* g_game_over_load_popup = nullptr;
+
+// ChangeNamePopup opens (see dialogue.h change_name_popup_opens).
+int g_change_name_popup_opens = 0;
+
+bool owns_game_over_load_cursor()
+{
+    void* cur = cursor::current().cursor;
+    void* popup = g_game_over_load_popup;
+    if (!cur || !popup) return false;
+    if (!unity::alive(popup)) {
+        g_game_over_load_popup = nullptr;
+        return false;
+    }
+    return ref::rd<void*>(popup, fGameOverLoadCursor) == cur;
+}
 
 // --- PopupState ---------------------------------------------------------------------------
 std::string g_popup_type;
@@ -316,6 +341,7 @@ void popup_open(void* p)
         return;
     }
     if (kChangeNamePopup.is(p)) {
+        ++g_change_name_popup_opens;
         handle_popup_detected("ChangeNamePopup", p, nullptr, [](void* q) { return read_description(q, fChangeNameDesc); });
         return;
     }
@@ -397,7 +423,10 @@ void d_InitSaveLoadPopup(void* self, const void* mi)
 {
     o_InitSaveLoadPopup(self, mi);
     hooks::guarded("GameOverPopupController.InitSaveLoadPopup", [&] {
-        if (self && kGameOverController.is(self)) delayed_game_over_load_popup_read(self);
+        if (!self || !kGameOverController.is(self)) return;
+        void* view = ref::rd<void*>(self, fGameOverCtrlView);
+        g_game_over_load_popup = view ? ref::rd<void*>(view, fGameOverViewLoadPopup) : nullptr;
+        delayed_game_over_load_popup_read(self);
     });
 }
 
@@ -414,6 +443,8 @@ int install()
     queries::define("PopupState.IsConfirmationPopupActive", [] { return popup_state::is_confirmation_popup_active(); });
     queries::define("PopupState.ShouldSuppress", [] { return popup_state::should_suppress(); });
     actions::define("PopupState.Clear", [] { popup_state::clear(); });
+    queries::define("PopupPatches.OwnsGameOverLoadCursor", [] { return owns_game_over_load_cursor(); });
+    cursor::add_suppressor("PopupPatches.OwnsGameOverLoadCursor");
     return n;
 }
 
@@ -466,6 +497,8 @@ void read_current_button(void* cur)
         if (!text::is_blank(button)) ffpr::say(text::trim(text::strip_markup(button)), true);
     });
 }
+
+int change_name_popup_opens() { return g_change_name_popup_opens; }
 
 // ReadFocusedButton: a Cursor-driven button popup's focused label (SavePopup: save/load/quick save).
 std::wstring read_focused_button(void* popup, ref::Field& select_cursor, ref::Field& command_list)

@@ -28,6 +28,7 @@
 #include "../../core/text.h"
 #include "../../core/unity.h"
 #include "../../core/system/cursor_event.h"
+#include "../../core/dialogue/dialogue.h"
 
 namespace ffpr::ff2 {
 namespace {
@@ -140,9 +141,10 @@ void on_init_select(void* self)
     ffpr::say(T(L"Character selection"));
 }
 
-void on_init_name_input(void* self)
+void on_init_name_input(void* self, bool game_popup_read)
 {
     naming_clear();
+    if (game_popup_read) return;   // the game's ChangeNamePopup text is read
     std::wstring name = current_character_name(self);
     ffpr::say(name.empty() ? T(L"Enter name using keyboard") : TF(L"Enter name for {0}. Type using keyboard.", {name}));
 }
@@ -221,10 +223,16 @@ void d_InitNameSelect(void* self, const void* mi)
     hooks::guarded("FF2.Naming.InitNameSelect", [&] { on_init_name_select(self); });
 }
 
+// Name entry: KeyboardManager.ShowKeyboard (called inside the input Init) opens the game's
+// ChangeNamePopup, whose description ("Enter a name for X") the popup reader speaks. When that
+// popup opened during the Init, the mod's own entry line is not spoken (2026-10-06, game text
+// first); it remains for the path without the popup (Steam's gamepad text input).
 void d_InitNameInput(void* self, const void* mi)
 {
+    const int popups_before = dialogue::change_name_popup_opens();
     o_InitNameInput(self, mi);
-    hooks::guarded("FF2.Naming.InitNameInput", [&] { on_init_name_input(self); });
+    const bool game_popup_read = dialogue::change_name_popup_opens() != popups_before;
+    hooks::guarded("FF2.Naming.InitNameInput", [&] { on_init_name_input(self, game_popup_read); });
 }
 
 void d_InitStartPopup(void* self, const void* mi)

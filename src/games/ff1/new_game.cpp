@@ -34,6 +34,7 @@
 #include "../../core/text.h"
 #include "../../core/ui_util.h"
 #include "../../core/unity.h"
+#include "../../core/dialogue/dialogue.h"
 
 namespace ffpr::ff1 {
 namespace {
@@ -82,6 +83,12 @@ void* g_controller = nullptr;     // currentController: the NewGameWindowControl
 int g_last_target_index = -1;     // lastTargetIndex (SetTargetSelectContent, UpdateView fallback)
 int g_decoded_slot = -1;          // decodedCharacterSlot (from SelectContent)
 bool g_handling_cursor = false;   // IsHandlingCursor
+// The suggested-name list moves with Cursor.NextIndex/PrevIndex/Skip* (NameContentListController.
+// <UpdateController>b__9_0), so the generic cursor reader speaks each move from the row's own
+// text; FF2's mod found SetFocus speaking the same name on every move as well (FF2 debug.md,
+// "Naming screen"). One line per move (2026-10-06): SetFocus speaks only during the list's entry
+// (InitNameSelect and the frame after it), where no cursor move is read.
+int64_t g_name_entry_frame = -100;
 
 // lastCharacterIndex / lastFieldType / lastSlotNames[4], moved to dedup:: as they were: reset
 // only where the C# reset them (Session scope = no automatic resets).
@@ -360,6 +367,7 @@ void on_init_name_select(void* self)
 
 void on_name_set_focus(int index)
 {
+    if (static_cast<int64_t>(frame::count()) - g_name_entry_frame > 1) return;   // a move: the cursor reader speaks it
     void* ctrl = g_controller;
     if (!ctrl || !kNewGameWindow.is(ctrl) || !unity::alive(ctrl)) return;
     std::wstring name = auto_name(ctrl, index);
@@ -421,7 +429,9 @@ void d_CharSetTarget(void* self, int32_t index, const void* mi)
 
 void d_InitNameSelect(void* self, const void* mi)
 {
+    g_name_entry_frame = static_cast<int64_t>(frame::count());
     o_InitNameSelect(self, mi);
+    g_name_entry_frame = static_cast<int64_t>(frame::count());
     hooks::guarded("NewGame.InitNameSelect", [&] { on_init_name_select(self); });
 }
 
@@ -437,9 +447,15 @@ void d_CharUpdateView(void* self, void* data_list, const void* mi)
     hooks::guarded("NewGame.UpdateView", [&] { on_update_view(self); });
 }
 
+// Name entry: KeyboardManager.ShowKeyboard (called inside the input Init) opens the game's
+// ChangeNamePopup, whose description ("Enter a name for X") the popup reader speaks. When that
+// popup opened during the Init, the mod's own entry line is not spoken (2026-10-06, game text
+// first); it remains for the path without the popup (Steam's gamepad text input).
 void d_InitNameInput(void* self, const void* mi)
 {
+    const int popups_before = dialogue::change_name_popup_opens();
     o_InitNameInput(self, mi);
+    if (dialogue::change_name_popup_opens() != popups_before) return;   // the game's popup text is read
     hooks::guarded("NewGame.InitNameInput", [&] { on_init_name_input(self); });
 }
 

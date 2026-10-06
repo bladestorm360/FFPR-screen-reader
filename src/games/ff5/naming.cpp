@@ -8,6 +8,16 @@
 // controller has no inputField member) and is not ported. NamingPatches.ShouldSuppress fed FF5's
 // own MessageWindowView.SetMessage reader, which the core's dialogue reader replaces; it is
 // published as the query "NamingPatches.ShouldSuppress".
+//
+// One line per event (2026-10-06):
+//  * Moves run Cursor.NextIndex/PrevIndex (ChangeNameController.<UpdateSelect>b__40_0, FF5
+//    0x93C150) with SelectContent as the callback, so the generic cursor reader read every move a
+//    second time. "NamingPatches.ShouldSuppress" is now a cursor suppressor, as in FF4 (same
+//    class, same flow).
+//  * InitializeSelect (+0x2D) and InitializeInput (+0x5E) call SelectContent themselves. The
+//    entry spoke the focused name and then "Name: X"; confirming a character spoke its name again
+//    before "Keyboard input active". Inside those two Inits SelectContent is silent; the
+//    InitializeSelect line falls back to the focused name when selectedData is empty.
 #include <cstdint>
 #include <string>
 #include "ff5_internal.h"
@@ -19,6 +29,8 @@
 #include "../../core/say.h"
 #include "../../core/ui_util.h"
 #include "../../core/battle/battle_util.h"
+#include "../../core/system/cursor_event.h"
+#include "../../core/dialogue/dialogue.h"
 
 namespace ffpr::ff5 {
 namespace {
@@ -37,6 +49,22 @@ ref::Class  kChangeNameContent{"Last.UI.KeyInput", "ChangeNameContentController"
 ref::Field  fContentTargetData{kChangeNameContent, "targetData"};
 
 constexpr const char* kCtxCursor = "FF5.ChangeNameController.SelectContent";   // _lastCursorIndex
+
+// Set while InitializeSelect / InitializeInput run their own SelectContent call.
+bool g_in_init = false;
+int g_init_focus_index = -1;
+std::wstring g_init_focus_name;
+
+struct InitScope {
+    bool was = g_in_init;
+    InitScope()
+    {
+        g_in_init = true;
+        g_init_focus_index = -1;
+        g_init_focus_name.clear();
+    }
+    ~InitScope() { g_in_init = was; }
+};
 
 void set_active(bool active)
 {
@@ -71,12 +99,18 @@ void d_Close(void* self, const void* mi)
 V_t o_InitializeSelect;
 void d_InitializeSelect(void* self, const void* mi)
 {
-    o_InitializeSelect(self, mi);
+    {
+        InitScope scope;
+        o_InitializeSelect(self, mi);
+    }
     hooks::guarded("FF5.ChangeName.InitializeSelect", [&] {
         if (!self) return;
-        dedup::reset(kCtxCursor);   // the SelectContent right after this also speaks
+        // The Init's own SelectContent was the focus read: the next move is new from its index.
+        dedup::reset(kCtxCursor);
+        if (g_init_focus_index >= 0) dedup::index(kCtxCursor, g_init_focus_index, dedup::Scope::Session);
         void* selected = ref::rd<void*>(self, fSelectedData);
         std::wstring name = selected ? battle::character_name(selected) : std::wstring();
+        if (name.empty()) name = g_init_focus_name;
         if (!name.empty()) ffpr::say(TF(L"Name: {0}", {name}), true);
     });
 }
@@ -88,6 +122,11 @@ void d_SelectContent(void* self, void* cursor, const void* mi)
     hooks::guarded("FF5.ChangeName.SelectContent", [&] {
         if (!cursor) return;
         int index = cursor_index(cursor);
+        if (g_in_init) {   // the Init's own call: its postfix speaks the entry line
+            g_init_focus_index = index;
+            g_init_focus_name = name_at(self, index);
+            return;
+        }
         if (!dedup::index(kCtxCursor, index, dedup::Scope::Session)) return;
         std::wstring name = name_at(self, index);
         if (!name.empty()) ffpr::say(name, true);
@@ -95,9 +134,18 @@ void d_SelectContent(void* self, void* cursor, const void* mi)
 }
 
 V_t o_InitializeInput;
+// Name entry: KeyboardManager.ShowKeyboard (called inside the input Init) opens the game's
+// ChangeNamePopup, whose description ("Enter a name for X") the popup reader speaks. When that
+// popup opened during the Init, the mod's own entry line is not spoken (2026-10-06, game text
+// first); it remains for the path without the popup (Steam's gamepad text input).
 void d_InitializeInput(void* self, const void* mi)
 {
-    o_InitializeInput(self, mi);
+    const int popups_before = dialogue::change_name_popup_opens();
+    {
+        InitScope scope;
+        o_InitializeInput(self, mi);
+    }
+    if (dialogue::change_name_popup_opens() != popups_before) return;   // the game's popup text is read
     ffpr::say(T(L"Keyboard input active"), true);
 }
 
@@ -111,6 +159,7 @@ int install()
     n += hooks::attach(mClose, &d_Close, &o_Close) ? 1 : 0;
     menu_state::register_reset(NAMING_MENU, [] { dedup::reset(kCtxCursor); });
     queries::define("NamingPatches.ShouldSuppress", [] { return menu_state::is_active(NAMING_MENU); });
+    cursor::add_suppressor("NamingPatches.ShouldSuppress");
     actions::define("NamingPatches.ClearState", [] { set_active(false); });
     return n;
 }

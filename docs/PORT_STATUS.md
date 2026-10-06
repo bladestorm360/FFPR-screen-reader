@@ -187,8 +187,8 @@ details with FF3's 26 stats. Keys: 9 toggles beacons; R on the status screen rep
 - Superseded by the core, not ported: GameOverPatches, ShopCommandReader, GameInfoAnnouncer,
   CursorSuppressionCheck, BattleDamagePatches, BattleStatePatches, helpers.
 - Pending:
-  1. BattleSystemMessagePatches: FF3 shared one text check with the battle-message hooks; adding
-     it without that check risks double speech. Decide after an in-game test.
+  1. BattleSystemMessagePatches: decided 2026-10-06 - not ported. Everything it hooked already
+     reaches the core's SetMessage reader; its other hooks fire only for map-title banners.
   2. Key 0 (dump untranslated names) needs a dump function in the core field area.
   3. Status Attack reads "Attack: {0}"; FF3's "hits x power" is not ported.
   4. Item, equip, shop, config, bestiary, save, title, popups, gallery, music and the field
@@ -290,3 +290,26 @@ representation only." Applied first to the battle action line: the game's messag
 ("Steal") and the mod's actor are paired into one line ("Edge: Steal"); a basic attack, which the
 game names nowhere, keeps the mod's "Actor: Attack". Damage numbers and status icons are
 picture-only, so their mod lines stay. A whole-mod audit for other doubles followed.
+
+Doubles fixed by the audit (each stops one producer; none compares text):
+1. Battle enemy target, FF2-FF5: first enemy spoken twice on opening (EnemysInit calls
+   SelectContent itself) - now once.
+2. Item-use target, all five: first target twice on entry, a stray party member on exit - now
+   once, nothing on exit (new hook ItemUseController.SingleExit, unshared in all five).
+3. FF5 field ability target: twice - now once.
+4. Game-over Load popup, all five: each button read by the popup and the menu reader - now once,
+   the game's label.
+5. Name entry, all five: the mod's "Enter name for X…"/"Keyboard input active" plus the game's
+   popup - now the game's popup only (the mod line stays for Steam's gamepad keyboard).
+6. FF4/FF5 Name Change: two names on opening and a repeat on confirm - now one, no repeat.
+7. FF5 Name Change moves: mod name plus menu reader - now the mod's name only (as FF4).
+8. FF1/FF3 suggested names: twice per move - now the game's on-screen name with its position
+   (from FF2's in-game note, not code proof).
+9. Shop command bar: "Buy" cut off and repeated - now once.
+
+Mod-composed where the game shows text (no double; the user's call whether to switch):
+"Entering X" (the map-title banner is not hooked), battle results, status list and details
+(FF1-FF4), save slots, shop names, command bars and quantity, item/magic/ability lists and
+targets, bestiary/music/gallery rows, new-game prompts (FF1's "Start game?"), battle command
+names. Suspected doubles, not proven: "On foot" twice, FF2 Learn keyword, a config row re-read
+after answering No, the title Options first row.

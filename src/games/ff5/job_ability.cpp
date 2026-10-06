@@ -152,6 +152,12 @@ constexpr const char* kCtxCommand = "FF5.AbilityCommandController.SelectContent"
 constexpr const char* kCtxEquipList = "FF5.AbilityChangeController.SelectContent";
 constexpr const char* kCtxEquipCommand = "FF5.AbilityChangeController.SelectCommand";
 constexpr const char* kCtxUseTarget = "FF5.AbilityUseContentListController.SelectContent";
+// Bumped each time the target SelectContent hook speaks. AbilityWindowController.UseTargetInit
+// calls AbilityUseContentListController.SelectContent itself (FF5 0x9BD8C0 +0x1FD), so the entry
+// target was spoken by that hook and, after the Init reset the guard, again by the focus read.
+// UseTargetInit compares this around its original and requests the read only when the game's own
+// call spoke nothing (one event, one line; identity, not text).
+int g_use_target_spoken_seq = 0;
 constexpr const char* kCtxSpell = "FF5.AbilityContentListController.SetCursor";
 
 bool is_new(const char* ctx, int index) { return dedup::index(ctx, index, dedup::Scope::Session); }
@@ -776,7 +782,7 @@ void d_UseSelectContent(void* self, void* contents, void* cursor, const void* mi
     o_UseSelectContent(self, contents, cursor, mi);
     hooks::guarded("FF5.AbilityUse.SelectContent", [&] {
         if (!cursor || !kAbilityUse.is(self)) return;   // shared body (SelectContent / SetCursor)
-        announce_use_target(self, cursor_index(cursor));
+        if (announce_use_target(self, cursor_index(cursor))) ++g_use_target_spoken_seq;
     });
 }
 
@@ -872,12 +878,14 @@ void d_WinUseListInit(void* self, const void* mi)
 V_t o_WinUseTargetInit;
 void d_WinUseTargetInit(void* self, const void* mi)
 {
+    const int spoken_before = g_use_target_spoken_seq;
     o_WinUseTargetInit(self, mi);
     hooks::guarded("FF5.AbilityWindow.UseTargetInit", [&] {
         if (!kAbilityWin.is(self)) return;
         g_ability_window = self;
         dedup::reset(kCtxCommand);
         dedup::reset(kCtxSpell);
+        if (g_use_target_spoken_seq != spoken_before) return;   // the game's own SelectContent spoke it
         dedup::reset(kCtxUseTarget);   // self-clear kept: Single/All share this guard
         focus::request("AbilityTarget", [self] {
             if (!still(self, kAbilityWin) || !usable(self)) return false;

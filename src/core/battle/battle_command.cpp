@@ -69,6 +69,12 @@ int g_set_command_data_seq = 0;
 
 // Initial-target read generation: bumped by every EnemysInit/PlayerInit and by ShowWindow(false).
 int g_target_read_gen = 0;
+// Bumped each time the enemy SelectContent hook speaks. In FF2-FF5, EnemysInit calls the enemy
+// SelectContent itself (KeyInput EnemysInit +0x139 / +0x148 in each GameAssembly.dll; FF1's does
+// not), so the entry target was spoken by that hook and again by the initial read. EnemysInit
+// compares this around its original: the initial read runs only when the game's own call spoke
+// nothing (one event, one line; an identity check, not a text comparison).
+int g_enemy_spoken_seq = 0;
 // Frames a pending initial-target read may wait for the cursor and list.
 constexpr int kTargetReadMaxFrames = 10;
 
@@ -192,14 +198,15 @@ void announce_player_target(void* list, int index)
     ffpr::say(announcement, true);
 }
 
-void announce_enemy_target(void* list, int index)
+/// True when it spoke.
+bool announce_enemy_target(void* list, int index)
 {
-    if (!is_list(list)) return;
+    if (!is_list(list)) return false;
     int count = unity::list_count(list);
-    if (count == 0) return;
-    if (index < 0 || index >= count) return;
+    if (count == 0) return false;
+    if (index < 0 || index >= count) return false;
     void* enemy = unity::list_at(list, index);
-    if (!enemy) return;
+    if (!enemy) return false;
 
     std::wstring name = T(L"Unknown");
     int current_hp = 0, max_hp = 0;
@@ -248,6 +255,7 @@ void announce_enemy_target(void* list, int index)
 
     g_command_reannounce_pending = true;
     ffpr::say(announcement, true);
+    return true;
 }
 
 /// Announces the focused target if the cursor and target list are ready. True once it spoke (or
@@ -403,7 +411,7 @@ void d_SelectEnemy(void* self, void* list, int32_t index, const void* mi)
     o_SelectEnemy(self, list, index, mi);
     hooks::guarded("BattleTargetSelectController.SelectContent(Enemy)", [&] {
         set_target_selection_active(true);
-        announce_enemy_target(is_list(list) ? list : nullptr, index);
+        if (announce_enemy_target(is_list(list) ? list : nullptr, index)) ++g_enemy_spoken_seq;
     });
 }
 
@@ -434,8 +442,15 @@ Init_t o_PlayerInit;
 
 void d_EnemysInit(void* self, const void* mi)
 {
+    const int spoken_before = g_enemy_spoken_seq;
     o_EnemysInit(self, mi);
-    hooks::guarded("BattleTargetSelectController.EnemysInit", [&] { begin_initial_target_read(self, true); });
+    hooks::guarded("BattleTargetSelectController.EnemysInit", [&] {
+        if (g_enemy_spoken_seq != spoken_before) {
+            ++g_target_read_gen;   // the game's own SelectContent spoke the entry target
+            return;
+        }
+        begin_initial_target_read(self, true);
+    });
 }
 
 void d_PlayerInit(void* self, const void* mi)

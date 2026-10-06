@@ -36,6 +36,7 @@ ref::Field  fItemUseContentList{kItemUseController, "contentList"};
 ref::Field  fItemUseSelectCursor{kItemUseController, "selectCursor"};
 ref::Method mItemUseSelectContent{kItemUseController, "SelectContent", 2};
 ref::Method mItemUseSingleInit{kItemUseController, "SingleInit", 0};
+ref::Method mItemUseSingleExit{kItemUseController, "SingleExit", 0};
 ref::Method mItemUseAllInit{kItemUseController, "AllInit", 0};
 
 ref::Class  kItemListContentData{"Last.UI", "ItemListContentData"};
@@ -65,6 +66,16 @@ int g_last_item_id = 0;
 // FieldItemReannouncePatches: a newer Init supersedes a pending read.
 int g_item_list_gen = 0;
 int g_item_target_gen = 0;
+
+// ItemUseController.SingleInit and SingleExit both set the cursor to 0 and call SelectContent
+// themselves (the shared SelectContent/SetCursor body; KeyInput SingleInit +0x191, SingleExit
+// +0x2D in all five GameAssembly.dlls). On entry that spoke the first target from the
+// SelectContent hook and again from the bounded entry read one frame later; on backing out it
+// spoke the first party member just before the item list's own read. One event, one line:
+// SingleInit skips its entry read when its own SelectContent call spoke (counter compared around
+// the original), and SelectContent stays silent inside SingleExit. Identity, not text.
+int g_item_target_spoken_seq = 0;
+bool g_in_single_exit = false;
 // Same cap the old per-frame consume used.
 constexpr int MAX_FRAMES = 30;
 
@@ -206,7 +217,8 @@ void d_ItemUseSelectContent(void* self, void* contents, void* cursor, const void
         if (index < 0 || index >= static_cast<int>(list.size())) return;
         void* content = list[static_cast<size_t>(index)];
         if (!content) return;
-        announce_item_use_target(content, index, static_cast<int>(list.size()));
+        if (g_in_single_exit) return;   // the game's own reset call while leaving the target list
+        if (announce_item_use_target(content, index, static_cast<int>(list.size()))) ++g_item_target_spoken_seq;
     });
 }
 
@@ -285,7 +297,7 @@ void item_target_init(void* self)
 }
 
 using Init_t = void (*)(void* self, const void* mi);
-Init_t o_UseSelectInit, o_ImportantSelectInit, o_OrganizeSelectInit, o_SingleInit, o_AllInit;
+Init_t o_UseSelectInit, o_ImportantSelectInit, o_OrganizeSelectInit, o_SingleInit, o_SingleExit, o_AllInit;
 
 void d_UseSelectInit(void* self, const void* mi)
 {
@@ -307,8 +319,25 @@ void d_OrganizeSelectInit(void* self, const void* mi)
 
 void d_SingleInit(void* self, const void* mi)
 {
+    const int spoken_before = g_item_target_spoken_seq;
     o_SingleInit(self, mi);
-    hooks::guarded("ItemUseController.SingleInit", [&] { item_target_init(self); });
+    hooks::guarded("ItemUseController.SingleInit", [&] {
+        if (g_item_target_spoken_seq != spoken_before) {
+            ++g_item_target_gen;   // the game's own SelectContent call spoke the entry target
+            return;
+        }
+        item_target_init(self);
+    });
+}
+
+void d_SingleExit(void* self, const void* mi)
+{
+    struct Scope {
+        bool was = g_in_single_exit;
+        Scope() { g_in_single_exit = true; }
+        ~Scope() { g_in_single_exit = was; }
+    } scope;
+    o_SingleExit(self, mi);
 }
 
 void d_AllInit(void* self, const void* mi)
@@ -335,6 +364,7 @@ int install()
     n += hooks::attach(mItemListImportantSelectInit, &d_ImportantSelectInit, &o_ImportantSelectInit) ? 1 : 0;
     n += hooks::attach(mItemListOrganizeSelectInit, &d_OrganizeSelectInit, &o_OrganizeSelectInit) ? 1 : 0;
     n += hooks::attach(mItemUseSingleInit, &d_SingleInit, &o_SingleInit) ? 1 : 0;
+    n += hooks::attach(mItemUseSingleExit, &d_SingleExit, &o_SingleExit) ? 1 : 0;   // unique RVA in all five
     n += hooks::attach(mItemUseAllInit, &d_AllInit, &o_AllInit) ? 1 : 0;
     return n;
 }

@@ -9,6 +9,7 @@
 #include "shop_internal.h"
 #include "../core.h"
 #include "../dedup.h"
+#include "../frame.h"
 #include "../hooks.h"
 #include "../log.h"
 #include "../modtext.h"
@@ -222,6 +223,13 @@ void d_SetDescription(void* self, void* value, const void* mi)
 using CommandSetCursor_t = void (*)(void* self, int32_t index, const void* mi);
 CommandSetCursor_t o_CommandSetCursor = nullptr;
 
+// ShopController.InitSelectCommand (entering the bar, or backing out to it) reaches SetCursor twice
+// in one frame: ShopInfoController.Reset jumps to it, then the command focus sets it again. Both
+// calls interrupt, so the row was cut off and spoken again. One cursor event = the same index on
+// the same or the next frame (an identity check from FF5's ShopPatches, not a text comparison).
+int g_last_command_index = -1;
+int64_t g_last_command_frame = -100;
+
 void d_CommandSetCursor(void* self, int32_t index, const void* mi)
 {
     o_CommandSetCursor(self, index, mi);
@@ -236,9 +244,15 @@ void d_CommandSetCursor(void* self, int32_t index, const void* mi)
 
         // Only announce when the command bar is the active panel (State.SelectCommand == 1). On
         // shop entry the state goes straight to SelectProduct without settling here, so the
-        // prep-time cursor flicker is suppressed; cancelling back to the bar announces. No dedup.
+        // prep-time cursor flicker is suppressed; cancelling back to the bar announces. No text
+        // dedup; only the same-frame second call of one cursor event is dropped (see above).
         void* gate = cached_or_find_controller();
         if (gate && current_state(gate) != STATE_SELECT_COMMAND) return;
+
+        const int64_t frame_now = static_cast<int64_t>(frame::count());
+        if (index == g_last_command_index && frame_now - g_last_command_frame <= 1) return;
+        g_last_command_index = index;
+        g_last_command_frame = frame_now;
 
         clear_other_menu_states_for_shop();
         if (!is_shop_menu_active()) {

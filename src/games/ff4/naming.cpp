@@ -3,6 +3,11 @@
 //
 // NamingPatches.IsNamingMenuActive is the registry key "Naming" (ff4.h), so another menu state
 // activating clears it (MenuStateRegistry.ClearOtherMenuStates called NamingPatches.ClearState).
+//
+// One line per event (2026-10-06): InitializeSelect (FF4 0x8B0BE0 +0x2D) and InitializeInput
+// (+0x5E) call SelectContent themselves. The entry spoke the focused name and then the selected
+// name; confirming a character spoke its name again before "Keyboard input active". Inside those
+// two Inits SelectContent is silent; the InitializeSelect line falls back to the focused name.
 #include <string>
 #include "ff4.h"
 #include "../../core/core.h"
@@ -13,6 +18,7 @@
 #include "../../core/ui_util.h"
 #include "../../core/unity.h"
 #include "../../core/system/cursor_event.h"
+#include "../../core/dialogue/dialogue.h"
 
 namespace ffpr::ff4 {
 namespace {
@@ -30,6 +36,22 @@ ref::Field  fContentTargetData{kChangeNameContent, "targetData"};
 
 // AnnouncementContexts.NAMING_SELECT (DEDUP_INVENTORY.md FF4 row 32): cursor index.
 constexpr const char* kCtxNamingSelect = "Naming.Select";
+
+// Set while InitializeSelect / InitializeInput run their own SelectContent call.
+bool g_in_init = false;
+int g_init_focus_index = -1;
+std::wstring g_init_focus_name;
+
+struct InitScope {
+    bool was = g_in_init;
+    InitScope()
+    {
+        g_in_init = true;
+        g_init_focus_index = -1;
+        g_init_focus_name.clear();
+    }
+    ~InitScope() { g_in_init = was; }
+};
 
 /// GetCharacterNameAtIndex: contentList[index].TargetData.Name.
 std::wstring name_at(void* controller, int index)
@@ -60,10 +82,16 @@ void d_Close(void* self, const void* mi)
 Void_t o_InitializeSelect;
 void d_InitializeSelect(void* self, const void* mi)
 {
-    o_InitializeSelect(self, mi);
+    {
+        InitScope scope;
+        o_InitializeSelect(self, mi);
+    }
     hooks::guarded("FF4 ChangeNameController.InitializeSelect", [&] {
+        // The Init's own SelectContent was the focus read: the next move is new from its index.
         dedup::reset(kCtxNamingSelect);
+        if (g_init_focus_index >= 0) dedup::index(kCtxNamingSelect, g_init_focus_index);
         std::wstring name = character_name(ref::rd<void*>(self, fNameSelectedData));
+        if (name.empty()) name = g_init_focus_name;
         if (!name.empty()) ffpr::say(name, true);
     });
 }
@@ -76,6 +104,11 @@ void d_SelectContent(void* self, void* cursor, const void* mi)
     hooks::guarded("FF4 ChangeNameController.SelectContent", [&] {
         if (!cursor) return;
         int index = ui::cursor_index(cursor);
+        if (g_in_init) {   // the Init's own call: its postfix speaks the entry line
+            g_init_focus_index = index;
+            g_init_focus_name = name_at(self, index);
+            return;
+        }
         if (!dedup::index(kCtxNamingSelect, index)) return;
         std::wstring name = name_at(self, index);
         if (!name.empty()) ffpr::say(name, true);
@@ -83,9 +116,18 @@ void d_SelectContent(void* self, void* cursor, const void* mi)
 }
 
 Void_t o_InitializeInput;
+// Name entry: KeyboardManager.ShowKeyboard (called inside the input Init) opens the game's
+// ChangeNamePopup, whose description ("Enter a name for X") the popup reader speaks. When that
+// popup opened during the Init, the mod's own entry line is not spoken (2026-10-06, game text
+// first); it remains for the path without the popup (Steam's gamepad text input).
 void d_InitializeInput(void* self, const void* mi)
 {
-    o_InitializeInput(self, mi);
+    const int popups_before = dialogue::change_name_popup_opens();
+    {
+        InitScope scope;
+        o_InitializeInput(self, mi);
+    }
+    if (dialogue::change_name_popup_opens() != popups_before) return;   // the game's popup text is read
     hooks::guarded("FF4 ChangeNameController.InitializeInput", [&] { ffpr::say(T(L"Keyboard input active."), true); });
 }
 
