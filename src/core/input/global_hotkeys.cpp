@@ -70,6 +70,13 @@ void handle_item_details_key()
         return;
     }
 
+    // A game module's own screen with details (FF2's keyword and Words menus).
+    if (queries::is("GameModule.HasDetails")) {
+        const std::wstring desc = queries::text("GameModule.Details");
+        ffpr::say(text::is_blank(desc) ? T(L"No description") : text::trim(desc), true);
+        return;
+    }
+
     // Config menu tooltip.
     bool key_input = false;
     if (void* config = active_config_controller(key_input)) {
