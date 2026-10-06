@@ -147,12 +147,13 @@ BattlePausePatches, BattleResultPatches, BattleStartPatches. All names checked i
 ## Lead integration notes (open)
 
 - `src/core/glue/scene_glue.cpp`: FF1's "left a battle scene" clear on SceneLoaded.
-- ClearMenuFlagsForMapTransition runs twice on a map change (fieldnav and system): remove one.
-- MainMenuController Show/Close is hooked by battle and possibly menus/system: check MAIN_MENU
-  handling does not run twice.
+- Done: ClearMenuFlagsForMapTransition ran twice on a map change; the system copy no longer
+  subscribes to MapChanged. MainMenuController Show/Close is hooked only by battle.
+- Done: first build with every area (no errors, no warnings), smoke test PASS, name check
+  4821/0 missing, wiring check: only the four Battle*State.ShouldSuppress queries are undefined,
+  which falls back to the menu-state flags exactly as FF1 did.
 - Four master-data readers and two `condition_name` copies: merge into core helpers.
-- Not yet done: first full build with every area, smoke test, wiring_check clean-up, the
-  FF2–FF5 game modules (running), FF5 navigation additions, release zip (Phase 5).
+- Not yet done: the FF2–FF5 game modules, FF5 navigation additions, release zip (Phase 5).
 
 ## Core: status, config, bestiary (`src/core/status`, `src/core/bestiary`) — FINISHED
 

@@ -257,8 +257,8 @@ int install()
     actions::define("Mod.ClearOtherMenuStates.Shop", [] { clear_other_menu_states("Shop"); });
 
     // FF1 MapTransitionPatches.CheckMapTransition calls ClearMenuFlagsForMapTransition when the
-    // map id changes, before "Entering X".
-    events::on(events::Kind::MapChanged, [] { clear_menu_flags_for_map_transition(); });
+    // map id changes, before "Entering X". src/core/fieldnav/map_transition.cpp does exactly
+    // that at the change, so it is not repeated here on MapChanged (it ran twice).
     return n;
 }
 
