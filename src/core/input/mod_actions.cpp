@@ -50,6 +50,8 @@ ref::Class  kCharacterParameterBase{"Last.Data", "CharacterParameterBase"};
 ref::Method mParamGetCurrentHP{kCharacterParameterBase, "get_CurrentHP", 0};
 ref::Class  kPlayerCharacterParameter{"Last.Data", "PlayerCharacterParameter"};
 ref::Method mParamConfirmedMaxHp{kPlayerCharacterParameter, "ConfirmedMaxHp", 0};   // override of the abstract base
+ref::Method mParamGetCurrentMP{kCharacterParameterBase, "get_CurrentMP", 0};
+ref::Method mParamConfirmedMaxMp{kPlayerCharacterParameter, "ConfirmedMaxMp", 0};
 ref::Method mParamGetCurrentConditionList{kCharacterParameterBase, "get_CurrentConditionList", 0};
 
 ref::Class  kCondition{"Last.Data.Master", "Condition"};
@@ -159,6 +161,15 @@ void announce_character_status()
     if (il2cpp::Method* m = mParamConfirmedMaxHp.get())
         max_hp = il2cpp::invoke_int(il2cpp::virtual_method(param, m), param, nullptr, 0);
     std::wstring line = TF(L"{0}: {1}/{2} HP", {name, std::to_wstring(hp), std::to_wstring(max_hp)});
+    if (game::flags().has_mp) {
+        // FF4 and FF5 (FF2 replaces this action with its own): MP with HP, in FF2's wording.
+        const int32_t mp = ref::call<int32_t>(mParamGetCurrentMP, param);
+        int32_t max_mp = 0;
+        if (il2cpp::Method* m = mParamConfirmedMaxMp.get())
+            max_mp = il2cpp::invoke_int(il2cpp::virtual_method(param, m), param, nullptr, 0);
+        line = TF(L"{0}: HP {1}/{2}, MP {3}/{4}", {name, std::to_wstring(hp), std::to_wstring(max_hp),
+                                                    std::to_wstring(mp), std::to_wstring(max_mp)});
+    }
 
     // Active status effects (non-critical: a failure leaves the HP line alone).
     hooks::guarded("Mod.AnnounceCharacterStatus.conditions", [&] {

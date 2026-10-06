@@ -10,8 +10,9 @@ Triggered when the user says "prepare release X.Y". The work ends at the zip; th
 4. Bump the version in `src/version.rc` (FILEVERSION, PRODUCTVERSION, both strings) and in
    `kBuild` in `src/dllmain.cpp`; build and smoke test again.
 5. `python tools\make_release.py X.Y.Z` → `releases\FFPR_ScreenReader_X.Y.Z.zip`.
-6. The readme in the zip is the user's own `readme.md` (repo root). Never write or edit it;
-   if it is missing, say so.
+6. The readme in the zip is `readme.md` (repo root). It was written on the user's request on
+   2026-10-06 from the FF1 readme; it is the user's document: edit it only when the user asks,
+   and check its key lists against the code when keys change.
 
 ## What players do (for the readme the user writes)
 
