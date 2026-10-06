@@ -188,3 +188,27 @@ details with FF3's 26 stats. Keys: 9 toggles beacons; R on the status screen rep
      scanner were not compared file by file against FF3's old mod (all names resolve in FF3).
 - Lead: menu_state reset handlers are now additive (a game's handler runs with the core's);
   battle exposes "BattleCommandPatches.NotifyCommandSubmenuActive".
+
+## FF5 module (`src/games/ff5`) — FINISHED (first pass)
+
+Jobs and abilities (JobAbilityPatches, JobEquipData, MenuFocusAnnouncer; Phase 1 proof hook
+AbilityChangeController), FF5 magic, status details with FF5's stat list, naming, timers
+(T reads, Shift+T freezes), FF5 keys (9 beacons, Shift+; landing pings, Enemy Letters toggle),
+battle targets ("All allies/enemies"), results log on L (points page only).
+- Exceptions to the rules, for the user/lead to approve:
+  1. `Timer.Update` is hooked with MinHook directly and enabled only while timers are frozen
+     (as the old mod did) - the one hook outside `hooks::attach`.
+  2. The results log reads its own keys while open and blocks the game's input itself.
+- Pending: FF5's own target reader (enemy letters, target statuses) - the core's SelectContent
+  target hooks would double it; results-log pages for level-ups, abilities, items; battle
+  totals with ABP, FF5 names for unnamed statuses ("Enemy: Float"), ability lists, steal
+  results; mod-mode + B for the results log; mod menu entries Landing Pings, Landing Ping
+  Volume, Enemy Letters; Boko and transport types 11/12 in the vehicle table (to verify).
+- Kept as the core has them (FF1 behaviour): StatusMenuFocusPatches, GameTogglePatches,
+  KeyboardGamepadReader, MessagePatches, the H key.
+- Missing mod_text key: "No data available" (line unreachable for now). English kept from the
+  C#: "Empty slot", "Slot N:", ", equipped", ", Not learned", "Lv.", "Mastered!".
+- FF5 navigation additions for the core: breadcrumb chaining (fallback in
+  `field::find_path_to` past the game searcher's ~31 tiles; max 6 legs + "and N more"),
+  landing pings (audio loop on ship-type vehicles using CheckLandingList/CheckOkList), exit
+  grouping (nearest member represents the group, next to `dedupe_vehicle_pads`).
