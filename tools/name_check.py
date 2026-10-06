@@ -164,9 +164,15 @@ def main():
             # Declarations inside comments (header examples) are not uses.
             text = "\n".join(l for l in text.split("\n") if not l.lstrip().startswith("//"))
             rel = os.path.relpath(path, ROOT)
+            # Local mask constants: constexpr uint8_t kFF134 = game::kFF1 | game::kFF3 | game::kFF4;
+            local_masks = {m.group(1): m.group(2) for m in re.finditer(
+                r'constexpr\s+[\w:]+\s+(\w+)\s*=\s*([^;]*kFF[^;]*);', text)}
             classes = {}
             for m in DECL_CLASS.finditer(text):
-                classes[m.group(1)] = (m.group(2), m.group(3), mask_games(m.group(4)))
+                expr = m.group(4)
+                if expr and expr.strip() in local_masks:
+                    expr = local_masks[expr.strip()]
+                classes[m.group(1)] = (m.group(2), m.group(3), mask_games(expr))
             fields = [(m.group(1), m.group(2), m.group(3), m.group(4)) for m in DECL_FIELD.finditer(text)]
             methods = [(m.group(1), m.group(2), m.group(3), int(m.group(4))) for m in DECL_METHOD.finditer(text)]
             if classes or fields or methods:

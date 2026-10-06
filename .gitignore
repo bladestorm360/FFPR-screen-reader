@@ -4,3 +4,4 @@ out/
 build_log.txt
 __pycache__/
 releases/
+build_check/

@@ -36,6 +36,15 @@ echo Checking exports and imports...
 python tools\import_check.py out\hid.dll
 if errorlevel 1 exit /b 1
 
+echo Checking every game-code name against each game's dump.cs...
+python tools\name_check.py
+if errorlevel 1 (
+    echo Name check FAILED - see build_check\name_report.txt
+    exit /b 1
+)
+REM Report only: a few names are optional by design (FF1's default when undefined).
+python tools\wiring_check.py
+
 echo.
 echo Build OK: out\hid.dll
 for %%F in ("out\hid.dll") do echo   %%~zF bytes
