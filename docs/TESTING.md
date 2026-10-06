@@ -61,6 +61,5 @@ Shift, LB/RB. 4. Name change. 5. Shift+T, then T. 6. After a battle: L, arrows, 
 ## Known gaps (details in `PORT_STATUS.md`)
 
 - Pending per game: FF3 battle system messages; FF4 steal results and choice lists; FF5's own
-  target reader, results-log pages beyond points, ABP totals; FF2/FF4/FF5 MP on some HP-only
-  lines.
+  target reader, results-log pages beyond points, ABP totals.
 - Missing translations: "hovercraft", "yellow chocobo" (FF4), "No data available" (FF5).

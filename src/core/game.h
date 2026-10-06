@@ -48,6 +48,7 @@ struct Flags {
     bool atb = false;                   // active-time battle (FF4, FF5)
     bool has_jobs = false;              // job system (FF3, FF5)
     bool has_skill_levels = false;      // FF2 weapon/magic skill levels
+    bool has_mp = false;                // MP shown with HP (FF2, FF4, FF5; FF1/FF3 use spell charges)
     bool timer_freeze = false;          // FF5 Shift+T timer freeze
 };
 

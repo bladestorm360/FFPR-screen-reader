@@ -157,22 +157,32 @@ void announce_player_target(void* list, int index)
     if (!player) return;
 
     std::wstring name = T(L"Unknown");
-    int current_hp = 0, max_hp = 0;
+    int current_hp = 0, max_hp = 0, current_mp = 0, max_mp = 0;
+    const bool has_mp = game::flags().has_mp;
     if (void* owned = player_owned_character(player)) {
         std::wstring n = character_name(owned);
         if (!n.empty()) name = n;
         if (void* char_param = character_parameter(owned)) {
             int v = 0;
             if (param_confirmed(char_param, Stat::MaxHp, v)) max_hp = v;
+            if (has_mp && param_confirmed(char_param, Stat::MaxMp, v)) max_mp = v;
         }
     }
     void* battle_param = unit_parameter(player);
     if (battle_param) {
         current_hp = param_current_hp(battle_param);
         if (max_hp == 0) max_hp = param_confirmed_or_base(battle_param, Stat::MaxHp);
+        if (has_mp) {
+            current_mp = param_current_mp(battle_param);
+            if (max_mp == 0) max_mp = param_confirmed_or_base(battle_param, Stat::MaxMp);
+        }
     }
 
-    std::wstring announcement = TF(L"{0}: HP {1}/{2}", {name, text::num(current_hp), text::num(max_hp)});
+    // MP joins HP in the games that have it (FF2, FF4, FF5), as their old mods read it.
+    std::wstring announcement = has_mp
+        ? TF(L"{0}: HP {1}/{2}, MP {3}/{4}", {name, text::num(current_hp), text::num(max_hp),
+                                              text::num(current_mp), text::num(max_mp)})
+        : TF(L"{0}: HP {1}/{2}", {name, text::num(current_hp), text::num(max_hp)});
     announcement += status_suffix(battle_param);
     announcement = ui::menu_position(announcement, index, count);
 

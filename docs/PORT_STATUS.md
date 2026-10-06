@@ -244,12 +244,16 @@ battle results (gil, weapon skills, spell level-ups, stat gains; no EXP), status
   block every field key).
 - Not ported: MovementSpeech's ChangeTransportation (it calls FieldPlayer.GetOn, which the core
   already speaks); the touch battle spell list (never worked in the C# mod).
-- Pending: FF2 shows MP but the core's status character list, item-use targets and battle
-  player targets say HP only (suggest a `Flags::has_mp`). Config, bestiary, dialogue, popup,
+- Done (lead): `Flags::has_mp` (FF2, FF4, FF5) adds MP to the core's status character list,
+  item-use targets and battle player targets. Config, bestiary, dialogue, popup,
   title, save, shop, item and equip compared by feature only.
 
 ## Lead changes after the game modules
 
+- The details key (I) has a game-module entry: queries "GameModule.HasDetails" / text
+  "GameModule.Details" (FF2's keyword and Words menus use it).
+- `has_mp` flag: MP joins HP in the status character list, item-use targets and battle player
+  targets for FF2, FF4 and FF5.
 - Core hotkeys and game input pause while FF5's results log is open
   (`BattleResultNavigator.IsOpen`).
 - `hooks::disable` now also applies to address hooks with a "Class.Method" label (FF5 can switch

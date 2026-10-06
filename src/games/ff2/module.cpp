@@ -20,6 +20,7 @@ namespace {
 
 void configure(game::Flags& f)
 {
+    f.has_mp = true;
     f.has_airship = true;
     f.has_vehicle_pads = true;
     f.multi_hit_setting = true;

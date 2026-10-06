@@ -38,6 +38,8 @@ ref::Field  fCurrentHP{kCharacterParameterBase, "currentHP"};
 ref::Field  fCurrentConditionList{kCharacterParameterBase, "<CurrentConditionList>k__BackingField"};
 ref::Class  kPlayerCharacterParameter{"Last.Data", "PlayerCharacterParameter"};
 ref::Method mConfirmedMaxHp{kPlayerCharacterParameter, "ConfirmedMaxHp", 0};
+ref::Field  fCurrentMP{kCharacterParameterBase, "currentMP"};
+ref::Method mConfirmedMaxMp{kPlayerCharacterParameter, "ConfirmedMaxMp", 0};
 
 ref::Class  kMasterManager{"Last.Data.Master", "MasterManager"};
 ref::Field  fMasterList{kMasterManager, "masterList"};
@@ -212,6 +214,10 @@ Vitals character_vitals(void* character)
     v.has_parameter = true;
     v.hp = ref::rd<int32_t>(param, fCurrentHP);
     v.max_hp = call_virtual_int(mConfirmedMaxHp, param);
+    if (game::flags().has_mp) {
+        v.mp = ref::rd<int32_t>(param, fCurrentMP);
+        v.max_mp = call_virtual_int(mConfirmedMaxMp, param);
+    }
     void* conditions = ref::rd<void*>(param, fCurrentConditionList);
     int n = unity::list_count(conditions);
     for (int i = 0; i < n; ++i) {

@@ -17,6 +17,7 @@ namespace {
 
 void configure(game::Flags& f)
 {
+    f.has_mp = true;
     f.has_vehicle_pads = true;
     f.has_hidden_passages = true;
     f.multi_hit_setting = false;

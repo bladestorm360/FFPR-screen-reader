@@ -53,6 +53,9 @@ ref::Field fBaseAccuracyRate{kCharParam, "<BaseAccuracyRate>k__BackingField"};
 ref::Field fBaseEvasionRate{kCharParam, "<BaseEvasionRate>k__BackingField"};
 ref::Field fCurrentConditionList{kCharParam, "<CurrentConditionList>k__BackingField"};
 ref::Method mConfirmedMaxHp{kCharParam, "ConfirmedMaxHp", 0};
+ref::Field fCurrentMP{kCharParam, "currentMP"};
+ref::Method mConfirmedMaxMp{kCharParam, "ConfirmedMaxMp", 0};
+ref::Field fBaseMaxMp{kCharParam, "<BaseMaxMp>k__BackingField"};
 ref::Method mConfirmedLevel{kCharParam, "ConfirmedLevel", 0};
 ref::Method mConfirmedPower{kCharParam, "ConfirmedPower", 0};
 ref::Method mConfirmedVitality{kCharParam, "ConfirmedVitality", 0};
@@ -175,6 +178,7 @@ ref::Method& confirmed_method(Stat s)
 {
     switch (s) {
     case Stat::MaxHp: return mConfirmedMaxHp;
+    case Stat::MaxMp: return mConfirmedMaxMp;
     case Stat::Level: return mConfirmedLevel;
     case Stat::Power: return mConfirmedPower;
     case Stat::Agility: return mConfirmedAgility;
@@ -190,6 +194,7 @@ ref::Field& base_field(Stat s)
 {
     switch (s) {
     case Stat::MaxHp: return fBaseMaxHp;
+    case Stat::MaxMp: return fBaseMaxMp;
     case Stat::Level: return fBaseLevel;
     case Stat::Power: return fBasePower;
     case Stat::Agility: return fBaseAgility;
@@ -344,6 +349,7 @@ void* character_parameter(void* owned) { return owned ? ref::rd<void*>(owned, fC
 // --- parameters ---------------------------------------------------------------------------------
 
 int param_current_hp(void* p) { return p ? ref::rd<int32_t>(p, fCurrentHP) : 0; }
+int param_current_mp(void* p) { return p ? ref::rd<int32_t>(p, fCurrentMP) : 0; }
 int param_base_max_hp(void* p) { return p ? ref::rd<int32_t>(p, fBaseMaxHp) : 0; }
 int param_base_level(void* p) { return p ? ref::rd<int32_t>(p, fBaseLevel) : 0; }
 

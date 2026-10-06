@@ -143,6 +143,8 @@ bool announce_item_use_target(void* content, int index, int count)
     detail::Vitals v = detail::character_vitals(character);
     if (v.has_parameter) {
         announcement += L", " + TF(L"HP {0}/{1}", {text::num(v.hp), text::num(v.max_hp)});
+        if (game::flags().has_mp)
+            announcement += L", " + TF(L"MP {0}/{1}", {text::num(v.mp), text::num(v.max_mp)});
         if (!v.conditions.empty()) announcement += L", " + detail::join_all(v.conditions, L", ");
     }
 

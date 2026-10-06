@@ -58,6 +58,8 @@ struct Vitals {
     bool has_parameter = false;
     int hp = 0;
     int max_hp = 0;
+    int mp = 0;        // read only when game::flags().has_mp
+    int max_mp = 0;
     std::vector<std::wstring> conditions;
 };
 Vitals character_vitals(void* character);

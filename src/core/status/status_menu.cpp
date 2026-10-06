@@ -85,6 +85,8 @@ ref::Class  kPlayerParam{"Last.Data", "PlayerCharacterParameter"};
 ref::Field  fParamMpCountList{kPlayerParam, "<CurrentMpCountList>k__BackingField"};
 ref::Method mConfirmedLevel{kPlayerParam, "ConfirmedLevel", 0};
 ref::Method mConfirmedMaxHp{kPlayerParam, "ConfirmedMaxHp", 0};
+ref::Field  fParamCurrentMp{kParamBase, "currentMP"};
+ref::Method mConfirmedMaxMp{kPlayerParam, "ConfirmedMaxMp", 0};
 ref::Method mConfirmedPower{kPlayerParam, "ConfirmedPower", 0};
 ref::Method mConfirmedAgility{kPlayerParam, "ConfirmedAgility", 0};
 ref::Method mConfirmedVitality{kPlayerParam, "ConfirmedVitality", 0};
@@ -169,6 +171,9 @@ void on_select_content(void* contents, int index)
         int level = param_level_or_base(param);
         if (level > 0) announcement += L", " + TF(L"Level {0}", {text::num(level)});
         announcement += L", " + TF(L"HP {0}/{1}", {text::num(param_current_hp(param)), text::num(param_max_hp(param))});
+        if (game::flags().has_mp)
+            announcement += L", " + TF(L"MP {0}/{1}", {text::num(ref::rd<int32_t>(param, fParamCurrentMp)),
+                                                     text::num(ref::call<int32_t>(mConfirmedMaxMp, param))});
     }
 
     ffpr::say(announcement, true);

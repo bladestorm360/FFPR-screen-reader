@@ -120,10 +120,11 @@ void* character_parameter(void* owned_character);
 
 // --- character parameters ---------------------------------------------------------------------
 int param_current_hp(void* param);
+int param_current_mp(void* param);
 int param_base_max_hp(void* param);
 int param_base_level(void* param);
 /// Confirmed* (virtual). False when the call failed (the C# catch branch).
-enum class Stat { MaxHp, Level, Power, Agility, Vitality, Intelligence, Luck, AccuracyRate, EvasionRate };
+enum class Stat { MaxHp, Level, Power, Agility, Vitality, Intelligence, Luck, AccuracyRate, EvasionRate, MaxMp };
 bool param_confirmed(void* param, Stat s, int& out);
 /// Base* auto-property backing field for the same stat.
 int param_base(void* param, Stat s);
