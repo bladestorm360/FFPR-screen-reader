@@ -478,7 +478,6 @@ Closes the mod menu.
 ### FINAL FANTASY IV
 
 - The Falcon and the Lunar Whale are called "airship".
-- "Hovercraft" and "yellow chocobo" are spoken in English in every language.
 - The old mod's special pathfinding on the moon is not in yet.
 
 ### FINAL FANTASY V

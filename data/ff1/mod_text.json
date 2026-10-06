@@ -1,1 +1,30 @@
-{}
+{
+  "Airship Landing": {
+    "en": "Airship Landing",
+    "ja": "飛空艇の着陸地点",
+    "fr": "Zone d'atterrissage",
+    "it": "Area di atterraggio",
+    "de": "Luftschiff-Landeplatz",
+    "es": "Zona de aterrizaje",
+    "ko": "비공정 착륙 지점",
+    "zht": "飛空艇降落點",
+    "zhc": "飞空艇降落点",
+    "ru": "Место посадки воздушного корабля",
+    "th": "จุดลงจอดเรือเหาะ",
+    "pt": "Pouso do helibarco"
+  },
+  "Airship Landings": {
+    "en": "Airship Landings",
+    "ja": "飛空艇の着陸地点",
+    "fr": "Zones d'atterrissage",
+    "it": "Aree di atterraggio",
+    "de": "Luftschiff-Landeplätze",
+    "es": "Zonas de aterrizaje",
+    "ko": "비공정 착륙 지점",
+    "zht": "飛空艇降落點",
+    "zhc": "飞空艇降落点",
+    "ru": "Места посадки воздушного корабля",
+    "th": "จุดลงจอดเรือเหาะ",
+    "pt": "Pousos do helibarco"
+  }
+}

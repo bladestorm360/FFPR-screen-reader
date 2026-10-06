@@ -6,10 +6,13 @@ Written 2026-10-05 for Phase 0 of `../UNIFIED_MOD_PLAN.md`.
 
 ## Files
 
-- `data/common/mod_text.json`: shared mod UI text. All 850 keys of the five mods.
+- `data/common/mod_text.json`: shared mod UI text. All 850 keys of the five mods, plus new keys.
 - `data/ff1/mod_text.json` to `data/ff5/mod_text.json`: per-game overrides. Game terms only.
 - `tools/merge_modtext.py`: makes all of the above from the old repos.
   It also rewrites the generated report at the end of this file.
+- `tools/modtext_fixes.py`: corrections to each game's own text, and new keys. The merge applies them last,
+  so they survive a re-merge. See "Official-text fixes" below.
+- `tools/official_text.py`: reads a game's message tables in all 12 languages (`find`, `id`, `dump`).
 
 Every entry has 12 languages: en, ja, fr, it, de, es, ko, zht, zhc, ru, th, pt.
 
@@ -35,6 +38,8 @@ python tools\merge_modtext.py --check
 
 - The first writes the data files and the report below.
 - `--check` writes nothing. It fails if the data files are out of date or have gaps.
+- Both stop if a row of `tools/modtext_fixes.py` no longer matches what the merge produced
+  (an old mod changed). Update or remove that row.
 - `--src-root` points at another folder holding `ff1\` to `FF5\`. The default is this repo's parent.
 
 The old repos are only read.
@@ -67,12 +72,16 @@ A label the game itself defines, whose wording follows that game's own text:
 
 The full list is `_CATEGORIES` in the script.
 
-**HP and MP.** The abbreviation is a game term:
+**HP and MP.** The abbreviation is a game term. The merge kept each old mod's abbreviation:
+KP, PV and HP in FF2 to FF4, and HP and MP in FF5.
+The games' own tables say otherwise: all five use the same abbreviations (checked 2026-10-06).
 
-- FF1 uses LP (de), VIT (es) and ОЗ (ru).
-- FF2 to FF4 use KP, PV and HP.
-- FF5 uses HP and MP in it, de, es, ru and pt.
+| | fr | it | de | es | ru | pt |
+|---|---|---|---|---|---|---|
+| HP | PV | PV | LP | VIT | ОЗ | PV |
+| MP | PM | PM | MP | PM | ОМ | PM |
 
+`tools/modtext_fixes.py` applies this table to every key whose English contains HP or MP.
 A key whose English contains HP or MP gets an override only when the game's abbreviation differs from
 the common one in some language. A difference in the rest of the sentence is drift.
 
@@ -87,21 +96,74 @@ These looked like game terms but were not overridden. FF1, or the chosen source,
 - `{0} gained {1} XP`, `EXP Counter Sound`, `EXP Counter Volume`: EXP, XP and EP are mixed within each game.
   There is no consistent per-game term.
 - MP sentences in FF2 to FF4, such as `{0}: Recovered {1} MP`: same PM abbreviation as FF1.
-  Only the wording differs. FF5 does get overrides for these.
+  Only the wording differs.
 - `Low Flying`, `Walking`, `Dashing`, `Unique`, `Vehicle {0}`: mod descriptions of movement, not game labels.
 - `Treasure Chest`, `Save Point`, `Map Exit` and the other entity categories: mod labels.
 - `Game Over`, `Bestiary. Encountered: {0} of {1}`, `Formation view`, bestiary section labels: shared extras text.
 - `Can equip: {0}`, `Status {0}`, `{0} learned {1}`: sentences without a game term.
 
-## Not verified
+## Official-text fixes (2026-10-06)
 
-- No override was checked against the games' own message tables.
-  The rule keeps what each old mod shipped for its own game.
-- Some of those entries may be wrong for their game. Examples:
-  - FF5's `Slow` in French is "Somni";
-  - FF3's `magical armor` says "magitek".
+The merge kept what each old mod shipped. On 2026-10-06 the game terms were checked against each game's
+own message tables, in all 12 languages, and corrected where they differ. The generated report below
+lists every change: file, key, language, old -> new, and the game table it comes from.
 
-  They are kept as they were. Fixing them is a translation task, not part of this merge.
+### Sources
+
+- `system` table of each game's `message_assets_all_*.bundle`, read with `tools/official_text.py`.
+  Status names follow the game's own mapping: the `condition` master's `mes_id_name`, or else the
+  bestiary label `MONSTER_BOOK_CONDITION_TYPE_n` in `message_conclusion`.
+  For example, FF5's Poison is `MSG_SYSTEM_414` (猛毒), not the element "Poison" `MSG_SYSTEM_334` (毒).
+- Where a game has no label for a vehicle, the word its dialogue (`story_mes`) uses for it:
+  the airship in FF3 and FF4, the ship in FF3 (French).
+- FF5's French `Slow` is "Somni" in the game too. It was right and is unchanged.
+
+### Rules
+
+- Only the game term changes. Mod wording around it, placeholders and suffixes stay.
+  Stat lines such as `Strength: {0}` change only the label part.
+- Each game gets its own word. A fix to the game a common entry came from goes in the common file.
+  Other games get an override. An override that now equals the common entry is removed.
+- Lower-case keys (`airship`, `ship`, `chocobo`, `black chocobo`, `wind drake`, `hovercraft`) use the game
+  word in lower case in en, fr, it, es, pt and ru.
+- Full-width and half-width forms (ＨＰ, HP) and case-only differences are not changes.
+- English changes too where the game's English differs: `Item` is "Items", `Config` is "Configuration",
+  `Interruption` is "Quick Save", FF2's `Words` is "Key Terms", `Blind` is "Darkness" in FF1 and FF4,
+  `Confusion` is "Confuse", and `Paralysis` and `Stone` are "Paralyze" and "Petrify" in FF3 and FF4.
+- Hand edits, marked in the report: the airship word inside `On airship`, `On ship` and `Airship Landing(s)`;
+  and article or verb agreement after the HP change (es "la VIT", it "i PV", pt "os PV", ru plural verbs).
+
+### New keys
+
+- `hovercraft` (FF4 file): FF4's own word, `MSG_SYSTEM_288`, in lower case as FF4's dialogue writes it.
+- `yellow chocobo` (FF4 file): FF4 has no name for the yellow chocobo. Composed from FF4's `Chocobo`
+  (`MSG_SYSTEM_343`) and the pattern of its `Black Chocobo` (`MSG_SYSTEM_285`). Common `Yellow Chocobo`
+  was aligned to the same pattern.
+- `No data available` (common): mod UI text, not game text. Translated by hand in the style of the
+  neighbouring "No ... available" keys.
+
+### Game text not adopted
+
+- FF1 `Confusion`: es "Confu" is the Confuse spell name cut short; th is an unrelated string ("sort weapons
+  first"). Both kept.
+- `Save` in zht: the game's text is the placeholder "(save)" in FF1, FF2, FF4 and FF5. Kept "儲存".
+- FF5 `Remove All` in es: the game says "Quitar", the same as Remove. Kept "Quitar todo".
+
+### Not verified
+
+No matching game label, or the label's context differs. These keep the old mods' text:
+
+- `Back`: also the shop's exit command, whose game label is "Exit".
+- `Equip`, `Equipment`: the game's main-menu label is "Equip"; the equip-screen and shop commands may use others.
+- `Magic`: one key for the menu command and the magic stat.
+- `Job`, `Job: {0}`, `No unlocked jobs can equip`: the games show only the plural menu label "Jobs"; FF1 says "Class".
+- `Next Level`, `Next Level: {0}`: the game label is "Next Level in", with a trailing colon in es, pt, zht and zhc.
+- `Front Row`, `Back Row`: no row label in any game's tables.
+- `Accessory`, `Accessory 2` in FF1 to FF4: the game's fifth slot is "Arms"; the slot mapping is not confirmed.
+- FF2: `Ability`, `Vitality`, `Learn`, `Unarmed`, and `Blind` and `Stone` (FF2 does not name these ailments).
+- FF3: `Forget`, `magical armor`. FF5: `Knife`, `Staff` (no weapon-type labels), `magical armor`.
+- Core fallback status names that every game names itself: `Critical`, `Aging`, `Venom`, `Curse`, `Gradual Petrify`.
+- Stat-line keys the code does not use, such as `Attack {0}` and `Spirit +{0}`.
 
 ## Notes for the port
 
@@ -110,8 +172,9 @@ These looked like game terms but were not overridden. FF1, or the chosen source,
   A game that never asks for the key never sees it.
 - **Watch for a game-term key a game did not have before.** Shared core code can make a game ask for one.
   The common entry then carries another game's term.
-  - Example: FF5's old mod has `airship` but not `Airship`. Common `Airship` is FF1's. FF1's French is "Vaisseau".
-  - Fix: add an override to that game's file, taken from that game's own text.
+  - Example: FF5's old mod has `airship` but not `Airship`. Common `Airship` is FF1's, whose pt is "Helibarco".
+    FF5's own word is "Navio Voador", so FF5 now has an override.
+  - Fix: add a row to `tools/modtext_fixes.py`, taken from that game's own text, and re-run the merge.
   - Never copy a game term from another game.
 - **Source format.** All five old files are UTF-8 without BOM, with CRLF endings. FF5's puts each entry on one line.
   The new files are UTF-8 without BOM, with LF endings and 2-space indentation, and are not ASCII-escaped.
@@ -136,14 +199,18 @@ Written by `tools/merge_modtext.py`. Do not edit by hand.
 ### Counts
 
 - Source keys: FF1 513, FF2 391, FF3 400, FF4 338, FF5 410.
-- Keys in the common file: 850.
+- Keys in the common file: 852.
 - Common entries taken from: FF1 513, FF3 86, FF2 48, FF4 92, FF5 111.
-- Overrides: FF1 0, FF2 49, FF3 42, FF4 26, FF5 39.
+- Overrides from the merge: FF1 0, FF2 49, FF3 42, FF4 26, FF5 39.
+- Official-text fixes: 653 rows, 4 new keys.
+- Overrides after the fixes: FF1 2, FF2 53, FF3 53, FF4 56, FF5 55.
 - Languages filled from another mod: 0.
 - Missing-language gaps after the merge: 0.
 - Placeholder mismatches (reported, not fixed): 0.
 
-### Overrides
+### Overrides from the merge
+
+Before the official-text fixes below.
 
 #### FF1: 0
 
@@ -316,6 +383,288 @@ None.
 - `Front Row`: battle row label; differs in it, pt.
 - `Back Row`: battle row label; differs in it, pt.
 - `{0}: {1} MP damage`: HP/MP abbreviation: it MP vs PM, es MP vs PM, pt MP vs PM.
+
+### Official-text fixes
+
+Applied by `tools/modtext_fixes.py` after the merge. Each line: language, old -> new, then the game table it comes from.
+
+#### common: 122 rows in 46 keys, 2 new keys
+
+- `MP`: ru "MP" -> "ОМ". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `Item`: en "Item" -> "Items". Source: FF1 system MSG_SYSTEM_042.
+- `Config`: en "Config" -> "Configuration". Source: FF1 system MSG_SYSTEM_047.
+- `Interruption`: en "Interruption" -> "Quick Save". Source: FF1 system MSG_SYSTEM_048.
+- `Remove`: fr "Retirer" -> "Enlever"; de "Entfernen" -> "Ablegen"; zht "移除" -> "卸除"; zhc "移除" -> "卸下"; ru "Убрать" -> "Снять"; th "นำออก" -> "ถอด". Source: FF1 system MSG_SYSTEM_067.
+- `chocobo`: th "โชโกโบ" -> "โชโคโบะ". Source: FF2 system MSG_SYSTEM_255.
+- `{0}: {1} MP damage`: ru "{0}: {1} урона MP" -> "{0}: {1} урона ОМ". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `{0}: Recovered {1} MP`: ru "{0}: восстановлено {1} MP" -> "{0}: восстановлено {1} ОМ". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `MP {0}`: ru "MP {0}" -> "ОМ {0}". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `MP {0}/{1}`: ru "MP {0}/{1}" -> "ОМ {0}/{1}". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `MP: {0}/{1}`: ru "MP: {0}/{1}" -> "ОМ: {0}/{1}". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `Blind`: en "Blind" -> "Darkness". Source: FF1 system MSG_SYSTEM_035.
+- `Poison`: ko "독" -> "중독"; ru "Яд" -> "Отравление". Source: FF1 system MSG_SYSTEM_034.
+- `Confusion`: en "Confusion" -> "Confuse". Source: FF1 system MSG_SYSTEM_336.
+- `Slow`: fr "Lenteur" -> "Somni"; it "Lentezza" -> "Adagio"; es "Lentitud" -> "Freno"; zht "減速" -> "緩慢"; th "ช้า" -> "สโลว์". Source: FF1 system MSG_MAGIC_NAME_40.
+- `Stop`: es "Stop" -> "Paro"; ru "Стоп" -> "Остановка"; pt "Parar" -> "Catatonia". Source: FF4 system MSG_SYSTEM_129.
+- `Chocobo`: th "โชโกโบ" -> "โชโคโบะ". Source: FF3 system MSG_SYSTEM_522.
+- `Airship Landing`: th "จุดลงจอดเรือบิน" -> "จุดลงจอดเรือเหาะ"; pt "Pouso da aeronave" -> "Pouso do navio voador". Source: FF3 story_mes dialogue word for 飛空艇 (airship word only).
+- `Airship Landings`: th "จุดลงจอดเรือบิน" -> "จุดลงจอดเรือเหาะ"; pt "Pousos da aeronave" -> "Pousos do navio voador". Source: FF3 story_mes dialogue word for 飛空艇 (airship word only).
+- `How enemy HP is read when targeting: numbers, percentage of maximum, or not at all.`: de "Wie Feind-KP beim Anvisieren gelesen werden: als Zahlen, als Prozent des Maximums oder gar nicht." -> "Wie Feind-LP beim Anvisieren gelesen werden: als Zahlen, als Prozent des Maximums oder gar nicht." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "Cómo se leen los PV enemigos al apuntar: en números, en porcentaje del máximo o nada." -> "Cómo se lee la VIT enemiga al apuntar: en números, en porcentaje del máximo o nada." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "Как читать HP врагов при выборе цели: числами, процентом от максимума или не читать вовсе." -> "Как читать ОЗ врагов при выборе цели: числами, процентом от максимума или не читать вовсе." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `MP LV{0}: {1}`: ru "MP ур. {0}: {1}" -> "ОМ ур. {0}: {1}". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `Magic Defense: {0}`: ko "마법 방어: {0}" -> "마법 방어력: {0}"; th "ป้องกันเวท: {0}" -> "การป้องกันเวทมนตร์: {0}". Source: FF3 system MSG_SYSTEM_297 (label part).
+- `Magic Evasion: {0}%`: it "Elusione magica: {0}%" -> "Destrezza magica: {0}%"; de "Magie-Ausweichrate: {0} %" -> "Magieausweichen: {0} %"; zhc "魔法闪避率：{0}%" -> "魔法回避率：{0}%"; th "อัตราหลบหลีกเวท: {0}%" -> "การหลีกหนีเวทมนตร์: {0}%". Source: FF3 system MSG_SYSTEM_298 (label part).
+- `Spirit: {0}`: de "Geist: {0}" -> "Animus: {0}"; ko "정신: {0}" -> "정신력: {0}"; pt "Espírito: {0}" -> "Vigor: {0}". Source: FF3 system MSG_SYSTEM_303 (label part).
+- `{0} for active character HP. {1} to cancel.`: de "{0}: KP der aktiven Figur. {1}: Abbrechen." -> "{0}: LP der aktiven Figur. {1}: Abbrechen." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0} para los PV del personaje activo. {1} para cancelar." -> "{0} para la VIT del personaje activo. {1} para cancelar." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0} — HP активного персонажа. {1} — отмена." -> "{0} — ОЗ активного персонажа. {1} — отмена." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Learn`: ja "覚える" -> "もつ"; it "Impara" -> "Apprendi"; ko "배우기" -> "소지". Source: FF3 system MSG_SYSTEM_276.
+- `Axe`: it "Ascia" -> "Asce". Source: FF2 system MSG_SYSTEM_102.
+- `Bow`: it "Arco" -> "Archi"; th "ธนู" -> "คันธนู". Source: FF2 system MSG_SYSTEM_104.
+- `Knife`: ja "短剣" -> "ナイフ"; it "Pugnale" -> "Pugnali"; de "Dolch" -> "Messer"; es "Daga" -> "Cuchillo"; ko "단검" -> "나이프"; zht "短劍" -> "匕首"; zhc "短剑" -> "匕首"; ru "Кинжал" -> "Нож"; th "มีดสั้น" -> "มีด"; pt "Adaga" -> "Faca". Source: FF2 system MSG_SYSTEM_099.
+- `Magic Defense`: fr "Défense magique" -> "Psyché"; ko "마법 방어" -> "마법 방어력"; th "ป้องกันเวทมนตร์" -> "การป้องกันเวทมนตร์". Source: FF2 system MSG_SYSTEM_085.
+- `Shield`: it "Scudo" -> "Scudi". Source: FF2 system MSG_SYSTEM_105.
+- `Spear`: it "Lancia" -> "Lance"; ru "Копьё" -> "Копье". Source: FF2 system MSG_SYSTEM_103.
+- `Spirit`: fr "Esprit" -> "Sagesse"; de "Geist" -> "Wille"; ko "정신" -> "정신력"; th "จิตใจ" -> "จิตวิญญาณ"; pt "Espírito" -> "Vigor". Source: FF2 system MSG_SYSTEM_088.
+- `Staff`: it "Bastone" -> "Aste"; es "Báculo" -> "Vara". Source: FF2 system MSG_SYSTEM_101.
+- `Sword`: it "Spada" -> "Spade". Source: FF2 system MSG_SYSTEM_100.
+- `{0}: HP {1} percent`: de "{0}: KP {1} Prozent" -> "{0}: LP {1} Prozent"; es "{0}: PV {1} por ciento" -> "{0}: VIT {1} por ciento"; ru "{0}: HP {1}%" -> "{0}: ОЗ {1}%". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `{0}: HP {1}/{2}, MP {3}/{4}`: de "{0}: KP {1}/{2}, MP {3}/{4}" -> "{0}: LP {1}/{2}, MP {3}/{4}"; es "{0}: PV {1}/{2}, PM {3}/{4}" -> "{0}: VIT {1}/{2}, PM {3}/{4}"; ru "{0}: HP {1}/{2}, MP {3}/{4}" -> "{0}: ОЗ {1}/{2}, ОМ {3}/{4}". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `Hovercraft`: ja "ホバークラフト" -> "ホバー船"; it "Hovercraft" -> "Eliscafo"; ru "Судно на воздушной подушке" -> "Автолет"; th "โฮเวอร์คราฟต์" -> "เรือโฮเวอร์คราฟต์"; pt "Hovercraft" -> "Aerobote". Source: FF4 system MSG_SYSTEM_288.
+- `Enterprise`: fr "Enterprise" -> "Entreprise"; ru "Энтерпрайз" -> "«Эскапада»"; th "เอนเตอร์ไพรส์" -> "เรือเหาะเอ็นเตอร์ไพรส์". Source: FF4 system MSG_SYSTEM_286.
+- `Yellow Chocobo`: zht "黃色陸行鳥" -> "黃陸行鳥"; zhc "黄色陆行鸟" -> "黄陆行鸟"; ru "Жёлтый чокобо" -> "Желтый чокобо"; th "โชโคโบสีเหลือง" -> "โชโคโบะเหลือง". Source: composed: FF4 MSG_SYSTEM_343 Chocobo + MSG_SYSTEM_285 pattern.
+- `Black Chocobo`: zht "黑色陸行鳥" -> "黑陸行鳥"; zhc "黑色陆行鸟" -> "黑陆行鸟"; ru "Чёрный чокобо" -> "Черный чокобо"; th "โชโคโบสีดำ" -> "โชโคโบะดำ". Source: FF4 system MSG_SYSTEM_285.
+- `How enemy HP is read while targeting: as numbers, as a percentage, or not at all.`: de "Wie Gegner-KP beim Zielen vorgelesen werden: als Zahlen, als Prozent oder gar nicht." -> "Wie Gegner-LP beim Zielen vorgelesen werden: als Zahlen, als Prozent oder gar nicht." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "Cómo se leen los PV enemigos al apuntar: en números, en porcentaje o nada." -> "Cómo se lee la VIT enemiga al apuntar: en números, en porcentaje o nada." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "Как читается HP врагов при выборе цели: числом, в процентах или никак." -> "Как читаются ОЗ врагов при выборе цели: числом, в процентах или никак." (HP/MP labels as above, with article/verb agreement fixed by hand).
+- `: HP: {0}/{1}`: it ": HP {0}/{1}" -> ": PV {0}/{1}"; de ": HP {0}/{1}" -> ": LP {0}/{1}"; es ": HP {0}/{1}" -> ": VIT {0}/{1}"; ru ": HP {0}/{1}" -> ": ОЗ {0}/{1}"; pt ": HP {0}/{1}" -> ": PV {0}/{1}". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `wind drake`: fr "dragon du vent" -> "dragon"; de "Winddrache" -> "Drache"; es "dragón del viento" -> "guiverno"; pt "dragão do vento" -> "dragonete do vento". Source: FF5 system MSG_SYSTEM_392.
+- `black chocobo`: zht "黑色陸行鳥" -> "黑陸行鳥"; zhc "黑色陆行鸟" -> "黑陆行鸟"; ru "чёрный чокобо" -> "черный чокобо"; th "โชโกโบดำ" -> "โชโคโบะดำ". Source: FF5 system MSG_SYSTEM_391.
+- `How enemy HP is read when you target an enemy: as numbers, as a percentage, or not at all.`: it "Come vengono letti gli HP del nemico quando lo prendi di mira: in numeri, in percentuale o per niente." -> "Come vengono letti i PV del nemico quando lo prendi di mira: in numeri, in percentuale o per niente." (HP/MP labels as above, with article/verb agreement fixed by hand); de "Wie die HP eines Gegners beim Anvisieren vorgelesen werden: als Zahlen, als Prozentsatz oder gar nicht." -> "Wie die LP eines Gegners beim Anvisieren vorgelesen werden: als Zahlen, als Prozentsatz oder gar nicht." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "Cómo se leen los HP del enemigo al seleccionarlo: en números, en porcentaje o nada." -> "Cómo se lee la VIT del enemigo al seleccionarlo: en números, en porcentaje o nada." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "Как зачитывается HP врага при выборе цели: числами, в процентах или никак." -> "Как зачитываются ОЗ врага при выборе цели: числами, в процентах или никак." (HP/MP labels as above, with article/verb agreement fixed by hand); pt "Como o HP do inimigo é lido ao selecioná-lo: em números, em porcentagem ou não é lido." -> "Como os PV do inimigo são lidos ao selecioná-lo: em números, em porcentagem ou não são lidos." (HP/MP labels as above, with article/verb agreement fixed by hand).
+- `No data available`: new key. Source: mod UI text, translated by hand (not game text) in the style of the neighbouring No ... available keys.
+- `Old screen reader still installed: {0}. Remove it from the Mods folder.`: new key. Source: mod UI text (native mod's startup warning), translated by hand (not game text).
+
+#### ff1: 4 rows in 2 keys
+
+- `Airship Landing`: th "จุดลงจอดเรือบิน" -> "จุดลงจอดเรือเหาะ"; pt "Pouso da aeronave" -> "Pouso do helibarco". Source: FF1 system MSG_SYSTEM_230 (airship word only).
+- `Airship Landings`: th "จุดลงจอดเรือบิน" -> "จุดลงจอดเรือเหาะ"; pt "Pousos da aeronave" -> "Pousos do helibarco". Source: FF1 system MSG_SYSTEM_230 (airship word only).
+
+#### ff2: 130 rows in 56 keys
+
+- `Enemy HP Display`: override removed (now equal to the common entry).
+- `Enemy HP: {0}`: override removed (now equal to the common entry).
+- `Item`: override removed (now equal to the common entry).
+- `Load`: override removed (now equal to the common entry).
+- `Save`: override removed (now equal to the common entry).
+- `Sort`: override removed (now equal to the common entry).
+- `Status`: override removed (now equal to the common entry).
+- `Accuracy`: override removed (now equal to the common entry).
+- `Agility`: override removed (now equal to the common entry).
+- `Buy`: override removed (now equal to the common entry).
+- `Chocobo`: override removed (now equal to the common entry).
+- `HP`: override removed (now equal to the common entry).
+- `Sell`: override removed (now equal to the common entry).
+- `Ship`: override removed (now equal to the common entry).
+- `Use`: override removed (now equal to the common entry).
+- `{0}: HP {1}/{2}`: override removed (now equal to the common entry).
+- `Config`: en "Config" -> "Configuration"; ja "設定" -> "コンフィグ"; fr "Configuration" -> "Réglages"; es "Configuración" -> "Preferencias"; zhc "设置" -> "设定"; ru "Настройки" -> "Конфигурация"; th "ตั้งค่า" -> "การตั้งค่า"; pt "Configurações" -> "Configuração". Source: FF2 system MSG_SYSTEM_050.
+- `Interruption`: en "Interruption" -> "Quick Save"; ja "中断" -> "ちゅうだん"; fr "Interruption" -> "Sauvegarde rapide"; it "Interruzione" -> "Salvataggio rapido"; de "Unterbrechung" -> "Schnellspeichern"; es "Interrupción" -> "Guardado rápido"; ko "중단" -> "중단 저장"; ru "Прерывание" -> "Быстрое сохранение"; th "การขัดจังหวะ" -> "บันทึกด่วน"; pt "Interrupção" -> "Salvamento rápido". Source: FF2 system MSG_SYSTEM_051.
+- `Words`: en "Words" -> "Key Terms"; fr "Mots" -> "Mots clés"; it "Parole" -> "Appunti"; es "Palabras" -> "Claves"; ko "단어" -> "용어"; zht "詞語" -> "關鍵字"; zhc "词语" -> "关键词"; ru "Слова" -> "Важные понятия"; th "คำศัพท์" -> "คำศัพท์หลัก"; pt "Palavras" -> "Termos-chave". Source: FF2 system MSG_SYSTEM_049.
+- `{0} for party HP. {1} to cancel.`: de "{0} für Gruppen-KP. {1} zum Abbrechen." -> "{0} für Gruppen-LP. {1} zum Abbrechen." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0} para los PV del grupo. {1} para cancelar." -> "{0} para la VIT del grupo. {1} para cancelar." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0} — HP группы. {1} — отмена." -> "{0} — ОЗ группы. {1} — отмена." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Controls how enemy HP appears in battle: numeric value, percentage of max, or hidden.`: de "Legt fest, wie die Gegner-KP im Kampf erscheinen: Zahlenwert, Prozent des Maximums oder verborgen." -> "Legt fest, wie die Gegner-LP im Kampf erscheinen: Zahlenwert, Prozent des Maximums oder verborgen." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "Controla cómo aparecen los PV enemigos en combate: valor numérico, porcentaje del máximo u oculto." -> "Controla cómo aparece la VIT enemiga en combate: valor numérico, porcentaje del máximo u oculta." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "Определяет, как HP врага отображается в бою: числом, процентом от максимума или скрыто." -> "Определяет, как ОЗ врага отображаются в бою: числом, процентом от максимума или скрыто." (HP/MP labels as above, with article/verb agreement fixed by hand).
+- `Airship`: fr "Aéronef" -> "Vaisseau"; es "Aeronave" -> "Barco volador". Source: FF2 system MSG_SYSTEM_202.
+- `Airship Landing`: fr "Atterrissage d'aéronef" -> "Atterrissage de vaisseau"; es "Aterrizaje de aeronave" -> "Aterrizaje de barco volador". Source: FF2 system MSG_SYSTEM_202 / MSG_SYSTEM_200 (vehicle word only).
+- `Airship Landings`: fr "Atterrissages d'aéronef" -> "Atterrissages de vaisseau"; es "Aterrizajes de aeronave" -> "Aterrizajes de barco volador". Source: FF2 system MSG_SYSTEM_202 / MSG_SYSTEM_200 (vehicle word only).
+- `Attack`: de "Angriff" -> "Attacke"; th "พลังโจมตี" -> "โจมตี". Source: FF2 system MSG_SYSTEM_081.
+- `Body`: ko "몸" -> "몸통"; ru "Тело" -> "Торс". Source: FF2 system MSG_SYSTEM_079.
+- `Evasion`: ja "回避" -> "回避率"; it "Evasione" -> "Schivata"; ko "회피" -> "회피율"; zht "迴避" -> "閃避率"; zhc "回避" -> "回避率"; th "การหลบหลีก" -> "การหลีกหนี". Source: FF2 system MSG_SYSTEM_084.
+- `Intellect`: es "Intelecto" -> "Inteligencia"; ko "지성" -> "지력". Source: FF2 system MSG_SYSTEM_090.
+- `Key Items`: fr "Objets rares" -> "Objets clés"; it "Oggetti chiave" -> "Rarità"; de "Schlüsselgegenstände" -> "Wertvolles"; es "Objetos clave" -> "Importantes"; zht "重要物品" -> "貴重物品"; zhc "重要物品" -> "贵重物品"; ru "Ключевые предметы" -> "Важные предметы"; th "ไอเทมสำคัญ" -> "ไอเท็มหลัก". Source: FF2 system MSG_SYSTEM_059.
+- `On airship`: fr "À bord de l'aéronef" -> "À bord du vaisseau"; es "A bordo de la aeronave" -> "A bordo del barco volador". Source: FF2 system MSG_SYSTEM_202 / MSG_SYSTEM_200 (vehicle word only).
+- `On ship`: fr "À bord du navire" -> "À bord du bateau". Source: FF2 system MSG_SYSTEM_202 / MSG_SYSTEM_200 (vehicle word only).
+- `Remove`: ja "外す" -> "はずす"; fr "Retirer" -> "Enlever"; zht "卸下" -> "卸除"; th "ถอด" -> "ถอดออก". Source: FF2 system MSG_SYSTEM_072.
+- `Remove All`: ja "全部外す" -> "すべてはずす"; fr "Tout retirer" -> "Tout enlever"; de "Alles ablegen" -> "Alle ablegen"; ko "전부 해제" -> "모두 해제"; zht "全部卸下" -> "全部卸除"; ru "Снять всё" -> "Снять все". Source: FF2 system MSG_SYSTEM_073.
+- `Stamina`: fr "Endurance" -> "Vigueur"; de "Ausdauer" -> "Konstitution"; es "Aguante" -> "Entereza"; th "ความอึด" -> "ความแข็งแกร่ง"; pt "Vigor" -> "Resistência". Source: FF2 system MSG_SYSTEM_087.
+- `Strength`: th "พลัง" -> "พละกำลัง". Source: FF2 system MSG_SYSTEM_086.
+- `{0}: Recovered {1} HP`: de "{0}: {1} KP wiederhergestellt" -> "{0}: {1} LP wiederhergestellt" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0}: recupera {1} PV" -> "{0}: recupera {1} de VIT" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0}: восстановлено {1} HP" -> "{0}: восстановлено {1} ОЗ" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Silence`: it "Silenzio" -> "Mutismo"; th "ใบ้" -> "เป็นใบ้". Source: FF2 system MSG_SYSTEM_040.
+- `Sleep`: th "หลับ" -> "นอนหลับ". Source: FF2 system MSG_SYSTEM_041.
+- `Paralysis`: th "ชา" -> "อัมพาต". Source: FF2 system MSG_SYSTEM_038.
+- `Poison`: en "Poison" -> "Venom"; fr "Poison" -> "Venin"; es "Veneno" -> "Ponzoña"; ko "독" -> "중독"; pt "Veneno" -> "Tóxico". Source: FF2 system MSG_SYSTEM_042.
+- `Confusion`: de "Konfus" -> "Konfusion"; th "สับสน" -> "ความสับสน". Source: FF2 system MSG_SYSTEM_037.
+- `Slow`: fr "Lenteur" -> "Somni"; it "Lentezza" -> "Adagio"; es "Lentitud" -> "Freno"; zht "減速" -> "緩慢". Source: FF2 system MSG_MAGIC_NAME_35.
+- `Mini`: es "Mini" -> "Minimalia". Source: FF2 system MSG_SYSTEM_039.
+- `Defense`: th "พลังป้องกัน" -> "การป้องกัน". Source: FF2 system MSG_SYSTEM_082.
+- `Forget`: zht "遺忘" -> "忘記"; zhc "遗忘" -> "忘记". Source: FF2 system MSG_SYSTEM_069.
+- `airship`: pt "helibarco" -> "aeronave". Source: FF2 system MSG_SYSTEM_202.
+- `Strength: {0}`: th "ความแข็งแกร่ง: {0}" -> "พละกำลัง: {0}". Source: FF2 system MSG_SYSTEM_086 (label part).
+- `Stamina: {0}`: th "พละกำลัง: {0}" -> "ความแข็งแกร่ง: {0}". Source: FF2 system MSG_SYSTEM_087 (label part).
+- `Intellect: {0}`: fr "Sagesse : {0}" -> "Intelligence : {0}"; th "ความฉลาด: {0}" -> "สติปัญญา: {0}". Source: FF2 system MSG_SYSTEM_090 (label part).
+- `Attack: {0}`: th "พลังโจมตี: {0}" -> "โจมตี: {0}". Source: FF2 system MSG_SYSTEM_081 (label part).
+- `Defense: {0}`: th "พลังป้องกัน: {0}" -> "การป้องกัน: {0}". Source: FF2 system MSG_SYSTEM_082 (label part).
+- `Evasion: {0}%`: th "การหลบหลีก: {0}%" -> "การหลีกหนี: {0}%". Source: FF2 system MSG_SYSTEM_084 (label part).
+- `Strength +{0}`: th "ความแข็งแกร่ง +{0}" -> "พละกำลัง +{0}". Source: FF2 system MSG_SYSTEM_086 (label part).
+- `Stamina +{0}`: th "พละกำลัง +{0}" -> "ความแข็งแกร่ง +{0}". Source: FF2 system MSG_SYSTEM_087 (label part).
+- `Intellect +{0}`: fr "Sagesse +{0}" -> "Intelligence +{0}"; th "ความฉลาด +{0}" -> "สติปัญญา +{0}". Source: FF2 system MSG_SYSTEM_090 (label part).
+- `Evasion +{0}`: th "การหลบหลีก +{0}" -> "การหลีกหนี +{0}". Source: FF2 system MSG_SYSTEM_084 (label part).
+
+#### ff3: 127 rows in 55 keys
+
+- `Enemy HP Display`: override removed (now equal to the common entry).
+- `Enemy HP: {0}`: override removed (now equal to the common entry).
+- `Ship`: override removed (now equal to the common entry).
+- `: HP {0}/{1}`: override removed (now equal to the common entry).
+- `Buy`: override removed (now equal to the common entry).
+- `HP {0}`: override removed (now equal to the common entry).
+- `HP {0}/{1}`: override removed (now equal to the common entry).
+- `HP: {0} / {1}`: override removed (now equal to the common entry).
+- `Sell`: override removed (now equal to the common entry).
+- `Status`: override removed (now equal to the common entry).
+- `ship`: override removed (now equal to the common entry).
+- `{0}: HP {1}/{2}`: override removed (now equal to the common entry).
+- `Use`: override removed (now equal to the common entry).
+- `Airship`: es "Aeronave" -> "Barco volador"; th "เรือบิน" -> "เรือเหาะ"; pt "Aeronave" -> "Navio voador". Source: FF3 story_mes (dialogue).
+- `Strength`: th "พลัง" -> "พละกำลัง". Source: FF3 system MSG_SYSTEM_299.
+- `Defense`: de "Verteidigung" -> "Abwehr"; ko "방어" -> "방어력"; th "ป้องกัน" -> "การป้องกัน". Source: FF3 system MSG_SYSTEM_295.
+- `HP +{0}`: de "KP +{0}" -> "LP +{0}"; es "PV +{0}" -> "VIT +{0}"; ru "HP +{0}" -> "ОЗ +{0}". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `Strength +{0}`: th "พลัง +{0}" -> "พละกำลัง +{0}". Source: FF3 system MSG_SYSTEM_299 (label part).
+- `Agility +{0}`: de "Schnelligkeit +{0}" -> "Agilität +{0}"; ko "민첩 +{0}" -> "민첩성 +{0}"; ru "Ловкость +{0}" -> "Скорость +{0}"; th "ความคล่องตัว +{0}" -> "ความเร็ว +{0}". Source: FF3 system MSG_SYSTEM_300 (label part).
+- `Accuracy: {0}%`: de "Treffsicherheit: {0} %" -> "Präzision: {0} %"; es "Precisión: {0}%" -> "Puntería: {0}%"; ru "Меткость: {0}%" -> "Точность: {0}%". Source: FF3 system MSG_SYSTEM_294 (label part).
+- `Agility: {0}`: de "Schnelligkeit: {0}" -> "Agilität: {0}"; ko "민첩: {0}" -> "민첩성: {0}"; ru "Ловкость: {0}" -> "Скорость: {0}"; th "ความคล่องตัว: {0}" -> "ความเร็ว: {0}". Source: FF3 system MSG_SYSTEM_300 (label part).
+- `Defense: {0}`: ja "防御力: {0}" -> "防御: {0}"; de "Verteidigung: {0}" -> "Abwehr: {0}"; zht "防禦力：{0}" -> "防禦：{0}"; zhc "防御力：{0}" -> "防御：{0}"; th "พลังป้องกัน: {0}" -> "การป้องกัน: {0}". Source: FF3 system MSG_SYSTEM_295 (label part).
+- `Evasion: {0}%`: it "Elusione: {0}%" -> "Destrezza: {0}%"; de "Ausweichrate: {0} %" -> "Ausweichen: {0} %"; zhc "闪避率：{0}%" -> "回避率：{0}%"; th "อัตราหลบหลีก: {0}%" -> "การหลีกหนี: {0}%". Source: FF3 system MSG_SYSTEM_296 (label part).
+- `Intellect: {0}`: it "Intelligenza: {0}" -> "Saggezza: {0}"; pt "Inteligência: {0}" -> "Intelecto: {0}". Source: FF3 system MSG_SYSTEM_302 (label part).
+- `Remove`: ja "外す" -> "はずす"; zht "卸下" -> "卸除"; ru "Снять" -> "Убрать"; th "ถอด" -> "ถอดออก". Source: FF3 system MSG_SYSTEM_284.
+- `Stamina: {0}`: fr "Endurance : {0}" -> "Vitalité : {0}"; de "Ausdauer: {0}" -> "Konstitution: {0}"; es "Aguante: {0}" -> "Entereza: {0}"; zht "耐力：{0}" -> "體力：{0}"; zhc "耐力：{0}" -> "体力：{0}"; th "ความอดทน: {0}" -> "ความแข็งแกร่ง: {0}". Source: FF3 system MSG_SYSTEM_301 (label part).
+- `Strength: {0}`: th "พลัง: {0}" -> "พละกำลัง: {0}". Source: FF3 system MSG_SYSTEM_299 (label part).
+- `airship`: es "aeronave" -> "barco volador"; th "เรือบิน" -> "เรือเหาะ"; pt "aeronave" -> "navio voador". Source: FF3 story_mes (dialogue).
+- `{0}: Recovered {1} HP`: de "{0}: {1} KP wiederhergestellt" -> "{0}: {1} LP wiederhergestellt" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0}: recupera {1} PV" -> "{0}: recupera {1} de VIT" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0}: восстановлено {1} HP" -> "{0}: восстановлено {1} ОЗ" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Exchange`: ja "入れ替え" -> "こうかん"; es "Intercambiar" -> "Cambiar"; ru "Поменять" -> "Обмен"; th "สลับ" -> "แลกเปลี่ยน". Source: FF3 system MSG_SYSTEM_277.
+- `Body`: ko "몸" -> "몸통"; ru "Тело" -> "Торс". Source: FF3 system MSG_SYSTEM_291.
+- `KO`: fr "KO" -> "Invalidité"; th "ต่อสู้ไม่ได้" -> "น็อกเอ้าต์". Source: FF3 system MSG_SYSTEM_243.
+- `Silence`: fr "Mutisme" -> "Silence". Source: FF3 system MSG_SYSTEM_239.
+- `Sleep`: th "หลับ" -> "นอนหลับ". Source: FF3 system MSG_SYSTEM_235.
+- `Paralysis`: en "Paralysis" -> "Paralyze"; th "ชา" -> "เป็นอัมพาต". Source: FF3 system MSG_SYSTEM_234.
+- `Blind`: fr "Aveugle" -> "Cécité"; de "Dunkel" -> "Blind"; ru "Тьма" -> "Слепота". Source: FF3 system MSG_SYSTEM_241.
+- `Poison`: ko "독" -> "중독"; th "พิษ" -> "ติดพิษ". Source: FF3 system MSG_SYSTEM_242.
+- `Stone`: en "Stone" -> "Petrify"; fr "Fossile" -> "Pétrification"; th "หิน" -> "กลายเป็นหิน". Source: FF3 system MSG_SYSTEM_237.
+- `Confusion`: en "Confusion" -> "Confuse"; fr "Folie" -> "Confusion". Source: FF3 system MSG_SYSTEM_236.
+- `Agility`: ru "Ловкость" -> "Скорость". Source: FF3 system MSG_SYSTEM_300.
+- `Stamina`: fr "Vigueur" -> "Vitalité"; th "พละกำลัง" -> "ความแข็งแกร่ง". Source: FF3 system MSG_SYSTEM_301.
+- `Intellect`: fr "Sagesse" -> "Intelligence"; it "Intelligenza" -> "Saggezza"; th "ความฉลาด" -> "สติปัญญา". Source: FF3 system MSG_SYSTEM_302.
+- `Spirit`: de "Geist" -> "Animus"; ko "정신" -> "정신력"; th "จิตใจ" -> "จิตวิญญาณ"; pt "Espírito" -> "Vigor". Source: FF3 system MSG_SYSTEM_303.
+- `Attack`: ja "攻撃力" -> "攻撃"; zht "攻擊力" -> "攻擊"; zhc "攻击力" -> "攻击"; th "พลังโจมตี" -> "โจมตี". Source: FF3 system MSG_SYSTEM_293.
+- `Evasion`: it "Schivata" -> "Destrezza"; th "การหลบหลีก" -> "การหลีกหนี". Source: FF3 system MSG_SYSTEM_296.
+- `Magic Defense`: ko "마법 방어" -> "마법 방어력"; th "ป้องกันเวทมนตร์" -> "การป้องกันเวทมนตร์". Source: FF3 system MSG_SYSTEM_297.
+- `Magic Evasion`: ja "魔法回避" -> "魔法回避率"; it "Evasione magica" -> "Destrezza magica"; ko "마법 회피" -> "마법 회피율"; zht "魔法迴避" -> "魔法閃避率"; zhc "魔法回避" -> "魔法回避率"; th "หลบหลีกเวทมนตร์" -> "การหลีกหนีเวทมนตร์". Source: FF3 system MSG_SYSTEM_298.
+- `Config`: en "Config" -> "Configuration"; th "ตั้งค่าระบบ" -> "การตั้งค่า". Source: FF3 system MSG_SYSTEM_252.
+- `Key Items`: fr "Objets clés" -> "Objets-clefs"; pt "Itens principais" -> "Itens-chave". Source: FF3 system MSG_SYSTEM_263.
+- `Sort`: fr "Classer" -> "Trier". Source: FF3 system MSG_SYSTEM_265.
+- `Remove All`: fr "Tout enlever" -> "Tout retirer"; ru "Снять все" -> "Убрать все". Source: FF3 system MSG_SYSTEM_285.
+- `Attack: {0}`: ja "攻撃力: {0}" -> "攻撃: {0}"; zht "攻擊力：{0}" -> "攻擊：{0}"; zhc "攻击力：{0}" -> "攻击：{0}"; th "พลังโจมตี: {0}" -> "โจมตี: {0}". Source: FF3 system MSG_SYSTEM_293 (label part).
+- `Stamina +{0}`: fr "Vigueur +{0}" -> "Vitalité +{0}"; th "พละกำลัง +{0}" -> "ความแข็งแกร่ง +{0}". Source: FF3 system MSG_SYSTEM_301 (label part).
+- `Intellect +{0}`: fr "Sagesse +{0}" -> "Intelligence +{0}"; it "Intelligenza +{0}" -> "Saggezza +{0}"; th "ความฉลาด +{0}" -> "สติปัญญา +{0}". Source: FF3 system MSG_SYSTEM_302 (label part).
+- `Evasion +{0}`: it "Schivata +{0}" -> "Destrezza +{0}"; th "การหลบหลีก +{0}" -> "การหลีกหนี +{0}". Source: FF3 system MSG_SYSTEM_296 (label part).
+
+#### ff4: 143 rows in 53 keys, 2 new keys
+
+- `HP`: override removed (now equal to the common entry).
+- `Accuracy`: override removed (now equal to the common entry).
+- `Chocobo`: override removed (now equal to the common entry).
+- `Status`: override removed (now equal to the common entry).
+- `Strength`: th "พลัง" -> "พละกำลัง". Source: FF4 system MSG_SYSTEM_175.
+- `Agility`: fr "Agilité" -> "Rapidité"; ko "민첩" -> "민첩성"; ru "Ловкость" -> "Скорость"; th "ความคล่องแคล่ว" -> "ความเร็ว". Source: FF4 system MSG_SYSTEM_176.
+- `Stamina`: fr "Endurance" -> "Vigueur"; de "Ausdauer" -> "Konstitution"; es "Resistencia" -> "Entereza"; zht "耐力" -> "體力"; zhc "耐力" -> "体力"; ru "Выносливость" -> "Стойкость"; th "ความอดทน" -> "ความแข็งแกร่ง". Source: FF4 system MSG_SYSTEM_177.
+- `Intellect`: fr "Intelligence" -> "Magie"; it "Intelletto" -> "Intelligenza"; de "Intellekt" -> "Intelligenz"; es "Intelecto" -> "Inteligencia". Source: FF4 system MSG_SYSTEM_178.
+- `Spirit`: de "Geist" -> "Animus"; ko "정신" -> "정신력"; th "จิตวิญญาณ" -> "วิญญาณ"; pt "Espírito" -> "Vigor". Source: FF4 system MSG_SYSTEM_179.
+- `Attack`: de "Angriff" -> "Attacke"; ko "공격" -> "공격력"; th "โจมตี" -> "การโจมตี". Source: FF4 system MSG_SYSTEM_180.
+- `Defense`: de "Verteidigung" -> "Abwehr"; ko "방어" -> "방어력"; th "ป้องกัน" -> "การป้องกัน". Source: FF4 system MSG_SYSTEM_182.
+- `Evasion`: ja "回避" -> "回避率"; fr "Esquive" -> "Parade"; it "Evasione" -> "Schivata"; ko "회피" -> "회피율"; zht "迴避" -> "閃避率"; zhc "回避" -> "回避率"; th "หลบหลีก" -> "การหลีกหนี". Source: FF4 system MSG_SYSTEM_183.
+- `Magic Defense`: de "Magieverteidigung" -> "Magieabwehr"; ko "마법 방어" -> "마법 방어력"; th "ป้องกันเวทย์" -> "การป้องกันเวทมนตร์". Source: FF4 system MSG_SYSTEM_184.
+- `Magic Evasion`: ja "魔法回避" -> "魔法回避率"; fr "Esquive magique" -> "Parade magique"; it "Evasione magica" -> "Schivata magica"; de "Magieausweichen" -> "Magieresistenz"; ko "마법 회피" -> "마법 회피율"; zht "魔法迴避" -> "魔法閃避率"; zhc "魔法回避" -> "魔法回避率"; th "หลบหลีกเวทย์" -> "การหลีกหนีเวทมนตร์". Source: FF4 system MSG_SYSTEM_185.
+- `Airship`: es "Aeronave" -> "Barco volador". Source: FF4 story_mes (dialogue).
+- `Enemy HP Display`: de "Gegner-KP-Anzeige" -> "Gegner-LP-Anzeige" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "Mostrar PV enemigos" -> "Mostrar VIT enemiga" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "Отображение HP врагов" -> "Отображение ОЗ врагов" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Enemy HP: {0}`: de "Gegner-KP: {0}" -> "Gegner-LP: {0}" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "PV enemigos: {0}" -> "VIT enemiga: {0}" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "HP врагов: {0}" -> "ОЗ врагов: {0}" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `{0} for party HP. {1} to cancel.`: de "{0} für die KP der Gruppe. {1} zum Abbrechen." -> "{0} für die LP der Gruppe. {1} zum Abbrechen." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0} para los PV del grupo. {1} para cancelar." -> "{0} para la VIT del grupo. {1} para cancelar." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0} — HP отряда. {1} — отмена." -> "{0} — ОЗ отряда. {1} — отмена." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `{0}: Recovered {1} HP`: de "{0}: {1} KP wiederhergestellt" -> "{0}: {1} LP wiederhergestellt" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0}: recupera {1} PV" -> "{0}: recupera {1} de VIT" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0}: восстановлено {1} HP" -> "{0}: восстановлено {1} ОЗ" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Airship Landing`: es "Zona de aterrizaje de aeronave" -> "Zona de aterrizaje de barco volador". Source: FF4 story_mes dialogue word for 飛空艇 (airship word only).
+- `Airship Landings`: es "Zonas de aterrizaje de aeronave" -> "Zonas de aterrizaje de barco volador". Source: FF4 story_mes dialogue word for 飛空艇 (airship word only).
+- `KO`: fr "KO" -> "Coma"; th "ต่อสู้ไม่ได้" -> "น็อกเอาต์". Source: FF4 system MSG_SYSTEM_121.
+- `Silence`: fr "Mutisme" -> "Silence"; it "Silenzio" -> "Mutismo". Source: FF4 system MSG_SYSTEM_116.
+- `Sleep`: th "หลับ" -> "นอนหลับ". Source: FF4 system MSG_SYSTEM_124.
+- `Paralysis`: en "Paralysis" -> "Paralyze"; th "ชา" -> "อัมพาต". Source: FF4 system MSG_SYSTEM_125.
+- `Blind`: en "Blind" -> "Darkness"; fr "Aveugle" -> "Cécité"; de "Dunkel" -> "Blind"; th "ตาบอด" -> "ความมืด". Source: FF4 system MSG_SYSTEM_115.
+- `Stone`: en "Stone" -> "Petrify"; fr "Fossile" -> "Pierre"; th "หิน" -> "แข็ง"; pt "Petrificação" -> "Petrificar". Source: FF4 system MSG_SYSTEM_120.
+- `Confusion`: en "Confusion" -> "Confuse"; fr "Folie" -> "Confusion"; it "Caos" -> "Confusione". Source: FF4 system MSG_SYSTEM_123.
+- `Slow`: it "Lentezza" -> "Adagio"; es "Lentitud" -> "Freno"; zht "減速" -> "緩慢". Source: FF4 system MSG_MAGIC_NAME_07.
+- `Doom`: fr "Condamné" -> "Glas"; it "Destino" -> "Condanna"; de "Verdammnis" -> "Tod"; ko "죽음의선고" -> "죽음의 선고"; th "คำสาป" -> "พิพากษา"; pt "Perdição" -> "Condenação". Source: FF4 system MSG_SYSTEM_128.
+- `Toad`: it "Rospo" -> "Ranocchio". Source: FF4 system MSG_SYSTEM_119.
+- `Float`: es "Lévita" -> "Levitación"; ru "Левитация" -> "Полет". Source: FF4 system MSG_SYSTEM_126.
+- `Berserk`: ja "バーサク" -> "狂戦士"; it "Furia" -> "Furore"; ko "버서크" -> "광전사". Source: FF4 system MSG_SYSTEM_122.
+- `Config`: en "Config" -> "Configuration"; th "ตั้งค่าระบบ" -> "การตั้งค่า". Source: FF4 system MSG_SYSTEM_140.
+- `Interruption`: en "Interruption" -> "Quick Save"; th "ควิกเซฟ" -> "บันทึกด่วน". Source: FF4 system MSG_SYSTEM_141.
+- `Key Items`: fr "Objets clés" -> "Objets clefs"; pt "Itens principais" -> "Itens-chave". Source: FF4 system MSG_SYSTEM_148.
+- `Remove`: fr "Retirer" -> "Enlever"; de "Entfernen" -> "Ablegen"; zht "移除" -> "卸除"; zhc "移除" -> "卸下"; ru "Убрать" -> "Снять"; th "นำออก" -> "ถอดออก". Source: FF4 system MSG_SYSTEM_164.
+- `Remove All`: th "ถอดทั้งหมด" -> "ถอดออกทั้งหมด". Source: FF4 system MSG_SYSTEM_165.
+- `Head`: it "Elmo" -> "Testa"; ru "Шлем" -> "Голова". Source: FF4 system MSG_SYSTEM_170.
+- `Body`: it "Armatura" -> "Corpo"; de "Brust" -> "Körper"; es "Cuerpo" -> "Torso"; ru "Доспехи" -> "Торс". Source: FF4 system MSG_SYSTEM_171.
+- `airship`: fr "vaisseau" -> "aéronef"; pt "helibarco" -> "aeronave". Source: FF4 story_mes (dialogue).
+- `Strength: {0}`: th "ความแข็งแกร่ง: {0}" -> "พละกำลัง: {0}". Source: FF4 system MSG_SYSTEM_175 (label part).
+- `Agility: {0}`: fr "Agilité : {0}" -> "Rapidité : {0}"; ru "Ловкость: {0}" -> "Скорость: {0}". Source: FF4 system MSG_SYSTEM_176 (label part).
+- `Stamina: {0}`: ru "Выносливость: {0}" -> "Стойкость: {0}"; th "พละกำลัง: {0}" -> "ความแข็งแกร่ง: {0}". Source: FF4 system MSG_SYSTEM_177 (label part).
+- `Intellect: {0}`: fr "Sagesse : {0}" -> "Magie : {0}"; th "ความฉลาด: {0}" -> "สติปัญญา: {0}". Source: FF4 system MSG_SYSTEM_178 (label part).
+- `Attack: {0}`: ja "攻撃力: {0}" -> "攻撃: {0}"; zht "攻擊力：{0}" -> "攻擊：{0}"; zhc "攻击力：{0}" -> "攻击：{0}"; th "พลังโจมตี: {0}" -> "การโจมตี: {0}". Source: FF4 system MSG_SYSTEM_180 (label part).
+- `Defense: {0}`: ja "防御力: {0}" -> "防御: {0}"; zht "防禦力：{0}" -> "防禦：{0}"; zhc "防御力：{0}" -> "防御：{0}"; th "พลังป้องกัน: {0}" -> "การป้องกัน: {0}". Source: FF4 system MSG_SYSTEM_182 (label part).
+- `Evasion: {0}%`: fr "Esquive : {0} %" -> "Parade : {0} %"; th "การหลบหลีก: {0}%" -> "การหลีกหนี: {0}%". Source: FF4 system MSG_SYSTEM_183 (label part).
+- `Strength +{0}`: th "ความแข็งแกร่ง +{0}" -> "พละกำลัง +{0}". Source: FF4 system MSG_SYSTEM_175 (label part).
+- `Agility +{0}`: fr "Agilité +{0}" -> "Rapidité +{0}"; ru "Ловкость +{0}" -> "Скорость +{0}". Source: FF4 system MSG_SYSTEM_176 (label part).
+- `Stamina +{0}`: ru "Выносливость +{0}" -> "Стойкость +{0}"; th "พละกำลัง +{0}" -> "ความแข็งแกร่ง +{0}". Source: FF4 system MSG_SYSTEM_177 (label part).
+- `Intellect +{0}`: fr "Sagesse +{0}" -> "Magie +{0}"; th "ความฉลาด +{0}" -> "สติปัญญา +{0}". Source: FF4 system MSG_SYSTEM_178 (label part).
+- `Evasion +{0}`: fr "Esquive +{0}" -> "Parade +{0}"; th "การหลบหลีก +{0}" -> "การหลีกหนี +{0}". Source: FF4 system MSG_SYSTEM_183 (label part).
+- `hovercraft`: new key. Source: FF4 system MSG_SYSTEM_288, lower case as the FF4 story_mes dialogue writes it.
+- `yellow chocobo`: new key. Source: composed: FF4 has no yellow-chocobo name; FF4 MSG_SYSTEM_343 Chocobo + the MSG_SYSTEM_285 Black Chocobo pattern.
+
+#### ff5: 127 rows in 44 keys
+
+- `ship`: override removed (now equal to the common entry).
+- `Confusion`: override removed (now equal to the common entry).
+- `Stop`: override removed (now equal to the common entry).
+- `HP`: override removed (now equal to the common entry).
+- `MP`: override removed (now equal to the common entry).
+- `Status`: override removed (now equal to the common entry).
+- `Enemy HP Display`: it "Visualizzazione HP nemico" -> "Visualizzazione PV nemico" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); de "Gegner-HP-Anzeige" -> "Gegner-LP-Anzeige" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "Pantalla de HP enemigo" -> "Pantalla de VIT enemiga" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "Отображение HP врага" -> "Отображение ОЗ врага" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); pt "Exibição de HP do inimigo" -> "Exibição de PV do inimigo" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Enemy HP: {0}`: it "HP nemico: {0}" -> "PV nemico: {0}" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); de "Gegner-HP: {0}" -> "Gegner-LP: {0}" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "HP enemigo: {0}" -> "VIT enemiga: {0}" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "HP врага: {0}" -> "ОЗ врага: {0}" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); pt "HP do inimigo: {0}" -> "PV do inimigo: {0}" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `airship`: fr "aéronef" -> "vaisseau"; es "aeronave" -> "barco volador"; th "เรือบิน" -> "เรือเหาะ"; pt "aeronave" -> "navio voador". Source: FF5 system MSG_MAP_NAME_02.
+- `Poison`: ja "毒" -> "猛毒"; ko "독" -> "맹독"; zht "毒" -> "猛毒"; zhc "毒" -> "猛毒"; ru "Яд" -> "Отравление". Source: FF5 system MSG_SYSTEM_414.
+- `{0}: Recovered {1} HP`: it "{0}: {1} HP recuperati" -> "{0}: {1} PV recuperati" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); de "{0}: {1} HP wiederhergestellt" -> "{0}: {1} LP wiederhergestellt" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0}: {1} HP recuperados" -> "{0}: recupera {1} de VIT" (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0}: восстановлено {1} HP" -> "{0}: восстановлено {1} ОЗ" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); pt "{0}: {1} de HP recuperado" -> "{0}: {1} de PV recuperado" (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `{0}: Recovered {1} MP`: it "{0}: {1} MP recuperati" -> "{0}: {1} PM recuperati"; es "{0}: {1} MP recuperados" -> "{0}: {1} PM recuperados"; ru "{0}: восстановлено {1} MP" -> "{0}: восстановлено {1} ОМ"; pt "{0}: {1} de MP recuperado" -> "{0}: {1} de PM recuperado". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `{0} for party HP. {1} to cancel.`: it "{0} per gli HP del gruppo. {1} per annullare." -> "{0} per i PV del gruppo. {1} per annullare." (HP/MP labels as above, with article/verb agreement fixed by hand); de "{0} für Gruppen-HP. {1} zum Abbrechen." -> "{0} für Gruppen-LP. {1} zum Abbrechen." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "{0} para HP del grupo. {1} para cancelar." -> "{0} para la VIT del grupo. {1} para cancelar." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "{0} — HP отряда. {1} — отмена." -> "{0} — ОЗ отряда. {1} — отмена." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); pt "{0} para HP do grupo. {1} para cancelar." -> "{0} para PV do grupo. {1} para cancelar." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)).
+- `Airship Landing`: es "Aterrizaje de aeronave" -> "Aterrizaje de barco volador"; ru "Посадка дирижабля" -> "Посадка воздушного корабля"; pt "Pouso da aeronave" -> "Pouso do navio voador". Source: FF5 system MSG_MAP_NAME_02 and story_mes (airship word only).
+- `Airship Landings`: es "Aterrizajes de aeronave" -> "Aterrizajes de barco volador"; ru "Места посадки дирижабля" -> "Места посадки воздушного корабля"; pt "Pousos da aeronave" -> "Pousos do navio voador". Source: FF5 system MSG_MAP_NAME_02 and story_mes (airship word only).
+- `Attack`: ja "攻撃力" -> "攻撃"; de "Angriff" -> "Attacke"; zht "攻擊力" -> "攻擊"; zhc "攻击力" -> "攻击"; th "พลังโจมตี" -> "การโจมตี". Source: FF5 system MSG_SYSTEM_190.
+- `Defense`: ja "防御力" -> "防御"; de "Verteidigung" -> "Abwehr"; zht "防禦力" -> "防禦"; zhc "防御力" -> "防御"; th "พลังป้องกัน" -> "การป้องกัน"; pt "Defesa" -> "Defesa física". Source: FF5 system MSG_SYSTEM_192.
+- `Magic Defense`: ja "魔法防御力" -> "魔法防御"; fr "Défense magique" -> "Psyché"; zht "魔法防禦力" -> "魔法防禦"; zhc "魔法防御力" -> "魔法防御"; ru "Магическая защита" -> "Маг. защита"; th "พลังป้องกันเวทมนตร์" -> "การป้องกันเวทมนตร์". Source: FF5 system MSG_SYSTEM_193.
+- `Evasion`: it "Evasione" -> "Schivata"; ko "회피" -> "회피율"; zht "迴避" -> "閃避"; th "การหลบหลีก" -> "การหลีกหนี". Source: FF5 system MSG_SYSTEM_191.
+- `Agility`: de "Beweglichkeit" -> "Agilität"; ru "Ловкость" -> "Скорость"; th "ความว่องไว" -> "ความเร็ว". Source: FF5 system MSG_SYSTEM_186.
+- `Stamina`: fr "Endurance" -> "Vigueur"; de "Ausdauer" -> "Konstitution"; es "Vigor" -> "Entereza"; ru "Выносливость" -> "Стойкость"; th "ความอดทน" -> "ความแข็งแกร่ง"; pt "Vigor" -> "Resistência". Source: FF5 system MSG_SYSTEM_187.
+- `{0}: {1} MP damage`: it "{0}: {1} danni MP" -> "{0}: {1} danni PM"; es "{0}: {1} de daño a MP" -> "{0}: {1} de daño a PM"; ru "{0}: {1} урона MP" -> "{0}: {1} урона ОМ"; pt "{0}: {1} de dano de MP" -> "{0}: {1} de dano de PM". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
+- `Config`: en "Config" -> "Configuration"; th "ตั้งค่าระบบ" -> "การตั้งค่า". Source: FF5 system MSG_SYSTEM_136.
+- `Interruption`: en "Interruption" -> "Quick Save"; ru "Быстрое сохранение" -> "Быстр. сохранение"; th "ควิกเซฟ" -> "บันทึกด่วน". Source: FF5 system MSG_SYSTEM_137.
+- `Save`: ru "Сохранить" -> "Сохранение". Source: FF5 system MSG_SYSTEM_138.
+- `Key Items`: pt "Itens principais" -> "Itens-chave". Source: FF5 system MSG_SYSTEM_145.
+- `Sort`: fr "Classer" -> "Trier". Source: FF5 system MSG_SYSTEM_147.
+- `Remove`: de "Entfernen" -> "Ablegen"; zht "移除" -> "卸除"; zhc "移除" -> "卸下"; ru "Убрать" -> "Снять"; th "นำออก" -> "ถอดออก". Source: FF5 system MSG_SYSTEM_173.
+- `Remove All`: fr "Tout enlever" -> "Tout retirer". Source: FF5 system MSG_SYSTEM_174.
+- `Head`: it "Elmo" -> "Testa"; ru "Шлем" -> "Голова". Source: FF5 system MSG_SYSTEM_180.
+- `Body`: it "Armatura" -> "Corpo"; ru "Доспехи" -> "Торс". Source: FF5 system MSG_SYSTEM_181.
+- `Airship`: pt "Helibarco" -> "Navio Voador". Source: FF5 system MSG_MAP_NAME_02.
+- `Accessory`: ja "アクセサリ" -> "アクセサリー"; ru "Аксессуар" -> "Аксессуары"; th "เครื่องประดับ" -> "อุปกรณ์เสริม". Source: FF5 system MSG_SYSTEM_182.
+- `Boko`: th "โบโค" -> "โบโกะ". Source: FF5 system MSG_SYSTEM_390.
+- `Strength: {0}`: th "ความแข็งแกร่ง: {0}" -> "พละกำลัง: {0}". Source: FF5 system MSG_SYSTEM_185 (label part).
+- `Agility: {0}`: ru "Ловкость: {0}" -> "Скорость: {0}". Source: FF5 system MSG_SYSTEM_186 (label part).
+- `Stamina: {0}`: ru "Выносливость: {0}" -> "Стойкость: {0}"; th "พละกำลัง: {0}" -> "ความแข็งแกร่ง: {0}". Source: FF5 system MSG_SYSTEM_187 (label part).
+- `Attack: {0}`: ja "攻撃力: {0}" -> "攻撃: {0}"; zht "攻擊力：{0}" -> "攻擊：{0}"; zhc "攻击力：{0}" -> "攻击：{0}"; th "พลังโจมตี: {0}" -> "การโจมตี: {0}". Source: FF5 system MSG_SYSTEM_190 (label part).
+- `Defense: {0}`: ja "防御力: {0}" -> "防御: {0}"; zht "防禦力：{0}" -> "防禦：{0}"; zhc "防御力：{0}" -> "防御：{0}"; th "พลังป้องกัน: {0}" -> "การป้องกัน: {0}"; pt "Defesa: {0}" -> "Defesa física: {0}". Source: FF5 system MSG_SYSTEM_192 (label part).
+- `Evasion: {0}%`: ja "回避率: {0}%" -> "回避: {0}%"; zht "閃避率：{0}%" -> "閃避：{0}%"; zhc "回避率：{0}%" -> "回避：{0}%"; th "การหลบหลีก: {0}%" -> "การหลีกหนี: {0}%". Source: FF5 system MSG_SYSTEM_191 (label part).
+- `Strength +{0}`: th "ความแข็งแกร่ง +{0}" -> "พละกำลัง +{0}". Source: FF5 system MSG_SYSTEM_185 (label part).
+- `Agility +{0}`: ru "Ловкость +{0}" -> "Скорость +{0}". Source: FF5 system MSG_SYSTEM_186 (label part).
+- `Stamina +{0}`: ru "Выносливость +{0}" -> "Стойкость +{0}"; th "พละกำลัง +{0}" -> "ความแข็งแกร่ง +{0}". Source: FF5 system MSG_SYSTEM_187 (label part).
+- `Evasion +{0}`: ja "回避率+{0}" -> "回避+{0}"; zht "閃避率+{0}" -> "閃避+{0}"; zhc "回避率+{0}" -> "回避+{0}"; th "การหลบหลีก +{0}" -> "การหลีกหนี +{0}". Source: FF5 system MSG_SYSTEM_191 (label part).
 
 ### Language fills
 

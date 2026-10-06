@@ -14,6 +14,8 @@ Rules (see docs/MODTEXT_MERGE.md for the reasons):
     for the same key, in the order FF1, FF3, FF2, FF4, FF5.
   * A game gets an override only for a game-term key whose entry in that
     game differs from the common entry. Wording drift gets no override.
+  * Then tools/modtext_fixes.py is applied: corrections to each game's own
+    official text and keys no old mod had. They survive every re-merge.
 
 Usage:  python tools/merge_modtext.py [--src-root DIR] [--check]
   --src-root  folder holding ff1/, ff2/, ff3/, FF4/, FF5/ (default: the
@@ -27,6 +29,9 @@ import json
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import modtext_fixes  # noqa: E402  (corrections layered on the merge)
 
 LANGS = ["en", "ja", "fr", "it", "de", "es", "ko", "zht", "zhc", "ru", "th", "pt"]
 
@@ -193,7 +198,41 @@ def md_key(key):
     return "`" + key.replace("`", "ˋ") + "`"
 
 
-def generated_block(src, common, source_of, fills, overrides, reasons, gaps, ph):
+def fixes_section():
+    """The per-change list of tools/modtext_fixes.py, grouped by file and key."""
+    out = ["### Official-text fixes", "",
+           "Applied by `tools/modtext_fixes.py` after the merge. "
+           "Each line: language, old -> new, then the game table it comes from.", ""]
+    files = ["common"] + [f"ff{g}" for g in SOURCES]
+    for f in files:
+        rows = [r for r in modtext_fixes.FIXES if r[0] == f]
+        adds = [a for a in modtext_fixes.ADDITIONS if a[0] == f]
+        if not rows and not adds:
+            continue
+        keys = list(dict.fromkeys(r[1] for r in rows))
+        out.append(f"#### {f}: {len(rows)} rows in {len(keys)} keys"
+                   + (f", {len(adds)} new key{'s' if len(adds) != 1 else ''}" if adds else ""))
+        out.append("")
+        for key in keys:
+            items = [r for r in rows if r[1] == key]
+            if items[0][2] == "-":
+                out.append(f"- {md_key(key)}: override removed ({items[0][5]}).")
+                continue
+            sources = list(dict.fromkeys(r[5] for r in items))
+            if len(sources) == 1:
+                body = "; ".join(f'{r[2]} "{r[3]}" -> "{r[4]}"' for r in items)
+                out.append(f"- {md_key(key)}: {body}. Source: {sources[0]}.")
+            else:
+                body = "; ".join(f'{r[2]} "{r[3]}" -> "{r[4]}" ({r[5]})' for r in items)
+                out.append(f"- {md_key(key)}: {body}.")
+        for _f, key, entry, why in adds:
+            out.append(f"- {md_key(key)}: new key. Source: {why}.")
+        out.append("")
+    return out
+
+
+def generated_block(src, common, source_of, fills, overrides, reasons, gaps, ph,
+                    merged_counts):
     out = [BEGIN, "", "## Generated report", "",
            "Written by `tools/merge_modtext.py`. Do not edit by hand.", ""]
     counts = {g: len(src[g]) for g in SOURCES}
@@ -204,14 +243,20 @@ def generated_block(src, common, source_of, fills, overrides, reasons, gaps, ph)
     by_src = {g: sum(1 for s in source_of.values() if s == g) for g in SOURCES}
     out.append("- Common entries taken from: " +
                ", ".join(f"FF{g} {by_src[g]}" for g in [1] + NOT_IN_FF1_ORDER) + ".")
-    out.append("- Overrides: " +
+    out.append("- Overrides from the merge: " +
+               ", ".join(f"FF{g} {merged_counts[g]}" for g in SOURCES) + ".")
+    out.append(f"- Official-text fixes: {len(modtext_fixes.FIXES)} rows, "
+               f"{len(modtext_fixes.ADDITIONS)} new keys.")
+    out.append("- Overrides after the fixes: " +
                ", ".join(f"FF{g} {len(overrides[g])}" for g in SOURCES) + ".")
     out.append(f"- Languages filled from another mod: {len(fills)}.")
     out.append(f"- Missing-language gaps after the merge: {len(gaps)}.")
     out.append(f"- Placeholder mismatches (reported, not fixed): {len(ph)}.")
     out.append("")
 
-    out.append("### Overrides")
+    out.append("### Overrides from the merge")
+    out.append("")
+    out.append("Before the official-text fixes below.")
     out.append("")
     for g in SOURCES:
         out.append(f"#### FF{g}: {len(reasons[g])}")
@@ -221,6 +266,8 @@ def generated_block(src, common, source_of, fills, overrides, reasons, gaps, ph)
         for key, why in reasons[g]:
             out.append(f"- {md_key(key)}: {why}.")
         out.append("")
+
+    out.extend(fixes_section())
 
     out.append("### Language fills")
     out.append("")
@@ -285,6 +332,13 @@ def main():
         raise SystemExit(f"game-term keys not in any source: {unknown}")
 
     common, source_of, fills, overrides, reasons = merge(src)
+    merged_counts = {g: len(overrides[g]) for g in SOURCES}
+    problems = modtext_fixes.apply(common, overrides)
+    if problems:
+        print(f"tools/modtext_fixes.py no longer matches the merge ({len(problems)} problems):")
+        for p in problems[:20]:
+            print("  " + p)
+        return 1
     data = repo / "data"
 
     if args.check:
@@ -306,7 +360,7 @@ def main():
     if not args.check:
         update_doc(repo / "docs" / "MODTEXT_MERGE.md",
                    generated_block(src, common, source_of, fills, overrides,
-                                   reasons, gaps, ph))
+                                   reasons, gaps, ph, merged_counts))
 
     print(f"common {len(disk_common)} keys; overrides " +
           ", ".join(f"FF{g} {len(disk_over[g])}" for g in SOURCES) +

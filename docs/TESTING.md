@@ -65,4 +65,5 @@ Shift, LB/RB. 4. Name change. 5. Shift+T, then T. 6. After a battle: L, arrows, 
   once and not cut off by the next "X's turn".
 - Pending per game: FF3 battle system messages; FF4 choice lists; FF5's own
   target reader, results-log pages beyond points, ABP totals.
-- Missing translations: "hovercraft", "yellow chocobo" (FF4), "No data available" (FF5).
+- Mod text was checked against each game's own text on 2026-10-06 (docs/MODTEXT_MERGE.md);
+  listen for terms that still sound wrong in your language.

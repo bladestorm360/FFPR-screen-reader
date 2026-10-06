@@ -214,7 +214,7 @@ battle targets ("All allies/enemies"), results log on L (points page only).
   line, which the core speaks (see "Core: battle").
 - Kept as the core has them (FF1 behaviour): StatusMenuFocusPatches, GameTogglePatches,
   KeyboardGamepadReader, MessagePatches, the H key.
-- Missing mod_text key: "No data available" (line unreachable for now). English kept from the
+- Mod_text key "No data available" added 2026-10-06 (line unreachable for now). English kept from the
   C#: "Empty slot", "Slot N:", ", equipped", ", Not learned", "Lv.", "Mastered!".
 - FF5 navigation additions: moved into the core (see "Core: FF5 navigation additions").
 
@@ -235,7 +235,7 @@ FF4 vehicle words (boarding speech and V). Key 9 = beacons.
   match FF1); the status character
   list has no MP or row; Falcon and Lunar Whale are spoken as "airship"; item/equip, shop,
   popup, save/load, gallery/music, config and bestiary not compared file by file.
-- Missing mod_text keys: "hovercraft", "yellow chocobo" (need translations).
+- Mod_text keys "hovercraft" and "yellow chocobo" added 2026-10-06 from FF4's own text.
 - Navigation gaps against FF4's old mod: Moon pathfinding (map 3 step checks); rescan 0.5 s after
   scene load instead of on MainGame.set_FieldReady; clear-all waypoints asks once, not twice.
 

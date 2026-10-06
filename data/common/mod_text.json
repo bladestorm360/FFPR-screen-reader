@@ -2291,7 +2291,7 @@
     "ko": "MP",
     "zht": "MP",
     "zhc": "MP",
-    "ru": "MP",
+    "ru": "ОМ",
     "th": "MP",
     "pt": "PM"
   },
@@ -2912,7 +2912,7 @@
     "pt": "quantidade {0}"
   },
   "Item": {
-    "en": "Item",
+    "en": "Items",
     "ja": "アイテム",
     "fr": "Objets",
     "it": "Oggetti",
@@ -3010,7 +3010,7 @@
     "pt": "Palavras"
   },
   "Config": {
-    "en": "Config",
+    "en": "Configuration",
     "ja": "コンフィグ",
     "fr": "Réglages",
     "it": "Configurazione",
@@ -3024,7 +3024,7 @@
     "pt": "Configuração"
   },
   "Interruption": {
-    "en": "Interruption",
+    "en": "Quick Save",
     "ja": "ちゅうだん",
     "fr": "Sauvegarde rapide",
     "it": "Salvataggio rapido",
@@ -3222,15 +3222,15 @@
   "Remove": {
     "en": "Remove",
     "ja": "はずす",
-    "fr": "Retirer",
+    "fr": "Enlever",
     "it": "Rimuovi",
-    "de": "Entfernen",
+    "de": "Ablegen",
     "es": "Quitar",
     "ko": "해제",
-    "zht": "移除",
-    "zhc": "移除",
-    "ru": "Убрать",
-    "th": "นำออก",
+    "zht": "卸除",
+    "zhc": "卸下",
+    "ru": "Снять",
+    "th": "ถอด",
     "pt": "Remover"
   },
   "Exchange": {
@@ -4070,7 +4070,7 @@
     "zht": "陸行鳥",
     "zhc": "陆行鸟",
     "ru": "чокобо",
-    "th": "โชโกโบ",
+    "th": "โชโคโบะ",
     "pt": "chocobo"
   },
   "Encounters on": {
@@ -5175,7 +5175,7 @@
     "ko": "{0}: MP {1} 피해",
     "zht": "{0}：{1} MP傷害",
     "zhc": "{0}：{1} MP伤害",
-    "ru": "{0}: {1} урона MP",
+    "ru": "{0}: {1} урона ОМ",
     "th": "{0}: ความเสียหาย MP {1}",
     "pt": "{0}: {1} de dano aos PM"
   },
@@ -5203,7 +5203,7 @@
     "ko": "{0}: MP {1} 회복",
     "zht": "{0}：恢復{1}MP",
     "zhc": "{0}：恢复{1}MP",
-    "ru": "{0}: восстановлено {1} MP",
+    "ru": "{0}: восстановлено {1} ОМ",
     "th": "{0}: ฟื้นฟู MP {1}",
     "pt": "{0}: recupera {1} PM"
   },
@@ -6589,7 +6589,7 @@
     "ko": "MP {0}",
     "zht": "MP {0}",
     "zhc": "MP {0}",
-    "ru": "MP {0}",
+    "ru": "ОМ {0}",
     "th": "MP {0}",
     "pt": "PM {0}"
   },
@@ -6603,7 +6603,7 @@
     "ko": "MP {0}/{1}",
     "zht": "MP {0}/{1}",
     "zhc": "MP {0}/{1}",
-    "ru": "MP {0}/{1}",
+    "ru": "ОМ {0}/{1}",
     "th": "MP {0}/{1}",
     "pt": "PM {0}/{1}"
   },
@@ -6617,7 +6617,7 @@
     "ko": "MP: {0}/{1}",
     "zht": "MP：{0}/{1}",
     "zhc": "MP：{0}/{1}",
-    "ru": "MP: {0}/{1}",
+    "ru": "ОМ: {0}/{1}",
     "th": "MP: {0}/{1}",
     "pt": "PM: {0}/{1}"
   },
@@ -7014,7 +7014,7 @@
     "pt": "Paralisia"
   },
   "Blind": {
-    "en": "Blind",
+    "en": "Darkness",
     "ja": "暗闇",
     "fr": "Aveugle",
     "it": "Cecità",
@@ -7034,10 +7034,10 @@
     "it": "Veleno",
     "de": "Gift",
     "es": "Veneno",
-    "ko": "독",
+    "ko": "중독",
     "zht": "中毒",
     "zhc": "中毒",
-    "ru": "Яд",
+    "ru": "Отравление",
     "th": "พิษ",
     "pt": "Veneno"
   },
@@ -7056,7 +7056,7 @@
     "pt": "Petrificação"
   },
   "Confusion": {
-    "en": "Confusion",
+    "en": "Confuse",
     "ja": "混乱",
     "fr": "Folie",
     "it": "Caos",
@@ -7072,15 +7072,15 @@
   "Slow": {
     "en": "Slow",
     "ja": "スロウ",
-    "fr": "Lenteur",
-    "it": "Lentezza",
+    "fr": "Somni",
+    "it": "Adagio",
     "de": "Gemach",
-    "es": "Lentitud",
+    "es": "Freno",
     "ko": "슬로우",
-    "zht": "減速",
+    "zht": "緩慢",
     "zhc": "减速",
     "ru": "Замедление",
-    "th": "ช้า",
+    "th": "สโลว์",
     "pt": "Lentidão"
   },
   "Stop": {
@@ -7089,13 +7089,13 @@
     "fr": "Stop",
     "it": "Stop",
     "de": "Stopp",
-    "es": "Stop",
+    "es": "Paro",
     "ko": "스톱",
     "zht": "停止",
     "zhc": "停止",
-    "ru": "Стоп",
+    "ru": "Остановка",
     "th": "หยุด",
-    "pt": "Parar"
+    "pt": "Catatonia"
   },
   "Zombie": {
     "en": "Zombie",
@@ -7276,7 +7276,7 @@
     "zht": "陸行鳥",
     "zhc": "陆行鸟",
     "ru": "Чокобо",
-    "th": "โชโกโบ",
+    "th": "โชโคโบะ",
     "pt": "Chocobo"
   },
   "Unable to detect vehicle state": {
@@ -7472,8 +7472,8 @@
     "zht": "飛空艇降落點",
     "zhc": "飞空艇降落点",
     "ru": "Место посадки воздушного корабля",
-    "th": "จุดลงจอดเรือบิน",
-    "pt": "Pouso da aeronave"
+    "th": "จุดลงจอดเรือเหาะ",
+    "pt": "Pouso do navio voador"
   },
   "Airship Landings": {
     "en": "Airship Landings",
@@ -7486,8 +7486,8 @@
     "zht": "飛空艇降落點",
     "zhc": "飞空艇降落点",
     "ru": "Места посадки воздушного корабля",
-    "th": "จุดลงจอดเรือบิน",
-    "pt": "Pousos da aeronave"
+    "th": "จุดลงจอดเรือเหาะ",
+    "pt": "Pousos do navio voador"
   },
   "Attack {0}": {
     "en": "Attack {0}",
@@ -7606,12 +7606,12 @@
     "ja": "対象選択時の敵HPの読み上げ方: 数値、最大値に対するパーセント、または読み上げなし。",
     "fr": "Lecture des PV ennemis lors du ciblage : en chiffres, en pourcentage du maximum, ou pas du tout.",
     "it": "Come leggere i PV nemici durante la selezione del bersaglio: numeri, percentuale del massimo o per niente.",
-    "de": "Wie Feind-KP beim Anvisieren gelesen werden: als Zahlen, als Prozent des Maximums oder gar nicht.",
-    "es": "Cómo se leen los PV enemigos al apuntar: en números, en porcentaje del máximo o nada.",
+    "de": "Wie Feind-LP beim Anvisieren gelesen werden: als Zahlen, als Prozent des Maximums oder gar nicht.",
+    "es": "Cómo se lee la VIT enemiga al apuntar: en números, en porcentaje del máximo o nada.",
     "ko": "대상 선택 시 적 HP를 읽는 방식: 숫자, 최대치 대비 퍼센트, 또는 읽지 않음.",
     "zht": "選擇目標時敵人HP的讀法：數值、佔最大值的百分比，或完全不讀。",
     "zhc": "选择目标时敌人HP的读法：数值、占最大值的百分比，或完全不读。",
-    "ru": "Как читать HP врагов при выборе цели: числами, процентом от максимума или не читать вовсе.",
+    "ru": "Как читать ОЗ врагов при выборе цели: числами, процентом от максимума или не читать вовсе.",
     "th": "วิธีอ่าน HP ศัตรูเมื่อเลือกเป้าหมาย: ตัวเลข เปอร์เซ็นต์ของค่าสูงสุด หรือไม่อ่านเลย",
     "pt": "Como os PV inimigos são lidos ao mirar: em números, em porcentagem do máximo ou nada."
   },
@@ -7639,7 +7639,7 @@
     "ko": "MP LV{0}: {1}",
     "zht": "MP LV{0}：{1}",
     "zhc": "MP LV{0}：{1}",
-    "ru": "MP ур. {0}: {1}",
+    "ru": "ОМ ур. {0}: {1}",
     "th": "MP LV{0}: {1}",
     "pt": "PM nv. {0}: {1}"
   },
@@ -7678,11 +7678,11 @@
     "it": "Difesa magica: {0}",
     "de": "Magieabwehr: {0}",
     "es": "Defensa mágica: {0}",
-    "ko": "마법 방어: {0}",
+    "ko": "마법 방어력: {0}",
     "zht": "魔法防禦：{0}",
     "zhc": "魔法防御：{0}",
     "ru": "Магическая защита: {0}",
-    "th": "ป้องกันเวท: {0}",
+    "th": "การป้องกันเวทมนตร์: {0}",
     "pt": "Defesa mágica: {0}"
   },
   "Magic Evade: {0}": {
@@ -7717,14 +7717,14 @@
     "en": "Magic Evasion: {0}%",
     "ja": "魔法回避率: {0}%",
     "fr": "Esquive magique : {0} %",
-    "it": "Elusione magica: {0}%",
-    "de": "Magie-Ausweichrate: {0} %",
+    "it": "Destrezza magica: {0}%",
+    "de": "Magieausweichen: {0} %",
     "es": "Evasión mágica: {0}%",
     "ko": "마법 회피율: {0}%",
     "zht": "魔法閃避率：{0}%",
-    "zhc": "魔法闪避率：{0}%",
+    "zhc": "魔法回避率：{0}%",
     "ru": "Магическое уклонение: {0}%",
-    "th": "อัตราหลบหลีกเวท: {0}%",
+    "th": "การหลีกหนีเวทมนตร์: {0}%",
     "pt": "Evasão mágica: {0}%"
   },
   "Magic: {0}": {
@@ -8068,14 +8068,14 @@
     "ja": "精神: {0}",
     "fr": "Esprit : {0}",
     "it": "Spirito: {0}",
-    "de": "Geist: {0}",
+    "de": "Animus: {0}",
     "es": "Espíritu: {0}",
-    "ko": "정신: {0}",
+    "ko": "정신력: {0}",
     "zht": "精神：{0}",
     "zhc": "精神：{0}",
     "ru": "Дух: {0}",
     "th": "จิตวิญญาณ: {0}",
-    "pt": "Espírito: {0}"
+    "pt": "Vigor: {0}"
   },
   "Stealable Items": {
     "en": "Stealable Items",
@@ -8222,12 +8222,12 @@
     "ja": "{0}で行動中のキャラクターのHP。{1}でキャンセル。",
     "fr": "{0} pour les PV du personnage actif. {1} pour annuler.",
     "it": "{0} per i PV del personaggio attivo. {1} per annullare.",
-    "de": "{0}: KP der aktiven Figur. {1}: Abbrechen.",
-    "es": "{0} para los PV del personaje activo. {1} para cancelar.",
+    "de": "{0}: LP der aktiven Figur. {1}: Abbrechen.",
+    "es": "{0} para la VIT del personaje activo. {1} para cancelar.",
     "ko": "{0}: 행동 중인 캐릭터 HP. {1}: 취소.",
     "zht": "{0}查看行動中角色的HP。{1}取消。",
     "zhc": "{0}查看行动中角色的HP。{1}取消。",
-    "ru": "{0} — HP активного персонажа. {1} — отмена.",
+    "ru": "{0} — ОЗ активного персонажа. {1} — отмена.",
     "th": "{0} เพื่อดู HP ตัวละครที่กำลังกระทำ {1} เพื่อยกเลิก",
     "pt": "{0} para os PV do personagem ativo. {1} para cancelar."
   },
@@ -8303,12 +8303,12 @@
   },
   "Learn": {
     "en": "Learn",
-    "ja": "覚える",
+    "ja": "もつ",
     "fr": "Apprendre",
-    "it": "Impara",
+    "it": "Apprendi",
     "de": "Lernen",
     "es": "Aprender",
-    "ko": "배우기",
+    "ko": "소지",
     "zht": "學習",
     "zhc": "学习",
     "ru": "Выучить",
@@ -8613,7 +8613,7 @@
     "en": "Axe",
     "ja": "斧",
     "fr": "Hache",
-    "it": "Ascia",
+    "it": "Asce",
     "de": "Axt",
     "es": "Hacha",
     "ko": "도끼",
@@ -8627,14 +8627,14 @@
     "en": "Bow",
     "ja": "弓",
     "fr": "Arc",
-    "it": "Arco",
+    "it": "Archi",
     "de": "Bogen",
     "es": "Arco",
     "ko": "활",
     "zht": "弓",
     "zhc": "弓",
     "ru": "Лук",
-    "th": "ธนู",
+    "th": "คันธนู",
     "pt": "Arco"
   },
   "Cancel": {
@@ -8737,30 +8737,30 @@
   },
   "Knife": {
     "en": "Knife",
-    "ja": "短剣",
+    "ja": "ナイフ",
     "fr": "Dague",
-    "it": "Pugnale",
-    "de": "Dolch",
-    "es": "Daga",
-    "ko": "단검",
-    "zht": "短劍",
-    "zhc": "短剑",
-    "ru": "Кинжал",
-    "th": "มีดสั้น",
-    "pt": "Adaga"
+    "it": "Pugnali",
+    "de": "Messer",
+    "es": "Cuchillo",
+    "ko": "나이프",
+    "zht": "匕首",
+    "zhc": "匕首",
+    "ru": "Нож",
+    "th": "มีด",
+    "pt": "Faca"
   },
   "Magic Defense": {
     "en": "Magic Defense",
     "ja": "魔法防御",
-    "fr": "Défense magique",
+    "fr": "Psyché",
     "it": "Difesa magica",
     "de": "Magieabwehr",
     "es": "Defensa mágica",
-    "ko": "마법 방어",
+    "ko": "마법 방어력",
     "zht": "魔法防禦",
     "zhc": "魔法防御",
     "ru": "Магическая защита",
-    "th": "ป้องกันเวทมนตร์",
+    "th": "การป้องกันเวทมนตร์",
     "pt": "Defesa mágica"
   },
   "Magic Defense Count": {
@@ -8837,7 +8837,7 @@
     "en": "Shield",
     "ja": "盾",
     "fr": "Bouclier",
-    "it": "Scudo",
+    "it": "Scudi",
     "de": "Schild",
     "es": "Escudo",
     "ko": "방패",
@@ -8851,37 +8851,37 @@
     "en": "Spear",
     "ja": "槍",
     "fr": "Lance",
-    "it": "Lancia",
+    "it": "Lance",
     "de": "Speer",
     "es": "Lanza",
     "ko": "창",
     "zht": "槍",
     "zhc": "枪",
-    "ru": "Копьё",
+    "ru": "Копье",
     "th": "หอก",
     "pt": "Lança"
   },
   "Spirit": {
     "en": "Spirit",
     "ja": "精神",
-    "fr": "Esprit",
+    "fr": "Sagesse",
     "it": "Spirito",
-    "de": "Geist",
+    "de": "Wille",
     "es": "Espíritu",
-    "ko": "정신",
+    "ko": "정신력",
     "zht": "精神",
     "zhc": "精神",
     "ru": "Дух",
-    "th": "จิตใจ",
-    "pt": "Espírito"
+    "th": "จิตวิญญาณ",
+    "pt": "Vigor"
   },
   "Staff": {
     "en": "Staff",
     "ja": "杖",
     "fr": "Bâton",
-    "it": "Bastone",
+    "it": "Aste",
     "de": "Stab",
-    "es": "Báculo",
+    "es": "Vara",
     "ko": "지팡이",
     "zht": "杖",
     "zhc": "杖",
@@ -8907,7 +8907,7 @@
     "en": "Sword",
     "ja": "剣",
     "fr": "Épée",
-    "it": "Spada",
+    "it": "Spade",
     "de": "Schwert",
     "es": "Espada",
     "ko": "검",
@@ -9034,12 +9034,12 @@
     "ja": "{0}: HP {1}パーセント",
     "fr": "{0} : PV {1} pour cent",
     "it": "{0}: PV {1} percento",
-    "de": "{0}: KP {1} Prozent",
-    "es": "{0}: PV {1} por ciento",
+    "de": "{0}: LP {1} Prozent",
+    "es": "{0}: VIT {1} por ciento",
     "ko": "{0}: HP {1}퍼센트",
     "zht": "{0}：HP {1}%",
     "zhc": "{0}：HP {1}%",
-    "ru": "{0}: HP {1}%",
+    "ru": "{0}: ОЗ {1}%",
     "th": "{0}: HP {1} เปอร์เซ็นต์",
     "pt": "{0}: PV {1} por cento"
   },
@@ -9048,12 +9048,12 @@
     "ja": "{0}: HP {1}/{2}、MP {3}/{4}",
     "fr": "{0} : PV {1}/{2}, PM {3}/{4}",
     "it": "{0}: PV {1}/{2}, PM {3}/{4}",
-    "de": "{0}: KP {1}/{2}, MP {3}/{4}",
-    "es": "{0}: PV {1}/{2}, PM {3}/{4}",
+    "de": "{0}: LP {1}/{2}, MP {3}/{4}",
+    "es": "{0}: VIT {1}/{2}, PM {3}/{4}",
     "ko": "{0}: HP {1}/{2}, MP {3}/{4}",
     "zht": "{0}：HP {1}/{2}，MP {3}/{4}",
     "zhc": "{0}：HP {1}/{2}，MP {3}/{4}",
-    "ru": "{0}: HP {1}/{2}, MP {3}/{4}",
+    "ru": "{0}: ОЗ {1}/{2}, ОМ {3}/{4}",
     "th": "{0}: HP {1}/{2}, MP {3}/{4}",
     "pt": "{0}: PV {1}/{2}, PM {3}/{4}"
   },
@@ -9633,17 +9633,17 @@
   },
   "Hovercraft": {
     "en": "Hovercraft",
-    "ja": "ホバークラフト",
+    "ja": "ホバー船",
     "fr": "Aéroglisseur",
-    "it": "Hovercraft",
+    "it": "Eliscafo",
     "de": "Luftkissenboot",
     "es": "Aerodeslizador",
     "ko": "호버크래프트",
     "zht": "氣墊船",
     "zhc": "气垫船",
-    "ru": "Судно на воздушной подушке",
-    "th": "โฮเวอร์คราฟต์",
-    "pt": "Hovercraft"
+    "ru": "Автолет",
+    "th": "เรือโฮเวอร์คราฟต์",
+    "pt": "Aerobote"
   },
   "{0} +{1}": {
     "en": "{0} +{1}",
@@ -9844,15 +9844,15 @@
   "Enterprise": {
     "en": "Enterprise",
     "ja": "エンタープライズ",
-    "fr": "Enterprise",
+    "fr": "Entreprise",
     "it": "Enterprise",
     "de": "Enterprise",
     "es": "Enterprise",
     "ko": "엔터프라이즈",
     "zht": "企業號",
     "zhc": "企业号",
-    "ru": "Энтерпрайз",
-    "th": "เอนเตอร์ไพรส์",
+    "ru": "«Эскапада»",
+    "th": "เรือเหาะเอ็นเตอร์ไพรส์",
     "pt": "Enterprise"
   },
   "Symbol": {
@@ -9905,10 +9905,10 @@
     "de": "Gelber Chocobo",
     "es": "Chocobo amarillo",
     "ko": "노란 초코보",
-    "zht": "黃色陸行鳥",
-    "zhc": "黄色陆行鸟",
-    "ru": "Жёлтый чокобо",
-    "th": "โชโคโบสีเหลือง",
+    "zht": "黃陸行鳥",
+    "zhc": "黄陆行鸟",
+    "ru": "Желтый чокобо",
+    "th": "โชโคโบะเหลือง",
     "pt": "Chocobo amarelo"
   },
   "Black Chocobo": {
@@ -9919,10 +9919,10 @@
     "de": "Schwarzer Chocobo",
     "es": "Chocobo negro",
     "ko": "검은 초코보",
-    "zht": "黑色陸行鳥",
-    "zhc": "黑色陆行鸟",
-    "ru": "Чёрный чокобо",
-    "th": "โชโคโบสีดำ",
+    "zht": "黑陸行鳥",
+    "zhc": "黑陆行鸟",
+    "ru": "Черный чокобо",
+    "th": "โชโคโบะดำ",
     "pt": "Chocobo preto"
   },
   "Boko": {
@@ -10336,12 +10336,12 @@
     "ja": "ターゲット選択中の敵HPの読み上げ方法: 数値、割合、または読み上げない。",
     "fr": "Façon dont les PV ennemis sont lus lors du ciblage : en nombres, en pourcentage ou pas du tout.",
     "it": "Come vengono letti i PV nemici durante la selezione del bersaglio: in numeri, in percentuale o per niente.",
-    "de": "Wie Gegner-KP beim Zielen vorgelesen werden: als Zahlen, als Prozent oder gar nicht.",
-    "es": "Cómo se leen los PV enemigos al apuntar: en números, en porcentaje o nada.",
+    "de": "Wie Gegner-LP beim Zielen vorgelesen werden: als Zahlen, als Prozent oder gar nicht.",
+    "es": "Cómo se lee la VIT enemiga al apuntar: en números, en porcentaje o nada.",
     "ko": "목표 선택 중 적 HP를 읽는 방식: 숫자, 퍼센트, 또는 읽지 않음.",
     "zht": "選擇目標時敵人HP的朗讀方式：數值、百分比或不朗讀。",
     "zhc": "选择目标时敌人HP的朗读方式：数值、百分比或不朗读。",
-    "ru": "Как читается HP врагов при выборе цели: числом, в процентах или никак.",
+    "ru": "Как читаются ОЗ врагов при выборе цели: числом, в процентах или никак.",
     "th": "วิธีอ่าน HP ศัตรูขณะเลือกเป้าหมาย: เป็นตัวเลข เป็นเปอร์เซ็นต์ หรือไม่อ่าน",
     "pt": "Como o PV dos inimigos é lido ao escolher o alvo: em números, em porcentagem ou não é lido."
   },
@@ -10517,15 +10517,15 @@
     "en": ": HP: {0}/{1}",
     "ja": ": HP {0}/{1}",
     "fr": " : PV {0}/{1}",
-    "it": ": HP {0}/{1}",
-    "de": ": HP {0}/{1}",
-    "es": ": HP {0}/{1}",
+    "it": ": PV {0}/{1}",
+    "de": ": LP {0}/{1}",
+    "es": ": VIT {0}/{1}",
     "ko": ": HP {0}/{1}",
     "zht": "：HP {0}/{1}",
     "zhc": "：HP {0}/{1}",
-    "ru": ": HP {0}/{1}",
+    "ru": ": ОЗ {0}/{1}",
     "th": ": HP {0}/{1}",
-    "pt": ": HP {0}/{1}"
+    "pt": ": PV {0}/{1}"
   },
   "Unavailable outside of battle": {
     "en": "Unavailable outside of battle",
@@ -10586,16 +10586,16 @@
   "wind drake": {
     "en": "wind drake",
     "ja": "飛竜",
-    "fr": "dragon du vent",
+    "fr": "dragon",
     "it": "drago del vento",
-    "de": "Winddrache",
-    "es": "dragón del viento",
+    "de": "Drache",
+    "es": "guiverno",
     "ko": "비룡",
     "zht": "飛龍",
     "zhc": "飞龙",
     "ru": "ветряной дракон",
     "th": "มังกรลม",
-    "pt": "dragão do vento"
+    "pt": "dragonete do vento"
   },
   "black chocobo": {
     "en": "black chocobo",
@@ -10605,10 +10605,10 @@
     "de": "Schwarzer Chocobo",
     "es": "chocobo negro",
     "ko": "검은 초코보",
-    "zht": "黑色陸行鳥",
-    "zhc": "黑色陆行鸟",
-    "ru": "чёрный чокобо",
-    "th": "โชโกโบดำ",
+    "zht": "黑陸行鳥",
+    "zhc": "黑陆行鸟",
+    "ru": "черный чокобо",
+    "th": "โชโคโบะดำ",
     "pt": "chocobo preto"
   },
   "Stole {0}": {
@@ -11875,15 +11875,15 @@
     "en": "How enemy HP is read when you target an enemy: as numbers, as a percentage, or not at all.",
     "ja": "敵を選んだときのHPの読み上げ方法です。数値、パーセント、または読み上げなしから選べます。",
     "fr": "Façon dont les PV ennemis sont lus quand vous ciblez un ennemi : en nombres, en pourcentage ou pas du tout.",
-    "it": "Come vengono letti gli HP del nemico quando lo prendi di mira: in numeri, in percentuale o per niente.",
-    "de": "Wie die HP eines Gegners beim Anvisieren vorgelesen werden: als Zahlen, als Prozentsatz oder gar nicht.",
-    "es": "Cómo se leen los HP del enemigo al seleccionarlo: en números, en porcentaje o nada.",
+    "it": "Come vengono letti i PV del nemico quando lo prendi di mira: in numeri, in percentuale o per niente.",
+    "de": "Wie die LP eines Gegners beim Anvisieren vorgelesen werden: als Zahlen, als Prozentsatz oder gar nicht.",
+    "es": "Cómo se lee la VIT del enemigo al seleccionarlo: en números, en porcentaje o nada.",
     "ko": "적을 선택했을 때 HP를 읽는 방식입니다. 숫자, 퍼센트, 또는 읽지 않음 중에서 고릅니다.",
     "zht": "選擇敵人時朗讀其HP的方式：數值、百分比或不朗讀。",
     "zhc": "选择敌人时朗读其HP的方式：数值、百分比或不朗读。",
-    "ru": "Как зачитывается HP врага при выборе цели: числами, в процентах или никак.",
+    "ru": "Как зачитываются ОЗ врага при выборе цели: числами, в процентах или никак.",
     "th": "วิธีอ่าน HP ของศัตรูเมื่อเลือกเป้าหมาย: เป็นตัวเลข เป็นเปอร์เซ็นต์ หรือไม่อ่านเลย",
-    "pt": "Como o HP do inimigo é lido ao selecioná-lo: em números, em porcentagem ou não é lido."
+    "pt": "Como os PV do inimigo são lidos ao selecioná-lo: em números, em porcentagem ou não são lidos."
   },
   "Adds a letter such as A or B to enemies that share a name, so you can tell them apart.": {
     "en": "Adds a letter such as A or B to enemies that share a name, so you can tell them apart.",
@@ -11898,5 +11898,33 @@
     "ru": "Добавляет букву, например A или B, врагам с одинаковыми именами, чтобы их различать.",
     "th": "เพิ่มตัวอักษร เช่น A หรือ B ให้ศัตรูที่มีชื่อเดียวกัน เพื่อให้แยกแยะได้",
     "pt": "Adiciona uma letra como A ou B a inimigos com o mesmo nome, para diferenciá-los."
+  },
+  "No data available": {
+    "en": "No data available",
+    "ja": "データがありません",
+    "fr": "Aucune donnée disponible",
+    "it": "Nessun dato disponibile",
+    "de": "Keine Daten verfügbar",
+    "es": "No hay datos disponibles",
+    "ko": "사용할 수 있는 데이터 없음",
+    "zht": "無可用資料",
+    "zhc": "无可用数据",
+    "ru": "Нет доступных данных",
+    "th": "ไม่มีข้อมูลที่พร้อมใช้งาน",
+    "pt": "Nenhum dado disponível"
+  },
+  "Old screen reader still installed: {0}. Remove it from the Mods folder.": {
+    "en": "Old screen reader still installed: {0}. Remove it from the Mods folder.",
+    "ja": "古いスクリーンリーダーがまだインストールされています: {0}。Modsフォルダーから削除してください。",
+    "fr": "Ancien lecteur d'écran encore installé : {0}. Retirez-le du dossier Mods.",
+    "it": "Il vecchio lettore di schermo è ancora installato: {0}. Rimuovilo dalla cartella Mods.",
+    "de": "Alter Screenreader noch installiert: {0}. Entferne ihn aus dem Ordner Mods.",
+    "es": "El antiguo lector de pantalla sigue instalado: {0}. Quítalo de la carpeta Mods.",
+    "ko": "이전 스크린 리더가 아직 설치되어 있습니다: {0}. Mods 폴더에서 제거하세요.",
+    "zht": "舊的螢幕閱讀器仍已安裝：{0}。請從 Mods 資料夾中移除。",
+    "zhc": "旧的屏幕阅读器仍已安装：{0}。请从 Mods 文件夹中移除。",
+    "ru": "Старая программа экранного доступа всё ещё установлена: {0}. Удалите её из папки Mods.",
+    "th": "ยังมีโปรแกรมอ่านหน้าจอเก่าติดตั้งอยู่: {0} โปรดลบออกจากโฟลเดอร์ Mods",
+    "pt": "O leitor de tela antigo ainda está instalado: {0}. Remova-o da pasta Mods."
   }
 }
