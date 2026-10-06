@@ -124,7 +124,75 @@ void* g_ff2_last_unit = nullptr;
 int g_ff2_last_id = -1;
 int64_t g_ff2_last_frame = -1;
 
-// --- InitActionState (postfix): "Actor: Action" ---------------------------------------------------
+// --- The action line: game text first (user rule, 2026-10-06) -------------------------------------
+// "Read game results where available; keep mod-side results only for information the game shows
+// as icons or pictures." When an action starts, the game writes its name in the battle message box
+// (BattleCommandMessageController.SetMessage: "Steal", "Fire"), and the mod's InitActionState hook
+// knows the actor, which the game shows only by animation. Speaking both doubled every spell and
+// ability ("Steal", then "Edge: Steal"). So the two are paired: whichever arrives first waits up to
+// kPairFrames for the other, and one line is spoken - the actor (picture-only information) plus
+// the GAME's text. An action the game names nowhere (a basic attack) keeps the mod's own
+// "Actor: Action"; a game message with no action starting (results, "Stole Potion!",
+// "Couldn't escape") is spoken as the game wrote it. This pairs two halves of one event; it is
+// not a text comparison.
+constexpr int kPairFrames = 2;
+
+struct PendingAction { bool set = false; std::wstring actor, action; int id = 0; };
+struct PendingMessage { bool set = false; std::wstring text; bool interrupt = false; int id = 0; };
+PendingAction g_pending_action;
+PendingMessage g_pending_message;
+int g_pair_id = 0;
+
+void flush_action(int id)
+{
+    if (!g_pending_action.set || g_pending_action.id != id) return;
+    const PendingAction a = g_pending_action;
+    g_pending_action = {};
+    // The game named nothing: the mod's own line ("Actor: Action"; the actor alone when the
+    // action name is unknown).
+    ffpr::say(a.action.empty() ? a.actor : a.actor + L": " + a.action, false);
+}
+
+void flush_message(int id)
+{
+    if (!g_pending_message.set || g_pending_message.id != id) return;
+    const PendingMessage m = g_pending_message;
+    g_pending_message = {};
+    ffpr::say(m.text, m.interrupt);
+}
+
+void speak_paired(const std::wstring& actor, const std::wstring& game_text, bool interrupt)
+{
+    ffpr::say(actor.empty() ? game_text : actor + L": " + game_text, interrupt);
+}
+
+void action_started(const std::wstring& actor, const std::wstring& action)
+{
+    if (g_pending_message.set) {
+        const PendingMessage m = g_pending_message;
+        g_pending_message = {};
+        speak_paired(actor, m.text, m.interrupt);
+        return;
+    }
+    const int id = ++g_pair_id;
+    g_pending_action = {true, actor, action, id};
+    frame::after_frames(kPairFrames, [id] { flush_action(id); }, "Battle.ActionLine");
+}
+
+void game_message(const std::wstring& text, bool interrupt)
+{
+    if (g_pending_action.set) {
+        const PendingAction a = g_pending_action;
+        g_pending_action = {};
+        speak_paired(a.actor, text, interrupt);
+        return;
+    }
+    const int id = ++g_pair_id;
+    g_pending_message = {true, text, interrupt, id};
+    frame::after_frames(kPairFrames, [id] { flush_message(id); }, "Battle.GameMessage");
+}
+
+// --- InitActionState (postfix): the action's actor ------------------------------------------------
 using Void_t = void (*)(void* self, const void* mi);
 Void_t o_InitActionState;
 
@@ -136,10 +204,7 @@ void d_InitActionState(void* self, const void* mi)
         void* act = ref::rd<void*>(self, fInStagingActData);
         if (!act) return;
         std::wstring actor = unit_name(ref::rd<void*>(act, fAttackUnitData));
-        std::wstring action = action_name(act);
-        // "Actor: Action" for every action (basic attack included), as in the command menu; the
-        // actor alone when the action name is unknown.
-        ffpr::say(action.empty() ? actor : actor + L": " + action, false);
+        action_started(actor, action_name(act));
     });
 }
 
@@ -227,7 +292,7 @@ void battle_system_message(void* message_str)
     if (clean.empty()) return;
     // The defeat message interrupts.
     bool is_defeat = text::contains(text::lower(clean), L"defeated");
-    ffpr::say(clean, is_defeat);
+    game_message(clean, is_defeat);
 }
 
 using SetMessage_t = void (*)(void* self, void* message_str, const void* mi);

@@ -281,3 +281,12 @@ battle results (gil, weapon skills, spell level-ups, stat gains; no EXP), status
   FF5's "(N exits)" suffix is not added.
 - Mod menu: Landing Pings and Landing Ping Volume in every game except FF4; Enemy Letters in FF5
   (no effect until FF5's target reader is ported).
+
+## User rule: game text over mod text (2026-10-06)
+
+"You don't need mod-side results and game-side results for anything, just read game results
+where available and only keep mod-side results if information is icon or picture
+representation only." Applied first to the battle action line: the game's message-box text
+("Steal") and the mod's actor are paired into one line ("Edge: Steal"); a basic attack, which the
+game names nowhere, keeps the mod's "Actor: Attack". Damage numbers and status icons are
+picture-only, so their mod lines stay. A whole-mod audit for other doubles followed.
