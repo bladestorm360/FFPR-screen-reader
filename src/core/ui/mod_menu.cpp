@@ -12,6 +12,13 @@
 // Cross-game layout (docs/FEATURES.md section 12): FF1's layout everywhere, except game content
 // that does not exist: "Multi-hit Damage" only where game::flags().multi_hit_setting (FF1-FF3),
 // and no "Battle Results" section in FF2 (FF2 has no experience points, so no EXP counter).
+//
+// FF5's additions (FF5 Core/ModMenu.cs: place and wording as there): "Landing Pings" after
+// "Beacon Navigation" and "Landing Ping Volume" after "Beacon Volume", in every game with a
+// ship-type vehicle (the landing-ping loop plays only on a ship or submarine; FF4's
+// transportation master has neither); "Enemy Letters" after "Enemy HP Display", FF5 only (for
+// FF5's own battle target reader, which src/games/ff5 has not ported yet: battle_target.cpp).
+// FF5 had one description per item, used for both states here.
 #include <windows.h>
 #include <algorithm>
 #include <cstdint>
@@ -130,6 +137,8 @@ void initialize()
     std::vector<Item>& v = st().items;
     v.clear();
 
+    const bool landing_pings = !game::is(game::Id::FF4);   // FF4 has no ship-type vehicle
+
     // Audio Feedback section
     v.push_back(header(L"Audio Feedback"));
     v.push_back(toggle(L"Wall Tones", p::kWallTones, p::kWallTonesDefault,
@@ -141,6 +150,11 @@ void initialize()
     v.push_back(toggle(L"Beacon Navigation", p::kAudioBeacons, p::kAudioBeaconsDefault,
                        L"On. Audio beacon is the primary navigation aid; turn-by-turn pathfinding is disabled.",
                        L"Off. Turn-by-turn pathfinding is used for navigation."));
+    if (landing_pings) {
+        v.push_back(toggle(L"Landing Pings", p::kLandingPings, p::kLandingPingsDefault,
+                           L"While riding a vehicle, pings the directions in which you can land or get off.",
+                           L"While riding a vehicle, pings the directions in which you can land or get off."));
+    }
 
     // Volume Controls section
     v.push_back(header(L"Volume Controls"));
@@ -152,6 +166,10 @@ void initialize()
                        L"Volume of directional wall proximity tones, zero to one hundred percent."));
     v.push_back(volume(L"Beacon Volume", p::kBeaconVolume, p::kBeaconVolumeDefault,
                        L"Volume of audio beacon pings, zero to one hundred percent."));
+    if (landing_pings) {
+        v.push_back(volume(L"Landing Ping Volume", p::kLandingPingVolume, p::kLandingPingVolumeDefault,
+                           L"Volume of the landing pings."));
+    }
 
     // Navigation Filters section
     v.push_back(header(L"Navigation Filters"));
@@ -173,6 +191,12 @@ void initialize()
     v.push_back(enumeration(L"Enemy HP Display", {L"Numbers", L"Percentage", L"Hidden"},
                             p::kEnemyHPDisplay, p::kEnemyHPDisplayDefault, p::kEnemyHPDisplayMax,
                             L"Controls how enemy HP appears in battle: numeric value, percentage of max, or hidden."));
+    if (game::is(game::Id::FF5)) {
+        // FFV_ScreenReaderMod.ToggleEnemyLetters: store, then "Settings.Changed.EnemyLetters" (flip)
+        v.push_back(toggle(L"Enemy Letters", p::kEnemyLetters, p::kEnemyLettersDefault,
+                           L"Adds a letter such as A or B to enemies that share a name, so you can tell them apart.",
+                           L"Adds a letter such as A or B to enemies that share a name, so you can tell them apart."));
+    }
     if (game::flags().multi_hit_setting) {
         v.push_back(enumeration(L"Multi-hit Damage", {L"Total only", L"With hit count"},
                                 p::kMultiHitDamage, p::kMultiHitDamageDefault, p::kMultiHitDamageMax,

@@ -139,6 +139,14 @@ bool live_entity(void* field_entity);
 /// object found in Transportation.ModelList, and its message id (FF4/FF5 names).
 bool vehicle_type_of(void* field_entity, int& type, std::wstring& message_id);
 
+// --- BreadcrumbRouteChainer (breadcrumb_chain.cpp) --------------------------------------------
+/// FF5 BreadcrumbRouteChainer.TryChain: chains MapRouteSearcher searches through reachable
+/// midpoints to a target beyond the game's ~31-cell window. False (out_path untouched) when the
+/// target is inside the window, there is no player, or no route was found. True with the stitched
+/// world-space path from the player to the target.
+bool try_breadcrumb_chain(unity::Vec3 player_world_pos, unity::Vec3 target_world_pos, void* map_handle,
+                          void* player, std::vector<unity::Vec3>& out_path);
+
 // --- FieldEntityState (entity_detection.cpp) ------------------------------------------------
 bool entity_is_present(void* field_entity);
 bool entity_is_active(void* field_entity);

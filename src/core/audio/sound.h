@@ -30,7 +30,8 @@ void play_exp_counter();
 void top_up_exp_counter();
 void stop_exp_counter();
 
-/// Vehicle landing ping (FF1 ToneGenerator.GenerateLandingPing), panned.
-void play_landing_ping(float pan, float volume_scale);
+/// Vehicle landing ping (FF1 ToneGenerator.GenerateLandingPing), panned. `frequency` 0 = the
+/// default tone; FF5 gave each direction its own (sound::constants::LandingPingFrequencies).
+void play_landing_ping(float pan, float volume_scale, int frequency = 0);
 
 } // namespace sound

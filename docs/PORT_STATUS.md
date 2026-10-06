@@ -153,7 +153,7 @@ BattlePausePatches, BattleResultPatches, BattleStartPatches. All names checked i
   4821/0 missing, wiring check: only the four Battle*State.ShouldSuppress queries are undefined,
   which falls back to the menu-state flags exactly as FF1 did.
 - Four master-data readers and two `condition_name` copies: merge into core helpers.
-- Not yet done: the FF2–FF5 game modules, FF5 navigation additions, release zip (Phase 5).
+- Not yet done: in-game tests, then the release zip (Phase 5) and archiving the old repos (Phase 6).
 
 ## Core: status, config, bestiary (`src/core/status`, `src/core/bestiary`) — FINISHED
 
@@ -202,16 +202,12 @@ battle targets ("All allies/enemies"), results log on L (points page only).
 - Pending: FF5's own target reader (enemy letters, target statuses) - the core's SelectContent
   target hooks would double it; results-log pages for level-ups, abilities, items; battle
   totals with ABP, FF5 names for unnamed statuses ("Enemy: Float"), ability lists, steal
-  results; mod-mode + B for the results log; mod menu entries Landing Pings, Landing Ping
-  Volume, Enemy Letters; Boko and transport types 11/12 in the vehicle table (to verify).
+  results; mod-mode + B for the results log; Boko and transport types 11/12 in the vehicle table (to verify).
 - Kept as the core has them (FF1 behaviour): StatusMenuFocusPatches, GameTogglePatches,
   KeyboardGamepadReader, MessagePatches, the H key.
 - Missing mod_text key: "No data available" (line unreachable for now). English kept from the
   C#: "Empty slot", "Slot N:", ", equipped", ", Not learned", "Lv.", "Mastered!".
-- FF5 navigation additions for the core: breadcrumb chaining (fallback in
-  `field::find_path_to` past the game searcher's ~31 tiles; max 6 legs + "and N more"),
-  landing pings (audio loop on ship-type vehicles using CheckLandingList/CheckOkList), exit
-  grouping (nearest member represents the group, next to `dedupe_vehicle_pads`).
+- FF5 navigation additions: moved into the core (see "Core: FF5 navigation additions").
 
 ## FF4 module (`src/games/ff4`) — FINISHED (first pass)
 
@@ -258,3 +254,19 @@ battle results (gil, weapon skills, spell level-ups, stat gains; no EXP), status
   (`BattleResultNavigator.IsOpen`).
 - `hooks::disable` now also applies to address hooks with a "Class.Method" label (FF5 can switch
   off the core's BattleTargetSelectController.SelectContent hooks for its own target reader).
+
+## Core: FF5 navigation additions — FINISHED
+
+- Breadcrumb chaining (all five games, `field/breadcrumb_chain.cpp`): when the game's route
+  search fails beyond ~31 cells, `field::find_path_to` chains searches; a chained route reads at
+  most 6 legs, then "and N more". The pathfinding filter and the beacon use
+  `find_path_to_quick` (never chains); \ and / chain. For the user: FF5 also capped ordinary
+  routes at 6 legs; FF1 never did, so ordinary routes are unchanged.
+- Landing pings (FF1, FF2, FF3, FF5 - FF4 has no ship): an audio loop on a ship or submarine,
+  `fieldnav/landing_spots.cpp`. Settings LandingPings (off) and LandingPingVolume (50). Each
+  direction has FF5's own pitch (660/440/550/520 Hz), pan and level; the directions take turns
+  every 250 ms (FF5 looped them together).
+- Map-exit grouping: FF1's MapExitFilter already does this (same setting, nearest exit kept);
+  FF5's "(N exits)" suffix is not added.
+- Mod menu: Landing Pings and Landing Ping Volume in every game except FF4; Enemy Letters in FF5
+  (no effect until FF5's target reader is ported).

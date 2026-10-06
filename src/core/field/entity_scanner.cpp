@@ -14,6 +14,7 @@
 #include "field_internal.h"
 #include "map_names.h"
 #include "object_cache.h"
+#include "path_search.h"
 #include "../game.h"
 #include "../hooks.h"
 #include "../il2cpp.h"
@@ -61,7 +62,10 @@ bool pathfinding_passes(const EntityPtr& e, const FilterContext& ctx)
     // reached by boarding its vehicle, so the walking path test does not apply.
     if (e->game && entity_is_hidden_by_vehicle(e->game)) return true;
     if (!ctx.player_controller) return false;
-    PathInfo p = find_path_to(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player);
+    // FF5 PathSearchMode.Quick: the filter runs once per entity and never pays for breadcrumb
+    // chaining, so a target past the game's search window can be filtered out yet still be
+    // routable with the announce key.
+    PathInfo p = find_path_to_quick(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player);
     return p.success;
 }
 
@@ -417,7 +421,9 @@ void dedupe_vehicle_pads(std::vector<EntityPtr>& list)
 }
 
 /// DeduplicateMapExits: the closest exit per destination (list sorted by distance); exits with
-/// an unresolved destination (<= 0) are kept individually.
+/// an unresolved destination (<= 0) are kept individually. This is also FF5's
+/// MapExitGroupingStrategy (same key, same "MapExitFilter" setting, nearest member as the
+/// representative); FF5 only added "(N exits)" to the grouped name, which FF1 does not say.
 void dedupe_map_exits(std::vector<EntityPtr>& list)
 {
     std::vector<EntityPtr> out;

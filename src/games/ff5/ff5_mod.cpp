@@ -4,14 +4,11 @@
 //   * Shift+; and the "LandingPings" setting (AudioLoopManager.ToggleLandingPings),
 //   * the "EnemyLetters" setting toggle (FFV_ScreenReaderMod.ToggleEnemyLetters).
 //
-// Settings the core mod menu does not list yet: LandingPings (bool, off), LandingPingVolume
-// (int 0-100, 50; read by the core's sound::play_landing_ping through Volume::LandingPing) and
-// EnemyLetters (bool, off; read by FF5's battle target reader). The mod-menu rows are a core gap.
-//
-// NOT ported here: the landing-ping loop itself. It is an audio loop over FF5's terrain landing
-// test (FieldNavigationHelper.GetNearbyLandingSpots), a navigation addition planned for the core;
-// "Settings.Changed.LandingPings" is run after the toggle so that loop can start/stop when it
-// exists.
+// The landing-ping loop itself is in the core (src/core/fieldnav/landing_spots.cpp and
+// audio_loops.cpp, every game with a ship), and the core mod menu lists LandingPings,
+// LandingPingVolume and, for FF5, EnemyLetters. "Settings.Changed.LandingPings" is run after
+// the toggle so the core loop starts and stops. EnemyLetters has no effect until FF5's own
+// battle target reader is ported.
 #include <string>
 #include "ff5_internal.h"
 #include "../../core/core.h"

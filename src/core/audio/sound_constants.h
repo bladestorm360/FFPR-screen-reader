@@ -79,6 +79,15 @@ constexpr float VOLUME = 0.15f;
 /// Vehicle landing ping (sound::play_landing_ping). FF1 has no landing ping; these are FF5's
 /// SoundConstants (LandingPingFrequencies.NORTH, LandingPingVolumeMultipliers.BASE_VOLUME,
 /// LandingPingTiming), the only old mod that played one.
+// FF5 SoundConstants.LandingPingFrequencies: one pitch per direction (north and south share
+// the centre pan, so pitch is what tells them apart).
+namespace LandingPingFrequencies {
+constexpr int NORTH = 660;
+constexpr int SOUTH = 440;
+constexpr int EAST = 550;
+constexpr int WEST = 520;
+}
+
 namespace LandingPing {
 constexpr int FREQUENCY = 660;
 constexpr float BASE_VOLUME = 0.132f;

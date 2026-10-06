@@ -344,14 +344,14 @@ void stop_exp_counter()
     engine::clear(Stream::Counter);
 }
 
-void play_landing_ping(float pan, float volume_scale)
+void play_landing_ping(float pan, float volume_scale, int frequency)
 {
     // No FF1 source (FF1 never plays one): FF5's landing-ping tone as a panned one-shot,
     // amplitude BASE_VOLUME x volume_scale, gain from "LandingPingVolume".
     hooks::guarded("SoundPlayer.PlayLandingPing", [&] {
         if (!ensure_open()) return;
         float scale = std::clamp(volume_scale, 0.0f, 1.0f);
-        tone::Pcm ping = tone::landing_ping(C::LandingPing::FREQUENCY, C::LandingPing::TOTAL_MS, C::LandingPing::PING_MS,
+        tone::Pcm ping = tone::landing_ping(frequency > 0 ? frequency : C::LandingPing::FREQUENCY, C::LandingPing::TOTAL_MS, C::LandingPing::PING_MS,
                                             C::LandingPing::BASE_VOLUME * scale, pan_to_unit(pan));
         engine::play_one_shot(Stream::Landing, ping, volume(Volume::LandingPing) / 50.0f);
     });

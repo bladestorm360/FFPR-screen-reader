@@ -1,5 +1,6 @@
 #pragma once
-// Ports FF1 Core/PreferencesManager.cs.
+// Ports FF1 Core/PreferencesManager.cs, plus FF5's LandingPings, LandingPingVolume and
+// EnemyLetters entries (FF5 Core/PreferencesManager.cs: same keys and defaults).
 //
 // Every MelonPreferences entry of FF1's [FFI_ScreenReader] category: its key (the native
 // settings key keeps the MelonPreferences name, so the one-time import is a copy), its default,
@@ -38,6 +39,10 @@ inline constexpr const char* kEnemyHPDisplay = "EnemyHPDisplay";            // E
 // Stored as "MultiHitDamage", not the obsolete "DamageDisplay" entry (FF1 moved everyone to the
 // new default once). 0 = Total only, 1 = With hit count ("14x1552 damage").
 inline constexpr const char* kMultiHitDamage = "MultiHitDamage";            // Multi-hit Damage
+// FF5's entries (FF5 PreferencesManager), kept by their MelonPreferences names.
+inline constexpr const char* kLandingPings = "LandingPings";                // Landing Pings
+inline constexpr const char* kLandingPingVolume = "LandingPingVolume";      // Landing Ping Volume (0-100)
+inline constexpr const char* kEnemyLetters = "EnemyLetters";                // Enemy Letters (FF5 only)
 
 // --- defaults -----------------------------------------------------------------------------
 inline constexpr bool kPathfindingFilterDefault = false;
@@ -58,6 +63,9 @@ inline constexpr int kBeaconVolumeDefault = 50;
 inline constexpr int kExpCounterVolumeDefault = 50;
 inline constexpr int kEnemyHPDisplayDefault = 0;
 inline constexpr int kMultiHitDamageDefault = 1;
+inline constexpr bool kLandingPingsDefault = false;
+inline constexpr int kLandingPingVolumeDefault = 50;
+inline constexpr bool kEnemyLettersDefault = false;
 
 // --- ranges (FF1's setter clamps) -----------------------------------------------------------
 inline constexpr int kVolumeMin = 0;
@@ -85,6 +93,8 @@ inline bool stick_click_normalization_enabled() { return settings::get_bool(kSti
 inline bool announce_on_beacon_restart_enabled() { return settings::get_bool(kAnnounceOnBeaconRestart, kAnnounceOnBeaconRestartDefault); }
 inline bool menu_position_announcements_enabled() { return settings::get_bool(kMenuPositionAnnouncements, kMenuPositionAnnouncementsDefault); }
 inline bool exp_counter_enabled() { return settings::get_bool(kExpCounter, kExpCounterDefault); }
+inline bool landing_pings_enabled() { return settings::get_bool(kLandingPings, kLandingPingsDefault); }
+inline bool enemy_letters_enabled() { return settings::get_bool(kEnemyLetters, kEnemyLettersDefault); }
 
 // --- value getters ------------------------------------------------------------------------
 inline int wall_bump_volume() { return settings::get_int(kWallBumpVolume, kWallBumpVolumeDefault); }
@@ -92,6 +102,7 @@ inline int footstep_volume() { return settings::get_int(kFootstepVolume, kFootst
 inline int wall_tone_volume() { return settings::get_int(kWallToneVolume, kWallToneVolumeDefault); }
 inline int beacon_volume() { return settings::get_int(kBeaconVolume, kBeaconVolumeDefault); }
 inline int exp_counter_volume() { return settings::get_int(kExpCounterVolume, kExpCounterVolumeDefault); }
+inline int landing_ping_volume() { return settings::get_int(kLandingPingVolume, kLandingPingVolumeDefault); }
 inline int enemy_hp_display() { return settings::get_int(kEnemyHPDisplay, kEnemyHPDisplayDefault); }
 /// FF1 PreferencesManager.DamageDisplay (stored as MultiHitDamage).
 inline int damage_display() { return settings::get_int(kMultiHitDamage, kMultiHitDamageDefault); }
@@ -107,6 +118,7 @@ inline void set_footstep_volume(int v) { set_int_clamped(kFootstepVolume, v, kVo
 inline void set_wall_tone_volume(int v) { set_int_clamped(kWallToneVolume, v, kVolumeMin, kVolumeMax); }
 inline void set_beacon_volume(int v) { set_int_clamped(kBeaconVolume, v, kVolumeMin, kVolumeMax); }
 inline void set_exp_counter_volume(int v) { set_int_clamped(kExpCounterVolume, v, kVolumeMin, kVolumeMax); }
+inline void set_landing_ping_volume(int v) { set_int_clamped(kLandingPingVolume, v, kVolumeMin, kVolumeMax); }
 inline void set_enemy_hp_display(int v) { set_int_clamped(kEnemyHPDisplay, v, 0, kEnemyHPDisplayMax); }
 inline void set_damage_display(int v) { set_int_clamped(kMultiHitDamage, v, 0, kMultiHitDamageMax); }
 
@@ -122,5 +134,7 @@ inline void save_stick_click_normalization(bool v) { settings::set_bool(kStickCl
 inline void save_announce_on_beacon_restart(bool v) { settings::set_bool(kAnnounceOnBeaconRestart, v); }
 inline void save_menu_position_announcements(bool v) { settings::set_bool(kMenuPositionAnnouncements, v); }
 inline void save_exp_counter(bool v) { settings::set_bool(kExpCounter, v); }
+inline void save_landing_pings(bool v) { settings::set_bool(kLandingPings, v); }
+inline void save_enemy_letters(bool v) { settings::set_bool(kEnemyLetters, v); }
 
 } // namespace ui::prefs

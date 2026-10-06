@@ -3,18 +3,25 @@
 // FF3 Field/HiddenPassageRouting.cs (FF3, FF4, FF5: game::flags().has_hidden_passages), and
 // FFI_ScreenReaderMod.GetFieldPlayer / GetCurrentMapId.
 //
+// From FF5 Field/FieldNavigationHelper.cs (all five games): PathSearchMode (find_path_to = Full,
+// find_path_to_quick = Quick, path_search.h), the breadcrumb fallback after a failed search
+// (breadcrumb_chain.cpp) and DescribeRoute's six-leg cap with "and N more" for chained routes.
+// A route the game's own search finds is described as FF1 described it (every leg).
+//
 // Per-game differences kept from each game's own mod: Transportation.ModelList skips types 0
 // and 1 in FF1 (the canoe, type 5, is skipped by the vehicle detector), and 0, 1, 4 (Symbol)
 // and 5 (Content) in FF2-FF5. FF4 and FF5 also keep each vehicle's message id (its official
 // name). The C# pointer offsets (TransportationController 0x18, Transportation 0x18,
 // FieldController 0x120, FootEvent 0x10) are the fields infoData, modelList, footEvent and
 // stepOnTriggerList, resolved by name.
+#include <algorithm>
 #include <cmath>
 #include <unordered_map>
 #include <unordered_set>
 #include "field_api.h"
 #include "field_internal.h"
 #include "object_cache.h"
+#include "path_search.h"
 #include "../game.h"
 #include "../hooks.h"
 #include "../il2cpp.h"
@@ -77,10 +84,11 @@ std::wstring cardinal_direction_name(Vec3 dir)
     return T(L"Unknown");
 }
 
-/// DescribePath: "North 3, East 2".
-std::wstring describe_path(const std::vector<Vec3>& path)
+/// The path as straight runs, "North 3": consecutive steps in the same direction merge (FF1
+/// DescribePath's loop = FF5 BuildLegs). On a breadcrumb route this also merges the runs across
+/// the seams between chained searches ("North 89", not "North 24, North 30, North 35").
+std::vector<std::wstring> route_legs(const std::vector<Vec3>& path)
 {
-    if (path.size() < 2) return T(L"No movement needed");
     std::vector<std::wstring> segments;
     Vec3 current{0, 0, 0};
     int steps = 0;
@@ -95,11 +103,42 @@ std::wstring describe_path(const std::vector<Vec3>& path)
         }
     }
     if (steps > 0) segments.push_back(cardinal_direction_name(current) + L" " + text::num(steps));
+    return segments;
+}
+
+std::wstring join_legs(const std::vector<std::wstring>& segments, size_t count)
+{
     std::wstring out;
-    for (size_t i = 0; i < segments.size(); ++i) {
+    for (size_t i = 0; i < count && i < segments.size(); ++i) {
         if (i) out += L", ";
         out += segments[i];
     }
+    return out;
+}
+
+/// DescribePath: "North 3, East 2".
+std::wstring describe_path(const std::vector<Vec3>& path)
+{
+    if (path.size() < 2) return T(L"No movement needed");
+    std::vector<std::wstring> segments = route_legs(path);
+    return join_legs(segments, segments.size());
+}
+
+/// FF5 FieldNavigationHelper.MAX_SPOKEN_LEGS: legs spoken before a chained route is summarised.
+/// A long route hugs terrain and runs to dozens of short legs; the player walks what they heard
+/// and asks again, and the search re-runs from the new position.
+constexpr size_t kMaxSpokenLegs = 6;
+
+/// FF5 DescribeRoute, for breadcrumb routes: at most six legs, then "and N more".
+std::wstring describe_chained_route(const std::vector<Vec3>& path)
+{
+    std::vector<std::wstring> legs = path.size() < 2 ? std::vector<std::wstring>{} : route_legs(path);
+    if (legs.empty()) return T(L"No movement needed");
+    size_t spoken = std::min(kMaxSpokenLegs, legs.size());
+    std::wstring out = join_legs(legs, spoken);
+    size_t remaining = legs.size() - spoken;
+    if (remaining > 0)
+        out += L", " + TF(L"and {0} more", {text::num(static_cast<long long>(remaining))});
     return out;
 }
 
@@ -380,7 +419,10 @@ WallDistances nearby_walls(void* player_obj)
     return w;
 }
 
-PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj)
+namespace {
+
+/// FindPathTo(..., mode). `allow_chain` = PathSearchMode.Full (FF5).
+PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj, bool allow_chain)
 {
     PathInfo info;
     if (!map) {
@@ -420,6 +462,16 @@ PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map, void* player_
         }
 
         if (!has_points(path)) {
+            // FF5: the plain search came up empty. Only now, and only for an explicit player
+            // action (Full), chain several searches to reach past the game's ~31.5-tile window.
+            // The chainer stays dormant for a target inside the window or without a player.
+            std::vector<Vec3> chained;
+            if (allow_chain && player_obj && try_breadcrumb_chain(from, to, map, player_obj, chained)) {
+                info.world_path = std::move(chained);
+                info.step_count = info.world_path.empty() ? 0 : static_cast<int>(info.world_path.size()) - 1;
+                info.description = describe_chained_route(info.world_path);
+                return true;
+            }
             info.error = L"No path found";
             return false;
         }
@@ -435,6 +487,18 @@ PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map, void* player_
     info.success = ok;
     if (!ok && info.error.empty()) info.error = L"Pathfinding error";
     return info;
+}
+
+} // namespace
+
+PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj)
+{
+    return find_path(from, to, map, player_obj, true);
+}
+
+PathInfo find_path_to_quick(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj)
+{
+    return find_path(from, to, map, player_obj, false);
 }
 
 std::wstring direction(unity::Vec3 from, unity::Vec3 to) { return direction_name(from, to); }

@@ -7,15 +7,30 @@
 // The C# coroutines resumed once per frame and paced themselves with Time.time. Here one frame
 // subscriber does the same with frame::now(); every early "continue" of the C# loops is a
 // return that leaves the next check time where the C# code set it.
+//
+// From FF5 Core/AudioLoopManager.cs (all five games): the landing-ping loop (LandingPingLoop,
+// Start/StopLandingPingLoop, the scene-load and vehicle-transition suppression of landing pings)
+// and PathSearchMode.Quick for the beacon's path test (field/path_search.h). Landing pings play
+// only while on a ship-type vehicle (MoveStateHelper.IsControllingShip: ship or submarine); FF4
+// has none (transportation master: no type 2 or 6), so they never sound there.
+//
+// Sound: FF5 kept one looping stream per direction (660/440/550/520 Hz, wall-tone pans, a ping
+// every 250 ms). sound.h has one landing ping (one pitch, one stream that each call restarts),
+// so the directions with a landing spot take turns, one ping every 250 ms, each with FF5's pan
+// and amplitude for its direction. North and south therefore sound alike until the audio area
+// offers FF5's per-direction pitches.
 #include <cmath>
 #include <memory>
 #include <vector>
 #include "audio_loops.h"
 #include "fieldnav_util.h"
+#include "landing_spots.h"
 #include "map_transition.h"
+#include "move_state.h"
 #include "nav_target.h"
 #include "waypoints.h"
 #include "../audio/sound.h"
+#include "../audio/sound_constants.h"
 #include "../core.h"
 #include "../frame.h"
 #include "../hooks.h"
@@ -24,6 +39,7 @@
 #include "../settings.h"
 #include "../unity.h"
 #include "../field/field_api.h"
+#include "../field/path_search.h"
 
 namespace ffpr::fieldnav::audio_loops {
 namespace {
@@ -78,6 +94,25 @@ double g_last_beacon_played_at = 0;
 
 // Reused direction buffer
 std::vector<sound::Direction> g_wall_directions;
+
+// Landing pings (FF5 AudioLoopManager.LandingPingLoop)
+constexpr double kLandingPingInterval = 0.1;            // GameConstants.LANDING_PING_INTERVAL
+constexpr double kLandingPingPeriod = 0.25;             // SoundConstants.LandingPingTiming.TOTAL_MS
+constexpr double kVehicleTransitionSuppression = 0.2;   // GameConstants.VEHICLE_TRANSITION_SUPPRESSION
+constexpr double kSceneLoadSuppression = 1.0;           // GameConstants.SCENE_LOAD_SUPPRESSION
+const char* const kLandingPingsKey = "LandingPings";    // PreferencesManager: default off
+constexpr bool kLandingPingsDefault = false;
+
+bool g_landing_running = false;
+double g_landing_next_check = 0;
+double g_landing_next_ping = 0;
+int g_landing_map_id = -1;
+double g_landing_suppressed_until = 0;
+double g_vehicle_transition_until = 0;
+bool g_was_on_ship = false;
+unsigned g_landing_mask = 0;   // directions with a landing spot (bit = sound::Direction)
+int g_landing_turn = 0;        // the direction to consider first for the next ping
+std::vector<sound::Direction> g_landing_directions;
 
 float clamp(float v, float lo, float hi) { return v < lo ? lo : (v > hi ? hi : v); }
 float clamp01(float v) { return clamp(v, 0.0f, 1.0f); }
@@ -233,10 +268,11 @@ void beacon_iteration(double now)
 
     float dist_tiles = distance(player_pos, target_pos) / kTileSize;
 
-    // Mode selection: expensive (A* per beacon tick) but only 1-5 Hz.
+    // Mode selection: expensive (A* per beacon tick) but only 1-5 Hz. PathSearchMode.Quick (FF5):
+    // the beacon never pays for breadcrumb chaining.
     bool path_valid;
     try {
-        ::field::PathInfo path_info = ::field::find_path_to(player_pos, target_pos, ::field::map_handle(), player);
+        ::field::PathInfo path_info = ::field::find_path_to_quick(player_pos, target_pos, ::field::map_handle(), player);
         path_valid = path_info.success;
     } catch (...) {
         path_valid = false;
@@ -325,12 +361,139 @@ void beacon_step()
         g_next_beacon_time = now + 0.5;
 }
 
+// --- landing pings (FF5) --------------------------------------------------------------------
+
+/// SoundPlayer.StopLandingPing: no more pings. (A ping already playing is a one-shot of at most
+/// 250 ms; sound.h has no call to cut it short.)
+void stop_landing_ping()
+{
+    g_landing_mask = 0;
+}
+
+/// One landing ping for a direction: FF5's pitch (LandingPingFrequencies), pan (WallTonePan,
+/// 0..1 -> -1..1) and amplitude
+/// (WallToneVolumeMultipliers on the landing BASE_VOLUME); the gain is "LandingPingVolume".
+void play_landing_ping_for(int direction)
+{
+    namespace C = sound::constants;
+    float pan = C::WallTonePan::NORTH;
+    float scale = C::WallToneVolumeMultipliers::NORTH;
+    int frequency = C::LandingPingFrequencies::NORTH;
+    switch (static_cast<sound::Direction>(direction)) {
+    case sound::Direction::North: pan = C::WallTonePan::NORTH; scale = C::WallToneVolumeMultipliers::NORTH; frequency = C::LandingPingFrequencies::NORTH; break;
+    case sound::Direction::South: pan = C::WallTonePan::SOUTH; scale = C::WallToneVolumeMultipliers::SOUTH; frequency = C::LandingPingFrequencies::SOUTH; break;
+    case sound::Direction::East: pan = C::WallTonePan::EAST; scale = C::WallToneVolumeMultipliers::EAST; frequency = C::LandingPingFrequencies::EAST; break;
+    case sound::Direction::West: pan = C::WallTonePan::WEST; scale = C::WallToneVolumeMultipliers::WEST; frequency = C::LandingPingFrequencies::WEST; break;
+    }
+    sound::play_landing_ping(pan * 2.0f - 1.0f, scale, frequency);
+}
+
+/// The 0.1 s check of FF5's LandingPingLoop (after its IsAudioSuppressed gate).
+void landing_ping_check(double current_time)
+{
+    // FF5 suppressed briefly on every GetOn/GetOff (boarding animation). The core's vehicle hooks
+    // are FF1's and do not call into the loops, so the boarding edge is taken from the ship state.
+    bool on_ship = move_state::is_controlling_ship();
+    if (on_ship != g_was_on_ship) {
+        g_was_on_ship = on_ship;
+        g_vehicle_transition_until = current_time + kVehicleTransitionSuppression;
+    }
+
+    int current_map_id = ::field::current_map_id();
+    if (current_map_id > 0 && g_landing_map_id > 0 && current_map_id != g_landing_map_id) {
+        g_landing_suppressed_until = current_time + kSceneLoadSuppression;
+        stop_landing_ping();
+    }
+    if (current_map_id > 0)
+        g_landing_map_id = current_map_id;
+
+    if (current_time < g_landing_suppressed_until) {
+        stop_landing_ping();
+        return;
+    }
+    if (current_time < g_vehicle_transition_until) {
+        stop_landing_ping();
+        return;
+    }
+    if (map_transition::is_screen_fading()) {
+        stop_landing_ping();
+        return;
+    }
+    void* player = ::field::player();
+    if (!player) {
+        stop_landing_ping();
+        return;
+    }
+    if (!on_ship) {
+        stop_landing_ping();
+        return;
+    }
+
+    landing_spots::nearby(player, g_landing_directions);
+
+    unsigned mask = 0;
+    for (sound::Direction d : g_landing_directions) mask |= 1u << static_cast<int>(d);
+    unsigned newly_on = mask & ~g_landing_mask;
+    g_landing_mask = mask;
+    if (newly_on) {
+        // FF5 started a newly active direction's loop at once: it pings next, now.
+        for (int d = 0; d < 4; ++d) {
+            if (newly_on & (1u << d)) {
+                g_landing_turn = d;
+                break;
+            }
+        }
+        g_landing_next_ping = 0;
+    }
+}
+
+/// The coroutine's exit path ("while (LandingPingsEnabled)" became false).
+void finish_landing_ping_loop()
+{
+    g_landing_running = false;
+    stop_landing_ping();
+}
+
+void landing_ping_step()
+{
+    if (!settings::get_bool(kLandingPingsKey, kLandingPingsDefault)) {
+        finish_landing_ping_loop();
+        return;
+    }
+
+    // Stop-gate: battle, event/cutscene, dialogue, menus, mod overlays.
+    if (audio_blocked()) {
+        stop_landing_ping();
+        return;
+    }
+
+    double now = frame::now();
+    if (now >= g_landing_next_check) {
+        g_landing_next_check = now + kLandingPingInterval;
+        hooks::guarded("LandingPing", [&] { landing_ping_check(now); });
+    }
+
+    // One ping per 250 ms loop, the directions taking turns.
+    if (g_landing_mask == 0 || now < g_landing_next_ping)
+        return;
+    for (int i = 0; i < 4; ++i) {
+        int d = (g_landing_turn + i) % 4;
+        if (g_landing_mask & (1u << d)) {
+            play_landing_ping_for(d);
+            g_landing_turn = (d + 1) % 4;
+            g_landing_next_ping = now + kLandingPingPeriod;
+            break;
+        }
+    }
+}
+
 // --- frame subscriber and wiring ------------------------------------------------------------
 
 void tick()
 {
     if (g_wall_running) wall_tone_step();
     if (g_beacon_running) beacon_step();
+    if (g_landing_running) landing_ping_step();
 }
 
 /// FFI_ScreenReaderMod.OnSceneLoaded (audio part) and DelayedInitialScan.
@@ -360,6 +523,11 @@ int install()
     actions::define("Settings.Changed.AudioBeacons", [] {
         if (settings::get_bool("AudioBeacons", false)) start_beacon_loop();
         else stop_beacon_loop();
+    });
+    // FF5 AudioLoopManager.ToggleLandingPings (the mod menu, FF5's Shift+;)
+    actions::define("Settings.Changed.LandingPings", [] {
+        if (settings::get_bool(kLandingPingsKey, kLandingPingsDefault)) start_landing_ping_loop();
+        else stop_landing_ping_loop();
     });
     actions::define("Mod.RestartBeacon", [] { restart_beacon(); });
     // Re-target the beacon to the current entity; with "announce destination on beacon
@@ -413,10 +581,27 @@ void restart_beacon()
     g_next_beacon_time = 0;
 }
 
+void start_landing_ping_loop()
+{
+    if (!settings::get_bool(kLandingPingsKey, kLandingPingsDefault)) return;
+    if (g_landing_running) return;
+    g_landing_running = true;
+    g_landing_next_check = frame::now() + 0.3;   // GameConstants.INITIAL_LOOP_DELAY
+    g_landing_next_ping = 0;
+    g_landing_mask = 0;
+}
+
+void stop_landing_ping_loop()
+{
+    g_landing_running = false;
+    stop_landing_ping();
+}
+
 void stop_all()
 {
     stop_wall_tone_loop();
     stop_beacon_loop();
+    stop_landing_ping_loop();
 }
 
 void suppress_briefly(float seconds)
@@ -424,12 +609,14 @@ void suppress_briefly(float seconds)
     double until = frame::now() + seconds;
     g_wall_tone_suppressed_until = until;
     g_beacon_suppressed_until = until;
+    g_landing_suppressed_until = until;   // FF5 OnSceneTransition
 }
 
 void start_if_enabled()
 {
     if (settings::get_bool("WallTones", false)) start_wall_tone_loop();
     if (settings::get_bool("AudioBeacons", false)) start_beacon_loop();
+    start_landing_ping_loop();   // no-op when "LandingPings" is off
 }
 
 } // namespace ffpr::fieldnav::audio_loops
