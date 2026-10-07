@@ -2,7 +2,7 @@
 REM Install the native screen reader into every installed FF1-FF6 Pixel Remaster folder,
 REM or into one game: deploy.bat ff1   (ff1..ff6).
 REM A SEPARATE step from build.bat. Run smoketest.bat first. Never launches a game.
-REM MelonLoader and its files are not touched. The old FFn_ScreenReader.dll in Mods is NOT
+REM MelonLoader, BepInEx and their files are not touched. The old FFn_ScreenReader.dll in Mods is NOT
 REM removed by this script; the mod speaks a warning at startup while it is still there.
 setlocal
 cd /d "%~dp0"
@@ -19,7 +19,7 @@ call :one ff5 "FINAL FANTASY V PR" "FINAL FANTASY V.exe"
 call :one ff6 "FINAL FANTASY VI PR" "FINAL FANTASY VI.exe"
 if not "%FAILED%"=="0" ( echo Some copies FAILED. & exit /b 1 )
 echo.
-echo Installed hid.dll, MinHook.x64.dll, Tolk.dll, nvdaControllerClient64.dll and SDL3.dll.
+echo Installed hid.dll, Tolk.dll, nvdaControllerClient64.dll and SDL3.dll. MinHook is built into hid.dll.
 echo Log: ffpr_screen_reader.log in each game folder. Uninstall: uninstall.bat
 endlocal
 exit /b 0
@@ -32,7 +32,6 @@ REM find.exe by full path: a Unix find earlier on PATH (Git Bash) makes this che
 tasklist /FI "IMAGENAME eq %~3" 2>nul | "%SystemRoot%\System32\find.exe" /I "%~3" >nul
 if not errorlevel 1 ( echo ERROR: %~3 is running. Close the game first. & set FAILED=1 & exit /b 0 )
 copy /Y "out\hid.dll" "%GAME%\hid.dll" >nul || ( set FAILED=1 & exit /b 0 )
-copy /Y "third_party\runtime\MinHook.x64.dll" "%GAME%\MinHook.x64.dll" >nul || ( set FAILED=1 & exit /b 0 )
 copy /Y "third_party\runtime\Tolk.dll" "%GAME%\Tolk.dll" >nul || ( set FAILED=1 & exit /b 0 )
 copy /Y "third_party\runtime\nvdaControllerClient64.dll" "%GAME%\nvdaControllerClient64.dll" >nul || ( set FAILED=1 & exit /b 0 )
 if exist "third_party\runtime\SAAPI64.dll" copy /Y "third_party\runtime\SAAPI64.dll" "%GAME%\SAAPI64.dll" >nul

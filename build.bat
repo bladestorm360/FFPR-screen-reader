@@ -36,6 +36,13 @@ echo Checking exports and imports...
 python tools\import_check.py out\hid.dll
 if errorlevel 1 exit /b 1
 
+echo Checking that hooks stack with MelonLoader / BepInEx style hooks...
+"out\checks\coexist_check.exe" > build_check\coexist_report.txt 2>&1
+if errorlevel 1 (
+    echo Coexistence check FAILED - see build_check\coexist_report.txt
+    exit /b 1
+)
+
 echo Checking every game-code name against each game's dump.cs...
 python tools\name_check.py
 if errorlevel 1 (

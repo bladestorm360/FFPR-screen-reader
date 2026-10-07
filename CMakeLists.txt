@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(FFPR_ScreenReader LANGUAGES CXX RC)
+project(FFPR_ScreenReader LANGUAGES C CXX RC)
 
-# One native DLL for FINAL FANTASY I-V Pixel Remaster, named hid.dll: UnityPlayer.dll imports
+# One native DLL for FINAL FANTASY I-VI Pixel Remaster, named hid.dll: UnityPlayer.dll imports
 # hid.dll statically and hid.dll is not a KnownDLL, so the game loads this copy from its own
-# folder. MelonLoader (version.dll) can stay installed untouched. See UNIFIED_MOD_PLAN.md.
+# folder. MelonLoader (version.dll) and BepInEx (winhttp.dll) can stay installed: the built-in
+# MinHook stacks safely with their hooks. See UNIFIED_MOD_PLAN.md and OPEN_ISSUES.md.
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")   # static CRT: no redistributable needed
@@ -17,6 +18,18 @@ set(FFPR_INCLUDES
     "${CMAKE_SOURCE_DIR}/third_party/sdl3/include"
     "${CMAKE_SOURCE_DIR}/third_party/minhook/include"
     "${CMAKE_SOURCE_DIR}/third_party/tolk")
+
+# --- MinHook 1.3.4, built in from source with the [FFPR] coexistence changes (see
+# src/core/minhook_dyn.h): trampolines resume past the first 16 bytes of a target and never
+# unhook over another mod's patch, so MelonLoader and BepInEx can hook the same functions.
+# Its own warning level: third-party C, kept as close to upstream as possible.
+add_library(ffpr_minhook OBJECT
+    third_party/minhook/src/buffer.c
+    third_party/minhook/src/hook.c
+    third_party/minhook/src/trampoline.c
+    third_party/minhook/src/hde/hde64.c)
+target_include_directories(ffpr_minhook PRIVATE "${CMAKE_SOURCE_DIR}/third_party/minhook/include")
+target_compile_options(ffpr_minhook PRIVATE /W3 /utf-8 /Gy)
 
 # --- core: shared by every game. NO include path to src/games (the build enforces that shared
 # code cannot call one game's classes). OBJECT library so file-scope registrations
@@ -70,6 +83,7 @@ add_library(hid SHARED
     src/version.rc
     "${FFPR_DATA_RC}"
     $<TARGET_OBJECTS:ffpr_core>
+    $<TARGET_OBJECTS:ffpr_minhook>
     ${FFPR_GAME_OBJECTS}
 )
 target_include_directories(hid PRIVATE "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/src/core" ${FFPR_INCLUDES})
@@ -77,8 +91,8 @@ target_compile_definitions(hid PRIVATE ${FFPR_DEFS})
 target_compile_options(hid PRIVATE ${FFPR_OPTS})
 # Export the real hid.dll surface (47 names) so the proxy is a drop-in replacement.
 target_link_options(hid PRIVATE "/DEF:${CMAKE_SOURCE_DIR}/src/proxy/hid.def" /OPT:REF /OPT:ICF)
-# Deliberately no MinHook/Tolk/SDL import libraries: each is LoadLibrary'd at runtime, so a
-# missing one silences the mod instead of stopping the game from starting.
+# Deliberately no Tolk/SDL import libraries: each is LoadLibrary'd at runtime, so a missing one
+# silences the mod instead of stopping the game from starting. MinHook is compiled in (above).
 set_target_properties(hid PROPERTIES
     OUTPUT_NAME hid
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/out"
@@ -103,7 +117,11 @@ foreach(c ${FFPR_CHECKS})
     if(first MATCHES "check-sources:(.*)")
         separate_arguments(names UNIX_COMMAND "${CMAKE_MATCH_1}")
         foreach(n ${names})
-            list(APPEND extra "${CMAKE_SOURCE_DIR}/src/core/${n}")
+            if(n STREQUAL "+minhook")   # the built-in MinHook (tools/coexist_check.cpp)
+                list(APPEND extra $<TARGET_OBJECTS:ffpr_minhook>)
+            else()
+                list(APPEND extra "${CMAKE_SOURCE_DIR}/src/core/${n}")
+            endif()
         endforeach()
     endif()
     add_executable(${cn} "${c}" ${extra})

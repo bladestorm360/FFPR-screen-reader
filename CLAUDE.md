@@ -12,7 +12,9 @@ FF6 is ZKline's (BlindGuyNW/FF6ScreenReader); its author gave permission to incl
 1. **Never launch a game.** The user tests. Ask for results before building on unverified work.
 2. **Nothing may stop a game from starting.** `hid.dll` is imported by UnityPlayer.dll:
    - forward all 47 System32 hid.dll exports (`tools\import_check.py` runs in `build.bat`);
-   - import only system DLLs; MinHook, Tolk and SDL3 are LoadLibrary'd at runtime;
+   - import only system DLLs; Tolk and SDL3 are LoadLibrary'd at runtime; MinHook is compiled
+     in from `third_party\minhook\src` with [FFPR] coexistence changes (do not swap in a stock
+     MinHook: MelonLoader/BepInEx coexistence depends on them; `tools\coexist_check.cpp`);
    - no CRT stdio, no `_s` functions with untrusted arguments (BDFFHD rule 9);
    - the boot thread never returns (BDFFHD rule 10: GC "SuspendThread loop failed").
 3. **Build, smoke test, then deploy:** `build.bat` → `smoketest.bat` → `deploy.bat [ffN]`.

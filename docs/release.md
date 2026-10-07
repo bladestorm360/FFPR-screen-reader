@@ -16,10 +16,11 @@ Triggered when the user says "prepare release X.Y". The work ends at the zip; th
 
 ## What players do (for the readme the user writes)
 
-- Remove the old `FFn_ScreenReader.dll` from the game's `Mods` folder. MelonLoader itself may
-  stay; the native mod speaks a warning while an old screen-reader DLL is still there.
+- Remove the old `FFn_ScreenReader.dll` from the game's `Mods` folder. MelonLoader and BepInEx
+  may stay (the built-in MinHook stacks with their hooks); the native mod speaks a warning while
+  an old screen-reader DLL is still there.
 - Copy the zip's files into the game folder (next to `FINAL FANTASY.exe` etc.). The same
-  files work for all five games.
-- To remove the mod: delete `hid.dll` (and `MinHook.x64.dll`). Settings are in
+  files work for all six games. The zip carries `MinHook_LICENSE.txt` (MinHook is compiled in).
+- To remove the mod: delete `hid.dll`. Settings are in
   `ffpr_screen_reader.ini`, the log in `ffpr_screen_reader.log`, both in the game folder.
 - First start imports the old mod's settings from `UserData\MelonPreferences.cfg` once.

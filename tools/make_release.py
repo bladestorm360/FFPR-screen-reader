@@ -1,4 +1,4 @@
-"""Package one release zip for all five games (UNIFIED_MOD_PLAN.md, Phase 5).
+"""Package one release zip for all six games (UNIFIED_MOD_PLAN.md, Phase 5).
 
     python tools/make_release.py 0.1.0
 
@@ -7,7 +7,7 @@ that out\\hid.dll exists and is newer than every source file). The zip goes to
 releases\\FFPR_ScreenReader_<version>.zip and holds, at its top level, the files that go in
 each game folder:
 
-    hid.dll, MinHook.x64.dll, Tolk.dll, nvdaControllerClient64.dll, SAAPI64.dll (if present),
+    hid.dll (MinHook is built in), Tolk.dll, nvdaControllerClient64.dll, SAAPI64.dll (if present),
     SDL3.dll, readme.md (the user's combined readme, only if it exists), uninstall.bat is NOT
     included (it targets this machine's Steam path).
 
@@ -45,7 +45,7 @@ def main():
         print("FAIL: out\\hid.dll is older than the sources - run build.bat and smoketest.bat first")
         return 1
     files = [(dll, "hid.dll")]
-    for name in ("MinHook.x64.dll", "Tolk.dll", "nvdaControllerClient64.dll", "SDL3.dll"):
+    for name in ("Tolk.dll", "nvdaControllerClient64.dll", "SDL3.dll"):
         path = os.path.join(RUNTIME, name)
         if not os.path.exists(path):
             print(f"FAIL: third_party\\runtime\\{name} missing")
@@ -54,6 +54,8 @@ def main():
     saapi = os.path.join(RUNTIME, "SAAPI64.dll")
     if os.path.exists(saapi):
         files.append((saapi, "SAAPI64.dll"))
+    # MinHook is compiled into hid.dll: its BSD-2 license must ship with the binary.
+    files.append((os.path.join(ROOT, "third_party", "minhook", "LICENSE.txt"), "MinHook_LICENSE.txt"))
     readme = os.path.join(ROOT, "readme.md")
     if os.path.exists(readme):
         files.append((readme, "readme.md"))

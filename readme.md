@@ -7,7 +7,7 @@ A screen reader mod for FINAL FANTASY I, II, III, IV, V and VI Pixel Remaster on
 - It speaks the games through your screen reader: dialogue, menus, battles, the field and the title screen.
 - It adds navigation aids: wall tones, footsteps, an audio beacon, a list of destinations with step by step directions, and waypoints you can name.
 - One set of files works in all six games. The mod finds out by itself which game it is running in.
-- It is one native file, hid.dll. MelonLoader is not needed.
+- It is one native file, hid.dll. MelonLoader is not needed, but it can stay installed, and so can BepInEx, if you use them for other mods.
 - It replaces the six older screen reader mods, FFI_ScreenReader.dll to FFVI_ScreenReader.dll. Your old settings and waypoints carry over.
 - The keyboard and a game controller both work, for the game and for the mod.
 
@@ -19,7 +19,6 @@ Why hid.dll: every game loads a Windows file called hid.dll when it starts, to t
 - A screen reader that is running, such as NVDA or JAWS. Speech goes through Tolk.
 - The files in the zip:
   - hid.dll: the mod.
-  - MinHook.x64.dll: lets the mod hook into the game.
   - Tolk.dll and nvdaControllerClient64.dll: speech.
   - SDL3.dll: the mod's sounds and controller support.
   - SAAPI64.dll, if the zip has it: lets Tolk talk to the System Access screen reader.
@@ -53,7 +52,7 @@ The old screen reader files:
 
 If you forget to remove it, both mods speak at once, and the new mod says "Old screen reader still installed" when the game starts.
 
-MelonLoader can stay if you use it for other mods. This mod does not need it.
+MelonLoader and BepInEx can stay if you use them for other mods. This mod does not need either of them, and it is built to run alongside them: it hooks the game in a way that leaves room for their hooks on the same game functions. Only the old screen reader file has to go.
 
 The game exes are FINAL FANTASY.exe, FINAL FANTASY II.exe, FINAL FANTASY III.exe, FINAL FANTASY IV.exe, FINAL FANTASY V.exe and FINAL FANTASY VI.exe.
 
@@ -61,7 +60,8 @@ The mod only works in these six games. In another game, it says "this game is no
 
 ## Uninstalling
 
-- Delete hid.dll and MinHook.x64.dll from the game folder. Deleting hid.dll alone already turns the mod off: the game then uses the hid.dll that comes with Windows.
+- Delete hid.dll from the game folder. That turns the mod off: the game then uses the hid.dll that comes with Windows.
+- Earlier versions of this mod also put MinHook.x64.dll in the game folder. You can delete it, unless another mod you use needs it.
 - If you want, also delete ffpr_screen_reader.ini, which holds your settings, and the ffpr_screen_reader log files.
 - Tolk.dll, nvdaControllerClient64.dll and SDL3.dll can stay. The old screen readers use them too.
 - To go back to an old screen reader, put its file back in the Mods folder. The old screen readers need MelonLoader.
@@ -469,6 +469,7 @@ Closes the mod menu.
 ### All games
 
 - This is the first version of the combined mod. If something the old screen reader read is now silent, or is read twice, please report it and send the log.
+- Running alongside MelonLoader or BepInEx is new and has not been tested in the games yet. If a game crashes with one of them installed, send the log; it says which loaders it found. Until that is fixed, delete hid.dll or move the other loader out.
 - In shops, the shopkeeper stands behind a counter. Talk to the counter to open the shop. It is usually straight north from the door.
 
 ### FINAL FANTASY and FINAL FANTASY II
@@ -523,6 +524,6 @@ Closes the mod menu.
 The mod uses:
 
 - Tolk, by Davy Kager, under the GNU Lesser General Public License version 3.
-- MinHook, by Tsuda Kageyu, under the BSD 2-clause license.
+- MinHook, by Tsuda Kageyu, under the BSD 2-clause license, with the Hacker Disassembler Engine by Vyacheslav Patkov. It is built into hid.dll, changed so that it runs alongside MelonLoader and BepInEx. Its license is in MinHook_LICENSE.txt.
 - SDL3, by Sam Lantinga and the SDL contributors, under the zlib license.
 - The NVDA Controller Client, by NV Access.

@@ -41,6 +41,10 @@ constexpr int kSpeechWaitMs = 30000;
 constexpr int kMaxWaitMs = 120000;
 constexpr int kPollMs = 50;
 constexpr int kRuntimeWaitMs = 180000;
+// With MelonLoader or BepInEx installed, their first start (or the first after a game update)
+// generates interop assemblies before the game's runtime runs, which can take minutes. The
+// boot thread only sleeps while it waits, so it waits much longer then.
+constexpr int kRuntimeWaitWithLoaderMs = 20 * 60 * 1000;
 
 /// Is this process one we should boot in?
 ///
@@ -84,6 +88,27 @@ void warn_old_mod(const game::Module* m)
     ffpr::say(line, false);
 }
 
+bool exists(const std::wstring& rel)
+{
+    return GetFileAttributesW((std::wstring(game::dir()) + rel).c_str()) != INVALID_FILE_ATTRIBUTES;
+}
+
+/// Other mod loaders in the game folder. The mod coexists with both (the built-in MinHook
+/// stacks with their hooks, see minhook_dyn.h); this records what was there, so a log from a
+/// crash says at once whether another loader was involved. True when one is present.
+bool log_other_loaders()
+{
+    const bool melon = exists(L"MelonLoader") || exists(L"version.dll");
+    const bool bepinex = exists(L"BepInEx") || exists(L"winhttp.dll") || exists(L"doorstop_config.ini");
+    if (melon)
+        LOGF("boot: MelonLoader present (%s%s); coexisting", exists(L"MelonLoader") ? "MelonLoader folder" : "",
+             exists(L"version.dll") ? (exists(L"MelonLoader") ? ", version.dll" : "version.dll") : "");
+    if (bepinex)
+        LOGF("boot: BepInEx present (%s%s%s); coexisting", exists(L"BepInEx") ? "BepInEx folder " : "",
+             exists(L"winhttp.dll") ? "winhttp.dll " : "", exists(L"doorstop_config.ini") ? "doorstop_config.ini" : "");
+    return melon || bepinex;
+}
+
 void boot_guarded(bool smoke)
 {
     game::Id id = game::detect();
@@ -98,6 +123,7 @@ void boot_guarded(bool smoke)
     LOGF("boot: game %s (%s)%s, pid %lu", game::label(), module ? module->name : "not supported",
          game::product_confirmed() ? ", product name confirmed" : "", GetCurrentProcessId());
     if (settings::imported()) LOGF("boot: settings imported from MelonPreferences");
+    const int runtime_wait = log_other_loaders() ? kRuntimeWaitWithLoaderMs : kRuntimeWaitMs;
 
     int waited = 0;
     while (!il2cpp::module_present() && waited < kMaxWaitMs) {
@@ -116,8 +142,8 @@ void boot_guarded(bool smoke)
         LOGF("boot: could not arm the runtime gate - going quiet");
         return;
     }
-    if (!gate::wait(kRuntimeWaitMs)) {
-        LOGF("boot: the game never called its own IL2CPP API within %d ms - going quiet", kRuntimeWaitMs);
+    if (!gate::wait(runtime_wait)) {
+        LOGF("boot: the game never called its own IL2CPP API within %d ms - going quiet", runtime_wait);
         return;
     }
     LOGF("boot: runtime live - the game called %s", gate::fired_by());

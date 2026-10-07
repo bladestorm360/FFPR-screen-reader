@@ -9,15 +9,28 @@ and attach `ffpr_screen_reader.log` from that game's folder if something is wron
 2. Move the old screen reader out of the game's `Mods` folder (for example to a `Mods-off`
    folder): `FFI_ScreenReader.dll` … `FFVI_ScreenReader.dll`. If you forget, the new mod says
    "Old screen reader still installed" at start.
-   **Remove MelonLoader too** (`version.dll` and the `MelonLoader` folder; keep `UserData`).
-   With MelonLoader installed, the game crashes at the first scene load: MelonLoader and the
-   mod both hook `SceneManager.Internal_SceneLoaded` (FF1 test, 2026-10-06; see
-   `..\OPEN_ISSUES.md`).
+   MelonLoader and BepInEx may stay (since 2026-10-07; see "With MelonLoader or BepInEx" below).
 3. From `ffpr-screen-reader`: `deploy.bat ff1` (or ff2 … ff6, or no argument for all six).
-   It copies `hid.dll`, `MinHook.x64.dll`, `Tolk.dll`, `nvdaControllerClient64.dll` and
-   `SDL3.dll` into the game folder.
+   It copies `hid.dll`, `Tolk.dll`, `nvdaControllerClient64.dll` and `SDL3.dll` into the game
+   folder (MinHook is built into `hid.dll`).
 4. To undo: `uninstall.bat` (keeps Tolk and SDL3, which the old mods also use), then move the
    old DLL back into `Mods`.
+
+## With MelonLoader or BepInEx (coexistence, 2026-10-07)
+
+FF1 crashed on 2026-10-06 with MelonLoader installed. The built-in MinHook now stacks with
+other loaders' hooks (`tools\coexist_check.cpp` passes offline; the stock MinHook reproduces
+the crash). To test, in one game first (FF1, where it crashed):
+
+1. Put MelonLoader back from `..\MelonLoader_backup\<game>`: `version.dll`, `MelonLoader`,
+   `Plugins`, `UserLibs` and an EMPTY `Mods` (no old screen reader DLL).
+2. Start the game: speech at the title; enter the field (a scene load: the 2026-10-06 crash
+   point); a battle; a menu; save and load.
+3. The log has "boot: MelonLoader present", and "hooks: coexistence: …". Any "already
+   starts with a … jump" lines name functions MelonLoader hooked before us.
+4. The first start with MelonLoader can be slow (it generates assemblies); the mod waits up to
+   20 minutes for the game to start running.
+5. BepInEx 6 (IL2CPP build): the same steps, with BepInEx in place of MelonLoader.
 
 ## First start, every game
 
@@ -64,7 +77,7 @@ Shift, LB/RB. 4. Name change. 5. Shift+T, then T. 6. After a battle: L, arrows, 
 
 ## FF6
 
-MelonLoader is already moved out of FF6. 1. Title, new game, naming. 2. Field keys, waypoints
+1. Title, new game, naming. 2. Field keys, waypoints
 (your old FF6 waypoints load). 3. Skills menu: Magic, Lore, Blitz (I reads the input sequence),
 Espers and esper details; Gogo's commands. 4. Status details: arrows, Shift, Ctrl, R. 5. Party
 setting and Row; Skills sort. 6. Battle: commands, Items, Edgar's Tools, Blitz/Lore/Rage/Dance

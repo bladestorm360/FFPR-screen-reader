@@ -79,7 +79,12 @@ typedef enum MH_STATUS
     MH_ERROR_MODULE_NOT_FOUND,
 
     // The specified function is not found.
-    MH_ERROR_FUNCTION_NOT_FOUND
+    MH_ERROR_FUNCTION_NOT_FOUND,
+
+    // [FFPR] Disabling was refused: another hooker (MelonLoader, BepInEx...) patched the
+    // target after this hook, so restoring our saved bytes would break its patch. The hook
+    // stays enabled; its detour must pass calls through when its feature is off.
+    MH_ERROR_PATCHED_OVER
 }
 MH_STATUS;
 
@@ -179,6 +184,24 @@ extern "C" {
 
     // Translates the MH_STATUS to its name as a string.
     const char * WINAPI MH_StatusToString(MH_STATUS status);
+
+    // [FFPR] Coexistence counters since MH_Initialize: hooks whose trampoline resumes at
+    // least MH_COEXIST_RESUME bytes into the target (safe when another hooker patches the
+    // target after us), hooks that had to fall back to MinHook's 5-byte minimum, and
+    // disables refused with MH_ERROR_PATCHED_OVER. Any pointer may be NULL.
+    VOID WINAPI MH_CoexistStats(UINT *pLongResume, UINT *pShortResume, UINT *pPatchedOver);
+
+    // [FFPR] Bytes into the target where the trampoline of pTarget's hook resumes the
+    // original code (0 if the copied code ends in a jump or return, so it never resumes).
+    // Returns MH_ERROR_NOT_CREATED when pTarget has no hook.
+    MH_STATUS WINAPI MH_GetResumeOffset(LPVOID pTarget, UINT *pOffset);
+
+// [FFPR] Minimum bytes copied into a trampoline before it jumps back into the target.
+// MinHook's own minimum is 5 (its E9 patch). Other hookers overwrite more of the prologue:
+// Dobby (MelonLoader 0.7, BepInEx 6) a 6-byte FF25 jump, MonoMod/funchook up to 14, and
+// a few 16. A trampoline that resumes inside that range jumps into the other hooker's
+// patch and crashes the game (FF1 with MelonLoader, 2026-10-06).
+#define MH_COEXIST_RESUME 16
 
 #ifdef __cplusplus
 }
