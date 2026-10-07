@@ -47,7 +47,7 @@ constexpr int kRuntimeWaitMs = 180000;
 /// hid.dll is loaded by anything in the game folder that wants HID, so the boot thread is
 /// gated: a Unity player exe (it has an "<exe>_Data" folder beside it) or the smoke host. The
 /// crash handler and other helpers get the proxy exports and nothing else. A Unity game that
-/// is not FF1-FF5 boots only far enough to say it is not supported.
+/// is not FF1-FF6 boots only far enough to say it is not supported.
 bool host_should_boot(bool& smoke)
 {
     wchar_t path[MAX_PATH];

@@ -104,7 +104,10 @@ Checked in this order:
 | F5 (no modifier) | in battle: cycles setting `EnemyHPDisplay` (Numbers, Percentage, Hidden), says "Enemy HP: {0}", runs `Settings.Changed.EnemyHPDisplay`; otherwise `ControllerRouter.SpeakModMenuUnavailable` | any |
 
 Game modules add their own keys with `input::add_binding(key, mod, context, "Action.Name", "description")`
-from their install (for example FF3–FF5's 9 for beacons, FF4/FF5's T / Shift+T).
+from their install (for example FF3–FF6's 9 for beacons, FF4–FF6's T / Shift+T). FF6 also
+binds H on the field (airship heading and altitude on the airship, else character status) and
+Up/Down in the Global context for its item detail screen (they do nothing elsewhere; a more
+specific context's Up/Down is tried first).
 
 ### I key cascade (`GlobalHotkeyHandler.HandleItemDetailsKey`)
 

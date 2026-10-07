@@ -137,7 +137,8 @@ void initialize()
     std::vector<Item>& v = st().items;
     v.clear();
 
-    const bool landing_pings = !game::is(game::Id::FF4);   // FF4 has no ship-type vehicle
+    // FF4 and FF6 have no ship-type vehicle (FF6's mod menu had no Landing Pings entry either)
+    const bool landing_pings = !game::is(game::Id::FF4) && !game::is(game::Id::FF6);
 
     // Audio Feedback section
     v.push_back(header(L"Audio Feedback"));

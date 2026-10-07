@@ -84,7 +84,7 @@ ref::Field fActAbilityList{kBattleActData, "abilityList"};
 ref::Field fActCommand{kBattleActData, "<Command>k__BackingField"};
 
 // MasterManager.GetList<Condition>() is generic; the same dictionary is reached through the
-// manager's own masterList (DataType.Condition = 20 in all five games) -> DataElement<T>.DataList.
+// manager's own masterList (DataType.Condition = 20 in all six games) -> DataElement<T>.DataList.
 ref::Class kMasterManager{"Last.Data.Master", "MasterManager"};
 ref::Field fMasterList{kMasterManager, "masterList"};
 constexpr int kDataTypeCondition = 20;

@@ -15,7 +15,8 @@
 //            "StatusNavigationReader.JumpToNextGroup", "StatusNavigationReader.JumpToPreviousGroup",
 //            "StatusNavigationReader.ReadCurrentStat", "StatusMenuState.ResetState"
 //
-// Games: the character-selection reader and the menu-transition clears run in all five games.
+// Games: the menu-transition clears run in every game; the character-selection reader in FF1-FF5
+// (FF6 has its own variant with the character's row, src/games/ff6/status_list.cpp).
 // The status details screen is FF1's (Serial.FF1 StatusDetailsController and FF1's stat list);
 // FF2-FF5 have their own controllers and stat sets (see status_navigation.cpp).
 // Main thread only.

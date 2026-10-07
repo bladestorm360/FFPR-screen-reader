@@ -169,7 +169,7 @@ StatusNavigationHandler, ConfigMenuPatches, ConfigMenuReader, BestiaryPatches, B
 BestiaryNavigationReader.
 - The status details screen is FF1 only (FF1's own controller and stat list). FF2–FF5 need
   their own controller hooks and stat lists: listed at the top of `status_navigation.cpp`.
-- Config library states: 19/20 in FF1, 18/19 in FF2, 17/18 in FF3–FF5
+- Config library states: 19/20 in FF1, 18/19 in FF2, 17/18 in FF3–FF6
   (`bestiary::config_handle_state_change(int)`).
 - `StatusDetailsController.ExitDisplay` shares its body with 10 methods in FF1: class-checked.
 - Language names ("English", "Japanese"…) stay English literals, as in FF1.
@@ -281,6 +281,50 @@ battle results (gil, weapon skills, spell level-ups, stat gains; no EXP), status
   FF5's "(N exits)" suffix is not added.
 - Mod menu: Landing Pings and Landing Ping Volume in every game except FF4; Enemy Letters in FF5
   (no effect until FF5's target reader is ported).
+
+## FF6 module (`src/games/ff6`) — FINISHED (first pass, 2026-10-07)
+
+FF6ScreenReader (ZKline, BlindGuyNW/FF6ScreenReader) ported with its author's permission.
+`game::kAll` now includes FF6, so every shared core feature runs in FF6; FF6-only screens are in
+`src/games/ff6`. Shared features keep the core's (FF1) behaviour; FF6-only screens follow FF1/FF4/
+FF5 conventions (AutoDetail, "(n of N)", I key, repeat checks reset on open), per the parity rule.
+Name check: 0 missing in all six games. Not tested in game.
+- Infrastructure: game detection, `kFF6`, CMake, data (FF6 mod_text merged: 102 new common keys,
+  23 FF6 game-term overrides; `translation.json`), settings import from `[FFVI_ScreenReader]`,
+  waypoints stay in `UserData\ffvi_waypoints.json`, deploy/uninstall. Landing Pings hidden (no
+  ship). Flags: has_mp, atb, timer_freeze, has_hidden_passages (map data not checked).
+- Core fixes for FF6 signatures: KeyInput `BattleCommandMessageController.SetMessage` and Touch
+  `SetSystemMessage` take `(string, bool)`; `FieldPlayer.GetOn` takes 3 args (as FF3/FF5);
+  library-return lambda `FieldMap.<InitMenu>b__99_0`. Every other core hook checked: same
+  signature as FF1. `StatusWindowController.SelectContent` and `battle_item.cpp` masked to FF1-FF5
+  (FF6 variants: row on the status list; Items and Tools share one controller).
+- FF6 screens: ability menus (magic, Lore, Blitz input sequence on I, Gogo's commands, espers and
+  esper details), battle items and Tools, battle abilities and "Summon, X", "All allies/enemies"
+  incl. side attacks, battle speaker, Magic AP and learned spells after a battle, status details
+  (18 stats, Commands, Magicite, At Level Up), status list with row, party setting, rows, Skills
+  sort, item detail navigator, U = which party members can equip, Coliseum, airship heading and
+  altitude (H on the airship; event hooks, not per-frame), timers (T, Shift+T), Opera
+  success/failure/out of time, chocobo on V.
+- Covered by the core, not ported: dialogue, popups (incl. the magicite popup), title, config,
+  bestiary, music, gallery, save slots, cursor routing, item/equip/shop menus, item targets,
+  damage/status/message box, field scanner, filters, waypoints, map names, footsteps.
+- Folded, class-checked: `StatusDetailsController.ExitDisplay` (9), `SetSpeaker` (KeyInput and
+  Touch share 0x493220), `AbilityUseContentListController.SelectContent`/`SetCursor`,
+  `BattleTargetSelectController.ShowWindow` (10).
+- For the user:
+  1. Bestiary steal items: FF2-FF6's old mods read them; the core (FF1) reads drops only.
+  2. Name entry: FF6's ". Press Enter for default name" after the game's popup is not ported.
+  3. Hit counts: FF6 has no "Multi-hit Damage" setting, so "N hits" is never spoken (the old mod
+     said it whenever the game made a hit count; whether FF6 ever does is unverified).
+  4. FF6 now says "X: Poison removed" (core behaviour; the old mod never did).
+  5. FF6's world-map entrance grouping (Phoenix Cave, Kefka's Tower: hard-coded boxes and English
+     names) is not ported; F1/F3/F5, 0 for "All", "Can not land", NPC movement words and vehicle
+     footsteps follow FF1.
+  6. Row on the status list is FF6 only; FF4's list still has none (FF4 gap above).
+  7. The core's battle item reader requires Item to be command 3 (FF1's gate): FF2-FF5 battle
+     item reads may be silent where Item is elsewhere (FF4). Not changed.
+  8. Mod text key "Low Flying Airship" has no translations (English everywhere).
+  9. HpAbs/MpAbs/Golem hit types are read as "N damage", as the old mod did.
 
 ## User rule: game text over mod text (2026-10-06)
 

@@ -7,13 +7,13 @@ and attach `ffpr_screen_reader.log` from that game's folder if something is wron
 
 1. Close the game.
 2. Move the old screen reader out of the game's `Mods` folder (for example to a `Mods-off`
-   folder): `FFI_ScreenReader.dll` … `FFV_ScreenReader.dll`. If you forget, the new mod says
+   folder): `FFI_ScreenReader.dll` … `FFVI_ScreenReader.dll`. If you forget, the new mod says
    "Old screen reader still installed" at start.
    **Remove MelonLoader too** (`version.dll` and the `MelonLoader` folder; keep `UserData`).
    With MelonLoader installed, the game crashes at the first scene load: MelonLoader and the
    mod both hook `SceneManager.Internal_SceneLoaded` (FF1 test, 2026-10-06; see
    `..\OPEN_ISSUES.md`).
-3. From `ffpr-screen-reader`: `deploy.bat ff1` (or ff2 … ff5, or no argument for all five).
+3. From `ffpr-screen-reader`: `deploy.bat ff1` (or ff2 … ff6, or no argument for all six).
    It copies `hid.dll`, `MinHook.x64.dll`, `Tolk.dll`, `nvdaControllerClient64.dll` and
    `SDL3.dll` into the game folder.
 4. To undo: `uninstall.bat` (keeps Tolk and SDL3, which the old mods also use), then move the
@@ -61,6 +61,15 @@ Ctrl, W/S, "Handed". 3. Party setting: switch a row; character lists say the row
 
 1. Jobs: level and ABP; I. 2. Abilities: spells with MP; equipped slots. 3. Status: arrows,
 Shift, LB/RB. 4. Name change. 5. Shift+T, then T. 6. After a battle: L, arrows, Escape.
+
+## FF6
+
+MelonLoader is already moved out of FF6. 1. Title, new game, naming. 2. Field keys, waypoints
+(your old FF6 waypoints load). 3. Skills menu: Magic, Lore, Blitz (I reads the input sequence),
+Espers and esper details; Gogo's commands. 4. Status details: arrows, Shift, Ctrl, R. 5. Party
+setting and Row; Skills sort. 6. Battle: commands, Items, Edgar's Tools, Blitz/Lore/Rage/Dance
+lists, I, summons, target all; after battle, Magic AP and learned spells. 7. Airship: H for
+heading and altitude. 8. A timer: T, Shift+T. 9. Coliseum: wager and challenger. 10. Opera.
 
 ## Known gaps (details in `PORT_STATUS.md`)
 

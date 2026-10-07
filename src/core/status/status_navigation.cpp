@@ -15,6 +15,9 @@
 //        Accuracy, Defense, Evasion, Magic Defense, Magic Evasion.
 //   FF5: Job, Character Level, Job Level, EXP, Next, ABP | HP, MP | Strength, Agility, Stamina,
 //        Magic | Attack, Defense, Evasion, Magic Defense.
+//   FF6: Name, Job, Level, Experience, Next Level | HP, MP | Strength, Agility, Stamina, Magic |
+//        Attack, Defense, Evasion, Magic Defense, Magic Evasion | Commands, Magicite, At Level Up
+//        (src/games/ff6/status_details.cpp).
 // Those games also need their own status details hooks (status_menu.cpp is FF1's controller).
 #include <vector>
 #include "status.h"

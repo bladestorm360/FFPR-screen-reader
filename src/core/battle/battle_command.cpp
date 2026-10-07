@@ -6,6 +6,11 @@
 // game (x10), so the detour class-checks self. Every other hooked RVA is unique.
 // SelectContent has two 2-argument overloads (IEnumerable<BattlePlayerData> / <BattleEnemyData>);
 // they are told apart by the first parameter's type name, as the C# code did.
+//
+// FF6: every hooked method has FF6's FF1-FF5 signature (dump.cs). FF6 also enters single-ally
+// targeting in side attacks through SideAttackPlayerInit / EnemySideAttackPlayerInit, which, like
+// PlayerInit, do not call SelectContent (GameAssembly.dll), so they get PlayerInit's initial read
+// (FF6-only refs, unique RVAs). Their enemy-side counterparts call SelectContent(enemy) themselves.
 #include <string>
 #include <vector>
 #include "battle_internal.h"
@@ -41,6 +46,9 @@ ref::Field fPlayerDataList{kTargetSelect, "playerDataList"};
 ref::Field fEnemyDataList{kTargetSelect, "enemyDataList"};
 ref::Field fTargetPlayerList{kTargetSelect, "<TargetPlayerList>k__BackingField"};
 ref::Field fTargetEnamyList{kTargetSelect, "<TargetEnamyList>k__BackingField"};
+ref::Class kTargetSelectFF6{"Last.UI.KeyInput", "BattleTargetSelectController", game::kFF6};
+ref::Method mSideAttackPlayerInit{kTargetSelectFF6, "SideAttackPlayerInit", 0};
+ref::Method mEnemySideAttackPlayerInit{kTargetSelectFF6, "EnemySideAttackPlayerInit", 0};
 
 ref::Class kTransform{"UnityEngine", "Transform"};
 
@@ -459,6 +467,23 @@ void d_PlayerInit(void* self, const void* mi)
     hooks::guarded("BattleTargetSelectController.PlayerInit", [&] { begin_initial_target_read(self, false); });
 }
 
+// FF6 side attacks: the same single-ally state entry as PlayerInit.
+Init_t o_SideAttackPlayerInit;
+Init_t o_EnemySideAttackPlayerInit;
+
+void d_SideAttackPlayerInit(void* self, const void* mi)
+{
+    o_SideAttackPlayerInit(self, mi);
+    hooks::guarded("BattleTargetSelectController.SideAttackPlayerInit", [&] { begin_initial_target_read(self, false); });
+}
+
+void d_EnemySideAttackPlayerInit(void* self, const void* mi)
+{
+    o_EnemySideAttackPlayerInit(self, mi);
+    hooks::guarded("BattleTargetSelectController.EnemySideAttackPlayerInit",
+                   [&] { begin_initial_target_read(self, false); });
+}
+
 int install()
 {
     actions::define("BattleCommandPatches.ClearCachedTargetController", [] { clear_cached_target_controller(); });
@@ -484,6 +509,9 @@ int install()
     n += hooks::attach(mShowWindow, &d_ShowWindow, &o_ShowWindow) ? 1 : 0;
     n += hooks::attach(mEnemysInit, &d_EnemysInit, &o_EnemysInit) ? 1 : 0;
     n += hooks::attach(mPlayerInit, &d_PlayerInit, &o_PlayerInit) ? 1 : 0;
+    // FF6 only (the class ref's mask; silent elsewhere).
+    n += hooks::attach(mSideAttackPlayerInit, &d_SideAttackPlayerInit, &o_SideAttackPlayerInit) ? 1 : 0;
+    n += hooks::attach(mEnemySideAttackPlayerInit, &d_EnemySideAttackPlayerInit, &o_EnemySideAttackPlayerInit) ? 1 : 0;
     return n;
 }
 core::Install s_install{"Battle.Command", &install, 110};

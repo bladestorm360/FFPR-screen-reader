@@ -20,21 +20,25 @@ ref::Method mGetCurrentState{kMainGame, "GetCurrentState", 0};
 
 // FieldMap.<InitMenu>b__N_0: the fade-in completion callback FieldMap.InitMenu builds only in its
 // library-return branch (FF1 found it by name pattern; the compiler's number differs per game).
+// FF6: b__99_0, the only InitMenu lambda in its dump.cs (RVA 0x3564F0, unshared); FF6's InitMenu
+// has FF1's call sequence (FadeManager.FadeIn, then the delegate built for its callback).
 ref::Class kFieldMap1{"", "FieldMap", game::kFF1};
 ref::Class kFieldMap23{"", "FieldMap", game::kFF2 | game::kFF3};
 ref::Class kFieldMap4{"", "FieldMap", game::kFF4};
 ref::Class kFieldMap5{"", "FieldMap", game::kFF5};
+ref::Class kFieldMap6{"", "FieldMap", game::kFF6};
 ref::Method mLibraryReturn1{kFieldMap1, "<InitMenu>b__92_0", 0};
 ref::Method mLibraryReturn23{kFieldMap23, "<InitMenu>b__90_0", 0};
 ref::Method mLibraryReturn4{kFieldMap4, "<InitMenu>b__88_0", 0};
 ref::Method mLibraryReturn5{kFieldMap5, "<InitMenu>b__89_0", 0};
+ref::Method mLibraryReturn6{kFieldMap6, "<InitMenu>b__99_0", 0};
 
-// SubSceneManagerMainGame.State: the field states are the same in all five games.
+// SubSceneManagerMainGame.State: the field states are the same in all six games.
 constexpr int kStateChangeMap = 1;
 constexpr int kStateFieldReady = 2;
 constexpr int kStatePlayer = 3;
 
-// MenuLibraryUi (list) / MenuLibraryInfo (detail): FF1 19/20, FF2 18/19, FF3-FF5 17/18.
+// MenuLibraryUi (list) / MenuLibraryInfo (detail): FF1 19/20, FF2 18/19, FF3-FF6 17/18.
 int state_library_ui()
 {
     switch (game::current()) {
@@ -109,6 +113,7 @@ ref::Method& library_return_method()
     case game::Id::FF1: return mLibraryReturn1;
     case game::Id::FF4: return mLibraryReturn4;
     case game::Id::FF5: return mLibraryReturn5;
+    case game::Id::FF6: return mLibraryReturn6;
     default: return mLibraryReturn23;
     }
 }

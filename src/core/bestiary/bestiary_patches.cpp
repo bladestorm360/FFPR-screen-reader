@@ -1,7 +1,9 @@
 // Ports FF1 Patches/BestiaryPatches.cs: BestiaryNavigationTracker, BestiaryStateTracker,
 // BestiaryManualPatches (state changes, list, detail, formation, minimap, full map) and
-// BestiaryManualPatches.ConfigBestiaryStateHandler. All five games; no hooked body is folded
-// (each RVA appears once in every dump.cs). LibraryMenuController.ChangeState is inlined in FF1,
+// BestiaryManualPatches.ConfigBestiaryStateHandler. All six games; no hooked body is folded
+// (each RVA appears once in every dump.cs). Page turns need no hook in any game: FF6's
+// ExtraLibraryInfo.OnNextPageButton -> LibraryInfoManager.NextPage -> ShowData calls
+// LibraryInfoController.SetData (KeyInput, hooked below), as in FF1 and FF5. LibraryMenuController.ChangeState is inlined in FF1,
 // so the minimap open/close is read one frame after SetupKeyHelp / SetupEnlargedMapKeyHelp.
 //
 // Not ported: GameObjectCache.Register(LibraryInfoController) (nothing reads that cache entry;
@@ -643,7 +645,7 @@ void config_handle_library_state(bool list)
 void config_handle_state_change(int main_game_state)
 {
     // SubSceneManagerMainGame.State MenuLibraryUi / MenuLibraryInfo, from each game's dump.cs.
-    int library_ui = 17, library_info = 18;   // FF3, FF4, FF5
+    int library_ui = 17, library_info = 18;   // FF3, FF4, FF5, FF6
     if (game::is(game::Id::FF1)) { library_ui = 19; library_info = 20; }
     else if (game::is(game::Id::FF2)) { library_ui = 18; library_info = 19; }
 

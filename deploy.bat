@@ -1,6 +1,6 @@
 @echo off
-REM Install the native screen reader into every installed FF1-FF5 Pixel Remaster folder,
-REM or into one game: deploy.bat ff1   (ff1..ff5).
+REM Install the native screen reader into every installed FF1-FF6 Pixel Remaster folder,
+REM or into one game: deploy.bat ff1   (ff1..ff6).
 REM A SEPARATE step from build.bat. Run smoketest.bat first. Never launches a game.
 REM MelonLoader and its files are not touched. The old FFn_ScreenReader.dll in Mods is NOT
 REM removed by this script; the mod speaks a warning at startup while it is still there.
@@ -16,6 +16,7 @@ call :one ff2 "FINAL FANTASY II PR" "FINAL FANTASY II.exe"
 call :one ff3 "FINAL FANTASY III PR" "FINAL FANTASY III.exe"
 call :one ff4 "FINAL FANTASY IV PR" "FINAL FANTASY IV.exe"
 call :one ff5 "FINAL FANTASY V PR" "FINAL FANTASY V.exe"
+call :one ff6 "FINAL FANTASY VI PR" "FINAL FANTASY VI.exe"
 if not "%FAILED%"=="0" ( echo Some copies FAILED. & exit /b 1 )
 echo.
 echo Installed hid.dll, MinHook.x64.dll, Tolk.dll, nvdaControllerClient64.dll and SDL3.dll.

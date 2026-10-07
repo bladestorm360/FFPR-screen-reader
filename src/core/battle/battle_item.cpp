@@ -3,6 +3,11 @@
 //
 // Last.UI.KeyInput.BattleItemInfomationController.SelectContent(Cursor, WithinRangeType) exists in
 // all five games, unique RVA in each; displayDataList / dataList by name (offsets differ in FF5).
+//
+// Not FF6: the same controller also shows FF6's Tools list (isMachineState), where this reader
+// would speak the item list, and its "Items is command index 2" gate drops every read in FF6.
+// FF6's own reader (src/games/ff6/battle_items.cpp) keeps this one's behaviour for items.
+#include <cstdint>
 #include <string>
 #include "battle_internal.h"
 #include "battle_util.h"
@@ -17,6 +22,8 @@
 
 namespace ffpr::battle {
 namespace {
+
+constexpr uint8_t kFF12345 = game::kFF1 | game::kFF2 | game::kFF3 | game::kFF4 | game::kFF5;
 
 ref::Class kItemCtl{"Last.UI.KeyInput", "BattleItemInfomationController"};
 ref::Method mSelectContent{kItemCtl, "SelectContent", 2};
@@ -143,7 +150,7 @@ int install()
     actions::define("BattleItemPatches.AnnounceCurrentDescription", [] { announce_current_description(); });
     return hooks::attach(mSelectContent, &d_SelectContent, &o_SelectContent) ? 1 : 0;
 }
-core::Install s_install{"Battle.Item", &install, 110};
+core::Install s_install{"Battle.Item", &install, 110, kFF12345};
 
 } // namespace
 } // namespace ffpr::battle

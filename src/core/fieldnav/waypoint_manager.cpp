@@ -1,7 +1,7 @@
 // Ports FF1 Core/WaypointManager.cs (WaypointData, WaypointFileData, WaypointManager) and
 // Field/WaypointEntity.cs (categories, FormatDescription).
 //
-// File: <game folder>\UserData\waypoints.json, the C# location (AppDomain.BaseDirectory is the
+// File: <game folder>\UserData\waypoints.json (FF6: ffvi_waypoints.json), the C# location (AppDomain.BaseDirectory is the
 // game folder under MelonLoader) and the C# format byte for byte: two-space indents, CRLF
 // lines, UTF-8 without BOM, invariant floats, ISO-8601 "o" timestamps, lowercase GUID ids.
 // Saved after every change, as in C#.
@@ -477,7 +477,8 @@ void ensure_path()
     std::wstring dir = std::wstring(game::dir()) + L"UserData";
     if (GetFileAttributesW(dir.c_str()) == INVALID_FILE_ATTRIBUTES)
         CreateDirectoryW(dir.c_str(), nullptr);
-    g_path = dir + L"\\waypoints.json";
+    // FF6's C# mod named its file ffvi_waypoints.json; keep it so saved waypoints carry over.
+    g_path = dir + (game::is(game::Id::FF6) ? L"\\ffvi_waypoints.json" : L"\\waypoints.json");
 }
 
 } // namespace

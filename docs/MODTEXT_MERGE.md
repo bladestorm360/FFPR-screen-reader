@@ -198,12 +198,12 @@ Written by `tools/merge_modtext.py`. Do not edit by hand.
 
 ### Counts
 
-- Source keys: FF1 513, FF2 391, FF3 400, FF4 338, FF5 410.
-- Keys in the common file: 852.
-- Common entries taken from: FF1 513, FF3 86, FF2 48, FF4 92, FF5 111.
-- Overrides from the merge: FF1 0, FF2 49, FF3 42, FF4 26, FF5 39.
+- Source keys: FF1 513, FF2 391, FF3 400, FF4 338, FF5 410, FF6 300.
+- Keys in the common file: 954.
+- Common entries taken from: FF1 513, FF3 86, FF2 48, FF4 92, FF5 111, FF6 102.
+- Overrides from the merge: FF1 0, FF2 49, FF3 42, FF4 26, FF5 39, FF6 23.
 - Official-text fixes: 653 rows, 4 new keys.
-- Overrides after the fixes: FF1 2, FF2 53, FF3 53, FF4 56, FF5 55.
+- Overrides after the fixes: FF1 2, FF2 53, FF3 53, FF4 56, FF5 55, FF6 23.
 - Languages filled from another mod: 0.
 - Missing-language gaps after the merge: 0.
 - Placeholder mismatches (reported, not fixed): 0.
@@ -383,6 +383,32 @@ None.
 - `Front Row`: battle row label; differs in it, pt.
 - `Back Row`: battle row label; differs in it, pt.
 - `{0}: {1} MP damage`: HP/MP abbreviation: it MP vs PM, es MP vs PM, pt MP vs PM.
+
+#### FF6: 23
+
+- `Enemy HP Display`: HP/MP abbreviation: de KP vs LP, es PV vs VIT, ru HP vs ОЗ.
+- `Airship Landing`: vehicle name; differs in ja, fr, it, es, ko, ru, th, pt.
+- `Airship Landings`: vehicle name; differs in ja, fr, it, es, ko, ru, th, pt.
+- `Enemy HP: {0}`: HP/MP abbreviation: de KP vs LP, es PV vs VIT, ru HP vs ОЗ.
+- `HP: {0} / {1}`: HP/MP abbreviation: de KP vs LP, es PV vs VIT, ru HP vs ОЗ.
+- `Next Level: {0}`: character stat label; differs in ja, fr, it, de, ko, zht, zhc, ru, th.
+- `HP`: HP/MP abbreviation: de KP vs LP, es PV vs VIT, ru HP vs ОЗ.
+- `Strength`: character stat label; differs in th.
+- `Agility`: character stat label; differs in de, ko, th.
+- `Stamina`: character stat label; differs in fr, de, es, zht, zhc, th.
+- `Magic`: menu command in FF1/FF2, magic stat in FF4/FF5; differs in ja, ko, zht, zhc.
+- `Attack`: character stat label; differs in ja, de, ko, zht, zhc, th.
+- `Defense`: character stat label; differs in ja, de, ko, zht, zhc, th.
+- `Evasion`: character stat label; differs in ja, it, ko, zht, zhc, th.
+- `Magic Defense`: character stat label; differs in de.
+- `Magic Evasion`: character stat label; differs in it, de, zht, zhc.
+- `Strength: {0}`: character stat label; differs in th.
+- `Agility: {0}`: character stat label; differs in de, ko, th.
+- `Stamina: {0}`: character stat label; differs in fr, de, es, zht, zhc, th.
+- `Defense: {0}`: character stat label; differs in ja, de, ko, zht, zhc, th.
+- `Poison`: status ailment name; differs in zht, zhc.
+- `Front Row`: battle row label; differs in fr, it, de, es, pt.
+- `Back Row`: battle row label; differs in fr, it, de, es.
 
 ### Official-text fixes
 
@@ -696,7 +722,7 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `Unable to detect vehicle state` (also in FF4)
 - `Vitality` (also in FF2)
 - `Evade` (also in FF4)
-- `No character data available` (also in FF2, FF4)
+- `No character data available` (also in FF2, FF4, FF6)
 - `{0} leveled up to level {1}` (also in FF4)
 - `Vitality +{0}`
 - `Intelligence +{0}`
@@ -706,8 +732,8 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `{0} job level up`
 - `Failed to dump entity names` (also in FF2)
 - `Accuracy {0}`
-- `Airship Landing` (also in FF2, FF4, FF5)
-- `Airship Landings` (also in FF2, FF4, FF5)
+- `Airship Landing` (also in FF2, FF4, FF5, FF6)
+- `Airship Landings` (also in FF2, FF4, FF5, FF6)
 - `Attack {0}`
 - `Attack: {0} x {1}`
 - `Can equip: {0}` (also in FF4, FF5)
@@ -721,12 +747,12 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `MP LV{0}: {1}`
 - `Magic +{0}`
 - `Magic Defense {0}`
-- `Magic Defense: {0}`
+- `Magic Defense: {0}` (also in FF6)
 - `Magic Evade: {0}`
 - `Magic Evasion {0}`
 - `Magic Evasion: {0}%`
-- `Magic: {0}`
-- `Miscellaneous` (also in FF2, FF4, FF5)
+- `Magic: {0}` (also in FF6)
+- `Miscellaneous` (also in FF2, FF4, FF5, FF6)
 - `No item details available` (also in FF2)
 - `Off. Every entity is listed, including unreachable ones.`
 - `Off. Every map exit is listed.` (also in FF4)
@@ -787,8 +813,8 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `No details`
 - `Not available here`
 - `{0} (true)`
-- `{0}. Details`
-- `{0}. Page changed`
+- `{0}. Details` (also in FF6)
+- `{0}. Page changed` (also in FF6)
 - `Any character can equip this`
 - `Ask`
 - `Axe` (also in FF5)
@@ -801,9 +827,9 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `Formation {0}`
 - `Intelligence`
 - `Knife` (also in FF5)
-- `Magic Defense` (also in FF4, FF5)
+- `Magic Defense` (also in FF4, FF5, FF6)
 - `Magic Defense Count`
-- `Magic Evasion` (also in FF4)
+- `Magic Evasion` (also in FF4, FF6)
 - `Magic Interference`
 - `On chocobo`
 - `Opened`
@@ -827,32 +853,32 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 #### From FF4: 92
 
 - `{1} {2}` (also in FF5)
-- `Chests` (also in FF5)
+- `Chests` (also in FF5, FF6)
 - `All allies` (also in FF5)
 - `All enemies` (also in FF5)
-- `Unknown Row Type {0}`
-- `{0} gil` (also in FF5)
-- `User data not available`
+- `Unknown Row Type {0}` (also in FF6)
+- `{0} gil` (also in FF5, FF6)
+- `User data not available` (also in FF6)
 - `Rename {0}`
 - `Waypoint created: {0}`
-- `Renamed to {0}` (also in FF5)
-- `Delete {0}?` (also in FF5)
+- `Renamed to {0}` (also in FF5, FF6)
+- `Delete {0}?` (also in FF5, FF6)
 - `Deleted {0}`
 - `Canceled`
-- `No waypoints to clear` (also in FF5)
+- `No waypoints to clear` (also in FF5, FF6)
 - `Clear all {0} waypoints on this map?`
 - `Are you sure? This cannot be undone.`
 - `less than`
 - `greater than`
 - `Status Details`
 - `Handed`
-- `Timers frozen` (also in FF5)
-- `Timers resumed` (also in FF5)
-- `Error toggling timer freeze` (also in FF5)
-- `No active timers` (also in FF5)
-- `Error reading timers` (also in FF5)
+- `Timers frozen` (also in FF5, FF6)
+- `Timers resumed` (also in FF5, FF6)
+- `Error toggling timer freeze` (also in FF5, FF6)
+- `No active timers` (also in FF5, FF6)
+- `Error reading timers` (also in FF5, FF6)
 - `Keyboard input active.`
-- `Cleared {0} waypoints` (also in FF5)
+- `Cleared {0} waypoints` (also in FF5, FF6)
 - `{0}: {1}`
 - `{0}: {1} / {2}`
 - `{0}: {1}x {2}`
@@ -869,7 +895,7 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `Magic Evade`
 - `Hovercraft`
 - `{0} +{1}`
-- `{0} learned {1}` (also in FF5)
+- `{0} learned {1}` (also in FF5, FF6)
 - `{0} flees`
 - `{0} attacks` (also in FF5)
 - `{0} uses {1}`
@@ -925,7 +951,7 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `Auto Detail on`
 - `Auto Detail off`
 - `Landing Ping Volume`
-- `Not in field`
+- `Not in field` (also in FF6)
 - `and {0} more`
 - `target {0} {1}`
 - `landing spot`
@@ -935,8 +961,8 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `Unavailable during dialogue`
 - `: HP: {0}/{1}`
 - `Unavailable outside of battle`
-- `{0}, status information not available`
-- `EXP counter {0}`
+- `{0}, status information not available` (also in FF6)
+- `EXP counter {0}` (also in FF6)
 - `Running`
 - `wind drake`
 - `black chocobo`
@@ -971,14 +997,14 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `of`
 - `Stick Click Normalization on`
 - `Stick Click Normalization off`
-- `Are you absolutely sure?`
-- `Rename waypoint`
-- `Rename failed`
-- `Rename cancelled`
-- `Added {0} as {1}`
-- `Removed {0}`
-- `Waypoint creation cancelled`
-- `Delete all {0} waypoints?`
+- `Are you absolutely sure?` (also in FF6)
+- `Rename waypoint` (also in FF6)
+- `Rename failed` (also in FF6)
+- `Rename cancelled` (also in FF6)
+- `Added {0} as {1}` (also in FF6)
+- `Removed {0}` (also in FF6)
+- `Waypoint creation cancelled` (also in FF6)
+- `Delete all {0} waypoints?` (also in FF6)
 - `{0} for battle results. {1} to cancel.`
 - `Knight Sword`
 - `Katana`
@@ -1004,12 +1030,12 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `ABP`
 - `Abilities`
 - `Jobs`
-- `Character Info`
-- `Vitals`
-- `Attributes`
-- `Combat Stats`
-- `Progression`
-- `Commands`
+- `Character Info` (also in FF6)
+- `Vitals` (also in FF6)
+- `Attributes` (also in FF6)
+- `Combat Stats` (also in FF6)
+- `Progression` (also in FF6)
+- `Commands` (also in FF6)
 - `Time {0}`
 - `Gil`
 - `Plays a tone toward any wall right next to you, so you can feel out corridors and doorways.`
@@ -1032,5 +1058,110 @@ The common entry for these came from the game named. Order tried: FF3, FF2, FF4,
 - `Volume of the experience counter ticking.`
 - `How enemy HP is read when you target an enemy: as numbers, as a percentage, or not at all.`
 - `Adds a letter such as A or B to enemies that share a name, so you can tell them apart.`
+
+#### From FF6: 102
+
+- `Wall Bumps`
+- `Category: {0}, {1} {2}`
+- `, {0} of {1}`
+- `, no path`
+- `Ground level`
+- `Low altitude`
+- `Cruising altitude`
+- `High altitude`
+- `Maximum altitude`
+- `HP {0} of {1}`
+- `MP {0} of {1}`
+- `Status: {0}`
+- `Airship status not available`
+- `Not on airship`
+- `Heading {0} degrees`
+- `Error reading airship status`
+- `Facing {0}`
+- `Rising. `
+- `Descending. `
+- `Path to {0}: {1}`
+- `No path to {0}. {1}`
+- `Please select a category.`
+- `MP: {0} / {1}`
+- `Commands: {0}`
+- `Magicite: {0}`
+- `Bonus: {0}`
+- `Details`
+- `Name and Class`
+- `At Level Up`
+- `Next Level in: {0}`
+- `Evasion: {0}`
+- `Magic Evasion: {0}`
+- `Commands: none`
+- `Magicite: none`
+- `Magicite: N/A`
+- `At Level Up: none`
+- `At Level Up: {0}`
+- `At Level Up: N/A`
+- `, Level `
+- `, Front Row`
+- `, Back Row`
+- `, HP {0}/{1}`
+- `, HP {0}`
+- `, MP {0}/{1}`
+- `, MP {0}`
+- `Bottom`
+- `Top`
+- `Properties: `
+- `Magic: `
+- `none`
+- `Element {0}`
+- `Fire`
+- `Ice`
+- `Lightning`
+- `Wind`
+- `Holy`
+- `Earth`
+- `Water`
+- `No characters can equip`
+- `, learning, {0} percent`
+- `, equipped`
+- `Slot {0}: Empty`
+- `, fixed`
+- ` - NOT OBTAINED`
+- ` - EQUIPPED`
+- `, MP Cost {0}`
+- `Not equipped`
+- `EQUIPPED to {0}`
+- `Equipped to {0}`
+- `Teaches {0} abilities: `
+- `Mastered`
+- `Level up bonus: {0}`
+- `, HP {0}/{1}, MP {2}/{3}`
+- ` ({0} of {1})`
+- `Success`
+- `Failed`
+- `Out of time`
+- `{0} minute`
+- `{0} minutes`
+- `{0} second`
+- `{0} seconds`
+- `Timer: `
+- `Wager {0}`
+- `, Win {0}`
+- `, Fight {0}`
+- `. Yes or No`
+- `{0} Magic AP`
+- ` and leveled up to level {0}`
+- `Summon, {0}`
+- `Left`
+- `Right`
+- `Up`
+- `Down`
+- `Down-Left`
+- `Down-Right`
+- `Up-Left`
+- `Up-Right`
+- `L2`
+- `R2`
+- `then Confirm`
+- `Blitz input: {0}`
+- `Press Enter for default name`
 
 <!-- END GENERATED -->

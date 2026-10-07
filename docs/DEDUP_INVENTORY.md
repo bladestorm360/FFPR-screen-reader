@@ -680,3 +680,16 @@ Excluded (speech-adjacent, not last-value guards):
 Notes:
 - No AnnouncementDeduplicator class exists in FF5, and the speech output path (`FFV_ScreenReaderMod.SpeakText` -> `TolkWrapper`) has no dedup.
 - One row per variable; paired guards (index+frame, mode+index, pointer+value) get one row each.
+
+### FF6 (ported 2026-10-07, FF6-only screens; each moved as the C# had it)
+
+- Text checks (FF6 C# `lastAnnouncement` per screen): `FF6.AbilityCommandController.SelectContent`,
+  `FF6.AbilityContentListController.SelectContent`, `FF6.SpecialAbilityContentListController.SelectContent`,
+  `FF6.AbilityChangeController.SelectContent`/`.SelectCommand`, `FF6.AbilityUseContentListController.SelectContent`,
+  `FF6.MagicStoneListController.SelectContent`, `FF6.MagicStoneDetailsController.Show` (Menu scope; reset when
+  the window opens or a list is entered, as FF4/FF5).
+- Battle: `BattleMagic`-style ability text check (Battle scope; reset at ShowUseSelect), `Battle.Speaker`
+  (Session; the C#'s lastSpeaker), `Battle.SetCommandMessage` (same text within 2.5 s through
+  BattleMenuController.SetCommadnMessage; an empty message resets it).
+- `FF6.Coliseum.Item` (index + text, Session; reset at SelectItemInit), `FF6.Coliseum.Challenger` (index).
+- `PartySetting.Select` (as FF4), `Orderly.Select` (Menu), `Status.Character` (FF1's check).

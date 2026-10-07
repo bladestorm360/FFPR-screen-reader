@@ -10,10 +10,11 @@ Plan: `D:\Games\Dev\Unity\FFPR\UNIFIED_MOD_PLAN.md`. Open issues: `..\OPEN_ISSUE
 2. **Never edit a file you do not own.** Your brief lists your files. The core files in
    `src/core/*.cpp|h` (top level) belong to the lead. Need a core change? Put a small helper in
    your own area and say so in your report.
-3. **Never edit the old mods** (`ff1\ff1-screen-reader` … `FF5\ff5-screen-reader`). Read only.
-   Never read FF6 (`ff6\`).
+3. **Never edit the old mods** (`ff1\ff1-screen-reader` … `FF5\ff5-screen-reader`,
+   `ff6\FF6ScreenReader`). Read only. FF6 (ZKline's FF6ScreenReader) may be read and ported:
+   its author gave permission (user, 2026-10-07).
 4. **Never read a `dump.cs` whole** (15+ MB). Grep it. Paths: `FFPR\ff1\dump.cs`, `ff2\`, `ff3\`,
-   `FF4\dump.cs`, `FF5\dump.cs`.
+   `FF4\dump.cs`, `FF5\dump.cs`, `ff6\dump.cs`.
 5. **No polling, no timers** except the allowed core: input, the controller router, audio loops
    (wall tones, footsteps, beacons, EXP tick), map-transition detection, and bounded 1–30-frame
    reads that start from an event. Keep the C# mod's event hooks; keep its documented one-frame

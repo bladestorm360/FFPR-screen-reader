@@ -6,7 +6,7 @@ mods. The old mods' game terms were not always the games' own words, so this mod
 holds the corrections and new keys that must survive a re-merge:
 
   FIXES      (file, key, lang, old, new, source)
-             file is "common" or "ff1".."ff5". A fix to an override the merged
+             file is "common" or "ff1".."ff6". A fix to an override the merged
              file does not have yet starts that override as a copy of the
              merged common entry. lang "-" removes the override instead (after
              the fixes it equals the common entry).

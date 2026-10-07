@@ -28,8 +28,9 @@ DUMPS = {
     "ff3": os.path.join(FFPR, "ff3", "dump.cs"),
     "ff4": os.path.join(FFPR, "FF4", "dump.cs"),
     "ff5": os.path.join(FFPR, "FF5", "dump.cs"),
+    "ff6": os.path.join(FFPR, "ff6", "dump.cs"),
 }
-GAME_BITS = {"kFF1": "ff1", "kFF2": "ff2", "kFF3": "ff3", "kFF4": "ff4", "kFF5": "ff5"}
+GAME_BITS = {"kFF1": "ff1", "kFF2": "ff2", "kFF3": "ff3", "kFF4": "ff4", "kFF5": "ff5", "kFF6": "ff6"}
 
 CLASS_RE = re.compile(r'^(?:\[.*?\]\s*)?(?:(?:public|private|protected|internal|static|sealed|abstract|readonly|ref|unsafe|partial)\s+)*'
                       r'(class|struct|interface|enum)\s+([^\s:]+)(?:\s*:\s*([^/{]+?))?\s*(?://.*)?$')
@@ -149,7 +150,7 @@ def mask_games(expr):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--games", default="ff1,ff2,ff3,ff4,ff5")
+    ap.add_argument("--games", default="ff1,ff2,ff3,ff4,ff5,ff6")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
     wanted = args.games.split(",")

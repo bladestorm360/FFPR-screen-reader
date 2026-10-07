@@ -1,6 +1,6 @@
 // Ports FF1 Menus/BestiaryReader.cs: bestiary (Picture Book) data formatted for speech. Only
 // what the game visibly shows - never raw master data, except the dropped items, which the UI
-// shows as icons without text. All five games.
+// shows as icons without text. All six games.
 #include "bestiary.h"
 #include "../log.h"
 #include "../modtext.h"

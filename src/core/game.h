@@ -8,12 +8,13 @@
 // spoken line and the mod stays passive.
 namespace game {
 
-enum class Id : uint8_t { Unknown = 0, FF1 = 1, FF2 = 2, FF3 = 3, FF4 = 4, FF5 = 5 };
+enum class Id : uint8_t { Unknown = 0, FF1 = 1, FF2 = 2, FF3 = 3, FF4 = 4, FF5 = 5, FF6 = 6 };
 
 /// Bit for one game in a game mask (ref::Class::games, hooks, feature tables).
 constexpr uint8_t bit(Id g) { return static_cast<uint8_t>(1u << static_cast<uint8_t>(g)); }
-constexpr uint8_t kFF1 = 1u << 1, kFF2 = 1u << 2, kFF3 = 1u << 3, kFF4 = 1u << 4, kFF5 = 1u << 5;
-constexpr uint8_t kAll = kFF1 | kFF2 | kFF3 | kFF4 | kFF5;
+constexpr uint8_t kFF1 = 1u << 1, kFF2 = 1u << 2, kFF3 = 1u << 3, kFF4 = 1u << 4, kFF5 = 1u << 5,
+                  kFF6 = 1u << 6;
+constexpr uint8_t kAll = kFF1 | kFF2 | kFF3 | kFF4 | kFF5 | kFF6;
 
 /// Run once on the boot thread, before anything else asks. Reads the exe name only.
 Id detect();
@@ -21,10 +22,10 @@ Id current();
 inline bool is(Id g) { return current() == g; }
 inline bool in(uint8_t mask) { return (mask & bit(current())) != 0; }
 
-/// "ff1".."ff5" (data and resource names), "FF1".."FF5" (log), or "unknown".
+/// "ff1".."ff6" (data and resource names), "FF1".."FF6" (log), or "unknown".
 const char* key();
 const char* label();
-/// 1..5, or 0 when unknown.
+/// 1..6, or 0 when unknown.
 int number();
 
 /// The game folder with a trailing backslash ("D:\...\FINAL FANTASY PR\").

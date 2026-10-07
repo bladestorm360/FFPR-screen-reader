@@ -6,8 +6,11 @@
 // (sound::play_landing_ping is FF5's later addition and is not called here).
 //
 // FieldPlayer.GetOn differs per game: GetOn(int typeId, bool isBackground) in FF1, FF2, FF4;
-// GetOn(int typeId, float uniqueSpeedScale, bool isBackground) in FF3, FF5. Both detours only
-// read typeId. No hook here is folded (one RVA hit each in every dump.cs).
+// GetOn(int typeId, float uniqueSpeedScale, bool isBackground) in FF3, FF5, FF6. Both detours
+// only read typeId. No hook here is folded (one RVA hit each in every dump.cs).
+//
+// FF6 (no landing or boarding speech in its own mod) gets FF1's: its TransportationType 5 is an
+// internal marker there (Content, skipped by FF6's vehicle list), not a canoe, so it has no name.
 #include <cstdint>
 #include <string>
 #include "move_state.h"
@@ -62,7 +65,7 @@ constexpr int kTransportYellowChocobo = 9;
 constexpr int kTransportBlackChocobo = 10;
 
 ref::Class  kFieldPlayer2{"Last.Entity.Field", "FieldPlayer", game::kFF1 | game::kFF2 | game::kFF4};
-ref::Class  kFieldPlayer3{"Last.Entity.Field", "FieldPlayer", game::kFF3 | game::kFF5};
+ref::Class  kFieldPlayer3{"Last.Entity.Field", "FieldPlayer", game::kFF3 | game::kFF5 | game::kFF6};
 ref::Class  kFieldPlayer{"Last.Entity.Field", "FieldPlayer"};
 ref::Method mGetOn2{kFieldPlayer2, "GetOn", 2};     // (int typeId, bool isBackground)
 ref::Method mGetOn3{kFieldPlayer3, "GetOn", 3};     // (int typeId, float uniqueSpeedScale, bool isBackground)
@@ -74,7 +77,8 @@ std::wstring transportation_name(int type_id)
     switch (type_id) {
     case kTransportShip: return T(L"ship");
     case kTransportPlane: return T(L"airship");
-    case kTransportContent: return T(L"canoe");          // FF1: canoe uses the Content slot
+    case kTransportContent:                              // FF1: canoe uses the Content slot
+        return game::is(game::Id::FF6) ? std::wstring() : T(L"canoe");
     case kTransportSubmarine: return T(L"submarine");
     case kTransportLowFlying: return T(L"airship");      // low-flying mode of the airship
     case kTransportSpecialPlane: return T(L"airship");

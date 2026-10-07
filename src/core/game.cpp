@@ -20,6 +20,7 @@ const Known kKnown[] = {
     { L"FINAL FANTASY III.exe", "FINAL FANTASY III", Id::FF3 },
     { L"FINAL FANTASY IV.exe",  "FINAL FANTASY IV",  Id::FF4 },
     { L"FINAL FANTASY V.exe",   "FINAL FANTASY V",   Id::FF5 },
+    { L"FINAL FANTASY VI.exe",  "FINAL FANTASY VI",  Id::FF6 },
 };
 
 /// <exe>_Data\app.info is two lines: company, then product. Read with Win32 only (no CRT stdio).
@@ -79,12 +80,12 @@ const wchar_t* dir() { return g_dir; }
 
 const char* key()
 {
-    static const char* k[] = { "unknown", "ff1", "ff2", "ff3", "ff4", "ff5" };
+    static const char* k[] = { "unknown", "ff1", "ff2", "ff3", "ff4", "ff5", "ff6" };
     return k[static_cast<int>(g_id)];
 }
 const char* label()
 {
-    static const char* k[] = { "unknown", "FF1", "FF2", "FF3", "FF4", "FF5" };
+    static const char* k[] = { "unknown", "FF1", "FF2", "FF3", "FF4", "FF5", "FF6" };
     return k[static_cast<int>(g_id)];
 }
 int number() { return static_cast<int>(g_id); }

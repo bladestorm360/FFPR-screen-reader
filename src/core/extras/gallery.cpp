@@ -3,7 +3,7 @@
 //
 // The Extra Gallery: entry ("Gallery" then the focused picture), list navigation, and opening a
 // picture. SubSceneManagerExtraGallery (Last.Management) and the KeyInput
-// GalleryTopListController are identical in all five games; neither hooked body is folded.
+// GalleryTopListController are identical in all six games; neither hooked body is folded.
 #include "extras.h"
 #include <cstdlib>
 #include "../core.h"

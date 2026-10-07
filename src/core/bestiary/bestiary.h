@@ -1,9 +1,9 @@
 #pragma once
 // The bestiary (Extra Library), from the title Extras and from the in-game config menu.
 // Ports FF1 Patches/BestiaryPatches.cs, Menus/BestiaryReader.cs and
-// Menus/BestiaryNavigationReader.cs. All five games: every class, field and method used is in
-// all five dump.cs, and SubSceneManagerExtraLibrary.State / LibraryMenuController.State have the
-// same values in all five. Only the main-game library states differ (handled below).
+// Menus/BestiaryNavigationReader.cs. All six games: every class, field and method used is in
+// all six dump.cs, and SubSceneManagerExtraLibrary.State / LibraryMenuController.State have the
+// same values in all six. Only the main-game library states differ (handled below).
 //
 // Published names (for areas that do not include this header):
 //   queries  "BestiaryStateTracker.IsInBestiary", "BestiaryStateTracker.IsInList",
@@ -75,7 +75,7 @@ Tracker& tracker();
 
 // --- BestiaryStateTracker -------------------------------------------------------------------
 // SubSceneManagerExtraLibrary.State: Init 0, List 1, Field 2, Dungeon 3, Info 4, ArTop 5,
-// ArBattle 6, GotoTitle 7 (all five games).
+// ArBattle 6, GotoTitle 7 (all six games).
 bool is_in_bestiary();
 bool is_in_list();
 bool is_in_detail();
@@ -85,7 +85,7 @@ void clear_state();
 
 // --- ConfigBestiaryStateHandler (the bestiary opened from the in-game config menu) ----------
 /// SubSceneManagerMainGame.ChangeState postfix, with the state value. MenuLibraryUi (list) and
-/// MenuLibraryInfo (detail) are 19/20 in FF1, 18/19 in FF2, 17/18 in FF3-FF5; other values
+/// MenuLibraryInfo (detail) are 19/20 in FF1, 18/19 in FF2, 17/18 in FF3-FF6; other values
 /// are ignored, as in FF1.
 void config_handle_state_change(int main_game_state);
 /// The same, by meaning: list = MenuLibraryUi, else MenuLibraryInfo.

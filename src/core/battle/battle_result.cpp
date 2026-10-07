@@ -2,15 +2,19 @@
 // level-ups with stat gains) and the EXP counter tick (sound::play_exp_counter / top_up / stop,
 // setting "ExpCounter").
 //
-// Last.UI.KeyInput.ResultMenuController and its phase-init methods exist in all five games.
+// Last.UI.KeyInput.ResultMenuController and its phase-init methods exist in all six games (FF6's
+// class is FF1's, member for member).
 // Folded body: EndWaitInit shares its RVA with another class's Close() override in every game (x2),
 // so its detour class-checks self. The other phase inits are unique.
 // The EXP monitor follows ResultMenuController.pointController -> characterListConteroller ->
 // contentList / perormanceEndCount. Those two classes are per game (Serial.FFn.UI.KeyInput, FF4's
 // is Serial.FF0.UI.KeyInput), so their fields are looked up by name on the live objects' classes.
+// A game module may add lines to the points announcement (battle.h ResultExtras; FF6 Magic AP and
+// spells learned, src/games/ff6/battle_result.cpp).
 #include <set>
 #include <string>
 #include <vector>
+#include "battle.h"
 #include "battle_internal.h"
 #include "battle_util.h"
 #include "../audio/sound.h"
@@ -56,6 +60,20 @@ bool g_announced_points = false;
 bool g_announced_items = false;
 // Level-ups already announced this result screen, by "<name>_levelup" (the C# HashSet).
 std::set<std::wstring> g_announced_level_ups;
+
+// A game module's additions to the points announcement (none in FF1-FF5).
+ResultExtras g_extras;
+
+/// Speak a game module's extra lines, queued; a fault in one never stops the core's own lines.
+template <typename F, typename... A>
+void speak_extras(F fn, A... args)
+{
+    if (!fn) return;
+    hooks::guarded("ResultMenuController.ShowPointsInit extras", [&] {
+        for (const std::wstring& line : fn(args...))
+            if (!line.empty()) ffpr::say(line, false);
+    });
+}
 
 // True only while the EXP counter tone is actually playing.
 bool g_exp_counter_playing = false;
@@ -184,6 +202,7 @@ void d_ShowPointsInit(void* self, const void* mi)
 
         int gil = ref::rd<int32_t>(data, fGetGil);
         ffpr::say(TF(L"Gained {0} gil", {n0(gil)}), true);
+        speak_extras(g_extras.after_gil, data);
 
         // Per-character EXP; the party total decides whether the counter tone starts.
         int total_exp = 0;
@@ -198,6 +217,7 @@ void d_ShowPointsInit(void* self, const void* mi)
                 total_exp += exp;
                 ffpr::say(TF(L"{0} gained {1} XP", {name, n0(exp)}), false);
             }
+            speak_extras(g_extras.after_character, char_result);
         }
 
         if (settings::get_bool("ExpCounter", true) && total_exp > 0) {
@@ -322,6 +342,8 @@ int install()
 core::Install s_install{"Battle.Result", &install, 110};
 
 } // namespace
+
+void set_result_extras(const ResultExtras& extras) { g_extras = extras; }
 
 void result_clear_all_battle_states()
 {

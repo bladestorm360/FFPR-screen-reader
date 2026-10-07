@@ -1,10 +1,11 @@
 # FFPR Screen Reader (native) — development rules
 
-One native C++ DLL, `hid.dll`, for FINAL FANTASY I–V Pixel Remaster. It replaces the five
-MelonLoader screen readers (`ff1\ff1-screen-reader` … `FF5\ff5-screen-reader`, now paused).
-Plan and decisions: `..\UNIFIED_MOD_PLAN.md`. Open issues: `..\OPEN_ISSUES.md`.
-Porting contract: `docs\PORTING.md`. Authors: FF1–FF5 are bladestorm360's. FF6 stays out
-until its author (ZKline) agrees: never read or port `..\ff6\`.
+One native C++ DLL, `hid.dll`, for FINAL FANTASY I–VI Pixel Remaster. It replaces the six
+MelonLoader screen readers (`ff1\ff1-screen-reader` … `FF5\ff5-screen-reader`, now paused, and
+`..\ff6\FF6ScreenReader`). Plan and decisions: `..\UNIFIED_MOD_PLAN.md`. Open issues:
+`..\OPEN_ISSUES.md`. Porting contract: `docs\PORTING.md`. Authors: FF1–FF5 are bladestorm360's.
+FF6 is ZKline's (BlindGuyNW/FF6ScreenReader); its author gave permission to include it (user,
+2026-10-07). Keep its attribution; the old FF6 repo is read-only.
 
 ## Hard rules
 

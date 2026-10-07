@@ -12,11 +12,21 @@
 //   FF4  BattleConditionController.RemoveFunction prefix (port of FF4's BattleMessagePatches)
 //   FF5  BattleConditionController.RemoveFunction prefix+postfix and BattleController.StateChange
 //        (port of FF5's BattleMessagePatches)
-// The FF2-FF5 variants use the shared FF1 unit and condition naming (battle_util).
+//   FF6  FF1's rule on <>c__DisplayClass62_0.<RemoveFunction>b__0 (FF6's C# mod announced no
+//        removal; FF6's RemoveFunction is FF1's: LastOrDefault(predicate), Remove, then
+//        UpdateTempParamter - GameAssembly.dll, 2026-10-07)
+// The FF2-FF6 variants use the shared FF1 unit and condition naming (battle_util).
 //
-// Per-game signatures: BattleBasicFunction.CreateDamageView has 4 parameters in FF1/FF3/FF4,
+// Per-game signatures: BattleBasicFunction.CreateDamageView has 4 parameters in FF1/FF3/FF4/FF6,
 // 5 in FF2 (+bool isPlaySe) and FF5 (+MissType); BattleConditionController.Add has 2 in FF1-FF4 and
-// 3 in FF5 (+bool isCallBack). Every hooked RVA is unique in every game.
+// FF6, 3 in FF5 (+bool isCallBack); BattleCommandMessageController.SetMessage (KeyInput) and
+// SetSystemMessage (Touch) take (string message, bool isLeft) in FF6, (string) in FF1-FF5. Every
+// hooked RVA is unique in every game.
+//
+// FF6 also keeps its C# mod's one existing check on the message line (BattleMenuController
+// .SetCommadnMessage: Libra/Scan results repeat the same text 40+ times); see ff6_* below.
+// FF6's HitType adds HpAbs (8), MpAbs (9) and Golem (10): they take the HP-damage branch, as in
+// FF6's C# mod (which spoke every non-recovery type as "N damage").
 #include <cstdint>
 #include <map>
 #include <set>
@@ -26,6 +36,7 @@
 #include "battle_internal.h"
 #include "battle_util.h"
 #include "../core.h"
+#include "../dedup.h"
 #include "../frame.h"
 #include "../game.h"
 #include "../hooks.h"
@@ -41,6 +52,11 @@ namespace {
 constexpr uint8_t kFF134 = game::kFF1 | game::kFF3 | game::kFF4;
 constexpr uint8_t kFF1234 = game::kFF1 | game::kFF2 | game::kFF3 | game::kFF4;
 constexpr uint8_t kFF345 = game::kFF3 | game::kFF4 | game::kFF5;
+constexpr uint8_t kFF12345 = kFF1234 | game::kFF5;
+// FF6 shares FF1's CreateDamageView, Add and removal predicate (signatures checked in FF6's dump.cs).
+constexpr uint8_t kFF1346 = kFF134 | game::kFF6;
+constexpr uint8_t kFF12346 = kFF1234 | game::kFF6;
+constexpr uint8_t kFF16 = game::kFF1 | game::kFF6;
 
 ref::Class kActExec{"Last.Battle", "BattleActExection"};
 ref::Method mInitActionState{kActExec, "InitActionState", 0};
@@ -48,7 +64,7 @@ ref::Field fInStagingActData{kActExec, "inStagingBattleActData"};
 ref::Class kActData{"Last.Battle", "BattleActData"};
 ref::Field fAttackUnitData{kActData, "<AttackUnitData>k__BackingField"};
 
-ref::Class kBasicFn{"Last.Battle.Function", "BattleBasicFunction", kFF134};
+ref::Class kBasicFn{"Last.Battle.Function", "BattleBasicFunction", kFF1346};
 ref::Method mCreateDamageView{kBasicFn, "CreateDamageView", 4};
 ref::Class kBasicFnFF2{"Last.Battle.Function", "BattleBasicFunction", game::kFF2};
 ref::Method mCreateDamageViewFF2{kBasicFnFF2, "CreateDamageView", 5};
@@ -58,21 +74,29 @@ ref::Method mCreateDamageViewFF5{kBasicFnFF5, "CreateDamageView", 5};
 ref::Class kDamageViewUI{"Last.UI", "DamageViewUIManager"};
 ref::Method mCreateHitCount{kDamageViewUI, "CreateHitCount", 3};
 
-ref::Class kCmdMsgKey{"Last.UI.KeyInput", "BattleCommandMessageController"};
+ref::Class kCmdMsgKey{"Last.UI.KeyInput", "BattleCommandMessageController", kFF12345};
 ref::Method mSetMessage{kCmdMsgKey, "SetMessage", 1};
-ref::Class kCmdMsgTouch{"Last.UI.Touch", "BattleCommandMessageController"};
+ref::Class kCmdMsgTouch{"Last.UI.Touch", "BattleCommandMessageController", kFF12345};
 ref::Method mSetSystemMessage{kCmdMsgTouch, "SetSystemMessage", 1};
+ref::Class kCmdMsgKeyFF6{"Last.UI.KeyInput", "BattleCommandMessageController", game::kFF6};
+ref::Method mSetMessageFF6{kCmdMsgKeyFF6, "SetMessage", 2};
+ref::Class kCmdMsgTouchFF6{"Last.UI.Touch", "BattleCommandMessageController", game::kFF6};
+ref::Method mSetSystemMessageFF6{kCmdMsgTouchFF6, "SetSystemMessage", 2};
+ref::Class kBattleMenuKeyFF6{"Last.UI.KeyInput", "BattleMenuController", game::kFF6};
+ref::Method mSetCommadnMessageFF6{kBattleMenuKeyFF6, "SetCommadnMessage", 2};
 
 ref::Class kCondCtl{"Last.Battle", "BattleConditionController"};
 ref::Method mBattleEndRecoveryCondition{kCondCtl, "BattleEndRecoveryCondition", 0};
-ref::Class kCondCtl1234{"Last.Battle", "BattleConditionController", kFF1234};
-ref::Method mAdd{kCondCtl1234, "Add", 2};
+ref::Class kCondCtl12346{"Last.Battle", "BattleConditionController", kFF12346};
+ref::Method mAdd{kCondCtl12346, "Add", 2};
 ref::Class kCondCtlFF5{"Last.Battle", "BattleConditionController", game::kFF5};
 ref::Method mAddFF5{kCondCtlFF5, "Add", 3};
 ref::Class kCondCtl345{"Last.Battle", "BattleConditionController", kFF345};
 ref::Method mRemoveFunction{kCondCtl345, "RemoveFunction", 2};
 ref::Class kRemovePredicate{"Last.Battle", "BattleConditionController.<>c__DisplayClass45_0", game::kFF1};
 ref::Method mRemovePredicate{kRemovePredicate, "<RemoveFunction>b__0", 1};
+ref::Class kRemovePredicateFF6{"Last.Battle", "BattleConditionController.<>c__DisplayClass62_0", game::kFF6};
+ref::Method mRemovePredicateFF6{kRemovePredicateFF6, "<RemoveFunction>b__0", 1};
 ref::Class kStatusCtlFF2{"Last.Battle", "BattleStatusControl", game::kFF2};
 ref::Method mUpdateTempParamter{kStatusCtlFF2, "UpdateTempParamter", 1};
 ref::Class kBattleCtlFF5{"Last.Battle", "BattleController", game::kFF5};
@@ -92,8 +116,9 @@ int g_pending_hit_count = 1;
 int64_t g_pending_hit_count_frame = -1;
 
 // --- status removal state ---------------------------------------------------------------------
-// True during the battle-end cleanup. FF1: only while BattleEndRecoveryCondition runs. FF2-FF5: from
-// BattleEndRecoveryCondition (FF5 also StateChange into an end state) until the next battle starts.
+// True during the battle-end cleanup. FF1 and FF6: only while BattleEndRecoveryCondition runs.
+// FF2-FF5: from BattleEndRecoveryCondition (FF5 also StateChange into an end state) until the next
+// battle starts.
 bool g_battle_end_cleanup = false;
 // Same-frame (unit, condition) guard.
 int64_t g_spoken_frame = -1;
@@ -310,6 +335,75 @@ void d_SetSystemMessage(void* self, void* message_str, const void* mi)
     hooks::guarded("BattleCommandMessageController.SetSystemMessage", [&] { battle_system_message(message_str); });
 }
 
+// --- FF6: the same two hooks, (string message, bool isLeft) --------------------------------------
+// In FF6 the KeyInput SetMessage has exactly two callers (GameAssembly.dll call sites, 2026-10-07):
+// BattleMenuController.SetCommadnMessage (BattleUIManager.SetCommadnMessage / SetSystemMessage:
+// "Stole X!", Libra results, system lines) and BattleMenuController.SetCommandText (BattleUIManager
+// .SetCommandText: the action's name). FF6's C# mod hooked those two; hooking SetMessage covers both.
+//
+// FF6's C# check on the SetCommadnMessage path (BattleMenuController_KeyInput_SetCommadnMessage_Patch),
+// kept as it was: Libra/Scan call it with the same text 40+ times, so the same text within 2.5 s is
+// dropped, and an empty message (the box cleared) forgets the last one. The SetCommadnMessage
+// wrapper below marks which SetMessage calls came through that path; the action-name path
+// (SetCommandText) is unchecked, as in the core. Its other check (SetCommandText never repeating
+// the previous text) is not kept: the core pairs the action name with its actor instead.
+constexpr const char* kCtxFF6CommandMessage = "Battle.SetCommandMessage";
+constexpr double kFF6ThrottleSeconds = 2.5;   // MESSAGE_THROTTLE_SECONDS
+bool g_ff6_in_command_message = false;
+double g_ff6_last_message_time = -1.0e9;      // lastMessageTime
+
+/// True when this message (arriving through SetCommadnMessage) is to be spoken.
+bool ff6_command_message_is_new(void* message_str)
+{
+    const std::wstring message = text::trim(ref::str(message_str));
+    if (blank(message)) {
+        // Message cleared: reset tracking.
+        dedup::reset(kCtxFF6CommandMessage);
+        g_ff6_last_message_time = -1.0e9;
+        return false;
+    }
+    const double now = frame::now();
+    if (now - g_ff6_last_message_time >= kFF6ThrottleSeconds) dedup::reset(kCtxFF6CommandMessage);
+    if (!dedup::text(kCtxFF6CommandMessage, message, dedup::Scope::Battle)) return false;
+    g_ff6_last_message_time = now;
+    return true;
+}
+
+using SetMessageFF6_t = void (*)(void* self, void* message_str, bool is_left, const void* mi);
+SetMessageFF6_t o_SetMessageFF6;
+void d_SetMessageFF6(void* self, void* message_str, bool is_left, const void* mi)
+{
+    o_SetMessageFF6(self, message_str, is_left, mi);
+    hooks::guarded("BattleCommandMessageController.SetMessage", [&] {
+        if (g_ff6_in_command_message && !ff6_command_message_is_new(message_str)) return;
+        battle_system_message(message_str);
+    });
+}
+
+SetMessageFF6_t o_SetSystemMessageFF6;
+void d_SetSystemMessageFF6(void* self, void* message_str, bool is_left, const void* mi)
+{
+    o_SetSystemMessageFF6(self, message_str, is_left, mi);
+    hooks::guarded("BattleCommandMessageController.SetSystemMessage", [&] { battle_system_message(message_str); });
+}
+
+/// Restores the path flag however the original returns (a managed exception unwinds under /EHa).
+struct CommandMessageScope {
+    bool outer;
+    CommandMessageScope() : outer(g_ff6_in_command_message) { g_ff6_in_command_message = true; }
+    ~CommandMessageScope() { g_ff6_in_command_message = outer; }
+    CommandMessageScope(const CommandMessageScope&) = delete;
+    CommandMessageScope& operator=(const CommandMessageScope&) = delete;
+};
+
+// KeyInput BattleMenuController.SetCommadnMessage: only marks the path; SetMessage speaks.
+SetMessageFF6_t o_SetCommadnMessageFF6;
+void d_SetCommadnMessageFF6(void* self, void* message_str, bool is_left, const void* mi)
+{
+    CommandMessageScope scope;
+    o_SetCommadnMessageFF6(self, message_str, is_left, mi);
+}
+
 // --- BattleConditionController.Add (postfix): "X: Poison" -----------------------------------------
 void condition_added(void* unit, int id)
 {
@@ -359,14 +453,16 @@ void d_BattleEndRecoveryCondition(void* self, const void* mi)
 {
     g_battle_end_cleanup = true;
     o_BattleEndRecoveryCondition(self, mi);
-    // FF1: the scope ends with the cleanup. FF2-FF5 keep the latch until the next battle starts.
-    if (game::is(game::Id::FF1)) g_battle_end_cleanup = false;
+    // FF1 and FF6: the scope ends with the cleanup. FF2-FF5 keep the latch until the next battle starts.
+    if (game::in(kFF16)) g_battle_end_cleanup = false;
 }
 
-// --- FF1: <RemoveFunction>b__0 predicate (postfix) -------------------------------------------------
+// --- FF1 and FF6: <RemoveFunction>b__0 predicate (postfix) ---------------------------------------
 // The predicate (f.condition.Id == id) runs only inside RemoveConditionFunction's removal loop, the
 // end of every removal path (cures, wear-off, conflicts, InterruptRemoveCondition, battle-end
 // cleanup), and only for a function Add created. __result true = the function being removed.
+// FF1's class is <>c__DisplayClass45_0, FF6's <>c__DisplayClass62_0 (one RVA each); one of them is
+// attached per process, so they share the detour and its original pointer.
 void ff1_removal(void* fn, bool result)
 {
     if (!result || !fn || g_battle_end_cleanup) return;
@@ -590,19 +686,27 @@ int install()
 {
     int n = 0;
     n += hooks::attach(mInitActionState, &d_InitActionState, &o_InitActionState) ? 1 : 0;
-    if (game::in(kFF134)) n += hooks::attach(mCreateDamageView, &d_CreateDamageView, &o_CreateDamageView) ? 1 : 0;
+    if (game::in(kFF1346)) n += hooks::attach(mCreateDamageView, &d_CreateDamageView, &o_CreateDamageView) ? 1 : 0;
     if (game::in(game::kFF2)) n += hooks::attach(mCreateDamageViewFF2, &d_CreateDamageViewFF2, &o_CreateDamageViewFF2) ? 1 : 0;
     if (game::in(game::kFF5)) n += hooks::attach(mCreateDamageViewFF5, &d_CreateDamageViewFF5, &o_CreateDamageViewFF5) ? 1 : 0;
     n += hooks::attach(mCreateHitCount, &d_CreateHitCount, &o_CreateHitCount) ? 1 : 0;
-    n += hooks::attach(mSetMessage, &d_SetMessage, &o_SetMessage) ? 1 : 0;
-    n += hooks::attach(mSetSystemMessage, &d_SetSystemMessage, &o_SetSystemMessage) ? 1 : 0;
+    if (game::in(kFF12345)) {
+        n += hooks::attach(mSetMessage, &d_SetMessage, &o_SetMessage) ? 1 : 0;
+        n += hooks::attach(mSetSystemMessage, &d_SetSystemMessage, &o_SetSystemMessage) ? 1 : 0;
+    }
+    if (game::in(game::kFF6)) {
+        n += hooks::attach(mSetMessageFF6, &d_SetMessageFF6, &o_SetMessageFF6) ? 1 : 0;
+        n += hooks::attach(mSetSystemMessageFF6, &d_SetSystemMessageFF6, &o_SetSystemMessageFF6) ? 1 : 0;
+        n += hooks::attach(mSetCommadnMessageFF6, &d_SetCommadnMessageFF6, &o_SetCommadnMessageFF6) ? 1 : 0;
+    }
 
-    if (game::in(kFF1234)) n += hooks::attach(mAdd, &d_Add, &o_Add) ? 1 : 0;
+    if (game::in(kFF12346)) n += hooks::attach(mAdd, &d_Add, &o_Add) ? 1 : 0;
     if (game::in(game::kFF5)) n += hooks::attach(mAddFF5, &d_AddFF5, &o_AddFF5) ? 1 : 0;
     n += hooks::attach(mBattleEndRecoveryCondition, &d_BattleEndRecoveryCondition, &o_BattleEndRecoveryCondition) ? 1 : 0;
 
     // Status removal, per game.
     if (game::in(game::kFF1)) n += hooks::attach(mRemovePredicate, &d_RemovePredicate, &o_RemovePredicate) ? 1 : 0;
+    if (game::in(game::kFF6)) n += hooks::attach(mRemovePredicateFF6, &d_RemovePredicate, &o_RemovePredicate) ? 1 : 0;
     if (game::in(game::kFF2)) n += hooks::attach(mUpdateTempParamter, &d_UpdateTempParamter, &o_UpdateTempParamter) ? 1 : 0;
     if (game::in(kFF345)) n += hooks::attach(mRemoveFunction, &d_RemoveFunction, &o_RemoveFunction) ? 1 : 0;
     if (game::in(game::kFF5)) n += hooks::attach(mStateChange, &d_StateChange, &o_StateChange) ? 1 : 0;

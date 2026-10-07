@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Merge the five old mods' mod_text.json files into the shared layout.
+"""Merge the six old mods' mod_text.json files into the shared layout.
 
-Reads (never writes) the paused FF1-FF5 C# mod repositories and writes:
+Reads (never writes) the paused FF1-FF6 C# mod repositories and writes:
 
   data/common/mod_text.json   shared mod UI text, the union of all keys
   data/ffN/mod_text.json      per-game overrides (game terms only)
@@ -9,9 +9,9 @@ Reads (never writes) the paused FF1-FF5 C# mod repositories and writes:
 
 Rules (see docs/MODTEXT_MERGE.md for the reasons):
   * A key in FF1 takes FF1's entry (parity rule: FF1 is the default).
-  * A key not in FF1 takes the first of FF3, FF2, FF4, FF5 that has it.
+  * A key not in FF1 takes the first of FF3, FF2, FF4, FF5, FF6 that has it.
   * A missing or empty language is filled from the other mods' entries
-    for the same key, in the order FF1, FF3, FF2, FF4, FF5.
+    for the same key, in the order FF1, FF3, FF2, FF4, FF5, FF6.
   * A game gets an override only for a game-term key whose entry in that
     game differs from the common entry. Wording drift gets no override.
   * Then tools/modtext_fixes.py is applied: corrections to each game's own
@@ -42,12 +42,13 @@ SOURCES = {
     3: "ff3/ff3-screen-reader/mod_text.json",
     4: "FF4/ff4-screen-reader/mod_text.json",
     5: "FF5/ff5-screen-reader/mod_text.json",
+    6: "ff6/FF6ScreenReader/FFVI_Mod/mod_text.json",
 }
 
 # Key not in FF1: first game in this order wins (the plan's porting order).
-NOT_IN_FF1_ORDER = [3, 2, 4, 5]
+NOT_IN_FF1_ORDER = [3, 2, 4, 5, 6]
 # Order used to fill a missing language.
-FILL_ORDER = [1, 3, 2, 4, 5]
+FILL_ORDER = [1, 3, 2, 4, 5, 6]
 
 # Keys that ARE game terms: labels the game itself defines. Each game keeps
 # its own entry when it differs from the common one.
@@ -295,7 +296,7 @@ def generated_block(src, common, source_of, fills, overrides, reasons, gaps, ph,
     out.append("### Keys not in FF1, by source")
     out.append("")
     out.append("The common entry for these came from the game named. "
-               "Order tried: FF3, FF2, FF4, FF5.")
+               "Order tried: FF3, FF2, FF4, FF5, FF6.")
     out.append("")
     for g in NOT_IN_FF1_ORDER:
         keys = [k for k, s in source_of.items() if s == g]

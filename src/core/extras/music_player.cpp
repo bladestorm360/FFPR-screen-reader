@@ -4,10 +4,10 @@
 // The Extra Sound music player: entry ("Music Player" then the focused song), song navigation,
 // the Play All toggle and the original/arrangement switch. SubSceneManagerExtraSound
 // (Last.Management) and the KeyInput ExtraSound* classes have the same names and fields in all
-// five games; no hooked body is folded.
+// six games; no hooked body is folded.
 //
-// Cross-game difference: ExtraSoundListContentInfo.playTime is an int in FF1, FF2, FF3 and FF5
-// but a float in FF4 (KeyInput class, dump.cs). FF4 reads the float and truncates it, as the old
+// Cross-game difference: ExtraSoundListContentInfo.playTime is an int in FF1, FF2, FF3, FF5 and
+// FF6 but a float in FF4 (KeyInput class, dump.cs). FF4 reads the float and truncates it, as the old
 // FF4 mod did.
 #include "extras.h"
 #include <cstdlib>
@@ -253,7 +253,7 @@ void d_PlaybackIcon(void* self, int32_t key, const void* mi)
     o_PlaybackIcon(self, key, mi);
     hooks::guarded("MusicPlayerPatches.ChangeKeyHelpPlaybackIcon", [&] {
         if (!g_in_music_player) return;
-        // LoopKeys.PlaybackOn = 0 in all five games.
+        // LoopKeys.PlaybackOn = 0 in all six games.
         ffpr::say(key == 0 ? T(L"Play All On") : T(L"Play All Off"), true);
     });
 }

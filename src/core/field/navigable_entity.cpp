@@ -3,7 +3,8 @@
 //
 // Vehicle names are game content, so each game keeps its own table (from that game's mod:
 // FF1 NavigableEntity.cs, FF2 NavigableEntity.cs, FF3 NavigableEntity.cs, FF4 VehicleEntity.cs,
-// FF5 NavigableEntity.cs). FF4 and FF5 prefer the vehicle's own message id.
+// FF5 NavigableEntity.cs, FF6 Field/NavigableEntity.cs). FF4, FF5 and FF6 prefer the vehicle's
+// own message id.
 #include <cmath>
 #include <cstdio>
 #include <cwctype>
@@ -109,6 +110,23 @@ std::wstring vehicle_name_ff5(int id)
     }
 }
 
+/// FF6 VehicleEntity.GetVehicleName's fallback table (MapConstants.TransportationType).
+std::wstring vehicle_name_ff6(int id)
+{
+    switch (id) {
+    case 2: return T(L"Ship");
+    case 3: return T(L"Airship");
+    case 6: return T(L"Submarine");
+    case 7: return T(L"Low Flying Airship");
+    case 8: return T(L"Special Airship");
+    case 9: return T(L"Yellow Chocobo");
+    case 10: return T(L"Black Chocobo");
+    case 11: return T(L"Boko");
+    case 12: return T(L"Magical Armor");
+    default: return TF(L"Vehicle {0}", {text::num(id)});
+    }
+}
+
 } // namespace
 
 float vec_distance(unity::Vec3 a, unity::Vec3 b)
@@ -162,11 +180,13 @@ std::wstring vehicle_name(int id, const std::wstring& message_id)
     case game::Id::FF2: return vehicle_name_ff2(id);
     case game::Id::FF3: return vehicle_name_ff3(id);
     case game::Id::FF4:
-    case game::Id::FF5: {
+    case game::Id::FF5:
+    case game::Id::FF6: {
         if (!message_id.empty()) {
             std::wstring msg = get_message(message_id, true);
             if (!msg.empty()) return msg;
         }
+        if (game::is(game::Id::FF6)) return vehicle_name_ff6(id);
         return game::is(game::Id::FF4) ? vehicle_name_ff4(id) : vehicle_name_ff5(id);
     }
     default: return vehicle_name_ff1(id);

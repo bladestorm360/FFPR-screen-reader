@@ -12,7 +12,9 @@
 // ConditionType fallback) and Utils/TextUtils.cs (StripIconMarkup), plus the native plumbing the
 // C# code got from Il2CppInterop: virtual calls, overload resolution and List<T> walks.
 //
-// Every class here exists in all five games' dump.cs with the same member names.
+// Every class here exists in all six games' dump.cs with the same member names (FF6 checked
+// 2026-10-07: same field types, same Confirmed* signatures, DataType.Condition = 20, same
+// ConditionType values for the fallback names).
 // Main thread only, like the C# originals.
 namespace ffpr::battle {
 

@@ -2,9 +2,10 @@
 // StatusDetailsState, StatusMenuHelpers, StatusMenuPatches, StatusDetailsPatches,
 // StatusDetailsHelpers, StatusWindowSetActivePatch) and Menus/StatusDetailsReader.cs.
 //
-// All five games: the Status menu's character list (Last.UI.KeyInput.StatusWindowController
-// .SelectContent) and the clears on its transitions to the item / magic / equipment windows
-// (each game's own Serial.FFn AbilityWindowController).
+// All games: the Status menu's character list (Last.UI.KeyInput.StatusWindowController
+// .SelectContent; FF6 has its own variant with the row, src/games/ff6/status_list.cpp) and the
+// clears on its transitions to the item / magic / equipment windows (each game's own
+// Serial.FFn AbilityWindowController).
 // FF1 only: the status details screen (Serial.FF1.UI.KeyInput.StatusDetailsController). FF2-FF5
 // have their own Serial.FFn StatusDetailsController and stat sets (status_navigation.cpp).
 //
@@ -32,8 +33,12 @@ ref::Class  kMenuManager{"Last.UI", "MenuManager"};
 ref::Method mMenuIsOpen{kMenuManager, "get_IsOpen", 0};
 
 ref::Class  kStatusWindow{"Last.UI.KeyInput", "StatusWindowController"};
-ref::Method mStatusWindowSelectContent{kStatusWindow, "SelectContent", 3};
 ref::Method mStatusWindowSetActive{kStatusWindow, "SetActive", 1};
+// FF6 reads this list in src/games/ff6/status_list.cpp (this reader plus the character's row,
+// which FF6's C# spoke on every main-menu character list): the SelectContent hook is FF1-FF5.
+constexpr uint8_t kFF12345 = game::kFF1 | game::kFF2 | game::kFF3 | game::kFF4 | game::kFF5;
+ref::Class  kStatusWindowList{"Last.UI.KeyInput", "StatusWindowController", kFF12345};
+ref::Method mStatusWindowSelectContent{kStatusWindowList, "SelectContent", 3};
 ref::Class  kStatusContent{"Serial.Template.UI", "StatusWindowContentControllerBase"};
 ref::Field  fContentCharacterData{kStatusContent, "<CharacterData>k__BackingField"};
 
@@ -47,11 +52,13 @@ ref::Class  kAbilityWindowFF2{"Serial.FF2.UI.KeyInput", "AbilityWindowController
 ref::Class  kAbilityWindowFF3{"Serial.FF3.UI.KeyInput", "AbilityWindowController", game::kFF3};
 ref::Class  kAbilityWindowFF4{"Serial.FF4.UI.KeyInput", "AbilityWindowController", game::kFF4};
 ref::Class  kAbilityWindowFF5{"Serial.FF5.UI.KeyInput", "AbilityWindowController", game::kFF5};
+ref::Class  kAbilityWindowFF6{"Serial.FF6.UI.KeyInput", "AbilityWindowController", game::kFF6};
 ref::Method mAbilityWindowSetActiveFF1{kAbilityWindowFF1, "SetActive", 1};
 ref::Method mAbilityWindowSetActiveFF2{kAbilityWindowFF2, "SetActive", 1};
 ref::Method mAbilityWindowSetActiveFF3{kAbilityWindowFF3, "SetActive", 1};
 ref::Method mAbilityWindowSetActiveFF4{kAbilityWindowFF4, "SetActive", 1};
 ref::Method mAbilityWindowSetActiveFF5{kAbilityWindowFF5, "SetActive", 1};
+ref::Method mAbilityWindowSetActiveFF6{kAbilityWindowFF6, "SetActive", 1};
 
 // FF1's status details screen. ExitDisplay's body is FOLDED in FF1 (RVA 0x29B6F0 is shared by
 // 11 methods, among them Touch StatusDetailsController.ExitDisplay, NewGameWindowController
@@ -351,13 +358,13 @@ int install_status_menu()
 {
     int n = 0;
     if (hooks::attach(mStatusWindowSelectContent, &d_StatusSelectContent, &o_StatusSelectContent)) ++n;
-    else LOGF("[Status Menu] Could not find SelectContent method");
+    else if (kStatusWindowList.applies()) LOGF("[Status Menu] Could not find SelectContent method");
     if (hooks::attach(mStatusWindowSetActive, &d_StatusWindowSetActive, &o_StatusWindowSetActive)) ++n;
     if (hooks::attach(mItemWindowSetActive, &d_ItemSetActive, &o_ItemSetActive)) ++n;
     if (hooks::attach(mEquipWindowSetActive, &d_EquipSetActive, &o_EquipSetActive)) ++n;
     // One AbilityWindowController per game; only the running game's ref applies.
     ref::Method* ability[] = {&mAbilityWindowSetActiveFF1, &mAbilityWindowSetActiveFF2, &mAbilityWindowSetActiveFF3,
-                              &mAbilityWindowSetActiveFF4, &mAbilityWindowSetActiveFF5};
+                              &mAbilityWindowSetActiveFF4, &mAbilityWindowSetActiveFF5, &mAbilityWindowSetActiveFF6};
     for (ref::Method* m : ability)
         if (m->cls.applies() && hooks::attach(*m, &d_AbilitySetActive, &o_AbilitySetActive)) ++n;
 

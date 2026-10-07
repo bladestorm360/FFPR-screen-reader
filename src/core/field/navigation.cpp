@@ -10,8 +10,8 @@
 //
 // Per-game differences kept from each game's own mod: Transportation.ModelList skips types 0
 // and 1 in FF1 (the canoe, type 5, is skipped by the vehicle detector), and 0, 1, 4 (Symbol)
-// and 5 (Content) in FF2-FF5. FF4 and FF5 also keep each vehicle's message id (its official
-// name). The C# pointer offsets (TransportationController 0x18, Transportation 0x18,
+// and 5 (Content) in FF2-FF6. FF4, FF5 and FF6 also keep each vehicle's message id (its
+// official name; FF6 Field/FieldNavigationHelper.cs PopulateVehicleTypeMap). The C# pointer offsets (TransportationController 0x18, Transportation 0x18,
 // FieldController 0x120, FootEvent 0x10) are the fields infoData, modelList, footEvent and
 // stepOnTriggerList, resolved by name.
 #include <algorithm>
@@ -333,7 +333,7 @@ std::vector<void*> all_field_entities()
                 unity::dict_for_each(model_list, [](uint64_t, uint64_t v, void* s) {
                     static_cast<std::vector<void*>*>(s)->push_back(reinterpret_cast<void*>(v));
                 }, &infos, 4, 8);
-                bool want_message = game::is(game::Id::FF4) || game::is(game::Id::FF5);
+                bool want_message = game::is(game::Id::FF4) || game::is(game::Id::FF5) || game::is(game::Id::FF6);
                 for (void* info : infos) {
                     if (!info) continue;
                     bool enabled = ref::call<bool>(r::mInfoGetEnable, info);

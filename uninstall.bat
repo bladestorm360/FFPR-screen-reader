@@ -1,5 +1,5 @@
 @echo off
-REM Remove the native screen reader from every FF1-FF5 Pixel Remaster folder.
+REM Remove the native screen reader from every FF1-FF6 Pixel Remaster folder.
 REM Removes ONLY this mod's own files: hid.dll, MinHook.x64.dll, its logs and settings.
 REM Tolk.dll, nvdaControllerClient64.dll and SDL3.dll stay, because the old MelonLoader
 REM screen readers use the same files. MelonLoader is not touched.
@@ -13,6 +13,7 @@ call :one "FINAL FANTASY II PR"
 call :one "FINAL FANTASY III PR"
 call :one "FINAL FANTASY IV PR"
 call :one "FINAL FANTASY V PR"
+call :one "FINAL FANTASY VI PR"
 echo Done.
 endlocal
 exit /b 0
