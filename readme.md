@@ -1,21 +1,21 @@
 # FFPR Screen Reader
 
-A screen reader mod for FINAL FANTASY I, II, III, IV and V Pixel Remaster on Steam.
+A screen reader mod for FINAL FANTASY I, II, III, IV, V and VI Pixel Remaster on Steam.
 
 ## What it is
 
 - It speaks the games through your screen reader: dialogue, menus, battles, the field and the title screen.
 - It adds navigation aids: wall tones, footsteps, an audio beacon, a list of destinations with step by step directions, and waypoints you can name.
-- One set of files works in all five games. The mod finds out by itself which game it is running in.
+- One set of files works in all six games. The mod finds out by itself which game it is running in.
 - It is one native file, hid.dll. MelonLoader is not needed.
-- It replaces the five older screen reader mods, FFI_ScreenReader.dll to FFV_ScreenReader.dll. Your old settings and waypoints carry over.
+- It replaces the six older screen reader mods, FFI_ScreenReader.dll to FFVI_ScreenReader.dll. Your old settings and waypoints carry over.
 - The keyboard and a game controller both work, for the game and for the mod.
 
 Why hid.dll: every game loads a Windows file called hid.dll when it starts, to talk to controllers. The mod's hid.dll passes all of that on to the hid.dll that comes with Windows, so controllers keep working. Then it starts the screen reader.
 
 ## Requirements
 
-- Windows, and one or more of the five games from Steam.
+- Windows, and one or more of the six games from Steam.
 - A screen reader that is running, such as NVDA or JAWS. Speech goes through Tolk.
 - The files in the zip:
   - hid.dll: the mod.
@@ -36,7 +36,7 @@ Why hid.dll: every game loads a Windows file called hid.dll when it starts, to t
 Do this for each game. The same files go into every game.
 
 1. Close the game.
-2. Open the game folder. With Steam's default library, the folders are in C:\Program Files (x86)\Steam\steamapps\common, and they are called FINAL FANTASY PR, FINAL FANTASY II PR, FINAL FANTASY III PR, FINAL FANTASY IV PR and FINAL FANTASY V PR.
+2. Open the game folder. With Steam's default library, the folders are in C:\Program Files (x86)\Steam\steamapps\common, and they are called FINAL FANTASY PR, FINAL FANTASY II PR, FINAL FANTASY III PR, FINAL FANTASY IV PR, FINAL FANTASY V PR and FINAL FANTASY VI PR.
 3. If your Steam library is on another drive, the path is drive letter, then the path to your library, then SteamLibrary\steamapps\common, then the game's folder.
 4. If you used the old screen reader, take its file out of the game's Mods folder. Delete it, or move it somewhere else. See the list below.
 5. Copy every file from the zip into the game folder, next to the game's exe. If Windows asks, replace the files that are already there.
@@ -49,14 +49,15 @@ The old screen reader files:
 - FINAL FANTASY III: FFIII_ScreenReader.dll
 - FINAL FANTASY IV: FFIV_ScreenReader.dll
 - FINAL FANTASY V: FFV_ScreenReader.dll
+- FINAL FANTASY VI: FFVI_ScreenReader.dll
 
 If you forget to remove it, both mods speak at once, and the new mod says "Old screen reader still installed" when the game starts.
 
 MelonLoader can stay if you use it for other mods. This mod does not need it.
 
-The game exes are FINAL FANTASY.exe, FINAL FANTASY II.exe, FINAL FANTASY III.exe, FINAL FANTASY IV.exe and FINAL FANTASY V.exe.
+The game exes are FINAL FANTASY.exe, FINAL FANTASY II.exe, FINAL FANTASY III.exe, FINAL FANTASY IV.exe, FINAL FANTASY V.exe and FINAL FANTASY VI.exe.
 
-The mod only works in these five games. In another game, such as FINAL FANTASY VI, it says "this game is not supported" and stays quiet.
+The mod only works in these six games. In another game, it says "this game is not supported" and stays quiet.
 
 ## Uninstalling
 
@@ -71,7 +72,7 @@ The mod only works in these five games. In another game, such as FINAL FANTASY V
 - Change them in the mod menu: F8, or Start on a controller. You do not need to edit the file.
 - The first time the mod starts in a game, it copies your old screen reader's settings from UserData\MelonPreferences.cfg in the game folder. This happens once. The old file is not changed.
 - If you delete ffpr_screen_reader.ini, the next start copies the old settings again, or uses the defaults if there are none.
-- Waypoints are saved in UserData\waypoints.json in the game folder. It is the same file the old screen reader used, so your waypoints carry over. The mod creates the UserData folder if it is missing.
+- Waypoints are saved in UserData\waypoints.json in the game folder. It is the same file the old screen reader used, so your waypoints carry over. In FINAL FANTASY VI the file is UserData\ffvi_waypoints.json, the old FINAL FANTASY VI screen reader's file. The mod creates the UserData folder if it is missing.
 
 ## Log file
 
@@ -328,6 +329,16 @@ In the results log:
 - Enter or Home: read the current line again. Controller: A.
 - Escape: close the log. Controller: B.
 
+### FINAL FANTASY VI
+
+- 9: beacon navigation on or off, like F6. Field only.
+- T: read the active timers.
+- Shift+T: freeze or resume the timers.
+- H also reads MP. On the airship, H reads the heading and altitude instead.
+- I, in the Skills menus: the spell's or ability's description. On a Blitz, I reads its button sequence. With an esper's details open, I reads them again.
+- U, in shops and the item menu: which party members can equip the item.
+- Up and Down arrows, on an item's details screen: move through the details. Ctrl+Up and Ctrl+Down: first and last line.
+
 ## Mod menu
 
 Open it with F8 or Start, on the field with no menu open. The game gets no keys while it is open.
@@ -349,7 +360,7 @@ The entries, by section, with their defaults:
 - Wall Tones, off: tones play as you approach walls.
 - Footsteps, off: a click for each tile you move.
 - Beacon Navigation, off: the audio beacon guides you, and turn by turn directions are off.
-- Landing Pings, off: on a ship or submarine, pings the directions in which you can land. Not in FINAL FANTASY IV.
+- Landing Pings, off: on a ship or submarine, pings the directions in which you can land. Not in FINAL FANTASY IV or VI.
 
 ### Volume Controls
 
@@ -412,10 +423,12 @@ Closes the mod menu.
 - FINAL FANTASY III: job change with job level, Onion Knight naming, the magic menu with Learn, Use, Remove, Forget and Exchange, and items that people ask you for.
 - FINAL FANTASY IV: the Ability menu, party setting with front and back row, and naming with Namingway.
 - FINAL FANTASY V: jobs with job level and ABP, abilities and ability slots, spells with MP, and name change.
+- FINAL FANTASY VI: the Skills menus with Magic, Espers, Lore, Blitz and Gogo's commands; esper details; party setting, rows and the party switch; item details; the Coliseum.
+- The bestiary lists stealable items in FINAL FANTASY IV, V and VI, the games whose bestiary shows them.
 
 ### Battle
 
-- Whose turn it is, the commands, and targets with their status. "All allies" and "All enemies" in FINAL FANTASY IV and V.
+- Whose turn it is, the commands, and targets with their status. "All allies" and "All enemies" in FINAL FANTASY IV, V and VI.
 - Item and spell lists, with descriptions.
 - Actions, damage, healing, misses, and statuses added and removed.
 - Steal results, in FINAL FANTASY III, IV and V: the game's own line, such as "Stole Potion!".
@@ -471,7 +484,7 @@ Closes the mod menu.
 - Some of the game's battle system messages are not read yet.
 - On the status screen, Attack reads one number. The old mod's "hits times power" is not in yet.
 
-### FINAL FANTASY IV and FINAL FANTASY V
+### FINAL FANTASY IV, FINAL FANTASY V and FINAL FANTASY VI
 
 - When a new turn is announced, it can cut off the line before it.
 
@@ -489,10 +502,20 @@ Closes the mod menu.
 - Some kinds of damage are read as plain "damage".
 - Boko and some other vehicles may not be named correctly yet.
 
+### FINAL FANTASY VI
+
+- FINAL FANTASY VI support is new in the combined mod and has not been tested in the game yet. Please report anything that is silent, read twice, or worded oddly.
+- The old mod's grouping of world map entrances, such as the Phoenix Cave and Kefka's Tower, is not in.
+- The number of hits in a multi-hit attack is not read.
+
 ## Credits
 
 - bladestorm360, for the mod.
-- ZKline, for making the original FF6 mod, without which I likely never would have tried modding these games.
+- ZKline, for originally writing the FINAL FANTASY VI mod, which this mod's FINAL FANTASY VI support is ported from, and without which I likely never would have tried modding these games.
+- Stirlock, for helping with the FINAL FANTASY and FINAL FANTASY III translations.
+- UnexplainedEntity, for the FINAL FANTASY II translations.
+- Lethal Lawn Mower, for helping with the FINAL FANTASY V translations.
+- G-rad, for the FINAL FANTASY VI translations.
 - Stirlock and UnexplainedEntity, for testing.
 - Stirlock, for obtaining Japanese entity names so they could be translated.
 - G-rad, for testing FINAL FANTASY IV and collecting entity names for translation.

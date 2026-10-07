@@ -106,8 +106,9 @@ Checked in this order:
 Game modules add their own keys with `input::add_binding(key, mod, context, "Action.Name", "description")`
 from their install (for example FF3–FF6's 9 for beacons, FF4–FF6's T / Shift+T). FF6 also
 binds H on the field (airship heading and altitude on the airship, else character status) and
-Up/Down in the Global context for its item detail screen (they do nothing elsewhere; a more
-specific context's Up/Down is tried first).
+Up/Down and Ctrl+Up/Down in the Global context for its item detail screen (they do nothing
+elsewhere; a more specific context's binding, such as the field's Ctrl+arrow teleport, is tried
+first).
 
 ### I key cascade (`GlobalHotkeyHandler.HandleItemDetailsKey`)
 

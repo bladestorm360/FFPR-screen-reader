@@ -312,7 +312,9 @@ Name check: 0 missing in all six games. Not tested in game.
   Touch share 0x493220), `AbilityUseContentListController.SelectContent`/`SetCursor`,
   `BattleTargetSelectController.ShowWindow` (10).
 - For the user:
-  1. Bestiary steal items: FF2-FF6's old mods read them; the core (FF1) reads drops only.
+  1. Bestiary steal items (user, 2026-10-07): listed only where the game's bestiary lists them,
+     the games with a Steal ability - FF4, FF5 ("probably", per the user), FF6
+     (`Flags::bestiary_steal`); never FF1-FF3. "Stealable Items" comes before "Dropped Items".
   2. Name entry: FF6's ". Press Enter for default name" after the game's popup is not ported.
   3. Hit counts: FF6 has no "Multi-hit Damage" setting, so "N hits" is never spoken (the old mod
      said it whenever the game made a hit count; whether FF6 ever does is unverified).
@@ -323,7 +325,8 @@ Name check: 0 missing in all six games. Not tested in game.
   6. Row on the status list is FF6 only; FF4's list still has none (FF4 gap above).
   7. The core's battle item reader requires Item to be command 3 (FF1's gate): FF2-FF5 battle
      item reads may be silent where Item is elsewhere (FF4). Not changed.
-  8. Mod text key "Low Flying Airship" has no translations (English everywhere).
+  8. Mod text key "Low Flying Airship": translated by hand on 2026-10-07 (no game text names
+     it; built from FF6's "Special Airship" and "Low altitude" wording), in modtext_fixes.py.
   9. HpAbs/MpAbs/Golem hit types are read as "N damage", as the old mod did.
 
 ## User rule: game text over mod text (2026-10-06)

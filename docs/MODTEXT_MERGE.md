@@ -199,10 +199,10 @@ Written by `tools/merge_modtext.py`. Do not edit by hand.
 ### Counts
 
 - Source keys: FF1 513, FF2 391, FF3 400, FF4 338, FF5 410, FF6 300.
-- Keys in the common file: 954.
+- Keys in the common file: 955.
 - Common entries taken from: FF1 513, FF3 86, FF2 48, FF4 92, FF5 111, FF6 102.
 - Overrides from the merge: FF1 0, FF2 49, FF3 42, FF4 26, FF5 39, FF6 23.
-- Official-text fixes: 653 rows, 4 new keys.
+- Official-text fixes: 653 rows, 5 new keys.
 - Overrides after the fixes: FF1 2, FF2 53, FF3 53, FF4 56, FF5 55, FF6 23.
 - Languages filled from another mod: 0.
 - Missing-language gaps after the merge: 0.
@@ -414,7 +414,7 @@ None.
 
 Applied by `tools/modtext_fixes.py` after the merge. Each line: language, old -> new, then the game table it comes from.
 
-#### common: 122 rows in 46 keys, 2 new keys
+#### common: 122 rows in 46 keys, 3 new keys
 
 - `MP`: ru "MP" -> "ОМ". Source: FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143).
 - `Item`: en "Item" -> "Items". Source: FF1 system MSG_SYSTEM_042.
@@ -464,6 +464,7 @@ Applied by `tools/modtext_fixes.py` after the merge. Each line: language, old ->
 - `How enemy HP is read when you target an enemy: as numbers, as a percentage, or not at all.`: it "Come vengono letti gli HP del nemico quando lo prendi di mira: in numeri, in percentuale o per niente." -> "Come vengono letti i PV del nemico quando lo prendi di mira: in numeri, in percentuale o per niente." (HP/MP labels as above, with article/verb agreement fixed by hand); de "Wie die HP eines Gegners beim Anvisieren vorgelesen werden: als Zahlen, als Prozentsatz oder gar nicht." -> "Wie die LP eines Gegners beim Anvisieren vorgelesen werden: als Zahlen, als Prozentsatz oder gar nicht." (FF1-FF5 system HP/MP labels (FF1 MSG_SYSTEM_053/283, FF5 MSG_SYSTEM_142/143)); es "Cómo se leen los HP del enemigo al seleccionarlo: en números, en porcentaje o nada." -> "Cómo se lee la VIT del enemigo al seleccionarlo: en números, en porcentaje o nada." (HP/MP labels as above, with article/verb agreement fixed by hand); ru "Как зачитывается HP врага при выборе цели: числами, в процентах или никак." -> "Как зачитываются ОЗ врага при выборе цели: числами, в процентах или никак." (HP/MP labels as above, with article/verb agreement fixed by hand); pt "Como o HP do inimigo é lido ao selecioná-lo: em números, em porcentagem ou não é lido." -> "Como os PV do inimigo são lidos ao selecioná-lo: em números, em porcentagem ou não são lidos." (HP/MP labels as above, with article/verb agreement fixed by hand).
 - `No data available`: new key. Source: mod UI text, translated by hand (not game text) in the style of the neighbouring No ... available keys.
 - `Old screen reader still installed: {0}. Remove it from the Mods folder.`: new key. Source: mod UI text (native mod's startup warning), translated by hand (not game text).
+- `Low Flying Airship`: new key. Source: FF6 vehicle fallback name (TransportationType.LowFlying), translated by hand (no game text): the airship word of FF6's Special Airship entry plus the Low altitude entry's wording.
 
 #### ff1: 4 rows in 2 keys
 
@@ -708,7 +709,7 @@ None.
 
 ### Keys not in FF1, by source
 
-The common entry for these came from the game named. Order tried: FF3, FF2, FF4, FF5.
+The common entry for these came from the game named. Order tried: FF3, FF2, FF4, FF5, FF6.
 
 #### From FF3: 86
 

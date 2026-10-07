@@ -24,6 +24,7 @@ void configure(game::Flags& f)
     f.atb = true;
     f.has_jobs = true;
     f.timer_freeze = true;
+    f.bestiary_steal = true;       // the bestiary lists stealable items (Steal ability)
 }
 
 } // namespace

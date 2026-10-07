@@ -13354,5 +13354,19 @@
     "ru": "Старая программа экранного доступа всё ещё установлена: {0}. Удалите её из папки Mods.",
     "th": "ยังมีโปรแกรมอ่านหน้าจอเก่าติดตั้งอยู่: {0} โปรดลบออกจากโฟลเดอร์ Mods",
     "pt": "O leitor de tela antigo ainda está instalado: {0}. Remova-o da pasta Mods."
+  },
+  "Low Flying Airship": {
+    "en": "Low Flying Airship",
+    "ja": "低空飛行の飛空艇",
+    "fr": "Aéronef à basse altitude",
+    "it": "Aeronave a bassa quota",
+    "de": "Tieffliegendes Luftschiff",
+    "es": "Aeronave a baja altitud",
+    "ko": "저공비행 비공정",
+    "zht": "低空飛行的飛空艇",
+    "zhc": "低空飞行的飞空艇",
+    "ru": "Низколетящий воздушный корабль",
+    "th": "เรือเหาะบินต่ำ",
+    "pt": "Aeronave a baixa altitude"
   }
 }

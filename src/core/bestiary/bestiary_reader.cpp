@@ -1,7 +1,10 @@
 // Ports FF1 Menus/BestiaryReader.cs: bestiary (Picture Book) data formatted for speech. Only
-// what the game visibly shows - never raw master data, except the dropped items, which the UI
-// shows as icons without text. All six games.
+// what the game visibly shows - never raw master data, except the dropped and stolen items, which
+// the UI shows as icons without text. All six games; stealable items only where the game's
+// bestiary lists them (game::flags().bestiary_steal: FF4, FF5, FF6), as FF2-FF6's old mods read
+// them.
 #include "bestiary.h"
+#include "../game.h"
 #include "../log.h"
 #include "../modtext.h"
 #include "../refs.h"
@@ -64,6 +67,13 @@ ref::Method mDrop5{kMonster, "get_DropContentId5", 0};
 ref::Method mDrop6{kMonster, "get_DropContentId6", 0};
 ref::Method mDrop7{kMonster, "get_DropContentId7", 0};
 ref::Method mDrop8{kMonster, "get_DropContentId8", 0};
+// Steal slots: read only where game::flags().bestiary_steal, so masked to those games.
+constexpr uint8_t kStealGames = game::kFF4 | game::kFF5 | game::kFF6;
+ref::Class  kMonsterSteal{"Last.Data.Master", "Monster", kStealGames};
+ref::Method mSteal1{kMonsterSteal, "get_StealContentId1", 0};
+ref::Method mSteal2{kMonsterSteal, "get_StealContentId2", 0};
+ref::Method mSteal3{kMonsterSteal, "get_StealContentId3", 0};
+ref::Method mSteal4{kMonsterSteal, "get_StealContentId4", 0};
 
 ref::Class  kContent{"Last.Data.Master", "Content"};
 ref::Method mContentMesIdName{kContent, "get_MesIdName", 0};
@@ -170,15 +180,12 @@ std::wstring resolve_content_name(int content_id)
     return text::trim(text::strip_markup(game_message(mes_id)));
 }
 
-// ReadItemsFromMasterData: the 8 drop slots of the Monster master.
-void read_items_from_master_data(void* monster_data, std::vector<StatEntry>& entries)
+// The item names in a list of Monster master slots, ", "-joined.
+template <size_t N>
+std::wstring item_names(void* master, ref::Method* (&slots)[N])
 {
-    if (!monster_data) return;
-    void* master = ref::call<void*>(mMonsterMaster, monster_data);
-    if (!master) return;
-    ref::Method* drops[] = {&mDrop1, &mDrop2, &mDrop3, &mDrop4, &mDrop5, &mDrop6, &mDrop7, &mDrop8};
     std::wstring names;
-    for (ref::Method* m : drops) {
+    for (ref::Method* m : slots) {
         int id = ref::call<int32_t>(*m, master);
         if (id <= 0) continue;
         std::wstring name = resolve_content_name(id);
@@ -186,6 +193,23 @@ void read_items_from_master_data(void* monster_data, std::vector<StatEntry>& ent
         if (!names.empty()) names += L", ";
         names += name;
     }
+    return names;
+}
+
+// ReadItemsFromMasterData: the 4 steal slots (games whose bestiary lists them), then the 8 drop
+// slots of the Monster master.
+void read_items_from_master_data(void* monster_data, std::vector<StatEntry>& entries)
+{
+    if (!monster_data) return;
+    void* master = ref::call<void*>(mMonsterMaster, monster_data);
+    if (!master) return;
+    if (game::flags().bestiary_steal) {
+        ref::Method* steals[] = {&mSteal1, &mSteal2, &mSteal3, &mSteal4};
+        std::wstring names = item_names(master, steals);
+        entries.push_back({T(L"Stealable Items"), names.empty() ? T(L"None") : names, StatGroup::Items});
+    }
+    ref::Method* drops[] = {&mDrop1, &mDrop2, &mDrop3, &mDrop4, &mDrop5, &mDrop6, &mDrop7, &mDrop8};
+    std::wstring names = item_names(master, drops);
     entries.push_back({T(L"Dropped Items"), names.empty() ? T(L"None") : names, StatGroup::Items});
 }
 

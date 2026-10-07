@@ -23,6 +23,7 @@ void configure(game::Flags& f)
     // on the collision grid. FF6's map data was not checked for passage layers.
     f.has_hidden_passages = true;
     f.timer_freeze = true;         // FF6 Shift+T (TimerPatches.cs)
+    f.bestiary_steal = true;       // the bestiary lists stealable items (Steal ability)
     // FF6 has no FieldAirShip class: has_airship stays false.
 }
 
