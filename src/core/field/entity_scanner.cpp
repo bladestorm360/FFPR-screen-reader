@@ -128,6 +128,19 @@ EntityPtr make(Kind kind, const Context& c, const std::wstring& name)
     return e;
 }
 
+/// The game module's placeholder list (game::Flags::placeholder_entity), asked with the raw
+/// property name, or the object name when the property has none or says "NPC": FF2's
+/// IsPlaceholderEntity, applied where its EntityScanner applied it (NPCs, event triggers and
+/// interactive objects). No list in the other games.
+bool placeholder(Context& c)
+{
+    bool (*fn)(const wchar_t*) = game::flags().placeholder_entity;
+    if (!fn) return false;
+    std::wstring raw = c.property() ? ref::rd_str(c.property(), r::fPropName) : std::wstring();
+    if (text::is_blank(raw) || raw == L"NPC") raw = c.go_name;
+    return fn(raw.c_str());
+}
+
 EntityPtr make_event(const Context& c, const std::wstring& name, const std::wstring& type)
 {
     EntityPtr e = make(Kind::Event, c, name);
@@ -233,6 +246,9 @@ Detection npc_detector(Context& c)
 {
     if (!r::kFieldNonPlayer.is(c.fe)) return not_handled();
     if (r::mNonPlayerGetCanAction.get() && !ref::call<bool>(r::mNonPlayerGetCanAction, c.fe)) return skip();
+    // FF2's vehicle spawn NPCs (the Dreadnought flying over the world map, the airship) have an
+    // action but no script or message; the game's CanAction cannot tell (user, 2026-10-10).
+    if (placeholder(c)) return skip();
 
     std::wstring name = entity_name_from_property(c.fe);
     if (name.empty() || name == L"NPC") name = clean_object_name(c.go_name, T(L"NPC"));
@@ -300,7 +316,7 @@ Detection to_layer_detector(Context& c)
 Detection event_trigger_detector(Context& c)
 {
     if (!c.is_event_trigger) return not_handled();
-    if (entity_is_scenery(c.fe)) return skip();
+    if (entity_is_scenery(c.fe) || placeholder(c)) return skip();
     std::wstring name = entity_name_from_property(c.fe);
     if (name.empty() || name == L"GeneralEventObject") {
         name = classify_by_dialogue(c.fe);
@@ -312,7 +328,7 @@ Detection event_trigger_detector(Context& c)
 /// InteractiveEntityDetector (130): FieldMapObjectDefault and any IInteractiveEntity left.
 Detection interactive_detector(Context& c)
 {
-    if (entity_is_scenery(c.fe)) return skip();
+    if (entity_is_scenery(c.fe) || placeholder(c)) return skip();
 
     if (r::kFieldMapObjectDefault.is(c.fe)) {
         if (!call_virtual_bool(r::mMapObjectGetCanAction, c.fe)) return skip();

@@ -65,6 +65,17 @@ Re-test after the 2026-10-10 fixes (first FF2 session; details in `PORT_STATUS.m
 11. Win a battle with gil drops in the item list: each row as the window shows it ("4 Gil"),
     no "Potion".
 
+Second batch (same day):
+12. World map while the Dreadnought flies: the entity list has no "Dreadnought" NPC (the parked
+    one at Bafsk is a map exit, as before).
+13. No "Level" anywhere: character pre-screens, the status list, save slots.
+14. Late game, the real Hilda: "Hilda (true)", not Japanese.
+15. In a weapon or armour shop, on an item: keys 1 to 4 say each party member's name and
+    "Stronger", "Weaker", "No change" or "Cannot equip", plus "Equipped" when the mark shows.
+    Outside a shop the number keys do nothing.
+16. Any NPC name still spoken in Japanese: tell me the name; the dictionary audit says FF2
+    has none left.
+
 ## FF3
 
 1. Onion Knight naming. 2. Job menu, then I. 3. Magic menu: Learn with a tome, Use, a target,

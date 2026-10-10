@@ -131,6 +131,86 @@ std::wstring strip_paren_suffix(const std::wstring& s)
     return text::trim(s);
 }
 
+// --- The other games' translators (2026-10-10) ---------------------------------------------
+// FF3-FF6 each had their own EntityTranslator with rules FF1's lacks; their dictionaries were
+// built against those rules. The union below runs only after FF1's tiers missed, so FF1's
+// results are unchanged (tools/translation_audit.py mirrors every rule here; FF1 and FF4 audit
+// at zero misses before and after).
+
+bool is_jp(wchar_t c)
+{
+    return (c >= 0x3040 && c <= 0x309F) || (c >= 0x30A0 && c <= 0x30FF) || (c >= 0x4E00 && c <= 0x9FFF);
+}
+bool is_colon(wchar_t c) { return c == L':' || c == 0xFF1A; }
+
+/// "sc_e_0091:" / "ev_e_1030：" style script references: `(sc_e|ev_e)_\d+(_\d+)?` from `from`,
+/// returning the length matched (0 when none). Case-insensitive.
+size_t script_ref_length(const std::wstring& s, size_t from)
+{
+    std::wstring low = text::lower(s.substr(from));
+    if (!(low.rfind(L"sc_e_", 0) == 0 || low.rfind(L"ev_e_", 0) == 0)) return 0;
+    size_t i = 5;
+    size_t n = digit_run(low, i);
+    if (n == 0) return 0;
+    i += n;
+    if (i < low.size() && low[i] == L'_') {
+        size_t m = digit_run(low, i + 1);
+        if (m > 0) i += 1 + m;
+    }
+    return i;
+}
+
+/// FF6 EventSuffixRegex [:：](?:ev_e|sc_e)_\d+(?:_\d+)?$ removed: "女の子:ev_e_1030" -> "女の子".
+std::wstring strip_event_ref_suffix(const std::wstring& s)
+{
+    size_t p = s.find_last_of(L":\xFF1A");
+    if (p == std::wstring::npos || p + 1 >= s.size()) return s;
+    size_t len = script_ref_length(s, p + 1);
+    if (len == 0 || p + 1 + len != s.size()) return s;
+    return s.substr(0, p);
+}
+
+/// FF6 JapaneseColonSuffixRegex [:：][Japanese]+$ removed: "宝箱:イベント前" -> "宝箱".
+std::wstring strip_jp_colon_suffix(const std::wstring& s)
+{
+    size_t p = s.find_last_of(L":\xFF1A");
+    if (p == std::wstring::npos || p + 1 >= s.size()) return s;
+    for (size_t i = p + 1; i < s.size(); ++i)
+        if (!is_jp(s[i])) return s;
+    return s.substr(0, p);
+}
+
+/// FF6 ParentheticalSuffixRegex [(（][Japanese]+[)）]$ removed: "扉(オブジェクト)" -> "扉".
+std::wstring strip_jp_paren_suffix(const std::wstring& s)
+{
+    if (s.size() < 3) return s;
+    wchar_t last = s.back();
+    if (last != L')' && last != 0xFF09) return s;
+    size_t end = s.size() - 1;
+    for (size_t i = end; i-- > 0;) {
+        if (s[i] == L'(' || s[i] == 0xFF08) return i + 1 == end ? s : s.substr(0, i);
+        if (!is_jp(s[i])) return s;
+    }
+    return s;
+}
+
+/// FF6 EntityPrefixRegex, the forms FF1's entity prefix lacks: `(sc_e|ev_e)_\d+(_\d+)?[:：]` and
+/// `NPC\d*_?` (ignore case). The length matched, 0 when none.
+size_t extended_prefix_length(const std::wstring& s)
+{
+    size_t len = script_ref_length(s, 0);
+    if (len > 0) return len < s.size() && is_colon(s[len]) ? len + 1 : 0;
+    std::wstring low = text::lower(s.substr(0, 3));
+    if (low == L"npc") {
+        size_t i = 3 + digit_run(s, 3);
+        // "NPC1_" (FF6's rule), and "NPC:" / "NPC：" (FF6 names its guards and the Thamasa
+        // characters that way; the old translator missed them).
+        if (i < s.size() && (s[i] == L'_' || is_colon(s[i]))) ++i;
+        return i;
+    }
+    return 0;
+}
+
 } // namespace
 
 bool is_decimal_digit(wchar_t c)
@@ -169,12 +249,14 @@ std::wstring translate_entity_name(const std::wstring& japanese_name)
     // Trailing enumeration suffix [①-⑳]+$ ("①"): lookups target the base name and the
     // suffix is re-appended to whichever tier succeeds.
     std::wstring enum_suffix;
+    std::wstring trailing_raw;   // the suffix as written, for the dictionaries that key on it
     std::wstring core = japanese_name;
     {
         size_t i = core.size();
         while (i > 0 && circled(core[i - 1])) --i;
         if (i < core.size()) {
-            enum_suffix = L" " + core.substr(i);
+            trailing_raw = core.substr(i);
+            enum_suffix = L" " + trailing_raw;
             core = core.substr(0, i);
         }
     }
@@ -184,7 +266,8 @@ std::wstring translate_entity_name(const std::wstring& japanese_name)
         size_t i = core.size();
         while (i > 0 && is_decimal_digit(core[i - 1])) --i;
         if (i < core.size() && i > 0) {
-            enum_suffix = L" " + core.substr(i);
+            trailing_raw = core.substr(i);
+            enum_suffix = L" " + trailing_raw;
             core = core.substr(0, i);
         }
     }
@@ -233,6 +316,56 @@ std::wstring translate_entity_name(const std::wstring& japanese_name)
     std::wstring stripped = strip_paren_suffix(name_for_suffix);
     if (stripped != name_for_suffix && !stripped.empty() && try_lookup(stripped, hit))
         return (has_prefix ? prefix + L" " + hit : hit) + leading_suffix + enum_suffix;
+
+    // 3b. Leading 真 ("true", "real") with a translated remainder: FF2's late-game variants such
+    //     as 真ヒルダ, the real Hilda after the impostor. FF2 EntityTranslator step 6: the
+    //     remainder's name with "(true)", so the distinction survives translation. The FF1
+    //     translator the core ported had no such step (FF2 test, 2026-10-10).
+    if (name_for_suffix.size() > 1 && name_for_suffix[0] == 0x771F) {
+        std::wstring after = name_for_suffix.substr(1);
+        std::wstring after_stripped = strip_paren_suffix(after);
+        if (try_lookup(after, hit) || (after_stripped != after && !after_stripped.empty() && try_lookup(after_stripped, hit))) {
+            std::wstring named = TF(L"{0} (true)", {hit});
+            return (has_prefix ? prefix + L" " + named : named) + leading_suffix + enum_suffix;
+        }
+    }
+
+    // --- The other games' tiers (the helpers above; FF1's results are decided by now) --------
+
+    // E1. The leading-stripped name WITH its trailing suffix: FF3 keys its sprite variants on
+    //     the digit ("1:女性4" -> "女性4"), FF2 too ("①フィンの町の店主色替え2").
+    if (!trailing_raw.empty()) {
+        if (try_lookup(core + trailing_raw, hit)) return hit + leading_suffix;
+        if (has_prefix && try_lookup(base + trailing_raw, hit)) return prefix + L" " + hit + leading_suffix;
+    }
+
+    // E2. FF6's prefixes ("sc_e_0091:", "ev_e_1030：", "NPC1_", "NPC"), spoken before the name as
+    //     its translator did ("NPC1 Merchant"); the rest with and without its suffix, and with
+    //     a parenthesised suffix removed.
+    {
+        size_t len = extended_prefix_length(core);
+        if (len > 0 && len < core.size()) {
+            std::wstring pfx = text::trim(core.substr(0, len));
+            if (!pfx.empty() && pfx.back() == L'_') pfx.pop_back();
+            std::wstring rest = core.substr(len);
+            if (!trailing_raw.empty() && try_lookup(rest + trailing_raw, hit)) return pfx + L" " + hit + leading_suffix;
+            if (try_lookup(rest, hit)) return pfx + L" " + hit + leading_suffix + enum_suffix;
+            std::wstring rest_stripped = strip_paren_suffix(rest);
+            if (rest_stripped != rest && !rest_stripped.empty() && try_lookup(rest_stripped, hit))
+                return pfx + L" " + hit + leading_suffix + enum_suffix;
+        }
+    }
+
+    // E3. FF6's pre-strips: a script reference, a Japanese qualifier after a colon, a
+    //     parenthesised Japanese word at the end. The stripped name runs through every tier
+    //     again (one level: the strips are idempotent).
+    {
+        std::wstring pre = strip_jp_paren_suffix(strip_jp_colon_suffix(strip_event_ref_suffix(japanese_name)));
+        if (pre != japanese_name && !pre.empty()) {
+            std::wstring again = translate_entity_name(pre);
+            if (again != pre) return again;
+        }
+    }
 
     // 4. Track the untranslated name by the current map (development aid).
     const std::wstring& tracking = has_prefix ? base : core;

@@ -122,6 +122,7 @@ std::wstring read_character_information(void* slot)
         current_mp.clear();
         max_mp.clear();
     }
+    if (!game::flags().has_levels) level.clear();   // FF2: no character levels (user, 2026-10-10)
     if (!job_name.empty()) {
         if (!announcement.empty()) announcement += L", " + job_name;
         else announcement = job_name;

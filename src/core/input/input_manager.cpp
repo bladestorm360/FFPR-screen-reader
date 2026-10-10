@@ -276,6 +276,9 @@ Context determine_context(bool on_demand)
     if (both("StatusNavigationTracker.IsNavigationActive", "StatusNavigationTracker.ValidateState")) return Context::Status;
     if (both("BestiaryNavigationTracker.IsNavigationActive", "BestiaryNavigationTracker.ValidateState")) return Context::BestiaryDetail;
     if (queries::is("BattleStateHelper.IsInBattle")) return Context::Battle;
+    // The shop (its tracker validates the controller's state each time): the number row reads
+    // the party panel's equipment comparison. Global keys still match in this context.
+    if (queries::is("ShopMenuTracker.IsShopMenuActive") && queries::is("ShopMenuTracker.ValidateState")) return Context::Shop;
     // Field keys only while on a field map with no menu open; otherwise Global, so the field
     // keys are silent and the global info keys still work.
     if (is_on_valid_map(on_demand) && !menu_state::any_active()) return Context::Field;

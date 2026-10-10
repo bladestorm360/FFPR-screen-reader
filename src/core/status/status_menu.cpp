@@ -176,7 +176,7 @@ void on_select_content(void* contents, int index)
 
     if (void* param = character_parameter(data)) {
         int level = param_level_or_base(param);
-        if (level > 0) announcement += L", " + TF(L"Level {0}", {text::num(level)});
+        if (level > 0 && game::flags().has_levels) announcement += L", " + TF(L"Level {0}", {text::num(level)});
         announcement += L", " + TF(L"HP {0}/{1}", {text::num(param_current_hp(param)), text::num(param_max_hp(param))});
         if (game::flags().has_mp)
             announcement += L", " + TF(L"MP {0}/{1}", {text::num(ref::rd<int32_t>(param, fParamCurrentMp)),
@@ -436,7 +436,7 @@ std::wstring read_status_details(void* controller)
         std::wstring name = character_name(data);
         if (!text::is_blank(name)) parts.push_back(name);
         if (void* param = character_parameter(data)) {
-            parts.push_back(TF(L"Level {0}", {text::num(param_confirmed_level(param))}));
+            if (game::flags().has_levels) parts.push_back(TF(L"Level {0}", {text::num(param_confirmed_level(param))}));
             parts.push_back(TF(L"HP: {0} / {1}", {text::num(param_current_hp(param)), text::num(param_max_hp(param))}));
         }
     }

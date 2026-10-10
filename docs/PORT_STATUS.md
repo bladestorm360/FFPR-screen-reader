@@ -405,3 +405,52 @@ Evidence: FF2's `ffpr_screen_reader.log` of 2026-10-10 04:40 and the user's repo
    the fallback when the method is unresolved.
 
 Re-test steps: `TESTING.md`, FF2 items 9-11.
+
+## FF2 session, second batch (2026-10-10): built, not yet re-tested
+
+6. **The Dreadnought listed as an NPC on the world map.** FF2's world map (Map_10010) carries
+   it as NPC objects in conditional groups with an action but no script and no message; the
+   game's CanAction is true, and the core's scenery rule only sees objects without an action.
+   A "no script and no message" rule for NPCs is unsafe: FF3's townsfolk talk through
+   map-script handlers and look the same offline (tools/mapdump counts: 285 such NPCs in FF3,
+   505 in FF4). The old FF2 mod never listed it because its EntityScanner had a name list
+   (IsPlaceholderEntity: vehicle spawn NPCs, location markers, dev triggers), which the port
+   had dropped. New `game::Flags::placeholder_entity`, a per-game function asked with the raw
+   property name in the scanner's NPC, event-trigger and interactive branches (where the C#
+   asked); FF2's list is ported whole in `src/games/ff2/module.cpp`. FF4/FF5's C# placeholder
+   filters (`tools/audit_events.py` mirrors them) are still not ported: no report yet.
+7. **No character level in FF2** (user: "it isn't used"). New `Flags::has_levels` (false for
+   FF2): the character-slot reader, the status character list, the status details line and
+   the save slots skip the level. FF2's weapon and spell skill levels are unaffected (they are
+   the game's).
+8. **"真ヒルダ" spoken in Japanese.** The core's translator is FF1's; the FF2 C# had a step for
+   a leading 真 ("true"): the remainder's name with "(true)". Ported: "Hilda (true)".
+9. **Dictionary audit, all six games.** New `tools/translation_audit.py`: for every object the
+   mod names by its property name it mirrors the translator's lookup against the game's
+   `data/<game>/translation.json`. First run: FF1 0, FF2 3, FF3 108, FF4 0, FF5 15, FF6 707
+   untranslated names. The misses were the translator, not the dictionaries: FF3 keys its
+   sprite variants with the trailing digit ("女性4") that FF1's tiers strip first; FF6's
+   (ZKline's) translator strips "NPC1_", "sc_e_0091:" / "ev_e_1030：" prefixes and
+   ":ev_e_1030", ":イベント前", "(オブジェクト)" suffixes. The union is now in
+   `entity_translator.cpp` as extra tiers after FF1's (FF1's results unchanged), plus "NPC:"
+   with a colon, which the FF6 translator also missed. After: FF1-FF4 0, FF5 15, FF6 75; the
+   remaining names have no dictionary entry at all (`tools/mapdump/<game>_untranslated.txt`):
+   FF5 event descriptions ("タイクーン王探し④", chains in the tower) and two shop NPCs; FF6
+   event descriptions, dev markers ("セーフ位置") and a few NPCs. Adding them means writing
+   twelve languages: the user's call.
+10. **FF6 map data extracted** (`tools/mapdump/ff6_*`): 267 bundles, 638 sub-maps, 15957
+    objects, 2841 scripts, 104 master tables, 0 errors; same Addressables layout as FF1-FF5,
+    two extra object types (29 ChangeAnimationKeyArea, 30 SwitchEvent). The baked-map work
+    (OPEN_ISSUES.md) starts from this.
+11. **Shop party panel on the number row, all six games** (user request). The game draws, per
+    active-party member, an up or down arrow, an equipped mark and a "cannot equip" text for
+    the focused item (`ShopPartyController.activeContentList` ->
+    `ShopCharaStatusContentView`, identical in the six dumps; it carries no stat numbers).
+    New `src/core/shop/shop_party.cpp` and key context `Shop` (open shop; Global keys still
+    match): 1-9 read slot N as "Name, Stronger / Weaker / No change[, Equipped]" or "Name,
+    Cannot equip". Rendered text is read as drawn (the mark's text, the impossible text) unless
+    it is a bare symbol; the arrows are icons, so their words are the mod's. Five new
+    mod-text keys (Stronger, Weaker, No change, Cannot equip, Equipped), translations written
+    by the port, not by a native speaker.
+
+Re-test steps: `TESTING.md`, FF2 items 12-16.

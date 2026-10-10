@@ -33,6 +33,7 @@ Checked in this order:
 | Status | `StatusNavigationTracker.IsNavigationActive` and `StatusNavigationTracker.ValidateState` (if only one is defined, that one) |
 | BestiaryDetail | `BestiaryNavigationTracker.IsNavigationActive` and `BestiaryNavigationTracker.ValidateState` (same rule) |
 | Battle | `BattleStateHelper.IsInBattle` |
+| Shop | `ShopMenuTracker.IsShopMenuActive` and `ShopMenuTracker.ValidateState` (native, 2026-10-10: the shop is open; Global keys still match) |
 | Field | a `Last.Map.FieldPlayerController` with a `fieldPlayer`, and `menu_state::any_active()` false |
 | Global | otherwise |
 
@@ -40,6 +41,7 @@ Checked in this order:
 
 | Key | Action | Context |
 |---|---|---|
+| 1 to 9 | `ShopPartyReader.AnnounceSlot1` to `AnnounceSlot9`: active-party slot N's name and equipment comparison for the focused item (Stronger / Weaker / No change, Equipped, Cannot equip) | Shop |
 | Down | `StatusNavigationReader.NavigateNext` | Status |
 | Shift+Down | `StatusNavigationReader.JumpToNextGroup` | Status |
 | Ctrl+Down | `StatusNavigationReader.JumpToBottom` | Status |

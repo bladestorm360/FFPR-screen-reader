@@ -111,10 +111,12 @@ std::wstring build_slot_announcement(const std::wstring& slot_id, const std::wst
 {
     std::wstring a = slot_id;
     if (!time_stamp.empty()) a += L", " + time_stamp;
+    // FF2 has no character levels: its slot keeps the game's level field at 1 (user, 2026-10-10).
+    const bool with_level = !level.empty() && game::flags().has_levels;
     if (!character_name.empty()) {
         a += L": " + character_name;
-        if (!level.empty()) a += L" " + TF(L"Level {0}", {level});
-    } else if (!level.empty()) {
+        if (with_level) a += L" " + TF(L"Level {0}", {level});
+    } else if (with_level) {
         a += L": " + TF(L"Level {0}", {level});
     }
     if (!location.empty()) a += L", " + location;

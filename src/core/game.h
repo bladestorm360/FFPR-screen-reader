@@ -53,6 +53,14 @@ struct Flags {
     bool timer_freeze = false;          // FF5 Shift+T timer freeze
     bool bestiary_steal = false;        // the bestiary lists stealable items: only the games with a
                                         // Steal ability (FF4, FF5, FF6; user, 2026-10-07)
+    bool has_levels = true;             // character levels exist and are read (all but FF2, whose
+                                        // characters grow by use; user, 2026-10-10)
+    /// Field entities the old mod never listed, by their raw (Japanese) property name: the C#
+    /// EntityScanner.IsPlaceholderEntity of FF2 (vehicle spawn NPCs such as the Dreadnought,
+    /// location markers, dev triggers). Null = no list. The scenery rule (no action, script or
+    /// message) runs first; this covers what it cannot see, e.g. an NPC with an action but no
+    /// script, which other games use for real townsfolk (FF3 talks through map-script handlers).
+    bool (*placeholder_entity)(const wchar_t* raw_name) = nullptr;
 };
 
 struct Module {
