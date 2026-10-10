@@ -75,6 +75,9 @@ Second batch (same day):
     Outside a shop the number keys do nothing.
 16. Any NPC name still spoken in Japanese: tell me the name; the dictionary audit says FF2
     has none left.
+17. NPC list in a town with several identical NPCs: "Man (Blue Clothes) 1" to "4" and
+    "Palamecian Soldier 1" to "5", the numbers unchanged after walking; "Borghen" with no
+    number. FF6 with its language set to anything but English: field names in that language.
 
 ## FF3
 

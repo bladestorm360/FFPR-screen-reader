@@ -180,6 +180,7 @@ struct Entity {
     void* game_class = nullptr;    // its class when converted (a reused address is not the same entity)
     unity::Vec3 pos{};             // position when converted
     std::wstring name;
+    std::wstring converted_name;   // name as converted; NPCs are renumbered from it each scan
     bool opened = false;           // TreasureChest: state when converted (fallback)
     std::wstring asset;            // NPC
     bool shop = false;             // NPC

@@ -479,5 +479,13 @@ Re-test steps: `TESTING.md`, FF2 items 9-11.
     speaker's. `tools\fill_translation.py` merged them without touching the file's layout
     (CRLF kept; `git diff -w` shows only value changes). The audit tool reports zero, and no
     entry in any of the six dictionaries is English-only any more.
+16. **NPC numbers (all six games).** "Palamecian Soldier 7 ... Borghen 11": the names end in
+    the developers' per-map object numbers (shared across every NPC on the map), which the
+    translator keeps as " N" and FF1's reader spoke as they were. User's rule (2026-10-10): a
+    number only when several NPCs share a name, 1..n within that group; a unique name has none.
+    `renumber_npcs` in `entity_scanner.cpp` runs on every scan from each entity's converted name
+    (new `Entity::converted_name`), orders a group by the developers' numbers (then top-to-
+    bottom, left-to-right position) so a number never moves with the player, and NPC only
+    (events, exits and chests are named otherwise).
 
 Re-test steps: `TESTING.md`, FF2 items 12-16.

@@ -9,7 +9,9 @@
 // EntityDetectionContext.TypeName is the entity's runtime class name. (In the C# mod it was
 // the Il2CppInterop wrapper's type, usually the static type FieldEntity.)
 #include <algorithm>
+#include <map>
 #include <unordered_set>
+#include "entity_translator.h"
 #include "field_api.h"
 #include "field_internal.h"
 #include "map_names.h"
@@ -125,6 +127,7 @@ EntityPtr make(Kind kind, const Context& c, const std::wstring& name)
     e->game_class = il2cpp::object_class(c.fe);
     e->pos = c.position;
     e->name = name;
+    e->converted_name = name;
     return e;
 }
 
@@ -452,6 +455,59 @@ void dedupe_map_exits(std::vector<EntityPtr>& list)
     list.swap(out);
 }
 
+/// Names end in the developers' per-map object number ("パラメキア兵7" -> "Palamecian Soldier
+/// 7", "ボーゲン11" -> "Borghen 11"), kept by the translator as " N". The user's rule
+/// (2026-10-10): an NPC is numbered only when several NPCs share the same name, 1..n within
+/// that group; a unique name carries no number. Groups keep the developers' order (then map
+/// position) so a number never changes as the player moves. Re-derived from the converted
+/// name on every scan, so an entity leaving the list renumbers its group.
+std::wstring strip_instance_number(const std::wstring& name, long long& number)
+{
+    number = -1;
+    size_t end = name.size();
+    while (end > 0 && is_decimal_digit(name[end - 1])) --end;
+    if (end == 0 || end == name.size()) return name;   // all digits, or no number
+    size_t base_end = end;
+    while (base_end > 0 && name[base_end - 1] == L' ') --base_end;
+    if (base_end == 0) return name;
+    number = 0;
+    for (size_t i = end; i < name.size(); ++i) {
+        wchar_t c = name[i];
+        number = number * 10 + ((c >= 0xFF10 && c <= 0xFF19) ? c - 0xFF10 : c - L'0');
+    }
+    return name.substr(0, base_end);
+}
+
+void renumber_npcs(std::vector<EntityPtr>& list)
+{
+    struct Member { EntityPtr e; long long number; };
+    std::map<std::wstring, std::vector<Member>> groups;
+    for (auto& e : list) {
+        if (e->kind != Kind::NPC) continue;
+        long long number = -1;
+        std::wstring base = strip_instance_number(e->converted_name, number);
+        groups[base].push_back({e, number});
+    }
+    for (auto& kv : groups) {
+        auto& members = kv.second;
+        if (members.size() == 1) {
+            members[0].e->name = kv.first;
+            continue;
+        }
+        std::stable_sort(members.begin(), members.end(), [](const Member& a, const Member& b) {
+            if (a.number != b.number) {
+                if (a.number < 0) return false;   // unnumbered after the numbered
+                if (b.number < 0) return true;
+                return a.number < b.number;
+            }
+            if (a.e->pos.y != b.e->pos.y) return a.e->pos.y > b.e->pos.y;   // top to bottom
+            return a.e->pos.x < b.e->pos.x;
+        });
+        int k = 0;
+        for (auto& m : members) m.e->name = kv.first + L" " + std::to_wstring(++k);
+    }
+}
+
 int find_entity_by_identifier()
 {
     // Reference match: the same entity object persists across scans, so the cursor stays on
@@ -577,6 +633,7 @@ void scan_entities()
 
         g_entities.clear();
         for (auto& kv : g_entity_map) g_entities.push_back(kv.second);
+        renumber_npcs(g_entities);
         g_last_scanned_map_id = map_id;
         apply_filter();
 
