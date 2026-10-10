@@ -453,4 +453,20 @@ Re-test steps: `TESTING.md`, FF2 items 9-11.
     mod-text keys (Stronger, Weaker, No change, Cannot equip, Equipped), translations written
     by the port, not by a native speaker.
 
+12. **"Save complete" not spoken (all six games).** The completion popup re-shows the same
+    SavePopup and fills its text after the write; the C# and the port read it once, two frames
+    after SetPopupActive(true), and found it empty ("[SaveLoad] MainMenuSave: Message is
+    empty" in the FF2 log). The read now retries each frame until the text is there (bounded,
+    30 frames), one announcement; the quick-save popup shares the path.
+13. **FF5 and FF6 dictionaries completed** for the names the audit listed (15 and 75), in all
+    twelve languages (`tools/add_translation.py` appends without touching the file's layout:
+    FF5's file is LF, FF6's CRLF). Proper nouns are the games' own names in every language
+    (Baram, Imp, Nikeah, Magitek Factory, Serpent Trench, Injured Lad, Returner, Wedge, from
+    the message tables dumped with `dump_masters.py --all-langs`; the characters from the
+    dictionaries); the descriptive words are the port's own translations, not a native
+    speaker's. The audit is now at zero in all six games. Still open: 1250 of FF6's 1574
+    entries are English-only (ZKline's dictionary; the translator falls back to English for
+    them), a separate and much larger job.
+14. **MP stays in FF2** (user, 2026-10-10: "that was my bad"). Item 4 above is closed.
+
 Re-test steps: `TESTING.md`, FF2 items 12-16.
