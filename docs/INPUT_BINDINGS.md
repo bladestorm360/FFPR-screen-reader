@@ -91,6 +91,8 @@ Checked in this order:
 | F6 | `Mod.ToggleAudioBeacons` | Field |
 | `=` | `Mod.CycleNextCategory` | Field |
 | `-` | `Mod.CyclePreviousCategory` | Field |
+| Shift+G | `PuzzleGuide.Next`: start the guide for this map, or the current step again with directions from here (`src/core/field/puzzle_guide.cpp`) | Field |
+| Ctrl+G | `PuzzleGuide.Stop` | Field |
 | G | `Mod.AnnounceGilAmount` | Global |
 | H | `Mod.AnnounceCharacterStatus` | Global |
 | M | `Mod.AnnounceCurrentMap` | Global |
@@ -160,6 +162,7 @@ Labels follow the pad family (A/B/X/Y, Cross/Circle/Square/Triangle, Nintendo).
 | X | `MessageWindowPatches.RepeatLastDialogue` | `Mod.AnnounceCharacterStatus` | `Mod.AnnounceGilAmount` |
 | Y | | | `Mod.AnnounceCurrentMap` |
 | A | | | `GlobalHotkeyHandler.AnnounceCurrentVehicle` |
+| RB / LB | | | `PuzzleGuide.Next` / `PuzzleGuide.Stop` |
 | R3 / L3 (normalization on) | | | `Mod.TogglePathfindingFilter` / `Mod.ToggleAudioBeacons` |
 | Right stick up / down / left / right | | down: mod-mode controls | `Mod.TeleportNorth` / `South` / `West` / `East` |
 

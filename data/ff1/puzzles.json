@@ -1,0 +1,13 @@
+{
+  "_comment": "Guided puzzle solutions for FINAL FANTASY (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff1_master/map.txt); cells are baked tile coordinates (tools/mapdump/ff1_objects.jsonl). Authored 2026-10-10 from the dumps; not yet tested in game.",
+  "puzzles": [
+    {
+      "id": "citadel_of_trials",
+      "_about": "The teleporter maze: 1F pad -> 2F point 1; the 2F pads (sc_war_30071_N: ChangeMap [94, N]) jump between the floor's numbered points; the 2F stairs at (33,32) lead to 3F, where the return pad at (29,29) sits by the throne. The router takes the pads as warp edges, so one destination suffices.",
+      "maps": [93, 94, 95],
+      "steps": [
+        {"map": 95, "x": 29, "y": 29, "layer": 0, "examine": false, "text": "Go to {0}", "arg": "map:95"}
+      ]
+    }
+  ]
+}

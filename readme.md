@@ -178,6 +178,10 @@ These work on the field.
 
 - Backslash or P: directions to the selected destination. When beacon navigation is on, it restarts the beacon instead.
 - Slash: directions to the selected waypoint.
+- Shift+G: puzzle guide. On a map with a guided puzzle, it starts the guide and reads the first step with directions; press it again for the current step from where you stand now. Each step is spoken as "Step 2 of 4" with what to do and the way there. The guide notices when you reach a step and reads the next one.
+- Ctrl+G: stop the puzzle guide.
+
+Directions are worked out by the mod from the game's own map data, so there is no distance limit: a route can cross a whole map. Routes follow stairs and layer changes, use secret passages when there is no other way, end on the tile in front of a shop counter rather than on the shopkeeper, and on the world map they use your vehicle. If you are on foot and the destination is across water, the directions include boarding your ship or airship ("board the Ship", then the way, then "land"). With the canoe or the snowcraft, river and snow tiles count as walkable. A route to another floor ends at the stairs or exit to take, for example "North 3, take the exit to Snow Cavern B3"; ask again after the transition. Very long routes are read six legs at a time: walk them, then ask again.
 
 ### Audio cues
 
@@ -266,6 +270,7 @@ On the field and in menus:
 - X (Square): your gil.
 - Y (Triangle): the current map.
 - A (Cross): walking, running, or the vehicle you are on.
+- RB (R1): puzzle guide, like Shift+G. LB (L1): stop it, like Ctrl+G. Field only.
 - Right stick Up, Down, Left or Right: teleport to the tile north, south, west or east of the selected destination. Field only.
 - L3 or R3, when Stick Click Normalization is on: beacon navigation or the pathfinding filter on or off.
 

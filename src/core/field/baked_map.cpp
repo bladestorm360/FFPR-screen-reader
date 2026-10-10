@@ -260,6 +260,17 @@ const Grids& grids(const Submap& s)
             }
         }
     }
+    // Step-on warps and trapdoors: cells an ordinary route must not cross.
+    if (cells) {
+        for (const Object& o : g->objects) {
+            if (o.type != ObjType::Warp || o.d != 1) continue;
+            if (g->hazard.empty()) g->hazard.assign(cells, 0);
+            for (int y = o.ty; y < o.ty + o.th; ++y)
+                for (int x = o.tx; x < o.tx + o.tw; ++x)
+                    if (x >= 0 && y >= 0 && x < g->width && y < g->height)
+                        g->hazard[static_cast<size_t>(y) * g->width + x] = 1;
+        }
+    }
     (*g_grids)[idx] = g;
     return *g;
 }

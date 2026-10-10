@@ -91,6 +91,8 @@ void neighbours(const Request& r, const baked::Grids& g, const Cell& from, F&& v
         if (!ok && nl != from.layer && open(r, g, n)) ok = true;
         if (!ok && r.goals_open && is_goal_cell(r, moved)) ok = true;   // a closed goal cell (town tile)
         if (!ok || blocked_by_caller(r, moved)) continue;
+        // A step-on warp or trapdoor is crossed only as the goal itself.
+        if (!g.hazard.empty() && g.hazard[static_cast<size_t>(n.y) * g.width + n.x] && !is_goal_cell(r, moved)) continue;
         if (!visit(moved)) return;
     }
 }

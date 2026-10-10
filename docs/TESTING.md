@@ -106,6 +106,48 @@ setting and Row; Skills sort. 6. Battle: commands, Items, Edgar's Tools, Blitz/L
 lists, I, summons, target all; after battle, Magic AP and learned spells. 7. Airship: H for
 heading and altitude. 8. A timer: T, Shift+T. 9. Coliseum: wager and challenger. 10. Opera.
 
+## Third batch, 2026-10-10: save popups, vehicles, baked maps, puzzle guides (all six games)
+
+Built and smoke-tested, deployed, not tested in game. Steps for every game unless named.
+
+1. **Save complete.** Save from the menu at a save point: the confirmation reads as before;
+   after the write, "Save complete" (the game's own text) plus the button. Quick save: the
+   same, "Save complete" after the write. Load popups unchanged.
+2. **FF2 vehicles.** Pick up the snowcraft and ride onto the snowfield: "On Snowcraft" (the
+   game's key-item name), V says "Snowcraft"; leaving it: "On foot". The canoe says "On
+   Canoe". Ship and airship: the game's names ("On Ship", "On Airship"). FF3: the canoe is
+   "Canoe", not "ship". FF4: "On Hovercraft", "On Enterprise", chocobos by the game's names.
+3. **FF2 character slots.** Magic, Equip, Status, Formation: "Firion, HP 155/244, MP 10/10" -
+   the name once, no second name, no level. The status list the same.
+4. **FF2 Altair, late game.** In the rebel hideout rooms after the empire's attack: "Entering
+   Altair Rebel Hideout" and the exits say the same, not "Altair" alone.
+5. **Routing, any map.** Pick a chest or NPC far away (more than 32 tiles): directions come
+   at once, no "No path". Long routes read six legs, then "and N more": walk them and ask
+   again. A shopkeeper: the route ends on the tile in front of the counter. Stairs: the route
+   goes up or down through them. A target behind a secret passage (FF3-FF5): the route goes
+   through the passage, with wall tones at its mouth. Standing next to an NPC in a corridor:
+   the route goes round, or through when there is no other way.
+6. **World map.** On foot: a town across water gets "board the Ship, East 40, ..." (ship
+   parked and owned) or "board the Airship, ..., land, ..."; with the canoe (FF1-FF3) or
+   the snowcraft (FF2) owned, rivers / snow count as walkable in the directions. In a vehicle:
+   routes stay on water or in the air. The pathfinding filter (Shift+\) hides targets across
+   water while you are on foot (it never boards), as the old filter hid targets out of range.
+7. **Puzzle guide.** Shift+G off a guided map: "No puzzle guide for this map". On one: "Puzzle
+   guide: <area>", then "Step 1 of N: <what to do>. <directions>"; reaching the step: "Step
+   done" and the next; the last: "Puzzle guide finished"; Ctrl+G: "Puzzle guide stopped".
+   Guided maps (data/ffN/puzzles.json): FF1 Citadel of Trials (one step: the 3F warp pad;
+   the directions take the 2F pads: "step on the warp"); FF3 Ur, Altar Cave B3, Mythril
+   Mines, Tower of Owen 5F, Molten Cave hidden-door switches; FF4 Troia Castle B1 (switches 1
+   to 4), Castle Baron switches, Devil's Road; FF5 Fire-Powered Ship engine room; FF6 Zozo
+   clock (6:10:50), Darill's Tomb stones, Ancient Castle hidden switch and stairs, Cultists'
+   Tower switch, Owzer's flower painting. Pad: mod mode + RB / LB.
+8. **Across floors.** A guide step on another floor: "North 3, take the exit to Snow Cavern
+   B3" (or "step on the warp"); after the transition, Shift+G (or the map change) gives the
+   next leg from the new position.
+9. **Nothing worse.** Wall tones, footsteps, beacons, waypoints (Slash) and teleports as
+   before; a map the baked data does not know (log: "[BakedMap] ... using the game's
+   searcher") falls back to the old routing.
+
 ## Known gaps (details in `PORT_STATUS.md`)
 
 - Steal (FF3, FF4, FF5): the result is the game's own line in the battle message box ("Stole

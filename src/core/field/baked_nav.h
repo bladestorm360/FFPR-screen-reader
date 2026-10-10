@@ -43,4 +43,31 @@ std::wstring describe(const std::vector<Phase>& phases);
 /// Forget the cached reachability flood (a scan or a map change).
 void invalidate();
 
+// --- across maps -----------------------------------------------------------------------------
+/// A destination on any sub-map of this game, by map master id and baked cell.
+struct MapGoal {
+    int map_id = 0;
+    baked_route::Cell cell;
+    bool examine = false;   // the target is examined from a neighbouring cell (a switch, a clock)
+};
+
+/// The first leg of the shortest way from the player to `goal`, possibly on another map: the
+/// route across the current map to the exit or warp to take (Dijkstra over the sub-map graph of
+/// GotoMap exits and script warps, each arriving at the destination's PointIn), or the route to
+/// the goal itself when it is on this map. `description` says what to do at the end of the leg
+/// ("take the exit to Castle Cornelia 2F", "step on the warp"). False when unreachable.
+struct CrossLeg {
+    bool found = false;
+    bool on_this_map = false;        // the goal itself is the end of this leg
+    int next_map_id = 0;             // the map the exit / warp leads to (when !on_this_map)
+    std::vector<baked_route::Cell> cells;
+    std::wstring description;        // the spoken directions, action word included
+    int steps_here = 0;              // steps of this leg
+    int steps_total = 0;             // estimated steps to the goal across every map
+};
+CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal);
+
+/// The map master name of a baked map id, through the game ("Citadel of Trials 2F"), or empty.
+std::wstring map_name_of(int map_id);
+
 } // namespace field::baked_nav

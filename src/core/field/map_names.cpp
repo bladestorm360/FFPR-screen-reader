@@ -138,6 +138,15 @@ std::wstring resolve_map_name_by_id(int map_id)
         if (!title_key.empty() && title_key != L"None" && text::lower(title_key) != L"none")
             title = message(title_key);
 
+        // A title the master lacks: data/<game>/map_titles.json, by map id (FF2's late Altair
+        // rebel hideout rooms are "Altair" alone in the master; user, 2026-10-10). The value is
+        // a message key, so the text is still the game's own.
+        if (title.empty()) {
+            const json::Value& overrides = data::game_json("maptitles");
+            if (const json::Value* v = overrides.get(std::to_wstring(map_id)))
+                if (v->is_string() && !v->s.empty()) title = message(v->s);
+        }
+
         // No title from the message table: the Floor field
         if (title.empty()) {
             int floor = ref::call<int32_t>(r::mMapGetFloor, map);

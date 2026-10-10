@@ -1,0 +1,8 @@
+{
+  "_comment": "Map titles the game's map master lacks (map.txt map_title None, floor 0), by map id: the message key the mod resolves through the game's own text (src/core/field/map_names.cpp). FF2's late-game Altair rebel hideout rooms (map_20131_6 to _10, the rooms of map_20011_1 to _5 after the empire's attack) carry no title, so the mod said plain 'Altair' there (user, 2026-10-10: 'the rebel hideout in Altair lost its labelling'). MSG_MAP_NAME_11 = 'Rebel Hideout', the early rooms' title.",
+  "325": "MSG_MAP_NAME_11",
+  "326": "MSG_MAP_NAME_11",
+  "327": "MSG_MAP_NAME_11",
+  "328": "MSG_MAP_NAME_11",
+  "329": "MSG_MAP_NAME_11"
+}

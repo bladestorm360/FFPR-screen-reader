@@ -1,0 +1,49 @@
+{
+  "_comment": "Guided puzzle solutions for FINAL FANTASY III (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff3_master/map.txt); cells are baked tile coordinates (tools/mapdump/ff3_objects.jsonl). Authored 2026-10-10 from the dumps' developer labels (hidden-door switches); not yet tested in game.",
+  "puzzles": [
+    {
+      "id": "ur_hidden_door",
+      "_about": "Ur: the examined object at (13,7) opens the hidden door at (15,9).",
+      "maps": [336],
+      "steps": [
+        {"map": 336, "x": 13, "y": 7, "layer": 1, "examine": true, "text": "Examine the hidden switch"},
+        {"map": 336, "x": 15, "y": 9, "layer": 1, "examine": false, "text": "Go through the hidden door"}
+      ]
+    },
+    {
+      "id": "altar_cave_wall_switch",
+      "_about": "Altar Cave B3: the wall switch on the left (sc_e_0003) at (15,11).",
+      "maps": [153],
+      "steps": [
+        {"map": 153, "x": 15, "y": 11, "layer": 1, "examine": true, "text": "Examine the switch"}
+      ]
+    },
+    {
+      "id": "mythril_mines_hidden_door",
+      "_about": "Mythril Mines: switch 1 at (13,7) opens the hidden door at (10,8).",
+      "maps": [159],
+      "steps": [
+        {"map": 159, "x": 13, "y": 7, "layer": 1, "examine": true, "text": "Examine the hidden switch"},
+        {"map": 159, "x": 10, "y": 8, "layer": 1, "examine": false, "text": "Go through the hidden door"}
+      ]
+    },
+    {
+      "id": "tower_of_owen_hidden_door",
+      "_about": "Tower of Owen 5F: the object at (12,7) opens the hidden door at (13,13).",
+      "maps": [179],
+      "steps": [
+        {"map": 179, "x": 12, "y": 7, "layer": 1, "examine": true, "text": "Examine the hidden switch"},
+        {"map": 179, "x": 13, "y": 13, "layer": 1, "examine": false, "text": "Go through the hidden door"}
+      ]
+    },
+    {
+      "id": "molten_cave_hidden_door",
+      "_about": "Molten Cave: the object at (22,6) opens the hidden door at (20,7).",
+      "maps": [191],
+      "steps": [
+        {"map": 191, "x": 22, "y": 6, "layer": 1, "examine": true, "text": "Examine the hidden switch"},
+        {"map": 191, "x": 20, "y": 7, "layer": 1, "examine": false, "text": "Go through the hidden door"}
+      ]
+    }
+  ]
+}

@@ -114,6 +114,8 @@ Where a readme or plan disagreed with the code, the code was taken.
 | Directions to selected entity | All | \ or P; pad: LT | — | `Field/FieldNavigationHelper.cs` |
 | Hidden-passage route grid | 3 4 5 | — | — | `Field/HiddenPassageRouting.cs` |
 | Long-range routing: breadcrumb chaining, riding search | 5 | — | — | FF5 `Field/Routing/BreadcrumbRouteChainer.cs`, `PathSpaceNormalizer.cs`, `RoutingAdapter.cs` |
+| Baked-map router (native only, 2026-10-10): the whole sub-map, layers, hidden passages, shop counters, world-map vehicles and boarding, no 31-tile window; the game's searcher only for unknown maps | All | same keys | — | `src/core/field/baked_map.cpp`, `baked_router.cpp`, `baked_nav.cpp`; data `data/ffN/maps.bin` from `tools/bake_maps.py` |
+| Puzzle guide (native only): authored step lists with live directions, across floors (exits and script warps) | All (FF2: none authored) | Shift+G / Ctrl+G; pad: mod mode + RB / LB | — | `src/core/field/puzzle_guide.cpp`, `data/ffN/puzzles.json` |
 | Moon pathfinding | 4 | — | — | FF4 `Field/FieldNavigationHelper.cs` |
 | Navigation target memory (last entity or waypoint) | All | — | — | `Core/NavigationTargetTracker.cs`; FF4 `Core/NavigationStateManager.cs`; FF5 `Core/NavigationStateSnapshot.cs` |
 

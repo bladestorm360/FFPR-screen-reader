@@ -106,6 +106,8 @@ void announce_mod_mode_controls()
         const std::wstring south = button_label(kSouth);
         ffpr::say(TF(L"{0} for Gil. {1} for location. {2} for vehicle. Right stick to teleport. {3} to cancel.",
                      {west, north, south, back}), true);
+        ffpr::say(TF(L"{0} for the puzzle guide, {1} to stop it.",
+                     {button_label(kRightShoulder), button_label(kLeftShoulder)}), false);
     }
 }
 
@@ -297,10 +299,12 @@ void handle_mod_mode_state()
         // Battle mod mode: X = party HP.
         if (button_pressed(kWest)) { run_action("Mod.AnnounceCharacterStatus"); g_state = RouterState::Normal; return; }
     } else {
-        // Field mod mode: X = Gil, Y = location, A = vehicle.
+        // Field mod mode: X = Gil, Y = location, A = vehicle, RB = puzzle guide, LB = stop it.
         if (button_pressed(kWest)) { run_action("Mod.AnnounceGilAmount"); g_state = RouterState::Normal; return; }
         if (button_pressed(kNorth)) { run_action("Mod.AnnounceCurrentMap"); g_state = RouterState::Normal; return; }
         if (button_pressed(kSouth)) { global_hotkeys::announce_current_vehicle(); g_state = RouterState::Normal; return; }
+        if (button_pressed(kRightShoulder)) { run_action("PuzzleGuide.Next"); g_state = RouterState::Normal; return; }
+        if (button_pressed(kLeftShoulder)) { run_action("PuzzleGuide.Stop"); g_state = RouterState::Normal; return; }
 
         // With Stick Click Normalization on, the stick-click functions move here.
         if (ui::prefs::stick_click_normalization_enabled()) {

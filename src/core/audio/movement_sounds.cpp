@@ -151,6 +151,11 @@ void d_OnTouchPadCallback(void* self, unity::Vec2 axis, const void* mi)
 {
     hooks::guarded("MovementSoundPatches.OnTouchPadCallback", [&] { on_touch_pad_prefix(self, axis); });
     o_OnTouchPadCallback(self, axis, mi);
+    // The puzzle guide checks the player's cell against its current step on each movement
+    // input (an input event, not a poll): see src/core/field/puzzle_guide.cpp.
+    hooks::guarded("PuzzleGuide.OnMove", [] {
+        if (actions::defined("PuzzleGuide.OnMove")) actions::run("PuzzleGuide.OnMove");
+    });
 }
 
 /// PollFootsteps: a footstep each time the player's tile changes, so the cadence follows the

@@ -71,6 +71,8 @@ foreach(n 1 2 3 4 5 6)
     ffpr_embed(MAPS_FF${n} data/ff${n}/maps.bin)
     # Guided puzzle routes, authored per game (src/core/field/puzzle_guide.cpp).
     ffpr_embed(PUZZLES_FF${n} data/ff${n}/puzzles.json)
+    # Map titles the game's map master lacks, by map id (src/core/field/map_names.cpp).
+    ffpr_embed(MAPTITLES_FF${n} data/ff${n}/map_titles.json)
 endforeach()
 file(GLOB FFPR_SOUNDS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/data/sounds/*.wav")
 foreach(s ${FFPR_SOUNDS})

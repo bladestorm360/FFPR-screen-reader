@@ -489,3 +489,75 @@ Re-test steps: `TESTING.md`, FF2 items 9-11.
     (events, exits and chests are named otherwise).
 
 Re-test steps: `TESTING.md`, FF2 items 12-16.
+
+## Third batch (2026-10-10): save popups, vehicles, job slot, baked maps, puzzle guides
+
+Built, smoke-tested and deployed; not tested in game. Re-test: `TESTING.md`, "Third batch".
+
+17. **"Save complete" still silent** (user). The wait for `messageText` (item 12) could never
+    end: the completion popup is the same SavePopup with a different layout.
+    `SaveWindowController.CompleteInit` (FF2 GameAssembly.dll 0x8EC3B0, read with capstone and
+    the Il2CppDumper script.json) sets `titleText` to MENU_SAVE_COMPLETED, `contentTitleText`
+    to the "Save" heading, and `messageText` / `subMessageText` to `string.Empty` with their
+    objects deactivated. A blank message now falls back to the title. The quick save's
+    `InterruptionWindowController.InitComplite` (0x782220) rewrites the OPEN popup without
+    `SetEnablePopup`, so no popup hook fired for it at all: it is hooked (every game has it).
+18. **FF2's snowcraft spoken as "On canoe"** (user). FF1's per-type words named every type-5
+    ("Content") vehicle a canoe; FF2 has two (canoe id 2, snowcraft id 5), FF3's canoe has no
+    message_id either. One resolver, `field::vehicle_display_name`: the transportation master's
+    message_id (the GPS labels' keys: "Ship", "Airship", "Chocobo" ...), else the game
+    module's key-item message for a row without one (`Flags::vehicle_message_id`: FF2
+    MSG_KEY_NAME_02 / _05, FF3 MSG_KEY_NAME_01), else the old per-type words. Used by the
+    boarding line, the V key (`move_state::current_name`) and the Vehicles category. The
+    boarding hooks read `TransportationController.CurrentTransportation`, which the game
+    switches before `FieldPlayer.GetOn` (FF2 `FieldController.ChangeTransportation`:
+    TransportationController.ChangeTransportation at +0x227, GetOn at +0x606). FF3's module
+    compared a transportation MASTER id with the type constants; it now reads the controller.
+19. **FF2 character slots still read the job text** (user). `Flags::reads_job_slot` (false in
+    FF2): the slot reader and the status list skip the job text entirely.
+20. **Altair's rebel hideout "lost its labelling"** (user). The late-game hideout rooms
+    (map ids 325-329, `map_20131_6..10`, the rooms of `map_20011_1..5` after the empire's
+    attack) have `map_title None`, floor 0 in the map master, so the resolver said "Altair"
+    alone; the early rooms carry MSG_MAP_NAME_11 "Rebel Hideout". New `data/ffN/map_titles.json`
+    (map id -> message key, so the text stays the game's), applied when the master has no
+    title. Every map's offline label was computed from the masters (tools/mapdump): the other
+    bare labels (Castle Fynn rooms, the Dreadnought, Castle Deist, the Coliseum, Leviathan ...)
+    are bare in the game's own data; candidates with a titled layout twin are listed in
+    OPEN_ISSUES.md for the user to confirm.
+21. **Baked maps (the user's plan).** `tools/bake_maps.py` packs `tools/mapdump` into
+    `data/ffN/maps.bin` (3 MB for the six games, embedded as MAPS_FFN): every sub-map's
+    collision per layer (every non-zero id is closed, as the game's
+    `MapRouteSearcher.MakeRouteMapWithCollision` does: FF2 0xA987B0 decompiled read-only with
+    `tools/ghidra/decomp.bat`), hidden passages, world attribute grids, the world maps'
+    `transportation` asset (one 0/1 layer per transportation GROUP: where that group's
+    vehicles move; found 2026-10-10, dumped by `dump_map_objects.py`), the routing objects and
+    the transportation masters. `src/core/field/baked_map` reads it, `baked_router` is the A*
+    (4-connected, ToLayer cells change layer, hidden passages optional, a closed goal cell is
+    entered as the game opens GotoMap cells, step-on warps are crossed only as the goal),
+    `baked_nav` is the game-side glue: the live map id -> sub-map, the player's layer, the
+    counter rule (a service NPC's `link_object_id` -> its RelayInteraction tile), live NPC
+    blockers (explicit routes only), the current vehicle's group, the owned auto-vehicles
+    (type 5: canoe, snowcraft: their terrain joins walking), and boarding a parked ship or
+    airship when walking cannot reach the target ("board the Ship", "land"). Quick mode (the
+    filter, the beacon) floods once per player cell. `field::find_path_to` uses it first; the
+    game's searcher and the breadcrumb chainer stay only for a map the data does not know.
+    Routes longer than the old window are capped at six legs with "and N more" (FF5's rule).
+    Offline: `tools/route_check.cpp` (build.bat) checks a Fynn shop counter, a layer change,
+    the FF2 world map on foot, by canoe, by ship and snowcraft, and a town tile as a goal.
+22. **Across floors and puzzle guides.** `bake_maps.py` also bakes warps: an Event or Entity
+    whose script's Main segment runs `ChangeMap [map, point]` (script.txt maps script_id to
+    the asset: FF1's Citadel pads sc_war_30071_N, trapdoors, Pandaemonium's zones).
+    `baked_nav::find_across` runs Dijkstra over the sub-map graph (GotoMap exits and warps,
+    each arriving at the destination's PointIn) and speaks only the first leg, ending at the
+    exit or warp to take ("take the exit to Snow Cavern B3", "step on the warp"); the player
+    continues after the transition (user, 2026-10-10). `src/core/field/puzzle_guide.cpp`
+    follows authored step lists (`data/ffN/puzzles.json`: map id, cell, examine flag, a
+    mod-text key) with live directions, advancing on arrival (checked on each movement input,
+    `FieldPlayerKeyController.OnTouchPadCallback`) and re-announcing after a map change.
+    Shift+G / Ctrl+G; pad mod mode + RB / LB. Authored from the dumps' developer labels: FF1
+    Citadel of Trials; FF3 five hidden-door switches; FF4 Troia Castle B1 (the label says
+    1→2→3→4), Castle Baron, Devil's Road; FF5 the Fire-Powered Ship engine room; FF6 the Zozo
+    clock (6:10:50), Darill's Tomb, the Ancient Castle, the Cultists' Tower, Owzer's painting.
+    FF2 has none (no switch or ordering puzzles in its dumps). 22 new mod-text keys, the
+    port's translations.
+23. **Waypoints** route through the same `find_path_to`, so they are on the baked router too.

@@ -1,0 +1,4 @@
+{
+  "_comment": "Guided puzzle solutions for FINAL FANTASY II (src/core/field/puzzle_guide.cpp). FF2's dungeons have no switch, clock or ordering puzzles in the dumps (tools/mapdump/ff2_objects.jsonl, scanned 2026-10-10): the Snow Cavern's passage opens by defeating the Adamantoise, Pandaemonium's warp zones are plain exits, and secret passages are routed through by the baked router itself. Nothing to guide yet.",
+  "puzzles": []
+}

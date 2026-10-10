@@ -10,6 +10,7 @@
 #include "baked_nav.h"
 #include "baked_map.h"
 #include "field_internal.h"
+#include "map_names.h"
 #include "../game.h"
 #include "../hooks.h"
 #include "../log.h"
@@ -407,6 +408,247 @@ std::wstring describe(const std::vector<Phase>& phases)
 void invalidate()
 {
     if (g_cache) g_cache->submap = nullptr;
+}
+
+// --- across maps -----------------------------------------------------------------------------
+namespace {
+
+/// An exit or warp of a sub-map, as the cross-map graph sees it.
+struct Edge {
+    const baked::Object* object;
+    int dest_map_id;
+    int dest_point;
+    bool warp;        // a script warp (step-on or examined), else a GotoMap exit
+};
+
+std::vector<Edge> edges_of(const baked::Grids& g)
+{
+    std::vector<Edge> out;
+    for (const baked::Object& o : g.objects) {
+        if (o.type == baked::ObjType::GotoMap && o.a > 0) out.push_back(Edge{&o, o.a, o.b, false});
+        else if (o.type == baked::ObjType::Warp && o.a > 0) out.push_back(Edge{&o, o.a, o.b, true});
+    }
+    return out;
+}
+
+/// The PointIn of a sub-map with this point id (the arrival cell of an exit), or null.
+const baked::Object* point_in(const baked::Grids& g, int point)
+{
+    const baked::Object* first = nullptr;
+    for (const baked::Object& o : g.objects) {
+        if (o.type != baked::ObjType::PointIn) continue;
+        if (o.a == point) return &o;
+        if (!first) first = &o;
+    }
+    return point <= 0 ? first : nullptr;
+}
+
+/// Distance from a flood to the nearest cell from which `o` is entered: the object's own
+/// cells, or (a closed exit cell, a town tile) a neighbouring open cell plus one.
+int distance_to_object(const baked_route::Reach& reach, const baked::Object& o, int layer, bool world)
+{
+    int best = -1;
+    for (int y = o.ty; y < o.ty + o.th; ++y) {
+        for (int x = o.tx; x < o.tx + o.tw; ++x) {
+            const int l = world ? layer : o.layer;
+            int d = reach.distance(Cell{l, x, y});
+            if (d < 0) {
+                static const int kSide[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+                for (const auto& s : kSide) {
+                    const int dn = reach.distance(Cell{l, x + s[0], y + s[1]});
+                    if (dn >= 0 && (d < 0 || dn + 1 < d)) d = dn + 1;
+                }
+            }
+            if (d >= 0 && (best < 0 || d < best)) best = d;
+        }
+    }
+    return best;
+}
+
+baked_route::Request walk_request(const baked::Submap& sm, const Cell& start)
+{
+    baked_route::Request req;
+    req.submap = &sm;
+    req.start = start;
+    req.passages = game::flags().has_hidden_passages;
+    if (sm.world) req.auto_groups = owned_auto_vehicle_groups();
+    return req;
+}
+
+constexpr int kMaxVisitedMaps = 400;
+
+} // namespace
+
+std::wstring map_name_of(int map_id) { return resolve_map_name_by_id(map_id); }
+
+CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal)
+{
+    CrossLeg out;
+    const baked::Submap* here = current_submap(map_handle);
+    const baked::Submap* there = baked::submap_by_map_id(goal.map_id);
+    if (!here || !there || !player) return out;
+    return hooks::guarded_r("BakedNav.FindAcross", out, [&] {
+        Cell start;
+        if (!player_cell(map_handle, player, start)) return out;
+        const baked::Grids& gh = baked::grids(*here);
+        if (!baked::in_bounds(gh, start.x, start.y)) return out;
+
+        // The goal's cells on its own map.
+        std::vector<Cell> goal_cells;
+        {
+            const baked::Grids& gt = baked::grids(*there);
+            Cell gc = goal.cell;
+            if (goal.examine) {
+                static const int kSide[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+                for (const auto& s : kSide) {
+                    Cell c{gc.layer, gc.x + s[0], gc.y + s[1]};
+                    if (baked::in_bounds(gt, c.x, c.y)) goal_cells.push_back(c);
+                }
+            }
+            if (goal_cells.empty()) goal_cells.push_back(gc);
+            if (there->world)
+                for (Cell& c : goal_cells) c.layer = 1;
+        }
+
+        // Dijkstra over (sub-map, arrival cell): the whole map is flooded from the arrival once.
+        struct State { int submap; Cell at; int cost; int parent; const baked::Object* via; int via_dest; };
+        std::vector<State> states;
+        std::vector<int> order;   // indices sorted by cost on each pop (small graphs)
+        states.push_back(State{baked::submap_index(here), start, 0, -1, nullptr, 0});
+        std::vector<bool> done;
+        int goal_state = -1;
+        int goal_steps = 0;
+        int visited = 0;
+        while (visited < kMaxVisitedMaps) {
+            // pop the cheapest unfinished state
+            int best = -1;
+            for (size_t i = 0; i < states.size(); ++i) {
+                if (i < done.size() && done[i]) continue;
+                if (best < 0 || states[i].cost < states[static_cast<size_t>(best)].cost) best = static_cast<int>(i);
+            }
+            if (best < 0) break;
+            if (done.size() < states.size()) done.resize(states.size(), false);
+            done[static_cast<size_t>(best)] = true;
+            ++visited;
+            const State cur = states[static_cast<size_t>(best)];
+            const baked::Submap* sm = baked::submap_at(cur.submap);
+            if (!sm) continue;
+            const baked::Grids& g = baked::grids(*sm);
+            baked_route::Request req = walk_request(*sm, cur.at);
+            baked_route::Reach reach = baked_route::flood(req);
+
+            if (sm == there) {
+                int d = -1;
+                for (const Cell& c : goal_cells) {
+                    int dc = reach.distance(c);
+                    if (dc < 0 && !goal.examine) {
+                        // a closed goal cell (a chest, a switch): from beside it
+                        static const int kSide[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+                        for (const auto& s : kSide) {
+                            const int dn = reach.distance(Cell{c.layer, c.x + s[0], c.y + s[1]});
+                            if (dn >= 0 && (dc < 0 || dn + 1 < dc)) dc = dn + 1;
+                        }
+                    }
+                    if (dc >= 0 && (d < 0 || dc < d)) d = dc;
+                }
+                if (d >= 0) {
+                    goal_state = best;
+                    goal_steps = cur.cost + d;
+                    break;
+                }
+            }
+            for (const Edge& e : edges_of(g)) {
+                const baked::Submap* dest = baked::submap_by_map_id(e.dest_map_id);
+                if (!dest) continue;
+                const int d = distance_to_object(reach, *e.object, cur.at.layer, sm->world);
+                if (d < 0) continue;
+                const baked::Grids& gd = baked::grids(*dest);
+                const baked::Object* arrival = point_in(gd, e.dest_point);
+                if (!arrival) continue;
+                Cell at{arrival->layer, arrival->tx, arrival->ty};
+                if (dest->world) at.layer = 1;
+                const int cost = cur.cost + d + 1;
+                // keep the cheapest arrival per (map, cell)
+                bool known = false;
+                for (size_t i = 0; i < states.size(); ++i) {
+                    if (states[i].submap == baked::submap_index(dest) && states[i].at == at) {
+                        known = true;
+                        if (cost < states[i].cost && !(i < done.size() && done[i])) {
+                            states[i].cost = cost;
+                            states[i].parent = best;
+                            states[i].via = e.object;
+                            states[i].via_dest = e.dest_map_id;
+                        }
+                        break;
+                    }
+                }
+                if (!known) states.push_back(State{baked::submap_index(dest), at, cost, best, e.object, e.dest_map_id});
+            }
+        }
+        if (goal_state < 0) return out;
+
+        // Walk back to the first hop taken from the start state.
+        int first = goal_state;
+        while (first >= 0 && states[static_cast<size_t>(first)].parent > 0) first = states[static_cast<size_t>(first)].parent;
+        std::vector<Phase> phases;
+        baked_route::Request req = walk_request(*here, start);
+        if (goal_state == 0) {
+            // On this map: route to the goal itself.
+            req.goals = goal_cells;
+            if (!goal.examine) {
+                std::vector<Cell> around = goals_for(*here, gh, goal.cell);
+                req.goals.insert(req.goals.end(), around.begin(), around.end());
+            }
+            req.blocked = live_blockers(*here, req.goals);
+            baked_route::Route route = baked_route::find(req);
+            if (!route.found) {
+                req.blocked.clear();
+                route = baked_route::find(req);
+            }
+            if (!route.found) return out;
+            Phase p;
+            p.cells = route.cells;
+            phases.push_back(p);
+            out.on_this_map = true;
+            out.description = describe(phases);
+            out.cells = route.cells;
+            out.steps_here = route.steps();
+            out.steps_total = goal_steps;
+            out.found = true;
+            return out;
+        }
+        const State& hop = states[static_cast<size_t>(first)];
+        if (!hop.via) return out;
+        const baked::Object& o = *hop.via;
+        for (int y = o.ty; y < o.ty + o.th; ++y)
+            for (int x = o.tx; x < o.tx + o.tw; ++x)
+                req.goals.push_back(Cell{here->world ? start.layer : o.layer, x, y});
+        req.blocked = live_blockers(*here, req.goals);
+        baked_route::Route route = baked_route::find(req);
+        if (!route.found) {
+            req.blocked.clear();
+            route = baked_route::find(req);
+        }
+        if (!route.found) return out;
+        Phase p;
+        p.cells = route.cells;
+        phases.push_back(p);
+        std::wstring text = describe(phases);
+        std::wstring dest_name = map_name_of(hop.via_dest);
+        if (o.type == baked::ObjType::Warp) {
+            text += L", " + (o.d == 1 ? T(L"step on the warp") : T(L"examine the warp"));
+        } else {
+            text += L", " + (dest_name.empty() ? T(L"take the exit") : TF(L"take the exit to {0}", {dest_name}));
+        }
+        out.found = true;
+        out.on_this_map = false;
+        out.next_map_id = hop.via_dest;
+        out.cells = route.cells;
+        out.description = text;
+        out.steps_here = route.steps();
+        out.steps_total = goal_steps;
+        return out;
+    });
 }
 
 bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, PathInfo& out)

@@ -20,6 +20,10 @@ enum class ObjType : uint8_t {
     OpenTrigger = 8, SavePoint = 9, AnimEntity = 10, MoveArea = 13, RelayInteraction = 16,
     ShopNPC = 17, CollisionEntity = 19, TelepoPoint = 20, TransportationEventAction = 21,
     IgnoreRoute = 22, NonEncountArea = 23, RandomEvent = 28, SwitchEvent = 30,
+    /// Baked only: an event whose script changes map (ChangeMap in its Main segment): a warp
+    /// pad, a trapdoor. a = destination map id, b = destination PointIn point id, d = 1 when
+    /// stepping on it fires (an Event), 0 when it is examined (an Entity).
+    Warp = 100,
 };
 
 /// One baked routing object (34 bytes in the file). Fields a-d per type: see bake_maps.py.
@@ -61,6 +65,8 @@ struct Grids {
     std::vector<uint8_t> attribute;      // world maps: terrain attribute id per cell
     std::vector<std::vector<uint8_t>> transport;   // [group - 1]: 1 = blocked for the group
     std::vector<Object> objects;
+    std::vector<uint8_t> hazard;         // 1 = a step-on warp / trapdoor cell: never crossed by
+                                         // an ordinary route, only entered as its goal
 };
 
 /// Bind the baked data (the bytes must outlive the process; a resource does). False when the

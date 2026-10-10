@@ -228,6 +228,10 @@ void initialize_bindings()
     reg_field(Key::Semicolon, Mod::None, "Mod.ToggleWallTones", "Toggle wall tones");
     reg_field(Key::F6, Mod::None, "Mod.ToggleAudioBeacons", "Toggle audio beacons");
 
+    // --- Field: puzzle guide (src/core/field/puzzle_guide.cpp) ---
+    reg_field(Key::G, Mod::Shift, "PuzzleGuide.Next", "Puzzle guide: start, or the current step again");
+    reg_field(Key::G, Mod::Ctrl, "PuzzleGuide.Stop", "Puzzle guide: stop");
+
     // --- Field-only category shortcuts ---
     reg_field(Key::K, Mod::Shift, "Mod.ResetToAllCategory", "Reset to All category");
     reg_field(Key::Equals, Mod::None, "Mod.CycleNextCategory", "Next entity category (global)");
