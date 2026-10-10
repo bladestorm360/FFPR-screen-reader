@@ -13,6 +13,7 @@
 #include "../../core/hooks.h"
 #include "../../core/modtext.h"
 #include "../../core/say.h"
+#include "../../core/field/field_api.h"
 #include "../../core/fieldnav/move_state.h"
 
 namespace ffpr::ff4 {
@@ -47,6 +48,19 @@ std::wstring transportation_name(int type_id)
     }
 }
 
+/// The game's own name for the boarded vehicle (its transportation master's message_id, e.g.
+/// MSG_SYSTEM_288 for the hovercraft), read from the controller's current vehicle when it is
+/// of this type; else FF4's words above.
+std::wstring boarded_vehicle_name(int type_id)
+{
+    ::field::VehicleState v = ::field::current_vehicle();
+    if (v.valid && v.type == type_id) {
+        std::wstring name = ::field::vehicle_game_name(v.id, v.message_id);
+        if (!name.empty()) return name;
+    }
+    return transportation_name(type_id);
+}
+
 /// The core's on_get_on with FF4's words.
 void on_get_on(int type_id)
 {
@@ -57,9 +71,9 @@ void on_get_on(int type_id)
         }
         return;
     }
-    std::wstring name = transportation_name(type_id);
+    std::wstring name = boarded_vehicle_name(type_id);
     if (name.empty()) return;
-    ms::set_vehicle_state(type_id);
+    ms::set_vehicle_state(type_id, name);
     ffpr::say(TF(L"On {0}", {name}), true);
 }
 
@@ -84,9 +98,11 @@ void d_GetOff(void* self, int32_t type_id, int32_t layer, const void* mi)
     });
 }
 
-/// MoveStateHelper.GetMoveStateName (FF4): the V key.
+/// MoveStateHelper.GetMoveStateName (FF4): the V key. The game's name of the boarded vehicle
+/// when known; else FF4's slot words.
 std::wstring move_state_name()
 {
+    if (!ms::is_on_foot() && !ms::vehicle_name().empty()) return ms::vehicle_name();
     int state = ms::current();
     if (state == ms::kShip) return T(L"Hovercraft");
     if (state == ms::kCanoe) return T(L"Chocobo");   // MOVE_STATE_CHOCOBO = 5

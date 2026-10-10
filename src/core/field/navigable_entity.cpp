@@ -173,7 +173,8 @@ std::wstring localize_type_name(const std::wstring& type_name)
     return type_name;
 }
 
-/// VehicleEntity.GetVehicleName for the running game. Empty = no name (FF2's null).
+/// VehicleEntity.GetVehicleName's per-type fallback tables (the old mods' words). Empty = no
+/// name (FF2's null). The game's own names come first: field::vehicle_display_name.
 std::wstring vehicle_name(int id, const std::wstring& message_id)
 {
     switch (game::current()) {
@@ -191,6 +192,34 @@ std::wstring vehicle_name(int id, const std::wstring& message_id)
     }
     default: return vehicle_name_ff1(id);
     }
+}
+
+// --- field_api.h -----------------------------------------------------------------------------
+
+std::wstring vehicle_game_name(int transportation_id, const std::wstring& message_id)
+{
+    // 1. The transportation master's own name (every game: the GPS labels use the same keys).
+    if (!message_id.empty()) {
+        std::wstring msg = text::clean(get_message(message_id, true));
+        if (!msg.empty()) return msg;
+    }
+    // 2. A row without a message_id: the game module's key-item name for it (FF2's canoe and
+    //    snowcraft, FF3's canoe). "<IC_IOBJ>Snowcraft": the icon markup is stripped.
+    if (transportation_id > 0 && game::flags().vehicle_message_id) {
+        if (const wchar_t* key = game::flags().vehicle_message_id(transportation_id)) {
+            std::wstring msg = text::clean(get_message(key, true));
+            if (!msg.empty()) return msg;
+        }
+    }
+    return {};
+}
+
+std::wstring vehicle_display_name(int transportation_id, int type, const std::wstring& message_id)
+{
+    std::wstring name = vehicle_game_name(transportation_id, message_id);
+    if (!name.empty()) return name;
+    // 3. The old mods' per-type words.
+    return vehicle_name(type, message_id);
 }
 
 // --- Entity --------------------------------------------------------------------------------
@@ -265,7 +294,7 @@ std::wstring Entity::display_name() const
     case Kind::NPC:
         return shop ? name + L" (" + T(L"shop") + L")" : name;
     case Kind::Vehicle: {
-        std::wstring n = vehicle_name(transport_id, message_id);
+        std::wstring n = vehicle_display_name(transportation_id, transport_id, message_id);
         if (n.empty()) return name;
         // FF5's names reuse lowercase keys that "On {0}" speaks mid-sentence; its entity list
         // capitalises the first letter for display only.

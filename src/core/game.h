@@ -55,12 +55,20 @@ struct Flags {
                                         // Steal ability (FF4, FF5, FF6; user, 2026-10-07)
     bool has_levels = true;             // character levels exist and are read (all but FF2, whose
                                         // characters grow by use; user, 2026-10-10)
+    bool reads_job_slot = true;         // the job / class text of a character slot and of the
+                                        // status list is spoken (FF1, FF3-FF6; FF2 has no jobs:
+                                        // its slot's job text repeats the name; user, 2026-10-10)
     /// Field entities the old mod never listed, by their raw (Japanese) property name: the C#
     /// EntityScanner.IsPlaceholderEntity of FF2 (vehicle spawn NPCs such as the Dreadnought,
     /// location markers, dev triggers). Null = no list. The scenery rule (no action, script or
     /// message) runs first; this covers what it cannot see, e.g. an NPC with an action but no
     /// script, which other games use for real townsfolk (FF3 talks through map-script handlers).
     bool (*placeholder_entity)(const wchar_t* raw_name) = nullptr;
+    /// The game's own name for a vehicle whose transportation master row has no message_id
+    /// (FF2's canoe and snowcraft, FF3's canoe: both type 5 "Content", so the type alone cannot
+    /// name them - the snowcraft was spoken as "canoe" until 2026-10-10). Returns the message
+    /// key of the matching key item (FF2 MSG_KEY_NAME_05 "Snowcraft") or null. Null = no table.
+    const wchar_t* (*vehicle_message_id)(int transportation_id) = nullptr;
 };
 
 struct Module {

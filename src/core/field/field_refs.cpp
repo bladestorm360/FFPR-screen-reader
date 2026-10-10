@@ -38,11 +38,13 @@ ref::Method mGetCollisionLayerHeight{kIMapAccessor, "GetCollisionLayerHeight", 0
 ref::Class kTransportationController{"Last.Map", "TransportationController"};
 ref::Field fInfoData{kTransportationController, "infoData"};
 ref::Method mNeedInteractiveList{kTransportationController, "NeedInteractiveList", 0};
+ref::Method mGetCurrentTransportation{kTransportationController, "get_CurrentTransportation", 0};
 ref::Class kTransportation{"Last.Map", "Transportation"};
 ref::Field fModelList{kTransportation, "modelList"};
 ref::Class kTransportationInfo{"Last.Map", "TransportationInfo"};
 ref::Method mInfoGetEnable{kTransportationInfo, "get_Enable", 0};
 ref::Method mInfoGetType{kTransportationInfo, "get_Type", 0};
+ref::Method mInfoGetId{kTransportationInfo, "get_Id", 0};
 ref::Method mInfoGetMapObject{kTransportationInfo, "get_MapObject", 0};
 ref::Method mInfoGetMessageId{kTransportationInfo, "get_MessageId", 0};
 

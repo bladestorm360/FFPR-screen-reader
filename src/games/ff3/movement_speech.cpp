@@ -27,6 +27,7 @@
 #include "../../core/modtext.h"
 #include "../../core/refs.h"
 #include "../../core/say.h"
+#include "../../core/field/field_api.h"
 #include "../../core/fieldnav/move_state.h"
 
 namespace ffpr::ff3 {
@@ -78,23 +79,43 @@ bool is_intermediate(int id) { return id == kNone || id == kSymbol || id == kCon
 bool is_vehicle(int id) { return id != kNone && id != kPlayer && id != kSymbol && id != kContent; }
 
 /// MoveStateHelper.SetVehicleState with FF3's table (Boko is a chocobo).
-void set_vehicle_state(int id) { ms::set_vehicle_state(id == kBoko ? kYellowChocobo : id); }
+void set_vehicle_state(int id, const std::wstring& name = std::wstring())
+{
+    ms::set_vehicle_state(id == kBoko ? kYellowChocobo : id, name);
+}
 
-// ChangeTransportation_Postfix
+/// The game's own name for the vehicle the TransportationController now holds, when that is
+/// the vehicle asked about (by master id or by type): the master's message_id, or FF3's
+/// key-item name for the canoe (module.cpp). Empty = use the per-type words.
+std::wstring game_name(int id_or_type, bool by_master_id, int& type_out)
+{
+    ::field::VehicleState v = ::field::current_vehicle();
+    if (!v.valid) return {};
+    if (by_master_id ? v.id != id_or_type : v.type != id_or_type) return {};
+    type_out = v.type;
+    return ::field::vehicle_game_name(v.id, v.message_id);
+}
+
+// ChangeTransportation_Postfix. `id` is the transportation MASTER id (the C# compared it with
+// the TransportationType constants; since 2026-10-10 the type comes from the controller's
+// current vehicle when it is this id, and the name is the game's own).
 void on_change_transportation(int id)
 {
     if (id == g_last_announced) return;
     const int previous = g_last_transportation;
     g_last_transportation = id;
     if (previous == -1) return;
-    if (is_intermediate(id)) return;   // cinematics and transitions
+
+    int type = id;   // the C# reading, kept when the controller does not know this id
+    std::wstring name = game_name(id, true, type);
+    if (is_intermediate(type)) return;   // cinematics and transitions
+    if (name.empty()) name = transportation_name(type);
 
     std::wstring announcement;
-    if (!is_vehicle(previous) && is_vehicle(id)) {
-        const std::wstring name = transportation_name(id);
+    if (!is_vehicle(previous) && is_vehicle(type)) {
         if (!name.empty()) {
             announcement = TF(L"On {0}", {name});
-            set_vehicle_state(id);
+            set_vehicle_state(type, name);
         }
     } else if (is_vehicle(previous) && id == kPlayer) {
         announcement = T(L"On foot");
@@ -105,13 +126,15 @@ void on_change_transportation(int id)
     ffpr::say(announcement, true);
 }
 
-// GetOn_Postfix
+// GetOn_Postfix (`id` is the TransportationType here)
 void on_get_on(int id)
 {
     if (id == g_last_announced) return;
-    const std::wstring name = transportation_name(id);
+    int type = id;
+    std::wstring name = game_name(id, false, type);
+    if (name.empty()) name = transportation_name(id);
     if (name.empty()) return;
-    set_vehicle_state(id);
+    set_vehicle_state(id, name);
     g_last_announced = id;
     g_last_transportation = id;
     ffpr::say(TF(L"On {0}", {name}), true);
@@ -128,9 +151,11 @@ void on_get_off(int id)
     if (!name.empty()) ffpr::say(T(L"On foot"), true);
 }
 
-/// MoveStateHelper.GetMoveStateName for FF3: the chocobo slot is "Chocobo" (FF1: "Canoe").
+/// MoveStateHelper.GetMoveStateName for FF3: the game's name of the boarded vehicle when known;
+/// else the chocobo slot is "Chocobo" (FF1: "Canoe").
 std::wstring move_state_name()
 {
+    if (!ms::is_on_foot() && !ms::vehicle_name().empty()) return ms::vehicle_name();
     const int state = ms::current();
     return state == ms::kCanoe ? T(L"Chocobo") : ms::move_state_name(state);
 }

@@ -21,10 +21,15 @@ constexpr int kCanoe = 5;      // FF1 has the canoe in the Chocobo slot
 constexpr int kGimmick = 6;
 constexpr int kUnique = 7;
 
-/// Boarding (GetOn hook): TransportationType -> MoveState.
-void set_vehicle_state(int transportation_type);
+/// Boarding (GetOn hook): TransportationType -> MoveState. `name` is the vehicle's spoken name
+/// (field::vehicle_display_name), kept for the V key; empty = unknown (the state's own word).
+void set_vehicle_state(int transportation_type, const std::wstring& name = std::wstring());
 /// Disembarking (GetOn(Player) / GetOff hooks).
 void set_on_foot();
+/// The boarded vehicle's name as given to set_vehicle_state, or empty on foot / unknown.
+const std::wstring& vehicle_name();
+/// What the V key speaks: the vehicle's name when known, else move_state_name(current()).
+std::wstring current_name();
 
 /// MoveStateHelper.AnnounceStateChange (kept public as in FF1; nothing calls it there).
 void announce_state_change(int previous_state, int new_state);

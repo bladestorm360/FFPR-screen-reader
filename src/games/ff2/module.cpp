@@ -62,6 +62,18 @@ bool placeholder_entity(const wchar_t* raw_name)
            contains(lower, L"airship") || contains(lower, L"transport") || contains(lower, L"movearea");
 }
 
+/// FF2's transportation master (tools/mapdump/ff2_master/transportation.txt) has no message_id
+/// for its two type-5 ("Content") vehicles, the canoe (id 2) and the snowcraft (id 5); the
+/// FF1-style type table named both "canoe". Their names are the game's own key-item names.
+const wchar_t* vehicle_message_id(int transportation_id)
+{
+    switch (transportation_id) {
+    case 2: return L"MSG_KEY_NAME_02";   // Canoe
+    case 5: return L"MSG_KEY_NAME_05";   // Snowcraft
+    default: return nullptr;
+    }
+}
+
 void configure(game::Flags& f)
 {
     f.has_mp = true;
@@ -70,7 +82,9 @@ void configure(game::Flags& f)
     f.multi_hit_setting = true;
     f.has_skill_levels = true;
     f.has_levels = false;   // characters grow by use; no level anywhere (user, 2026-10-10)
+    f.reads_job_slot = false;   // no jobs: the slot's job text repeats the name (user, 2026-10-10)
     f.placeholder_entity = &placeholder_entity;
+    f.vehicle_message_id = &vehicle_message_id;
 
     // FF2 has no EXP. FF1's ShowPointsInit (gil + EXP + EXP tick) never runs in FF2, and FF1's
     // ShowStatusUpInit ("X leveled up to N" with FF1's stats) would double FF2's own stat pages:

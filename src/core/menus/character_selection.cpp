@@ -117,7 +117,10 @@ std::wstring read_character_information(void* slot)
     //    their slots still carry MP texts, which are never displayed.
     std::wstring announcement;
     if (!character_name.empty()) announcement = character_name;
-    if (job_name == character_name) job_name.clear();
+    if (text::clean(job_name) == text::clean(character_name)) job_name.clear();
+    // FF2 has no jobs: nothing from its slot's job text is ever a job (user, 2026-10-10: the
+    // name was still read twice from it after the equality rule above).
+    if (!game::flags().reads_job_slot) job_name.clear();
     if (!game::flags().has_mp) {
         current_mp.clear();
         max_mp.clear();

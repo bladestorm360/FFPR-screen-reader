@@ -13,11 +13,19 @@
 // install() adds FF3's own keys (Core/InputManager.cs of the old FF3 mod).
 namespace {
 
+/// FF3's transportation master has no message_id for its canoe (id 2, type 5 "Content"); its
+/// name is the game's key-item name (tools/mapdump/ff3_master, 2026-10-10).
+const wchar_t* vehicle_message_id(int transportation_id)
+{
+    return transportation_id == 2 ? L"MSG_KEY_NAME_01" : nullptr;   // Canoe
+}
+
 void configure(game::Flags& f)
 {
     f.has_hidden_passages = true;
     f.multi_hit_setting = true;
     f.has_jobs = true;
+    f.vehicle_message_id = &vehicle_message_id;
 
     // FF3 speaks line-fade story text line by line (line_fade.cpp replaces the core's SetData hook).
     hooks::disable("LineFadeMessageWindowController.SetData");

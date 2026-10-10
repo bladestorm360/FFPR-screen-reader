@@ -21,6 +21,7 @@
 #include "../modtext.h"
 #include "../refs.h"
 #include "../say.h"
+#include "../field/field_api.h"
 
 namespace ffpr::fieldnav::vehicle_landing {
 namespace {
@@ -88,6 +89,20 @@ std::wstring transportation_name(int type_id)
     }
 }
 
+/// The boarded vehicle's spoken name: the game's own (field::vehicle_display_name, from the
+/// TransportationController's current vehicle, which the game switches before GetOn) when it
+/// names the vehicle of this type; else FF1's per-type words. "On canoe" for FF2's snowcraft
+/// (both are type 5) ended here on 2026-10-10.
+std::wstring boarded_vehicle_name(int type_id)
+{
+    ::field::VehicleState v = ::field::current_vehicle();
+    if (v.valid && v.type == type_id) {
+        std::wstring name = ::field::vehicle_game_name(v.id, v.message_id);
+        if (!name.empty()) return name;
+    }
+    return transportation_name(type_id);
+}
+
 /// GetOn postfix body: boarding AND disembarking. FF1 uses GetOn(vehicle) to board and
 /// GetOn(1 = Player) to return to walking.
 void on_get_on(int type_id)
@@ -101,10 +116,10 @@ void on_get_on(int type_id)
         return;
     }
 
-    std::wstring vehicle_name = transportation_name(type_id);
+    std::wstring vehicle_name = boarded_vehicle_name(type_id);
     if (!vehicle_name.empty()) {
         std::wstring announcement = TF(L"On {0}", {vehicle_name});
-        move_state::set_vehicle_state(type_id);
+        move_state::set_vehicle_state(type_id, vehicle_name);
         ffpr::say(announcement, true);
     }
 }
@@ -133,10 +148,12 @@ void d_GetOff(void* self, int32_t type_id, int32_t layer, const void* mi)
     o_GetOff(self, type_id, layer, mi);
     hooks::guarded("MovementSpeech.GetOff", [&] {
         std::wstring vehicle_name = transportation_name(type_id);
+        // A vehicle the game named (boarding said "On <name>") counts as known too.
+        const bool was_on_vehicle = !move_state::is_on_foot();
         move_state::set_on_foot();
 
         // Only announce "On foot" if we were on a known vehicle
-        if (!vehicle_name.empty())
+        if (!vehicle_name.empty() || was_on_vehicle)
             ffpr::say(T(L"On foot"), true);
     });
 }

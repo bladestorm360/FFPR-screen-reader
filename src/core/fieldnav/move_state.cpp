@@ -19,6 +19,13 @@ constexpr int kTransportBlackChocobo = 10;
 int g_move_state = kWalk;
 int g_transportation_type = 0;
 int g_last_announced_state = -1;
+std::wstring* g_vehicle_name = nullptr;   // heap: no static destructor at process exit
+
+std::wstring& vehicle_name_storage()
+{
+    if (!g_vehicle_name) g_vehicle_name = new std::wstring();
+    return *g_vehicle_name;
+}
 
 int transport_type_to_move_state(int transportation_type)
 {
@@ -41,22 +48,33 @@ int install()
     queries::define("MoveStateHelper.IsControllingShip", [] { return is_controlling_ship(); });
     queries::define("MoveStateHelper.IsInCanoe", [] { return is_in_canoe(); });
     queries::define("MoveStateHelper.IsControllingAirship", [] { return is_controlling_airship(); });
-    queries::define_text("MoveStateHelper.GetMoveStateName", [] { return move_state_name(current()); });
+    queries::define_text("MoveStateHelper.GetMoveStateName", [] { return current_name(); });
     return 0;
 }
 core::Install s_install{"MoveStateHelper", &install, 90};
 } // namespace
 
-void set_vehicle_state(int transportation_type)
+void set_vehicle_state(int transportation_type, const std::wstring& name)
 {
     g_transportation_type = transportation_type;
     g_move_state = transport_type_to_move_state(transportation_type);
+    vehicle_name_storage() = name;
 }
 
 void set_on_foot()
 {
     g_transportation_type = 0;
     g_move_state = kWalk;
+    vehicle_name_storage().clear();
+}
+
+const std::wstring& vehicle_name() { return vehicle_name_storage(); }
+
+std::wstring current_name()
+{
+    // The game's own name for the boarded vehicle ("Snowcraft", not the state slot's "Canoe").
+    if (!is_on_foot() && !vehicle_name_storage().empty()) return vehicle_name_storage();
+    return move_state_name(current());
 }
 
 void announce_state_change(int previous_state, int new_state)
@@ -137,6 +155,7 @@ void reset()
     g_move_state = kWalk;
     g_transportation_type = 0;
     g_last_announced_state = -1;
+    vehicle_name_storage().clear();
 }
 
 } // namespace ffpr::fieldnav::move_state

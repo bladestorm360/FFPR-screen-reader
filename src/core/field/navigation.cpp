@@ -32,9 +32,10 @@
 namespace field {
 namespace {
 
-struct VehicleInfo { int type; std::wstring message_id; };
+struct VehicleInfo { int type; int id; std::wstring message_id; };
 /// FieldNavigationHelper.VehicleTypeMap. Entries for objects no longer on the map are dropped
-/// at each scan, so a reused address can never be taken for a vehicle.
+/// at each scan, so a reused address can never be taken for a vehicle. Since 2026-10-10 every
+/// game keeps the master id and message id too (field::vehicle_display_name).
 std::unordered_map<void*, VehicleInfo> g_vehicle_types;
 
 using Vec3 = unity::Vec3;
@@ -255,13 +256,34 @@ bool position_walkable(void* player, Vec3 position)
 void* player_controller() { return cache::get_or_refresh(r::kFieldPlayerController); }
 void* field_map() { return cache::get_or_refresh(r::kFieldMap); }
 
-bool vehicle_type_of(void* fe, int& type, std::wstring& message_id)
+bool vehicle_type_of(void* fe, int& type, int& transportation_id, std::wstring& message_id)
 {
     auto it = g_vehicle_types.find(fe);
     if (it == g_vehicle_types.end()) return false;
     type = it->second.type;
+    transportation_id = it->second.id;
     message_id = it->second.message_id;
     return true;
+}
+
+// --- field_api.h vehicles --------------------------------------------------------------------
+
+VehicleState current_vehicle()
+{
+    VehicleState v;
+    hooks::guarded("Field.CurrentVehicle", [&] {
+        void* map = field_map();
+        void* fc = map ? ref::rd<void*>(map, r::fFieldController) : nullptr;
+        void* transportation = fc ? ref::rd<void*>(fc, r::fTransportation) : nullptr;
+        if (!transportation) return;
+        void* info = ref::call<void*>(r::mGetCurrentTransportation, transportation);
+        if (!info || !r::kTransportationInfo.is(info)) return;
+        v.id = ref::call<int32_t>(r::mInfoGetId, info);
+        v.type = ref::call<int32_t>(r::mInfoGetType, info);
+        v.message_id = ref::call_str(r::mInfoGetMessageId, info);
+        v.valid = true;
+    });
+    return v;
 }
 
 // --- field_api.h ---------------------------------------------------------------------------
@@ -333,7 +355,6 @@ std::vector<void*> all_field_entities()
                 unity::dict_for_each(model_list, [](uint64_t, uint64_t v, void* s) {
                     static_cast<std::vector<void*>*>(s)->push_back(reinterpret_cast<void*>(v));
                 }, &infos, 4, 8);
-                bool want_message = game::is(game::Id::FF4) || game::is(game::Id::FF5) || game::is(game::Id::FF6);
                 for (void* info : infos) {
                     if (!info) continue;
                     bool enabled = ref::call<bool>(r::mInfoGetEnable, info);
@@ -342,8 +363,8 @@ std::vector<void*> all_field_entities()
                     void* map_object = ref::call<void*>(r::mInfoGetMapObject, info);
                     if (map_object && !seen.count(map_object)) {
                         add(map_object);
-                        VehicleInfo vi{type, {}};
-                        if (want_message) vi.message_id = ref::call_str(r::mInfoGetMessageId, info);
+                        VehicleInfo vi{type, ref::call<int32_t>(r::mInfoGetId, info),
+                                       ref::call_str(r::mInfoGetMessageId, info)};
                         g_vehicle_types[map_object] = vi;
                     }
                 }

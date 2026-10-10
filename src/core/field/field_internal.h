@@ -40,11 +40,13 @@ extern ref::Method mGetCollisionLayerHeight;
 extern ref::Class kTransportationController;
 extern ref::Field fInfoData;
 extern ref::Method mNeedInteractiveList;
+extern ref::Method mGetCurrentTransportation;
 extern ref::Class kTransportation;
 extern ref::Field fModelList;
 extern ref::Class kTransportationInfo;
 extern ref::Method mInfoGetEnable;
 extern ref::Method mInfoGetType;
+extern ref::Method mInfoGetId;
 extern ref::Method mInfoGetMapObject;
 extern ref::Method mInfoGetMessageId;
 
@@ -136,8 +138,8 @@ bool live_entity(void* field_entity);
 
 // --- vehicle data (navigation.cpp) ----------------------------------------------------------
 /// FieldNavigationHelper.VehicleTypeMap lookup: the transportation type of a vehicle map
-/// object found in Transportation.ModelList, and its message id (FF4/FF5 names).
-bool vehicle_type_of(void* field_entity, int& type, std::wstring& message_id);
+/// object found in Transportation.ModelList, its master id and its message id (official name).
+bool vehicle_type_of(void* field_entity, int& type, int& transportation_id, std::wstring& message_id);
 
 // --- BreadcrumbRouteChainer (breadcrumb_chain.cpp) --------------------------------------------
 /// FF5 BreadcrumbRouteChainer.TryChain: chains MapRouteSearcher searches through reachable
@@ -187,8 +189,9 @@ struct Entity {
     int dest_map_id = -1;          // MapExit
     std::wstring dest_name;        // MapExit
     std::wstring event_type;       // Event / ScriptTrigger: the raw English type ("ToLayer" ...)
-    int transport_id = 0;          // Vehicle
-    std::wstring message_id;       // Vehicle (FF4/FF5 official name)
+    int transport_id = 0;          // Vehicle: MapConstants.TransportationType
+    int transportation_id = 0;     // Vehicle: transportation master id (0 = unknown)
+    std::wstring message_id;       // Vehicle: the master's message_id (its official name)
 
     Category category() const;
     int priority() const;

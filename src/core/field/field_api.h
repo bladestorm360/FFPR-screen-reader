@@ -60,6 +60,28 @@ std::wstring simple_path_description(unity::Vec3 from, unity::Vec3 to);
 /// Every FieldEntity on the map (FieldNavigationHelper.GetAllFieldEntities).
 std::vector<void*> all_field_entities();
 
+// --- vehicles ----------------------------------------------------------------------------
+/// TransportationController.CurrentTransportation: the vehicle the player is in (or the
+/// player row, id 1). The game switches it before FieldPlayer.GetOn runs (FF2
+/// FieldController.ChangeTransportation, 2026-10-10), so GetOn hooks may read it.
+struct VehicleState {
+    bool valid = false;
+    int id = 0;                 // transportation master id (FF2: 2 canoe, 5 snowcraft)
+    int type = 0;               // MapConstants.TransportationType
+    std::wstring message_id;    // the master's message_id ("MSG_SYSTEM_200"), or empty
+};
+VehicleState current_vehicle();
+
+/// The vehicle's name for speech, one rule for every game and every reader (the boarding
+/// line, the V key, the Vehicles category): the game's own text first - the master's
+/// message_id, else the game module's key-item message for a row without one
+/// (game::Flags::vehicle_message_id) - and the mod's per-type words only as the fallback.
+/// `transportation_id` 0 = unknown (type fallback only). Empty when nothing names it.
+std::wstring vehicle_display_name(int transportation_id, int type, const std::wstring& message_id);
+/// The game's own name only (the first two steps of vehicle_display_name); empty when the
+/// game has none, so a caller can keep its own per-type words for those.
+std::wstring vehicle_game_name(int transportation_id, const std::wstring& message_id);
+
 // --- selection ---------------------------------------------------------------------------
 Target selected();
 /// The rescan the C# mod runs after a scene load / map change (DelayedInitialScan).

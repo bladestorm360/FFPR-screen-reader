@@ -151,10 +151,12 @@ EntityPtr make_event(const Context& c, const std::wstring& name, const std::wstr
     return e;
 }
 
-EntityPtr make_vehicle(const Context& c, const std::wstring& name, int type, const std::wstring& message_id = L"")
+EntityPtr make_vehicle(const Context& c, const std::wstring& name, int type, const std::wstring& message_id = L"",
+                       int transportation_id = 0)
 {
     EntityPtr e = make(Kind::Vehicle, c, name);
     e->transport_id = type;
+    e->transportation_id = transportation_id;
     e->message_id = message_id;
     return e;
 }
@@ -179,13 +181,14 @@ Detection player_filter(Context& c)
 Detection vehicle_detector(Context& c)
 {
     int type = 0;
+    int transportation_id = 0;
     std::wstring message_id;
-    if (!vehicle_type_of(c.fe, type, message_id)) return not_handled();
+    if (!vehicle_type_of(c.fe, type, transportation_id, message_id)) return not_handled();
     // The canoe is an auto-used key item (summoned at canals), not a walk-to vehicle.
     if (type == kCanoe) return skip();
-    std::wstring name = vehicle_name(type, message_id);
+    std::wstring name = vehicle_display_name(transportation_id, type, message_id);
     if (name.empty()) name = T(L"Vehicle");   // FF2's table has no name for this type
-    return detected(make_vehicle(c, name, type, message_id));
+    return detected(make_vehicle(c, name, type, message_id, transportation_id));
 }
 
 /// VisualEffectFilter (20): party members, visual effects and inactive objects.

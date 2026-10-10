@@ -37,6 +37,7 @@ ref::Field fMenuLoadPopup{kMenuLoad, "savePopup"};
 ref::Field fMenuSavePopup{kMenuSave, "savePopup"};
 ref::Field fInterruptionPopup{kInterruption, "savePopup"};
 ref::Field fSavePopupMessage{kSavePopup, "messageText"};
+ref::Field fSavePopupTitle{kSavePopup, "titleText"};
 ref::Field fSavePopupCursor{kSavePopup, "selectCursor"};
 ref::Field fSavePopupCommands{kSavePopup, "commandList"};
 ref::Field fSaveListCursor{kSaveList, "selectCursor"};
@@ -45,6 +46,11 @@ ref::Method mTitleLoadSetPopupActive{kTitleLoad, "SetPopupActive", 1};
 ref::Method mMenuLoadSetPopupActive{kMenuLoad, "SetPopupActive", 1};
 ref::Method mMenuSaveSetPopupActive{kMenuSave, "SetPopupActive", 1};
 ref::Method mInterruptionSetEnablePopup{kInterruption, "SetEnablePopup", 1};
+// The quick-save completion state. Unlike SaveWindowController.CompleteInit (which calls
+// SetPopupActive(true) again), InterruptionWindowController.InitComplite (the game's spelling)
+// keeps the confirmation's popup open and only rewrites its texts (FF2 0x782220, 2026-10-10),
+// so no popup-active hook fires for it. Driven by its state machine: never inlined.
+ref::Method mInterruptionInitComplite{kInterruption, "InitComplite", 0};
 ref::Method mSaveListSetActive{kSaveList, "SetActive", 3};
 
 ref::Method mKeySlotName{kSaveContentKey, "get_SlotName", 0};
@@ -221,10 +227,16 @@ constexpr int kPopupReadMinFrames = 2;
 constexpr int kPopupReadMaxFrames = 30;
 
 // ReadPopupTextDelayed: from two frames on, read SavePopup.messageText plus the focused button
-// as soon as the text is there. The C# read once at two frames; the completion popup ("Save
-// complete") re-shows the same SavePopup and fills its text later, after the write, so that
-// single read found it empty ("Message is empty" in the FF2 log, 2026-10-10) and the
-// completion was never spoken. Bounded retry, one announcement.
+// as soon as the text is there. The C# read once at two frames and read messageText only.
+//
+// The completion popup is the same SavePopup with a different layout: SaveWindowController.
+// CompleteInit (every game; FF2 GameAssembly.dll 0x8EC3B0 read on 2026-10-10) sets titleText to
+// MENU_SAVE_COMPLETED ("Save complete", or the failure text), contentTitleText to the "Save"
+// heading, and messageText and subMessageText to string.Empty, with the message objects
+// deactivated. So "Message is empty" (FF2 log, 2026-10-10) was not a timing gap: the message IS
+// empty, and waiting for it could never speak the completion. A blank message now falls back to
+// the title text. The retry stays for a popup whose texts are set a frame later. Bounded, one
+// announcement.
 void read_popup_text_delayed(void* popup, const char* context)
 {
     int frames = 0;
@@ -240,7 +252,16 @@ void read_popup_text_delayed(void* popup, const char* context)
             }
             std::wstring message = unity::ui_text(message_text);
             if (text::is_blank(message)) {
-                if (frames >= kPopupReadMaxFrames) LOGF("[SaveLoad] %s: message still empty after %d frames", context, frames);
+                // The completion layout: the sentence is the title ("Save complete").
+                void* title_text = ref::rd<void*>(popup, fSavePopupTitle);
+                std::wstring title = title_text ? unity::ui_text(title_text) : std::wstring();
+                if (!text::is_blank(title) && unity::active_in_hierarchy(title_text)) {
+                    message = title;
+                    LOGF("[SaveLoad] %s: message empty, speaking the title", context);
+                }
+            }
+            if (text::is_blank(message)) {
+                if (frames >= kPopupReadMaxFrames) LOGF("[SaveLoad] %s: message and title still empty after %d frames", context, frames);
                 return false;   // not filled in yet: retry
             }
             message = strip_rich_text_tags(message);
@@ -333,6 +354,18 @@ void d_InterruptionSetEnablePopup(void* self, bool is_enable, const void* mi)
     });
 }
 
+using InitComplite_t = void (*)(void* self, const void* mi);
+InitComplite_t o_InterruptionInitComplite;
+
+// The quick save has been written: the open popup now says "Save complete" in its title.
+void d_InterruptionInitComplite(void* self, const void* mi)
+{
+    o_InterruptionInitComplite(self, mi);
+    hooks::guarded("SaveLoad.QuickSaveComplete", [&] {
+        if (kInterruption.is(self)) read_save_popup(self, fInterruptionPopup, "QuickSaveComplete", "QuickSavePopup");
+    });
+}
+
 // --- SaveListPatches ----------------------------------------------------------------------------
 
 // DelayedReadSlot: one frame after SaveListController.SetActive(true), read the highlighted slot.
@@ -377,6 +410,7 @@ int install()
     if (hooks::attach(mMenuLoadSetPopupActive, &d_MenuLoadSetPopupActive, &o_MenuLoadSetPopupActive)) ++n;
     if (hooks::attach(mMenuSaveSetPopupActive, &d_MenuSaveSetPopupActive, &o_MenuSaveSetPopupActive)) ++n;
     if (hooks::attach(mInterruptionSetEnablePopup, &d_InterruptionSetEnablePopup, &o_InterruptionSetEnablePopup)) ++n;
+    if (hooks::attach(mInterruptionInitComplite, &d_InterruptionInitComplite, &o_InterruptionInitComplite)) ++n;
     if (hooks::attach(mSaveListSetActive, &d_SaveListSetActive, &o_SaveListSetActive)) ++n;
 
     queries::define("SaveLoadMenuState.IsActive", [] { return save_load_active(); });

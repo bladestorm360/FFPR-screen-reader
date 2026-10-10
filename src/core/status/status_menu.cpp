@@ -169,7 +169,8 @@ void on_select_content(void* contents, int index)
     if (text::is_blank(name)) return;
     std::wstring announcement = name;
 
-    std::wstring job = current_job_name(data);
+    // FF2 has no jobs (game::flags().reads_job_slot; user, 2026-10-10).
+    std::wstring job = game::flags().reads_job_slot ? current_job_name(data) : std::wstring();
     if (!job.empty()) announcement += L", " + job;
 
     // Row information removed: FF1 has no front/back row system.
