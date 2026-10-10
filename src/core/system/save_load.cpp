@@ -216,29 +216,42 @@ std::wstring strip_rich_text_tags(const std::wstring& s)
     return out;
 }
 
-// ReadPopupTextDelayed: two frames later read SavePopup.messageText plus the focused button.
+// Frames a popup read waits for SavePopup.messageText to be filled in (bounded, 2-30).
+constexpr int kPopupReadMinFrames = 2;
+constexpr int kPopupReadMaxFrames = 30;
+
+// ReadPopupTextDelayed: from two frames on, read SavePopup.messageText plus the focused button
+// as soon as the text is there. The C# read once at two frames; the completion popup ("Save
+// complete") re-shows the same SavePopup and fills its text later, after the write, so that
+// single read found it empty ("Message is empty" in the FF2 log, 2026-10-10) and the
+// completion was never spoken. Bounded retry, one announcement.
 void read_popup_text_delayed(void* popup, const char* context)
 {
-    frame::after_frames(2, [popup, context] {
-        hooks::guarded("SaveLoad.ReadPopupText", [&] {
-            if (!unity::alive(popup)) return;
+    int frames = 0;
+    frame::every_frame([popup, context, frames]() mutable {
+        ++frames;
+        if (frames < kPopupReadMinFrames) return true;
+        bool done = hooks::guarded_r("SaveLoad.ReadPopupText", true, [&] {
+            if (!unity::alive(popup) || !unity::active_in_hierarchy(popup)) return true;
             void* message_text = ref::rd<void*>(popup, fSavePopupMessage);
             if (!message_text) {
                 LOGF("[SaveLoad] %s: messageText pointer is null", context);
-                return;
+                return true;
             }
             std::wstring message = unity::ui_text(message_text);
             if (text::is_blank(message)) {
-                LOGF("[SaveLoad] %s: Message is empty", context);
-                return;
+                if (frames >= kPopupReadMaxFrames) LOGF("[SaveLoad] %s: message still empty after %d frames", context, frames);
+                return false;   // not filled in yet: retry
             }
             message = strip_rich_text_tags(message);
             // Append the initially-focused button (Yes/No) so it is heard right after the body;
             // save, load and quick save share this SavePopup layout.
             std::wstring button = dialogue::read_focused_button(popup, fSavePopupCursor, fSavePopupCommands);
             ffpr::say(text::is_blank(button) ? message : message + L" " + button);
+            return true;
         });
-    }, "SaveLoad.ReadPopupText");
+        return !done && frames < kPopupReadMaxFrames;
+    }, "SaveLoad.ReadPopupText", kPopupReadMaxFrames + 1);
 }
 
 // ReadSavePopup
