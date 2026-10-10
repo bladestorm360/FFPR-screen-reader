@@ -468,5 +468,16 @@ Re-test steps: `TESTING.md`, FF2 items 9-11.
     entries are English-only (ZKline's dictionary; the translator falls back to English for
     them), a separate and much larger job.
 14. **MP stays in FF2** (user, 2026-10-10: "that was my bad"). Item 4 above is closed.
+15. **FF6 dictionary fully localized** (user: "ff6 should have full localization support like
+    the other games"). The 1250 English-only entries of ZKline's dictionary now carry the ten
+    other languages (12,500 values). Method, kept in `..\tools\ff6_localization\`: each entry's
+    English became a template with its numbering as `{n}` (680 distinct templates for 1250
+    keys); proper nouns are placeholders resolved from a glossary of the game's own names in
+    every language (the message tables and the already-translated entries: Terra, Narshe,
+    Magicite = fr "Magilithe", Imperial Soldier, ...); the descriptive words are the port's
+    translations, consistent per batch (fr/it/de/es/ko/zht/zhc/ru/th/pt), not a native
+    speaker's. `tools\fill_translation.py` merged them without touching the file's layout
+    (CRLF kept; `git diff -w` shows only value changes). The audit tool reports zero, and no
+    entry in any of the six dictionaries is English-only any more.
 
 Re-test steps: `TESTING.md`, FF2 items 12-16.
