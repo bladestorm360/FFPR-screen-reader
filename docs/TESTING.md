@@ -57,6 +57,14 @@ shops; battle (commands, targets, results with the EXP tick); save and load; dia
 5. Battle spell list and I; H says HP and MP. 6. Victory: gil, weapon skills, spell levels,
 stat gains, no EXP. 7. Status details: all 23 stats. 8. U in a shop.
 
+Re-test after the 2026-10-10 fixes (first FF2 session; details in `PORT_STATUS.md`):
+9. Load a game: nothing but "Entering X" and the map name while the field appears (no "Use").
+10. Magic, pick a character: the character once (name, level, HP, MP), then "Use" once.
+    Back out of the spell list to the bar: "Use" once again. Equip, Status, Formation: the
+    character's name once.
+11. Win a battle with gil drops in the item list: each row as the window shows it ("4 Gil"),
+    no "Potion".
+
 ## FF3
 
 1. Onion Knight naming. 2. Job menu, then I. 3. Magic menu: Learn with a tome, Use, a target,

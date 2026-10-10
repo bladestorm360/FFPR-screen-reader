@@ -287,7 +287,9 @@ std::wstring command_name(int id)
 bool try_read_command(void* ctrl)
 {
     if (!unity::alive(ctrl) || !unity::active_in_hierarchy(ctrl)) return true;
-    if (window_state(find_window()) != kStateCommand) {
+    // Not on the field: the UI pre-load initialises the window in its command state there
+    // (core game_state.cpp, IsFieldState).
+    if (ffpr::system::is_field_state() || window_state(find_window()) != kStateCommand) {
         dedup::reset(kCtxCommand);
         return true;
     }

@@ -37,6 +37,7 @@
 #include "../../core/unity.h"
 #include "../../core/battle/battle_util.h"
 #include "../../core/system/cursor_event.h"
+#include "../../core/system/system.h"
 
 namespace ffpr::ff5 {
 namespace {
@@ -439,6 +440,8 @@ void speak_details(const std::wstring& s, bool interrupt)
 bool announce_command(void* self, int index)
 {
     if (!self) return false;
+    // The UI pre-load initialises the window on the field (core game_state.cpp, IsFieldState).
+    if (ffpr::system::is_field_state()) return false;
     void* list = ref::rd<void*>(self, fCmdContentList);
     void* content_view = ui::list_item(list, index);
     if (!content_view) return false;

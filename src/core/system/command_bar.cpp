@@ -119,9 +119,11 @@ bool try_read_item(void* ctrl)
 {
     if (!unity::alive(ctrl)) return true;
 
-    // Only while the item window is in its command-select phase.
+    // Only while the item window is in its command-select phase, and only while a menu can be
+    // open at all: the UI pre-load initialises the window in that phase while the player is on
+    // the field (game_state.cpp, IsFieldState).
     void* win = item_win();
-    if (!win || ui::state_tag(win, fItemWindowState) != kStateItemCommand) {
+    if (is_field_state() || !win || ui::state_tag(win, fItemWindowState) != kStateItemCommand) {
         dedup::reset(kCtxItem);
         return true;
     }
@@ -153,7 +155,7 @@ bool try_read_equip(void* ctrl)
     if (!unity::alive(ctrl)) return true;
 
     void* win = equip_win();
-    if (!win || ui::state_tag(win, fEquipWindowState) != kStateEquipCommand) {
+    if (is_field_state() || !win || ui::state_tag(win, fEquipWindowState) != kStateEquipCommand) {
         dedup::reset(kCtxEquip);
         return true;
     }
@@ -177,7 +179,7 @@ bool try_read_magic(void* ctrl)
     if (!unity::alive(ctrl) || !unity::active_in_hierarchy(ctrl)) return true;
 
     void* win = magic_win();
-    if (!win || ui::state_tag(win, fMagicWindowState) != kStateMagicCommand) {
+    if (is_field_state() || !win || ui::state_tag(win, fMagicWindowState) != kStateMagicCommand) {
         dedup::reset(kCtxMagic);   // not in the command bar: re-arm for the next entry
         return true;
     }
@@ -306,6 +308,7 @@ core::Install s_install{"CommandBar", &install, 100};
 bool is_command_bar_active()
 {
     return hooks::guarded_r("CommandBar.IsActive", false, [] {
+        if (is_field_state()) return false;   // the UI pre-load leaves windows in their command state
         void* item = item_win();
         if (item && ui::state_tag(item, fItemWindowState) == kStateItemCommand) return true;
         void* equip = equip_win();

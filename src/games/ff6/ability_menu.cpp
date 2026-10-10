@@ -54,6 +54,7 @@
 #include "../../core/unity.h"
 #include "../../core/battle/battle_util.h"
 #include "../../core/system/cursor_event.h"
+#include "../../core/system/system.h"
 
 namespace ffpr::ff6 {
 namespace {
@@ -194,6 +195,8 @@ void reset_window_guards()
 void announce_command(void* self, int index)
 {
     if (!self || !kAbilityCommand.is(self)) return;
+    // The UI pre-load initialises the window on the field (core game_state.cpp, IsFieldState).
+    if (ffpr::system::is_field_state()) return;
     g_command = self;
     void* list = ref::rd<void*>(self, fCommandContentList);
     void* content_view = ui::list_item(list, index);

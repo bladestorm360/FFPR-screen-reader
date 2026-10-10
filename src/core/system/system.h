@@ -55,6 +55,11 @@ int field_command_count(void* cursor);
 // --- GameStatePatches -----------------------------------------------------------------------
 /// GameStatePatches.IsFieldPlayerState: the main game is in its Player state.
 bool is_field_player_state();
+/// The main game is in a field state (Init, ChangeMap, FieldReady, Player, Transport) or its
+/// state is not known yet: no menu, shop or battle screen can have focus. Menu readers whose
+/// deferred reads can be reached by the game's UI pre-load (the command bars) skip when true.
+/// Query "GameStatePatches.IsFieldState".
+bool is_field_state();
 /// GameStatePatches.ResetMainGameState (FF1: on the "Title" scene load).
 void reset_main_game_state();
 

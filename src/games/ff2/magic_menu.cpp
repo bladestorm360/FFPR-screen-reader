@@ -38,6 +38,7 @@
 #include "../../core/ui_util.h"
 #include "../../core/unity.h"
 #include "../../core/menus/menus.h"
+#include "../../core/system/system.h"
 #include "../../core/ui/preferences.h"
 
 namespace ffpr::ff2 {
@@ -305,6 +306,8 @@ enum class ReadResult { Spoken, NotReady, Abandon };
 
 ReadResult read_command_entry(void* window)
 {
+    // The UI pre-load runs CommandInit on the field (core game_state.cpp, IsFieldState).
+    if (ffpr::system::is_field_state()) return ReadResult::Abandon;
     if (!unity::alive(window) || !unity::active_in_hierarchy(window)) return ReadResult::NotReady;
     const int state = window_state(window);
     if (state != STATE_COMMAND) return state < 0 ? ReadResult::NotReady : ReadResult::Abandon;
@@ -419,10 +422,19 @@ void d_SetCommandSelectCursor(void* self, const void* mi)
     o_SetCommandSelectCursor(self, mi);
     hooks::guarded("FF2.Magic.SetCommandSelectCursor", [&] {
         if (g_command_init_in_progress || !self || !unity::active_in_hierarchy(self)) return;
+        if (ffpr::system::is_field_state()) return;   // UI pre-load on the field
         void* window = unity::find_object(kWindow);
         if (!window || window_state(window) != STATE_COMMAND) return;
         sync();
-        if (!g_command_menu_active) on_command_menu_active();
+        // Cursor MOVES only. The bar's first command is the entry read's (CommandInit): the game
+        // sets the cursor once more while opening the window (SetActive -> ResetController), with
+        // the state machine still on Command from the last visit, BEFORE CommandInit runs. The
+        // C# (and the first port) took that as the entry, spoke "Use", then CommandInit forgot
+        // the guard and the entry read spoke "Use" again (FF2 test, 2026-10-10).
+        if (!g_command_menu_active) {
+            LOGF("[FF2 Magic] command cursor set before CommandInit: left to the entry read");
+            return;
+        }
         try_announce_focused_command(self);
     });
 }

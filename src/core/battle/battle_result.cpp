@@ -56,6 +56,37 @@ ref::Class kDropItem{"Last.Data", "DropItemData"};
 ref::Field fContentId{kDropItem, "<ContentId>k__BackingField"};
 ref::Field fDropValue{kDropItem, "<DropValue>k__BackingField"};
 
+// The game's own drop-list rows (what the result window renders), all six games.
+ref::Class kListItemFormatter{"Last.Management", "ListItemFormatter"};
+ref::Method mGetContentDataList{kListItemFormatter, "GetContentDataList", 2};   // name check only: see format_drop_list
+ref::Class kItemListContentData{"Last.UI", "ItemListContentData"};
+ref::Field fContentName{kItemListContentData, "<Name>k__BackingField"};
+ref::Field fContentCount{kItemListContentData, "<Count>k__BackingField"};
+ref::Class kMessageManager{"Last.Management", "MessageManager"};
+
+/// ListItemFormatter.GetContentDataList(List<DropItemData>, MessageManager): the rows the result
+/// window shows, names included. The method has three two-argument overloads, so it is picked by
+/// its first parameter's class, which is the drop list's own class (one enumeration of the
+/// formatter's six methods, on the first result screen). Null when unresolved.
+void* format_drop_list(void* drops)
+{
+    static il2cpp::Method* method = nullptr;
+    static bool tried = false;
+    if (!tried) {
+        tried = true;
+        il2cpp::Class* k = kListItemFormatter.get();
+        il2cpp::Class* list_class = il2cpp::object_class(static_cast<il2cpp::Object*>(drops));
+        if (k && list_class) method = il2cpp::find_method_overload(k, "GetContentDataList", 2, list_class);
+        if (!method)
+            LOGF("[Battle Result] ListItemFormatter.GetContentDataList(List<DropItemData>, MessageManager) "
+                 "not found: drops are named by content id");
+    }
+    void* mm = ref::instance(kMessageManager);
+    if (!method || !mm) return nullptr;
+    void* args[2] = {drops, mm};
+    return il2cpp::invoke_ptr(method, nullptr, args, 2);
+}
+
 bool g_announced_points = false;
 bool g_announced_items = false;
 // Level-ups already announced this result screen, by "<name>_levelup" (the C# HashSet).
@@ -246,16 +277,28 @@ void d_ShowGetItemsInit(void* self, const void* mi)
         void* items = ref::rd<void*>(data, fItemList);
         if (!items || unity::list_count(items) == 0) return;
 
-        for (void* drop : list_items(items)) {
-            if (!drop) continue;
-            std::wstring name = item_name_by_content(ref::rd<int32_t>(drop, fContentId));
-            if (name.empty()) continue;
-            name = strip_icon(name);
-            if (name.empty()) continue;
-            int drop_count = ref::rd<int32_t>(drop, fDropValue);
+        auto speak_drop = [](const std::wstring& raw_name, int drop_count) {
+            std::wstring name = strip_icon(raw_name);
+            if (name.empty()) return;
             std::wstring announcement = drop_count > 1 ? TF(L"Found {0} x{1}", {name, text::num(drop_count)})
                                                        : TF(L"Found {0}", {name});
             ffpr::say(announcement, false);
+        };
+
+        // The game's own rows first (the FF2 C# did this): a gil drop has no item behind its
+        // content id, and FF2 lists one per monster ("4 Gil", "18 Gil"); resolving the id as an
+        // item named every one of them after item 1, "Potion x4" (FF2 test, 2026-10-10).
+        if (void* rows = format_drop_list(items)) {
+            for (void* row : list_items(rows)) {
+                if (row) speak_drop(ref::rd_str(row, fContentName), ref::rd<int32_t>(row, fContentCount));
+            }
+            return;
+        }
+
+        // FF1's own lookup, kept as the fallback.
+        for (void* drop : list_items(items)) {
+            if (!drop) continue;
+            speak_drop(item_name_by_content(ref::rd<int32_t>(drop, fContentId)), ref::rd<int32_t>(drop, fDropValue));
         }
     });
 }

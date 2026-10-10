@@ -109,8 +109,19 @@ std::wstring read_character_information(void* slot)
     });
 
     // "Name, Job, Level X, HP current/max, MP current/max"
+    //
+    // Two rules the FF1 reader did not need (FF2 test, 2026-10-10):
+    //  * a job text that repeats the character's name is not a job (FF2 has no jobs; its slot's
+    //    job text carries the name again, which read as "Firion, Firion, ...");
+    //  * MP only in the games that show MP (game::flags().has_mp). FF1 and FF3 use spell charges;
+    //    their slots still carry MP texts, which are never displayed.
     std::wstring announcement;
     if (!character_name.empty()) announcement = character_name;
+    if (job_name == character_name) job_name.clear();
+    if (!game::flags().has_mp) {
+        current_mp.clear();
+        max_mp.clear();
+    }
     if (!job_name.empty()) {
         if (!announcement.empty()) announcement += L", " + job_name;
         else announcement = job_name;

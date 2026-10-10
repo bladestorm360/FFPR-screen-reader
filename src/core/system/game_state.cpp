@@ -37,6 +37,7 @@ ref::Method mLibraryReturn6{kFieldMap6, "<InitMenu>b__99_0", 0};
 constexpr int kStateChangeMap = 1;
 constexpr int kStateFieldReady = 2;
 constexpr int kStatePlayer = 3;
+constexpr int kStateTransport = 4;   // the last field state; Menu is 5, Shop 9, Battle 13
 
 // MenuLibraryUi (list) / MenuLibraryInfo (detail): FF1 19/20, FF2 18/19, FF3-FF6 17/18.
 int state_library_ui()
@@ -131,6 +132,7 @@ int install()
     else LOGF("[GameState] FieldMap InitMenu fade-in callback not found - no config re-announce after the bestiary");
 
     queries::define("GameStatePatches.IsFieldPlayerState", [] { return is_field_player_state(); });
+    queries::define("GameStatePatches.IsFieldState", [] { return is_field_state(); });
     actions::define("GameStatePatches.ResetMainGameState", [] { reset_main_game_state(); });
     // FF1 FFI_ScreenReaderMod.OnSceneLoaded calls ResetMainGameState on the "Title" scene load:
     // the next MainGame instance reports its own states.
@@ -152,6 +154,26 @@ bool is_field_player_state()
         void* mg = g_main_game;
         if (!mg || !kMainGame.is(mg)) return false;
         return ref::call<int32_t>(mGetCurrentState, mg) == kStatePlayer;
+    });
+}
+
+// IsFieldState: the main game is in one of its field states (Init, ChangeMap, FieldReady, Player,
+// Transport: 0-4 in all six dump.cs files), or no state is known yet. No menu, shop or battle
+// screen can have focus then, so a menu reader's deferred read is a stray.
+//
+// Why it exists (FF2, 2026-10-10): on the first field after a load, the game pre-loads every UI
+// scene (CampMenu, SecondMenu, Battle, ShopMenu, ...) and initialises their controllers while
+// their objects are still active. The item window came up in its command-select state with its
+// cursor set, the command-bar reader's one-frame read found an active window in state 1, and
+// "Use" was spoken on the world map. The window's own state machine cannot tell this
+// initialisation apart from a real open; the main-game state can.
+bool is_field_state()
+{
+    return hooks::guarded_r("GameState.IsFieldState", true, [] {
+        void* mg = g_main_game;
+        if (!mg || !kMainGame.is(mg)) return true;
+        const int32_t state = ref::call<int32_t>(mGetCurrentState, mg);
+        return state >= 0 && state <= kStateTransport;
     });
 }
 

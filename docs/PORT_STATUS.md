@@ -360,3 +360,48 @@ Mod-composed where the game shows text (no double; the user's call whether to sw
 targets, bestiary/music/gallery rows, new-game prompts (FF1's "Start game?"), battle command
 names. Suspected doubles, not proven: "On foot" twice, FF2 Learn keyword, a config row re-read
 after answering No, the title Options first row.
+
+## First FF2 in-game session (2026-10-10): five reports, fixed, not yet re-tested
+
+Evidence: FF2's `ffpr_screen_reader.log` of 2026-10-10 04:40 and the user's reports.
+
+1. **"Use" on the world map right after loading a game (all six games).** The game pre-loads
+   every UI scene on the first field (CampMenu, SecondMenu, Battle, ShopMenu, ...) and
+   initialises their controllers while the objects are still active; the item window came up
+   in its command-select state with its cursor set, so the command-bar reader's one-frame read
+   found "an active window in state 1" and spoke. A window's own state machine cannot tell this
+   from a real open; the main-game state can (`SubSceneManagerMainGame.State`: Init, ChangeMap,
+   FieldReady, Player, Transport = 0-4 in all six dump.cs files; Menu 5, Shop 9, Battle 13).
+   New `system::is_field_state()` / query `GameStatePatches.IsFieldState` (true also while no
+   state is known yet). Every command-bar read skips on it: the core's item, equipment and FF1
+   magic bars and `IsCommandBarActive`, FF2's and FF3's magic bars, FF4's, FF5's and FF6's
+   ability bars (`announce_command`).
+2. **FF2 magic bar "Use" twice on entry.** Two producers: the game sets the bar's cursor once
+   more while opening the window (SetActive, ResetController), with the state machine still on
+   Command from the last visit and BEFORE CommandInit runs; the C# and the port took that as an
+   entry and spoke, then CommandInit forgot the guard and the entry read spoke again. The
+   cursor-set hook now speaks MOVES only (never activates the bar itself); the entry is
+   CommandInit's, as in FF1. A log line names the skipped early cursor-set so the next log
+   confirms the order. FF3 (deferred reads superseded per frame, FF1's design) and FF4/FF6
+   (guard reset before the init body) were checked and left alone.
+3. **Character pre-screens: "Firion, Firion, Level 1, HP .., MP .."** (magic, equip, status,
+   formation). The core's character-slot reader is FF1's: it walks the slot's texts by object
+   name, and FF2's job text carries the character's name again (FF2 has no jobs). A job text
+   equal to the name is dropped. Not a dedup: one producer, one field removed.
+4. **MP.** The same reader read MP texts in every game; it now reads them only with
+   `Flags::has_mp` (FF2, FF4, FF5, FF6), so FF1 and FF3 never speak an MP stat anywhere (their
+   spell-charge lines keep their "MP: a/b" wording, FF1's). **FF2 keeps MP:** FF2 has MP (spell
+   level = cost); the FF2 C# read "Name, HP a/b, MP c/d" here and its status menu said so
+   ("MP (FF2 specific - unlike FF3 which uses spell charges)"). The user asked for MP to go in
+   FF2 as well; raised, awaiting the user's decision. Open question for the user: FF2 has no
+   character levels, yet "Level 1" is read from the slot's level text (the C# FF2 never read a
+   level on these screens).
+5. **Gil drops read as "Potion x4".** FF2 lists one gil row per monster in the victory item
+   list ("4 Gil", "18 Gil"); a gil row's content id has no item behind it, and FF1's lookup
+   (`GetMesIdItemName(contentId)`) named every row after item 1. The core now asks the game for
+   the rows it renders, `ListItemFormatter.GetContentDataList(List<DropItemData>, MessageManager)`
+   (the FF2 C#'s way; three two-argument overloads, picked by the drop list's own class through
+   `il2cpp::find_method_overload`), and speaks each row's Name and Count; FF1's lookup stays as
+   the fallback when the method is unresolved.
+
+Re-test steps: `TESTING.md`, FF2 items 9-11.

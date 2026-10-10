@@ -25,6 +25,7 @@
 #include "../../core/ui_util.h"
 #include "../../core/unity.h"
 #include "../../core/menus/menus.h"
+#include "../../core/system/system.h"
 
 namespace ffpr::ff4 {
 namespace {
@@ -73,6 +74,8 @@ constexpr const char* kCtxUseTarget = "AbilityMenu.UseTarget";
 /// AbilityCommandController_SelectContent_Patch.Announce
 void announce_command(void* controller, int index)
 {
+    // The UI pre-load initialises the window on the field (core game_state.cpp, IsFieldState).
+    if (ffpr::system::is_field_state()) return;
     void* list = ref::rd<void*>(controller, fCommandContentList);
     void* view = ui::list_item(list, index);
     if (!view) return;
