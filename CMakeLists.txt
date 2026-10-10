@@ -66,6 +66,11 @@ foreach(n 1 2 3 4 5 6)
     ffpr_embed(MODTEXT_FF${n} data/ff${n}/mod_text.json)
     ffpr_embed(TRANSLATION_FF${n} data/ff${n}/translation.json)
     ffpr_embed(ENTITYNAMES_FF${n} data/ff${n}/EntityNames.json)
+    # The baked maps (tools/bake_maps.py from tools/mapdump): grids and routing objects of
+    # every sub-map, for the mod-side router (src/core/field/baked_map.cpp).
+    ffpr_embed(MAPS_FF${n} data/ff${n}/maps.bin)
+    # Guided puzzle routes, authored per game (src/core/field/puzzle_guide.cpp).
+    ffpr_embed(PUZZLES_FF${n} data/ff${n}/puzzles.json)
 endforeach()
 file(GLOB FFPR_SOUNDS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/data/sounds/*.wav")
 foreach(s ${FFPR_SOUNDS})

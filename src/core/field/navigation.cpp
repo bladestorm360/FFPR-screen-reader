@@ -18,6 +18,8 @@
 #include <cmath>
 #include <unordered_map>
 #include <unordered_set>
+#include "baked_map.h"
+#include "baked_nav.h"
 #include "field_api.h"
 #include "field_internal.h"
 #include "object_cache.h"
@@ -266,6 +268,50 @@ bool vehicle_type_of(void* fe, int& type, int& transportation_id, std::wstring& 
     return true;
 }
 
+std::vector<VehicleOnMap> vehicles_on_map()
+{
+    std::vector<VehicleOnMap> out;
+    for (const auto& [fe, info] : g_vehicle_types) {
+        if (!live_entity(fe)) continue;
+        void* tr = unity::transform(fe);
+        if (!tr) continue;
+        VehicleOnMap v;
+        v.game = fe;
+        v.type = info.type;
+        v.transportation_id = info.id;
+        v.message_id = info.message_id;
+        v.pos = unity::local_position(tr);
+        out.push_back(std::move(v));
+    }
+    return out;
+}
+
+std::vector<int> owned_auto_vehicle_groups()
+{
+    std::vector<int> groups;
+    hooks::guarded("FieldNavigationHelper.AutoVehicles", [&] {
+        void* map = field_map();
+        void* fc = map ? ref::rd<void*>(map, r::fFieldController) : nullptr;
+        void* transportation = fc ? ref::rd<void*>(fc, r::fTransportation) : nullptr;
+        void* info_data = transportation ? ref::rd<void*>(transportation, r::fInfoData) : nullptr;
+        void* model_list = info_data ? ref::rd<void*>(info_data, r::fModelList) : nullptr;
+        if (!model_list) return;
+        std::vector<void*> infos;
+        unity::dict_for_each(model_list, [](uint64_t, uint64_t v, void* s) {
+            static_cast<std::vector<void*>*>(s)->push_back(reinterpret_cast<void*>(v));
+        }, &infos, 4, 8);
+        for (void* info : infos) {
+            if (!info || !ref::call<bool>(r::mInfoGetEnable, info)) continue;
+            if (ref::call<int32_t>(r::mInfoGetType, info) != 5) continue;   // Content: auto-ridden
+            const int id = ref::call<int32_t>(r::mInfoGetId, info);
+            if (const baked::TransportRow* row = baked::transport(id))
+                if (row->group > 0 && std::find(groups.begin(), groups.end(), row->group) == groups.end())
+                    groups.push_back(row->group);
+        }
+    });
+    return groups;
+}
+
 // --- field_api.h vehicles --------------------------------------------------------------------
 
 VehicleState current_vehicle()
@@ -448,6 +494,14 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
     PathInfo info;
     if (!map) {
         info.error = L"Map handle not available";
+        return info;
+    }
+
+    // The baked maps first (user decision, 2026-10-10): the whole sub-map, layers, hidden
+    // passages, counters, vehicles; no 31-tile window. The game's searcher below stays the
+    // fallback for a map the baked data does not know.
+    if (baked_nav::find(from, to, map, player_obj, allow_chain, info)) {
+        if (!info.success && info.error.empty()) info.error = L"No path found";
         return info;
     }
 

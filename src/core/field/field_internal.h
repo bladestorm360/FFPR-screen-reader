@@ -141,6 +141,21 @@ bool live_entity(void* field_entity);
 /// object found in Transportation.ModelList, its master id and its message id (official name).
 bool vehicle_type_of(void* field_entity, int& type, int& transportation_id, std::wstring& message_id);
 
+/// The vehicles parked on this map (Transportation.ModelList objects seen at the last scan),
+/// with their positions now: the baked router's boarding candidates (baked_nav.cpp).
+struct VehicleOnMap {
+    void* game = nullptr;
+    int type = 0;
+    int transportation_id = 0;
+    std::wstring message_id;
+    unity::Vec3 pos{};
+};
+std::vector<VehicleOnMap> vehicles_on_map();
+/// The transportation groups of the party's enabled auto-ridden vehicles (type 5 "Content":
+/// FF1-FF3's canoe, FF2's snowcraft), read from Transportation.ModelList now. On a world map
+/// they extend walking: the player boards them by stepping onto their terrain.
+std::vector<int> owned_auto_vehicle_groups();
+
 // --- BreadcrumbRouteChainer (breadcrumb_chain.cpp) --------------------------------------------
 /// FF5 BreadcrumbRouteChainer.TryChain: chains MapRouteSearcher searches through reachable
 /// midpoints to a target beyond the game's ~31-cell window. False (out_path untouched) when the

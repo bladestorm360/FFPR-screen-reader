@@ -43,6 +43,13 @@ if errorlevel 1 (
     exit /b 1
 )
 
+echo Checking the baked-map router against FF2 routes known from the dumps...
+"out\checks\route_check.exe" "data\ff2\maps.bin" > build_check\route_report.txt 2>&1
+if errorlevel 1 (
+    echo Route check FAILED - see build_check\route_report.txt
+    exit /b 1
+)
+
 echo Checking every game-code name against each game's dump.cs...
 python tools\name_check.py
 if errorlevel 1 (

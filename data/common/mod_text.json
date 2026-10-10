@@ -13438,5 +13438,33 @@
     "ru": "Экипировано",
     "th": "สวมใส่อยู่",
     "pt": "Equipado"
+  },
+  "board the {0}": {
+    "en": "board the {0}",
+    "ja": "{0}に乗る",
+    "fr": "montez à bord : {0}",
+    "it": "sali su {0}",
+    "de": "{0} besteigen",
+    "es": "sube a {0}",
+    "ko": "{0}에 탑승",
+    "zht": "搭乘{0}",
+    "zhc": "搭乘{0}",
+    "ru": "сядьте на {0}",
+    "th": "ขึ้น{0}",
+    "pt": "embarque no {0}"
+  },
+  "land": {
+    "en": "land",
+    "ja": "着陸",
+    "fr": "atterrissez",
+    "it": "atterra",
+    "de": "landen",
+    "es": "aterriza",
+    "ko": "착륙",
+    "zht": "降落",
+    "zhc": "降落",
+    "ru": "приземлитесь",
+    "th": "ลงจอด",
+    "pt": "pouse"
   }
 }
