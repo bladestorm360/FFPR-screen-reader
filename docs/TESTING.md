@@ -11,6 +11,13 @@ check save, load, quicksave, return to title and quit. Check the title prompt an
 world/town/floor transitions for delay. Ordinary FF2 world exits must not announce an
 event, and field audio/navigation should recover after loading.
 
+Title prompt follow-up: in each game, let the visible button prompt appear before
+pressing a button; hear its actual wording. FF5/FF6 add the intro-wait instruction
+after that wording. Check initial boot, letting the cinematic play, and returning
+to title. Opening the title menu should cancel any pending prompt speech.
+User has confirmed fast startup and map transitions with the preceding loading fix;
+the later entering-map announcement was accepted.
+
 Build, native-name, DLL host, scheduler and baked-route checks are offline validation.
 They do not confirm gameplay or measure game startup time.
 

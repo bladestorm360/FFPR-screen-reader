@@ -22,6 +22,7 @@ void configure(game::Flags& f)
     f.has_hidden_passages = true;
     f.atb = true;
     f.has_jobs = true;
+    f.title_idle_cinematic = true;
     f.timer_freeze = true;
     f.bestiary_steal = true;       // the bestiary lists stealable items (Steal ability)
 }

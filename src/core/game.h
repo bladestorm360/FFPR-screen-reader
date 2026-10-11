@@ -48,6 +48,7 @@ struct Flags {
     bool atb = false;                   // active-time battle (FF4, FF5)
     bool has_jobs = false;              // job system (FF3, FF5)
     bool has_skill_levels = false;      // FF2 weapon/magic skill levels
+    bool title_idle_cinematic = false;  // FF5/FF6 replay their intro after idling at the prompt
     bool has_mp = false;                // MP shown with HP (FF2, FF4, FF5; FF1/FF3 use spell charges)
     bool timer_freeze = false;          // FF5 Shift+T timer freeze
     bool bestiary_steal = false;        // the bestiary lists stealable items: only the games with a

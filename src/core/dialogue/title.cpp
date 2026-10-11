@@ -4,6 +4,7 @@
 #include <string>
 #include "core.h"
 #include "frame.h"
+#include "game.h"
 #include "hooks.h"
 #include "log.h"
 #include "modtext.h"
@@ -23,6 +24,7 @@ ref::Class kTitleWindow{"Last.UI.KeyInput", "TitleWindowController"};
 ref::Class kTitleWindowView{"Last.UI.KeyInput", "TitleWindowView"};
 ref::Class kTitleCommand{"Last.UI.KeyInput", "TitleMenuCommandController"};
 ref::Class kTouchTitleCommand{"Last.UI.Touch", "TitleMenuCommandController"};
+ref::Class kIndicator{"Last.Systems.Indicator", "SystemIndicator"};
 
 ref::Field fTitleCommandController{kTitleWindow, "commandController"};
 ref::Field fTitleView{kTitleWindow, "view"};
@@ -35,7 +37,11 @@ ref::Method mInitializeOption{kTitleWindow, "InitializeOption", 0};
 ref::Method mInitializeExtra{kTitleWindow, "InitializeExtra", 0};
 ref::Method mSetEnableMainMenu{kTitleCommand, "SetEnableMainMenu", 1};
 ref::Method mTouchSetEnableMainMenu{kTouchTitleCommand, "SetEnableMainMenu", 1};
-ref::Method mSetEnableStart{kTitleWindow, "SetEnableStartObject", 1};
+ref::Method mInitNone{kTitleWindow, "InitNone", 0};
+ref::Method mInitShortcut{kTitleWindow, "InitShortcutCommand", 0};
+ref::Method mIndicatorHide{kIndicator, "Hide", 0};
+
+void dismiss_press_prompt();
 
 // --- TitleMenuReader ------------------------------------------------------------------------
 
@@ -64,7 +70,11 @@ Void_t o_InitializeExtra;
 void d_InitSelect(void* self, const void* mi)
 {
     o_InitSelect(self, mi);
-    hooks::guarded("Title.InitSelect", [&] { announce_focus(self, "InitSelect"); });
+    hooks::guarded("Title.InitSelect", [&] {
+        if (!kTitleWindow.is(self)) return;
+        dismiss_press_prompt();
+        announce_focus(self, "InitSelect");
+    });
 }
 
 void d_InitializeOption(void* self, const void* mi)
@@ -81,13 +91,22 @@ void d_InitializeExtra(void* self, const void* mi)
 
 // --- TitleScreenPatches -------------------------------------------------------------------------
 //
-// The native SetEnableStartObject activates view.startParent directly (FF2
-// 0x806340). Use that presentation event, with a bounded wait for its fade/text,
-// rather than inferring it from unrelated loading-indicator Hide calls.
+// All six UpdateNone bodies inline SetEnableStartObject: they call Indicator.Hide
+// immediately before activating view.startParent. The wrapper is never called
+// on this path. InitShortcutCommand also activates that parent directly. Start
+// a bounded rendered-text read from those actual events, not an Update hook.
+// FF5/FF6 own cinematic timing; no mod timer predicts when their prompt appears.
 bool g_press_prompt_armed = false;
 bool g_title_main_menu_shown = false;
 
-// SpeakPressPromptIfShown: one frame after a Hide (or the arm), speak the prompt if it is on screen.
+void dismiss_press_prompt()
+{
+    g_title_main_menu_shown = true;
+    g_press_prompt_armed = false;
+    frame::cancel_label("Title.PressPrompt");
+}
+
+// One frame after the presentation event, wait only for its actual fade/text.
 void speak_press_prompt_if_shown(void* ctrl)
 {
     if (!ctrl) return;
@@ -97,26 +116,54 @@ void speak_press_prompt_if_shown(void* ctrl)
         void* view = ref::rd<void*>(ctrl, fTitleView);
         void* start_text = ref::rd<void*>(view, fTitleStartText);
         if (!start_text || !unity::active_in_hierarchy(start_text)) return false;
-        const auto raw = displayed::text(start_text);
+        auto raw = displayed::text(start_text);
         if (text::is_blank(raw)) return true;
         g_press_prompt_armed = false;
         LOGW(L"[Title] press prompt shown, text=", raw.c_str());
+        // Preserve the game's displayed wording first. This is mod guidance,
+        // requested by the user, only for games with native idle intro playback.
+        if (game::flags().title_idle_cinematic)
+            raw += L". " + T(L"Wait to watch the intro cinematic, or press a button to open the title menu.");
         ffpr::say(raw, true);
         return false;
     }, "Title.PressPrompt", 60);
 }
 
-using SetStart_t = void (*)(void*, bool, const void*);
-SetStart_t o_SetEnableStart;
-void d_SetEnableStart(void* self, bool enable, const void* mi)
+void arm_for_controller(void* ctrl)
 {
-    o_SetEnableStart(self, enable, mi);
-    hooks::guarded("Title.StartObject", [=] {
-        if (!kTitleWindow.is(self)) return;
-        g_press_prompt_armed = enable;
-        if (!enable) { frame::cancel_label("Title.PressPrompt"); return; }
-        g_title_main_menu_shown = false;
-        speak_press_prompt_if_shown(self);
+    frame::cancel_label("Title.PressPrompt");
+    g_press_prompt_armed = true;
+    g_title_main_menu_shown = false;
+    speak_press_prompt_if_shown(ctrl);
+}
+
+Void_t o_InitNone, o_InitShortcut, o_IndicatorHide;
+void d_InitNone(void* self, const void* mi)
+{
+    o_InitNone(self, mi);
+    hooks::guarded("Title.InitNone", [=] {
+        if (kTitleWindow.is(self)) arm_for_controller(self);
+    });
+}
+
+void d_InitShortcut(void* self, const void* mi)
+{
+    o_InitShortcut(self, mi);
+    hooks::guarded("Title.InitShortcut", [=] {
+        if (kTitleWindow.is(self)) arm_for_controller(self);
+    });
+}
+
+void d_IndicatorHide(void* self, const void* mi)
+{
+    o_IndicatorHide(self, mi);
+    hooks::guarded("Title.IndicatorHide", [=] {
+        if (!g_press_prompt_armed || g_title_main_menu_shown || !kIndicator.is(self)) return;
+        const auto& scene = field::scene_name();
+        if (scene != L"Title" && scene != L"TitleScreen") return;
+        // UpdateNone enables the prompt immediately after this call returns.
+        // One contextual lookup per native Hide; none during field loading.
+        speak_press_prompt_if_shown(unity::find_object(kTitleWindow));
     });
 }
 
@@ -124,8 +171,7 @@ void d_SetEnableStart(void* self, bool enable, const void* mi)
 void set_enable_main_menu_postfix(bool is_enable)
 {
     if (!is_enable) return;
-    g_title_main_menu_shown = true;   // press-any-button dismissed
-    g_press_prompt_armed = false;
+    dismiss_press_prompt();
     menu_state::reset_all();
     actions::run("BattleResultPatches.ClearAllBattleMenuFlags");
 }
@@ -154,7 +200,9 @@ int install()
     if (hooks::attach(mInitializeExtra, &d_InitializeExtra, &o_InitializeExtra)) ++n;
     if (hooks::attach(mSetEnableMainMenu, &d_SetEnableMainMenu, &o_SetEnableMainMenu)) ++n;
     if (hooks::attach(mTouchSetEnableMainMenu, &d_TouchSetEnableMainMenu, &o_TouchSetEnableMainMenu)) ++n;
-    if (hooks::attach(mSetEnableStart, &d_SetEnableStart, &o_SetEnableStart)) ++n;
+    if (hooks::attach(mInitNone, &d_InitNone, &o_InitNone)) ++n;
+    if (hooks::attach(mInitShortcut, &d_InitShortcut, &o_InitShortcut)) ++n;
+    if (hooks::attach(mIndicatorHide, &d_IndicatorHide, &o_IndicatorHide)) ++n;
 
     actions::define("TitleScreenPatches.ArmPressPrompt", [] { arm_press_prompt(); });
     // FF1 FFI_ScreenReaderMod.OnSceneLoaded arms the prompt when the "Title" Unity scene loads
@@ -173,10 +221,8 @@ core::Install s_install{"TitleScreen", &install, 100};
 // the prompt is already up (normally it is not: the scene loads seconds before UpdateNone).
 void arm_press_prompt()
 {
-    g_press_prompt_armed = true;
-    g_title_main_menu_shown = false;
     // One scene-entry recovery lookup; the native activation event owns readiness.
-    speak_press_prompt_if_shown(unity::find_object(kTitleWindow));
+    arm_for_controller(unity::find_object(kTitleWindow));
 }
 
 // TitleMenuReader.TryGetActiveCommandCount: visible title commands (activeContents, so disabled

@@ -1,0 +1,7 @@
+1808CCD50	TitleWindowController.SetEnableTitleWindow
+1808CCD30	TitleWindowController.SetEnableStartObject
+1808CB440	TitleWindowController.InitNone
+1808CD650	TitleWindowController.UpdateNone
+1808CB860	TitleWindowController.InitShortcutCommand
+1808CD8D0	TitleWindowController.UpdateShortcutCommand
+1808CCE30	TitleWindowController.ShortcutExtraCommand

@@ -1,0 +1,16 @@
+180E05A50	Advertisement.Setup
+180E05B00	Advertisement.Start
+180E06D70	Advertisement.Update
+180E06A40	Advertisement.<Update>b__48_0
+180E06AC0	Advertisement.<Update>b__48_1
+180913DC0	TitleWindowController.SetEnableTitleWindow
+180913DA0	TitleWindowController.SetEnableStartObject
+180912350	TitleWindowController.InitNone
+180914840	TitleWindowController.UpdateNone
+180912860	TitleWindowController.InitShortcutCommand
+180914B70	TitleWindowController.UpdateShortcutCommand
+180913480	TitleWindowController.PreloadCheck
+180913EA0	TitleWindowController.ShortcutExtraCommand
+180912010	TitleWindowController.FreezeStateMachine
+1802F10A0	TitleWindowController.SetTitleFadeCallback
+1802F10A0	TitleWindowController.OnAdvertisement

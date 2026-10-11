@@ -1,0 +1,507 @@
+
+FF1 TitleWindowController.SetEnableTitleWindow RVA 7D79B0
+1807D79B0 push rbx
+1807D79B2 sub rsp, 0x20
+1807D79B6 cmp byte ptr [rip + 0x177afe6], 0
+1807D79BD mov rbx, rcx
+1807D79C0 mov qword ptr [rsp + 0x30], rsi
+1807D79C5 movzx esi, dl
+1807D79C8 jne 0x1807d79dc
+1807D79CA mov ecx, dword ptr [rip + 0xf80220]
+1807D79D0 call 0x180237690 ; 
+1807D79D5 mov byte ptr [rip + 0x177afc7], 1
+1807D79DC mov rcx, qword ptr [rbx + 0x28]
+1807D79E0 test rcx, rcx
+1807D79E3 je 0x1807d79f1
+1807D79E5 xor r8d, r8d
+1807D79E8 movzx edx, sil
+1807D79EC call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D79F1 mov rcx, qword ptr [rbx + 0x30]
+1807D79F5 test rcx, rcx
+1807D79F8 je 0x1807d7a06
+1807D79FA xor r8d, r8d
+1807D79FD movzx edx, sil
+1807D7A01 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7A06 mov rcx, qword ptr [rbx + 0x40]
+1807D7A0A mov qword ptr [rsp + 0x38], rdi
+1807D7A0F movzx edi, sil
+1807D7A13 xor dil, 1
+1807D7A17 test rcx, rcx
+1807D7A1A je 0x1807d7a28
+1807D7A1C xor r8d, r8d
+1807D7A1F movzx edx, dil
+1807D7A23 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7A28 mov rcx, qword ptr [rbx + 0x48]
+1807D7A2C test rcx, rcx
+1807D7A2F je 0x1807d7a41
+1807D7A31 mov rcx, qword ptr [rcx + 0x40]
+1807D7A35 xor r8d, r8d
+1807D7A38 movzx edx, dil
+1807D7A3C call 0x1806a71d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7A41 mov rdi, qword ptr [rsp + 0x38]
+1807D7A46 test sil, sil
+1807D7A49 mov rsi, qword ptr [rsp + 0x30]
+1807D7A4E je 0x1807d7a86
+1807D7A50 mov rcx, qword ptr [rbx + 0x48]
+1807D7A54 test rcx, rcx
+1807D7A57 je 0x1807d7a67
+1807D7A59 mov rcx, qword ptr [rcx + 0x40]
+1807D7A5D xor r8d, r8d
+1807D7A60 xor edx, edx
+1807D7A62 call 0x1806a71d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7A67 mov rcx, qword ptr [rbx + 0x18]
+1807D7A6B test rcx, rcx
+1807D7A6E je 0x1807d7a86
+1807D7A70 mov r8, qword ptr [rip + 0x1a53429]
+1807D7A77 mov edx, 2
+1807D7A7C add rsp, 0x20
+1807D7A80 pop rbx
+1807D7A81 jmp 0x180fe04a0 ; 
+1807D7A86 add rsp, 0x20
+1807D7A8A pop rbx
+1807D7A8B ret 
+1807D7A8C int3 
+1807D7A8D int3 
+1807D7A8E int3 
+1807D7A8F int3 
+
+FF1 TitleWindowController.SetEnableStartObject RVA 7D7990
+1807D7990 mov rcx, qword ptr [rcx + 0x48]
+1807D7994 test rcx, rcx
+1807D7997 je 0x1807d79a5
+1807D7999 mov rcx, qword ptr [rcx + 0x18]
+1807D799D xor r8d, r8d
+1807D79A0 jmp 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D79A5 ret 
+1807D79A6 int3 
+1807D79A7 int3 
+1807D79A8 int3 
+1807D79A9 int3 
+1807D79AA int3 
+1807D79AB int3 
+1807D79AC int3 
+1807D79AD int3 
+1807D79AE int3 
+1807D79AF int3 
+
+FF1 TitleWindowController.InitNone RVA 7D60F0
+1807D60F0 push rbx
+1807D60F2 sub rsp, 0x20
+1807D60F6 mov rbx, rcx
+1807D60F9 mov rcx, qword ptr [rcx + 0x48]
+1807D60FD test rcx, rcx
+1807D6100 je 0x1807d6143
+1807D6102 mov rcx, qword ptr [rcx + 0x40]
+1807D6106 xor r8d, r8d
+1807D6109 xor edx, edx
+1807D610B call 0x1806a71d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D6110 mov rcx, qword ptr [rbx + 0x48]
+1807D6114 test rcx, rcx
+1807D6117 je 0x1807d6143
+1807D6119 mov rcx, qword ptr [rcx + 0x18]
+1807D611D xor r8d, r8d
+1807D6120 xor edx, edx
+1807D6122 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D6127 mov rcx, qword ptr [rbx + 0x48]
+1807D612B test rcx, rcx
+1807D612E je 0x1807d6143
+1807D6130 mov rcx, qword ptr [rcx + 0x20]
+1807D6134 xor r8d, r8d
+1807D6137 xor edx, edx
+1807D6139 add rsp, 0x20
+1807D613D pop rbx
+1807D613E jmp 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D6143 add rsp, 0x20
+1807D6147 pop rbx
+1807D6148 ret 
+1807D6149 int3 
+1807D614A int3 
+1807D614B int3 
+1807D614C int3 
+1807D614D int3 
+1807D614E int3 
+1807D614F int3 
+
+FF1 TitleWindowController.UpdateNone RVA 7D82A0
+1807D82A0 push rdi
+1807D82A2 sub rsp, 0x30
+1807D82A6 cmp byte ptr [rip + 0x177a6fb], 0
+1807D82AD mov rdi, rcx
+1807D82B0 jne 0x1807d82c4
+1807D82B2 mov ecx, dword ptr [rip + 0xf7fad0]
+1807D82B8 call 0x180237690 ; 
+1807D82BD mov byte ptr [rip + 0x177a6e4], 1
+1807D82C4 mov rcx, qword ptr [rip + 0x1a85f25]
+1807D82CB test byte ptr [rcx + 0x12f], 2
+1807D82D2 je 0x1807d82e2
+1807D82D4 cmp dword ptr [rcx + 0xe0], 0
+1807D82DB jne 0x1807d82e2
+1807D82DD call 0x1801c54b0 ; 
+1807D82E2 mov rcx, qword ptr [rip + 0x1a6ce27]
+1807D82E9 mov qword ptr [rsp + 0x40], rbx
+1807D82EE call 0x180ea8da0 ; 
+1807D82F3 test rax, rax
+1807D82F6 je 0x1807d84f9
+1807D82FC xor edx, edx
+1807D82FE mov rcx, rax
+1807D8301 call 0x180900780 ; System.Fade.FadeManager.IsFadeFinish
+1807D8306 test al, al
+1807D8308 je 0x1807d84ee
+1807D830E mov rcx, qword ptr [rip + 0x1a6606b]
+1807D8315 test byte ptr [rcx + 0x12f], 2
+1807D831C je 0x1807d832c
+1807D831E cmp dword ptr [rcx + 0xe0], 0
+1807D8325 jne 0x1807d832c
+1807D8327 call 0x1801c54b0 ; 
+1807D832C xor ecx, ecx
+1807D832E call 0x18036f740 ; Last.Scene.SceneTitle.PreloadIsFinished
+1807D8333 test al, al
+1807D8335 je 0x1807d84ee
+1807D833B mov rax, qword ptr [rdi + 0x48]
+1807D833F test rax, rax
+1807D8342 je 0x1807d8404
+1807D8348 mov rcx, qword ptr [rax + 0x18]
+1807D834C test rcx, rcx
+1807D834F je 0x1807d84f9
+1807D8355 xor edx, edx
+1807D8357 call 0x18108c7c0 ; UnityEngine.GameObject.get_activeSelf
+1807D835C xor ecx, ecx
+1807D835E test al, al
+1807D8360 sete cl
+1807D8363 test ecx, ecx
+1807D8365 je 0x1807d8404
+1807D836B mov rcx, qword ptr [rip + 0x1a85e7e]
+1807D8372 test byte ptr [rcx + 0x12f], 2
+1807D8379 je 0x1807d8389
+1807D837B cmp dword ptr [rcx + 0xe0], 0
+1807D8382 jne 0x1807d8389
+1807D8384 call 0x1801c54b0 ; 
+1807D8389 mov rcx, qword ptr [rip + 0x1a6cd80]
+1807D8390 call 0x180ea8da0 ; 
+1807D8395 test rax, rax
+1807D8398 je 0x1807d84f9
+1807D839E lea rcx, [rax + 0x58]
+1807D83A2 xor edx, edx
+1807D83A4 mov qword ptr [rcx], 0
+1807D83AB call 0x1802373f0 ; 
+1807D83B0 mov rcx, qword ptr [rip + 0x1a85329]
+1807D83B7 test byte ptr [rcx + 0x12f], 2
+1807D83BE je 0x1807d83ce
+1807D83C0 cmp dword ptr [rcx + 0xe0], 0
+1807D83C7 jne 0x1807d83ce
+1807D83C9 call 0x1801c54b0 ; 
+1807D83CE mov rcx, qword ptr [rip + 0x1a6cfc3]
+1807D83D5 call 0x180ea8da0 ; 
+1807D83DA test rax, rax
+1807D83DD je 0x1807d84f9
+1807D83E3 xor edx, edx
+1807D83E5 mov rcx, rax
+1807D83E8 call 0x1804ff4a0 ; Last.Systems.Indicator.SystemIndicator.Hide
+1807D83ED mov rcx, qword ptr [rdi + 0x48]
+1807D83F1 test rcx, rcx
+1807D83F4 je 0x1807d8404
+1807D83F6 mov rcx, qword ptr [rcx + 0x18]
+1807D83FA xor r8d, r8d
+1807D83FD mov dl, 1
+1807D83FF call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D8404 xor ecx, ecx
+1807D8406 call 0x18153f000 ; UnityEngine.Input.get_anyKey
+1807D840B test al, al
+1807D840D jne 0x1807d8454
+1807D840F mov rcx, qword ptr [rip + 0x1a63fa2]
+1807D8416 test byte ptr [rcx + 0x12f], 2
+1807D841D je 0x1807d842d
+1807D841F cmp dword ptr [rcx + 0xe0], 0
+1807D8426 jne 0x1807d842d
+1807D8428 call 0x1801c54b0 ; 
+1807D842D mov rcx, qword ptr [rip + 0x1a6cc24]
+1807D8434 call 0x180ea8da0 ; 
+1807D8439 test rax, rax
+1807D843C je 0x1807d84f9
+1807D8442 xor edx, edx
+1807D8444 mov rcx, rax
+1807D8447 call 0x18090bec0 ; System.Input.InputSystemManager.GetAnyKey
+1807D844C test al, al
+1807D844E je 0x1807d84ee
+1807D8454 mov rcx, qword ptr [rip + 0x1a85bed]
+1807D845B test byte ptr [rcx + 0x12f], 2
+1807D8462 je 0x1807d8472
+1807D8464 cmp dword ptr [rcx + 0xe0], 0
+1807D846B jne 0x1807d8472
+1807D846D call 0x1801c54b0 ; 
+1807D8472 mov rcx, qword ptr [rip + 0x1a6d4df]
+1807D8479 call 0x180ea8da0 ; 
+1807D847E mov rbx, rax
+1807D8481 mov rax, qword ptr [rip + 0x1a85b90]
+1807D8488 test byte ptr [rax + 0x12f], 2
+1807D848F je 0x1807d84a9
+1807D8491 cmp dword ptr [rax + 0xe0], 0
+1807D8498 jne 0x1807d84a9
+1807D849A mov rcx, rax
+1807D849D call 0x1801c54b0 ; 
+1807D84A2 mov rax, qword ptr [rip + 0x1a85b6f]
+1807D84A9 test rbx, rbx
+1807D84AC je 0x1807d84f9
+1807D84AE mov rax, qword ptr [rax + 0xb8]
+1807D84B5 xorps xmm2, xmm2
+1807D84B8 mov qword ptr [rsp + 0x28], 0
+1807D84C1 xorps xmm3, xmm3
+1807D84C4 mov rcx, rbx
+1807D84C7 movss dword ptr [rsp + 0x20], xmm2
+1807D84CD mov edx, dword ptr [rax]
+1807D84CF call 0x1806ca9e0 ; Last.Management.AudioManager.PlaySe
+1807D84D4 mov rcx, qword ptr [rdi + 0x18]
+1807D84D8 test rcx, rcx
+1807D84DB je 0x1807d84ee
+1807D84DD mov r8, qword ptr [rip + 0x1a529bc]
+1807D84E4 mov edx, 2
+1807D84E9 call 0x180fe04a0 ; 
+1807D84EE mov rbx, qword ptr [rsp + 0x40]
+1807D84F3 add rsp, 0x30
+1807D84F7 pop rdi
+1807D84F8 ret 
+1807D84F9 call 0x180237800 ; 
+1807D84FE int3 
+1807D84FF int3 
+
+FF1 TitleWindowController.InitShortcutCommand RVA 7D6510
+1807D6510 push rbx
+1807D6512 sub rsp, 0x20
+1807D6516 mov rbx, rcx
+1807D6519 mov rcx, qword ptr [rcx + 0x48]
+1807D651D test rcx, rcx
+1807D6520 je 0x1807d657a
+1807D6522 mov rcx, qword ptr [rcx + 0x40]
+1807D6526 xor r8d, r8d
+1807D6529 xor edx, edx
+1807D652B call 0x1806a71d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D6530 mov rcx, qword ptr [rbx + 0x48]
+1807D6534 test rcx, rcx
+1807D6537 je 0x1807d657a
+1807D6539 mov rcx, qword ptr [rcx + 0x18]
+1807D653D xor r8d, r8d
+1807D6540 xor edx, edx
+1807D6542 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D6547 mov rcx, qword ptr [rbx + 0x48]
+1807D654B test rcx, rcx
+1807D654E je 0x1807d657a
+1807D6550 mov rcx, qword ptr [rcx + 0x20]
+1807D6554 xor r8d, r8d
+1807D6557 xor edx, edx
+1807D6559 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D655E mov rcx, qword ptr [rbx + 0x48]
+1807D6562 test rcx, rcx
+1807D6565 je 0x1807d657a
+1807D6567 mov rcx, qword ptr [rcx + 0x18]
+1807D656B xor r8d, r8d
+1807D656E mov dl, 1
+1807D6570 add rsp, 0x20
+1807D6574 pop rbx
+1807D6575 jmp 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D657A add rsp, 0x20
+1807D657E pop rbx
+1807D657F ret 
+
+FF1 TitleWindowController.UpdateShortcutCommand RVA 7D8520
+1807D8520 push rbx
+1807D8522 sub rsp, 0x30
+1807D8526 cmp byte ptr [rip + 0x177a47c], 0
+1807D852D mov rbx, rcx
+1807D8530 jne 0x1807d8544
+1807D8532 mov ecx, dword ptr [rip + 0xf7f874]
+1807D8538 call 0x180237690 ; 
+1807D853D mov byte ptr [rip + 0x177a465], 1
+1807D8544 mov rcx, qword ptr [rip + 0x1a65e35]
+1807D854B test byte ptr [rcx + 0x12f], 2
+1807D8552 je 0x1807d8562
+1807D8554 cmp dword ptr [rcx + 0xe0], 0
+1807D855B jne 0x1807d8562
+1807D855D call 0x1801c54b0 ; 
+1807D8562 xor ecx, ecx
+1807D8564 call 0x18036f740 ; Last.Scene.SceneTitle.PreloadIsFinished
+1807D8569 test al, al
+1807D856B je 0x1807d85d5
+1807D856D xor edx, edx
+1807D856F mov rcx, rbx
+1807D8572 call 0x1807d7a90 ; Last.UI.KeyInput.TitleWindowController.ShortcutExtraCommand
+1807D8577 mov rcx, qword ptr [rip + 0x1a85c72]
+1807D857E test byte ptr [rcx + 0x12f], 2
+1807D8585 je 0x1807d8595
+1807D8587 cmp dword ptr [rcx + 0xe0], 0
+1807D858E jne 0x1807d8595
+1807D8590 call 0x1801c54b0 ; 
+1807D8595 mov rcx, qword ptr [rip + 0x1a6cb74]
+1807D859C call 0x180ea8da0 ; 
+1807D85A1 xor edx, edx
+1807D85A3 lea rcx, [rsp + 0x20]
+1807D85A8 mov rbx, rax
+1807D85AB call 0x1810882a0 ; UnityEngine.Color.get_white
+1807D85B0 test rbx, rbx
+1807D85B3 je 0x1807d85db
+1807D85B5 movups xmm0, xmmword ptr [rax]
+1807D85B8 lea r8, [rsp + 0x20]
+1807D85BD xor r9d, r9d
+1807D85C0 movss xmm1, dword ptr [rip + 0x129a058]
+1807D85C8 mov rcx, rbx
+1807D85CB movaps xmmword ptr [rsp + 0x20], xmm0
+1807D85D0 call 0x180900150 ; System.Fade.FadeManager.FadeIn
+1807D85D5 add rsp, 0x30
+1807D85D9 pop rbx
+1807D85DA ret 
+1807D85DB call 0x180237800 ; 
+1807D85E0 int3 
+1807D85E1 int3 
+1807D85E2 int3 
+1807D85E3 int3 
+1807D85E4 int3 
+1807D85E5 int3 
+1807D85E6 int3 
+1807D85E7 int3 
+1807D85E8 int3 
+1807D85E9 int3 
+1807D85EA int3 
+1807D85EB int3 
+1807D85EC int3 
+1807D85ED int3 
+1807D85EE int3 
+1807D85EF int3 
+
+FF1 TitleWindowController.ShortcutExtraCommand RVA 7D7A90
+1807D7A90 push rbx
+1807D7A92 sub rsp, 0x30
+1807D7A96 cmp byte ptr [rip + 0x177af0d], 0
+1807D7A9D mov rbx, rcx
+1807D7AA0 jne 0x1807d7ab4
+1807D7AA2 mov ecx, dword ptr [rip + 0xf80178]
+1807D7AA8 call 0x180237690 ; 
+1807D7AAD mov byte ptr [rip + 0x177aef6], 1
+1807D7AB4 mov rcx, qword ptr [rbx + 0x48]
+1807D7AB8 test rcx, rcx
+1807D7ABB je 0x1807d7ae2
+1807D7ABD mov rcx, qword ptr [rcx + 0x18]
+1807D7AC1 xor r8d, r8d
+1807D7AC4 xor edx, edx
+1807D7AC6 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7ACB mov rcx, qword ptr [rbx + 0x48]
+1807D7ACF test rcx, rcx
+1807D7AD2 je 0x1807d7ae2
+1807D7AD4 mov rcx, qword ptr [rcx + 0x20]
+1807D7AD8 xor r8d, r8d
+1807D7ADB mov dl, 1
+1807D7ADD call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7AE2 mov rcx, qword ptr [rbx + 0x28]
+1807D7AE6 test rcx, rcx
+1807D7AE9 je 0x1807d7af5
+1807D7AEB xor r8d, r8d
+1807D7AEE mov dl, 1
+1807D7AF0 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7AF5 mov rcx, qword ptr [rbx + 0x30]
+1807D7AF9 test rcx, rcx
+1807D7AFC je 0x1807d7b08
+1807D7AFE xor r8d, r8d
+1807D7B01 mov dl, 1
+1807D7B03 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7B08 mov rcx, qword ptr [rbx + 0x40]
+1807D7B0C test rcx, rcx
+1807D7B0F je 0x1807d7b1b
+1807D7B11 xor r8d, r8d
+1807D7B14 xor edx, edx
+1807D7B16 call 0x1806a72d0 ; UnityEngine.SafeSetFunction.SafeActiveSet
+1807D7B1B mov qword ptr [rsp + 0x40], rbp
+1807D7B20 xor ecx, ecx
+1807D7B22 mov qword ptr [rsp + 0x50], rdi
+1807D7B27 call 0x1807abc20 ; Last.Management.SceneManager.get_Instance
+1807D7B2C test rax, rax
+1807D7B2F je 0x1807d7c74
+1807D7B35 mov rdi, qword ptr [rax + 0x48]
+1807D7B39 test rdi, rdi
+1807D7B3C je 0x1807d7c4e
+1807D7B42 mov qword ptr [rsp + 0x48], rsi
+1807D7B47 mov r11, qword ptr [rdi]
+1807D7B4A xor ebp, ebp
+1807D7B4C mov rsi, qword ptr [rip + 0x1a68355]
+1807D7B53 movzx ecx, bp
+1807D7B56 mov r10, qword ptr [rip + 0x1a85c73]
+1807D7B5D movzx r8d, word ptr [r11 + 0x126]
+1807D7B65 cmp bp, r8w
+1807D7B69 jae 0x1807d7b8d
+1807D7B6B mov r9, qword ptr [r11 + 0xb0]
+1807D7B72 movzx edx, cx
+1807D7B75 mov eax, edx
+1807D7B77 add rax, rax
+1807D7B7A cmp qword ptr [r9 + rax*8], r10
+1807D7B7E je 0x1807d7c33
+1807D7B84 inc cx
+1807D7B87 cmp cx, r8w
+1807D7B8B jb 0x1807d7b72
+1807D7B8D mov r8d, 3
+1807D7B93 mov rdx, r10
+1807D7B96 mov rcx, rdi
+1807D7B99 call 0x1801f5180 ; 
+1807D7B9E mov r9, qword ptr [rax + 8]
+1807D7BA2 mov r8d, 0xffffffff
+1807D7BA8 mov rdx, rsi
+1807D7BAB mov rcx, rdi
+1807D7BAE call qword ptr [rax]
+1807D7BB0 mov rsi, qword ptr [rsp + 0x48]
+1807D7BB5 lea ecx, [rax - 6]
+1807D7BB8 cmp ecx, 2
+1807D7BBB ja 0x1807d7c4e
+1807D7BC1 mov rcx, qword ptr [rbx + 0x50]
+1807D7BC5 lea edi, [rax - 6]
+1807D7BC8 test rcx, rcx
+1807D7BCB je 0x1807d7be7
+1807D7BCD mov dword ptr [rcx + 0x40], 2
+1807D7BD4 mov dword ptr [rcx + 0x44], edi
+1807D7BD7 mov rcx, qword ptr [rbx + 0x50]
+1807D7BDB test rcx, rcx
+1807D7BDE je 0x1807d7be7
+1807D7BE0 xor edx, edx
+1807D7BE2 call 0x1807d3ba0 ; Last.UI.KeyInput.TitleMenuCommandController.SetActiveCommandList
+1807D7BE7 xor r9d, r9d
+1807D7BEA mov qword ptr [rsp + 0x28], rbp
+1807D7BEF mov rcx, rbx
+1807D7BF2 mov byte ptr [rsp + 0x20], 1
+1807D7BF7 lea edx, [r9 + 3]
+1807D7BFB lea r8d, [r9 + 2]
+1807D7BFF call 0x1807d7150 ; Last.UI.KeyInput.TitleWindowController.SetCommand
+1807D7C04 mov rcx, qword ptr [rbx + 0x50]
+1807D7C08 test rcx, rcx
+1807D7C0B je 0x1807d7c23
+1807D7C0D mov rax, qword ptr [rcx + 0x30]
+1807D7C11 test rax, rax
+1807D7C14 je 0x1807d7c74
+1807D7C16 xor r8d, r8d
+1807D7C19 mov dword ptr [rax + 0x18], edi
+1807D7C1C mov edx, edi
+1807D7C1E call 0x1807d3df0 ; Last.UI.KeyInput.TitleMenuCommandController.SetCursor
+1807D7C23 mov rdi, qword ptr [rsp + 0x50]
+1807D7C28 mov rbp, qword ptr [rsp + 0x40]
+1807D7C2D add rsp, 0x30
+1807D7C31 pop rbx
+1807D7C32 ret 
+1807D7C33 add rdx, rdx
+1807D7C36 mov eax, dword ptr [r9 + rdx*8 + 8]
+1807D7C3B add eax, 3
+1807D7C3E add rax, 0x13
+1807D7C42 shl rax, 4
+1807D7C46 add rax, r11
+1807D7C49 jmp 0x1807d7b9e ; 
+1807D7C4E mov rcx, qword ptr [rbx + 0x18]
+1807D7C52 test rcx, rcx
+1807D7C55 je 0x1807d7c23
+1807D7C57 mov r8, qword ptr [rip + 0x1a53242]
+1807D7C5E xor edx, edx
+1807D7C60 mov rdi, qword ptr [rsp + 0x50]
+1807D7C65 mov rbp, qword ptr [rsp + 0x40]
+1807D7C6A add rsp, 0x30
+1807D7C6E pop rbx
+1807D7C6F jmp 0x180fe04a0 ; 
+1807D7C74 call 0x180237800 ; 
+1807D7C79 int3 
+1807D7C7A int3 
+1807D7C7B int3 
+1807D7C7C int3 
+1807D7C7D int3 
+1807D7C7E int3 
+1807D7C7F int3 

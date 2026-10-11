@@ -17,6 +17,7 @@ void configure(game::Flags& f)
 {
     f.has_mp = true;
     f.atb = true;
+    f.title_idle_cinematic = true;
     // The engine routes on CollisionMappingData AND HiddenPassageMappingData in FF6 too
     // (MapDataUtility.ParseHiddenPassageMappingData exists); the core retries a failed search
     // on the collision grid. FF6's map data was not checked for passage layers.
