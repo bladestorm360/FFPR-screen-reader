@@ -28,6 +28,7 @@ extern ref::Field fFieldController;
 
 extern ref::Class kFieldController;
 extern ref::Field fEntityList;
+extern ref::Field fColliderEntityList;
 extern ref::Field fTransportation;
 extern ref::Field fFootEvent;
 extern ref::Field fMapManager;
@@ -68,6 +69,7 @@ extern ref::Class kPropertyEntity;
 extern ref::Field fPropTmeId;
 extern ref::Field fPropObjectId;
 extern ref::Field fPropObjectType;
+extern ref::Field fPropEntityId;
 extern ref::Field fPropName;
 extern ref::Field fPropTargetTransportationIdList;
 extern ref::Class kPropertyGotoMap;
@@ -207,7 +209,13 @@ struct Entity {
     int transport_id = 0;          // Vehicle: MapConstants.TransportationType
     int transportation_id = 0;     // Vehicle: transportation master id (0 = unknown)
     std::wstring message_id;       // Vehicle: the master's message_id (its official name)
+    // An entry from another floor of this map, listed from the baked data under the "Current
+    // map" filter (user, 2026-10-11): no FieldEntity, no live position. Routed by its cell.
+    int remote_map_id = 0;         // that floor's map id; 0 = a live entity on this floor
+    int cell_layer = 1, cell_x = 0, cell_y = 0;
+    std::wstring floor_name;       // the floor's title, spoken after the name
 
+    bool remote() const { return remote_map_id > 0; }
     Category category() const;
     int priority() const;
     bool blocks_pathing() const;

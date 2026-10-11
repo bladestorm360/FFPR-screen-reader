@@ -1,0 +1,416 @@
+FF1 Serial.FF1.UI.KeyInput.AbilityCharaStatusView
+private GameObject cursorParent; // 0x18
+private Text jobNameText; // 0x20
+private GameObject jobLevelView; // 0x28
+private Text nameText; // 0x30
+private Text fixedHpText; // 0x38
+private Text separationHpText; // 0x40
+private Text currentHpText; // 0x48
+private Text maxHpText; // 0x50
+private Text fixedMpText; // 0x58
+private Text separationMpText; // 0x60
+private Text currentMpText; // 0x68
+private List<Text> currentLvMpTextList; // 0x70
+private List<Text> separationLvMpTextList; // 0x78
+private Text maxMpText; // 0x80
+private Text fixedLevelText; // 0x88
+private Text currentLevelText; // 0x90
+private Text fixedNextText; // 0x98
+private Text nextExpText; // 0xA0
+private Image lineImage; // 0xA8
+private GameObject lrIcon; // 0xB0
+private KeyIconController leftKeyhelpIcon; // 0xB8
+private KeyIconController rightKeyhelpIcon; // 0xC0
+public GameObject CursorParent { get; }
+public Text NameText { get; }
+public Text CurrentLevelText { get; }
+public Text JobNameText { get; }
+public Text NextExpText { get; }
+public Text CurrentHpText { get; }
+public Text CurrentMpText { get; }
+public List<Text> CurrentLvMpTextList { get; }
+public Text MaxHpText { get; }
+public Text MaxMpText { get; }
+public Text SeparationHPText { get; }
+public Text SeparationMPText { get; }
+public List<Text> SeparationLvMpTextList { get; }
+public KeyIconController LeftKeyhelpIcon { get; }
+public KeyIconController RightKeyhelpIcon { get; }
+FF1 Serial.FF1.UI.KeyInput.StatusDetailsController
+private StatusDetailsView view; // 0x70
+private AbilityCharaStatusController statusController; // 0x78
+FF1 Serial.FF1.UI.KeyInput.StatusDetailsView
+private Text fixedBattleCommandText; // 0x18
+private List<Text> battleCommandTextList; // 0x20
+private Text fixedExpText; // 0x28
+private Text expText; // 0x30
+private Text fixedNextExpText; // 0x38
+private Text nextExpText; // 0x40
+FF1 Last.UI.KeyInput.ParameterContentView
+private Text fixedText; // 0x18
+private Text multipliedText; // 0x20
+private Text multipliedValueText; // 0x28
+private Text parameterValueText; // 0x30
+private Text percentText; // 0x38
+FF2 Serial.FF2.UI.SkillLevelContentView
+private IconTextView iconText; // 0x18
+private Text levelText; // 0x20
+private CommonGauge gauge; // 0x28
+public IconTextView IconTextView { get; }
+public Text LevelText { get; }
+public CommonGauge CommonGauge { get; }
+FF2 Serial.FF2.UI.KeyInput.AbilityCharaStatusView
+private GameObject cursorParent; // 0x18
+private Text dominantArmText; // 0x20
+private Text jobNameText; // 0x28
+private GameObject jobLevelView; // 0x30
+private Text nameText; // 0x38
+private Text fixedHpText; // 0x40
+private Text separationHpText; // 0x48
+private Text currentHpText; // 0x50
+private Text maxHpText; // 0x58
+private Text fixedMpText; // 0x60
+private Text separationMpText; // 0x68
+private Text currentMpText; // 0x70
+private List<Text> currentLvMpTextList; // 0x78
+private List<Text> separationLvMpTextList; // 0x80
+private Text maxMpText; // 0x88
+private Text fixedLevelText; // 0x90
+private Text currentLevelText; // 0x98
+private Text fixedNextText; // 0xA0
+private Text nextExpText; // 0xA8
+private Image lineImage; // 0xB0
+private GameObject lrIcon; // 0xB8
+private KeyIconController leftKeyhelpIcon; // 0xC0
+private KeyIconController rightKeyhelpIcon; // 0xC8
+public GameObject CursorParent { get; }
+public Text DominantArmText { get; }
+public Text NameText { get; }
+public Text CurrentLevelText { get; }
+public Text JobNameText { get; }
+public Text NextExpText { get; }
+public Text CurrentHpText { get; }
+public Text CurrentMpText { get; }
+public List<Text> CurrentLvMpTextList { get; }
+public Text MaxHpText { get; }
+public Text MaxMpText { get; }
+public Text SeparationHPText { get; }
+public Text SeparationMPText { get; }
+public List<Text> SeparationLvMpTextList { get; }
+public KeyIconController LeftKeyhelpIcon { get; }
+public KeyIconController RightKeyhelpIcon { get; }
+FF2 Serial.FF2.UI.KeyInput.StatusDetailsController
+private StatusDetailsView view; // 0x70
+private AbilityCharaStatusController statusController; // 0x78
+private List<SkillLevelContentController> skillLevelContentList; // 0x80
+FF2 Serial.FF2.UI.KeyInput.StatusDetailsView
+private Text fixedSkillLevelText; // 0x18
+private List<Text> battleCommandTextList; // 0x20
+private Text fixedExpText; // 0x28
+private Text expText; // 0x30
+private Text fixedNextExpText; // 0x38
+private Text nextExpText; // 0x40
+FF2 Last.UI.KeyInput.ParameterContentView
+private Text fixedText; // 0x18
+private Text multipliedText; // 0x20
+private Text multipliedValueText; // 0x28
+private Text parameterValueText; // 0x30
+private Text percentText; // 0x38
+FF3 Serial.FF3.UI.KeyInput.AbilityCharaStatusView
+private GameObject cursorParent; // 0x18
+private Text jobNameText; // 0x20
+private GameObject jobLevelView; // 0x28
+private Text nameText; // 0x30
+private Text fixedHpText; // 0x38
+private Text separationHpText; // 0x40
+private Text currentHpText; // 0x48
+private Text maxHpText; // 0x50
+private Text fixedMpText; // 0x58
+private Text separationMpText; // 0x60
+private Text currentMpText; // 0x68
+private List<Text> currentLvMpTextList; // 0x70
+private List<Text> separationLvMpTextList; // 0x78
+private Text maxMpText; // 0x80
+private Text fixedLevelText; // 0x88
+private Text currentLevelText; // 0x90
+private Text fixedNextText; // 0x98
+private Text nextExpText; // 0xA0
+private Image lineImage; // 0xA8
+private GameObject lrIcon; // 0xB0
+private KeyIconController leftKeyhelpIcon; // 0xB8
+private KeyIconController rightKeyhelpIcon; // 0xC0
+public GameObject CursorParent { get; }
+public Text NameText { get; }
+public Text CurrentLevelText { get; }
+public Text JobNameText { get; }
+public Text NextExpText { get; }
+public Text CurrentHpText { get; }
+public Text CurrentMpText { get; }
+public List<Text> CurrentLvMpTextList { get; }
+public Text MaxHpText { get; }
+public Text MaxMpText { get; }
+public Text SeparationHPText { get; }
+public Text SeparationMPText { get; }
+public List<Text> SeparationLvMpTextList { get; }
+public KeyIconController LeftKeyhelpIcon { get; }
+public KeyIconController RightKeyhelpIcon { get; }
+FF3 Serial.FF3.UI.KeyInput.StatusDetailsController
+private StatusDetailsView view; // 0x70
+private AbilityCharaStatusController statusController; // 0x78
+FF3 Serial.FF3.UI.KeyInput.StatusDetailsView
+private Text fixedBattleCommandText; // 0x18
+private List<Text> battleCommandTextList; // 0x20
+private Text fixedExpText; // 0x28
+private Text expText; // 0x30
+private Text fixedNextExpText; // 0x38
+private Text nextExpText; // 0x40
+private Text fixedCurrentJobExpText; // 0x48
+private Text currentJobExpText; // 0x50
+FF3 Last.UI.KeyInput.ParameterContentView
+private Text fixedText; // 0x18
+private Text multipliedText; // 0x20
+private Text multipliedValueText; // 0x28
+private Text parameterValueText; // 0x30
+private Text percentText; // 0x38
+FF4 Serial.FF4.UI.KeyInput.AbilityCharaStatusView
+private GameObject cursorParent; // 0x18
+private Text jobNameText; // 0x20
+private GameObject jobLevelView; // 0x28
+private Text nameText; // 0x30
+private Text fixedHpText; // 0x38
+private Text separationHpText; // 0x40
+private Text currentHpText; // 0x48
+private Text maxHpText; // 0x50
+private Text fixedMpText; // 0x58
+private Text separationMpText; // 0x60
+private Text currentMpText; // 0x68
+private List<Text> currentLvMpTextList; // 0x70
+private List<Text> separationLvMpTextList; // 0x78
+private Text maxMpText; // 0x80
+private Text fixedLevelText; // 0x88
+private Text currentLevelText; // 0x90
+private Text fixedNextText; // 0x98
+private Text nextExpText; // 0xA0
+private Image lineImage; // 0xA8
+private GameObject lrIcon; // 0xB0
+private Text dominantArmText; // 0xB8
+private KeyIconController leftKeyhelpIcon; // 0xC0
+private KeyIconController rightKeyhelpIcon; // 0xC8
+public GameObject CursorParent { get; }
+public Text NameText { get; }
+public Text CurrentLevelText { get; }
+public Text JobNameText { get; }
+public Text NextExpText { get; }
+public Text CurrentHpText { get; }
+public Text CurrentMpText { get; }
+public List<Text> CurrentLvMpTextList { get; }
+public Text MaxHpText { get; }
+public Text MaxMpText { get; }
+public Text SeparationHPText { get; }
+public Text SeparationMPText { get; }
+public List<Text> SeparationLvMpTextList { get; }
+public Text DominantArmText { get; }
+public KeyIconController LeftKeyhelpIcon { get; }
+public KeyIconController RightKeyhelpIcon { get; }
+FF4 Serial.FF4.UI.KeyInput.StatusDetailsController
+private StatusDetailsView view; // 0x70
+private AbilityCharaStatusController statusController; // 0x78
+FF4 Serial.FF4.UI.KeyInput.StatusDetailsView
+private Text fixedBattleCommandText; // 0x18
+private List<Text> battleCommandTextList; // 0x20
+private Text fixedExpText; // 0x28
+private Text expText; // 0x30
+private Text fixedNextExpText; // 0x38
+private Text nextExpText; // 0x40
+FF4 Last.UI.KeyInput.ParameterContentView
+private Text fixedText; // 0x18
+private Text multipliedText; // 0x20
+private Text multipliedValueText; // 0x28
+private Text parameterValueText; // 0x30
+private Text percentText; // 0x38
+FF5 Serial.FF5.UI.KeyInput.AbilityCharaStatusView
+private GameObject cursorParent; // 0x18
+private Text jobNameText; // 0x20
+private GameObject jobLevelView; // 0x28
+private Text nameText; // 0x30
+private Text fixedHpText; // 0x38
+private Text separationHpText; // 0x40
+private Text currentHpText; // 0x48
+private Text maxHpText; // 0x50
+private Text fixedMpText; // 0x58
+private Text separationMpText; // 0x60
+private Text currentMpText; // 0x68
+private List<Text> currentLvMpTextList; // 0x70
+private List<Text> separationLvMpTextList; // 0x78
+private Text maxMpText; // 0x80
+private Text fixedLevelText; // 0x88
+private Text currentLevelText; // 0x90
+private Text fixedNextText; // 0x98
+private Text nextExpText; // 0xA0
+private Image lineImage; // 0xA8
+private GameObject lrIcon; // 0xB0
+private KeyIconController leftKeyIconController; // 0xB8
+private KeyIconController rightKeyIconController; // 0xC0
+public GameObject CursorParent { get; }
+public Text NameText { get; }
+public Text CurrentLevelText { get; }
+public Text JobNameText { get; }
+public Text NextExpText { get; }
+public Text CurrentHpText { get; }
+public Text CurrentMpText { get; }
+public List<Text> CurrentLvMpTextList { get; }
+public Text MaxHpText { get; }
+public Text MaxMpText { get; }
+public Text SeparationHPText { get; }
+public Text SeparationMPText { get; }
+public List<Text> SeparationLvMpTextList { get; }
+public KeyIconController LeftKeyIconController { get; }
+public KeyIconController RightKeyIconController { get; }
+FF5 Serial.FF5.UI.KeyInput.StatusDetailsController
+private const int ImpressionistJobId = 22;
+private const int ToraeruCommandId = 30;
+private const int HanatsuCommandId = 31;
+private StatusDetailsView view; // 0x70
+private AbilityCharaStatusController statusController; // 0x78
+FF5 Serial.FF5.UI.KeyInput.StatusDetailsView
+private Text fixedBattleCommandText; // 0x18
+private List<AbilityChangeContentController> equipAbilityContentList; // 0x20
+private Text fixedExpText; // 0x28
+private Text expText; // 0x30
+private Text fixedNextExpText; // 0x38
+private Text nextExpText; // 0x40
+private Text fixedJobLevelText; // 0x48
+private Text jobLevelText; // 0x50
+private Text fixedAbpText; // 0x58
+private Text fixedJobCountText; // 0x60
+private Text fixedAbilityCount; // 0x68
+private Text currentAbpText; // 0x70
+private Text currentJobCountText; // 0x78
+private Text currentAbilityCountText; // 0x80
+private Text separateAbpText; // 0x88
+private Text separateJobCountText; // 0x90
+private Text separateAbilityCount; // 0x98
+private Text maxAbpText; // 0xA0
+private Text maxJobCountText; // 0xA8
+private Text maxAbilityCountText; // 0xB0
+private Animator leftArrow; // 0xB8
+private Animator rightArrow; // 0xC0
+private KeyIconController leftKeyhelpIcon; // 0xC8
+private KeyIconController rightKeyhelpIcon; // 0xD0
+public Text FixedBattleCommandText { get; }
+public List<AbilityChangeContentController> EquipAbilityContentList { get; }
+public Text FixedExpText { get; }
+public Text ExpText { get; }
+public Text FixedNextExpText { get; }
+public Text NextExpText { get; }
+public Text FixedJobLevelText { get; }
+public Text JobLevelText { get; }
+public Text FixedAbpText { get; }
+public Text FixedJobCountText { get; }
+public Text FixedAbilityCount { get; }
+public Text CurrentAbpText { get; }
+public Text CurrentJobCountText { get; }
+public Text CurrentAbilityCountText { get; }
+private Text SeparateAbpText { get; }
+public Text SeparateJobCountText { get; }
+public Text SeparateAbilityCount { get; }
+public Text MaxAbpText { get; }
+public Text MaxJobCountText { get; }
+public Text MaxAbilityCountText { get; }
+public KeyIconController LeftKeyhelpIcon { get; }
+public KeyIconController RightKeyhelpIcon { get; }
+public Animator LeftArrow { get; }
+public Animator RightArrow { get; }
+FF5 Last.UI.KeyInput.ParameterContentView
+private Text fixedText; // 0x18
+private Text multipliedText; // 0x20
+private Text multipliedValueText; // 0x28
+private Text parameterValueText; // 0x30
+private Text percentText; // 0x38
+FF6 Serial.FF6.UI.KeyInput.AbilityCharaStatusView
+private GameObject cursorParent; // 0x18
+private Text jobNameText; // 0x20
+private GameObject jobLevelView; // 0x28
+private Text nameText; // 0x30
+private Text fixedHpText; // 0x38
+private Text separationHpText; // 0x40
+private Text currentHpText; // 0x48
+private Text maxHpText; // 0x50
+private Text fixedMpText; // 0x58
+private Text separationMpText; // 0x60
+private Text currentMpText; // 0x68
+private List<Text> currentLvMpTextList; // 0x70
+private List<Text> separationLvMpTextList; // 0x78
+private Text maxMpText; // 0x80
+private Text fixedLevelText; // 0x88
+private Text currentLevelText; // 0x90
+private Text fixedNextText; // 0x98
+private Text nextExpText; // 0xA0
+private Image lineImage; // 0xA8
+private GameObject lrIcon; // 0xB0
+private Text magicStoneNameText; // 0xB8
+private Image masterImage; // 0xC0
+public GameObject CursorParent { get; }
+public Text NameText { get; }
+public Text CurrentLevelText { get; }
+public Text JobNameText { get; }
+public Text NextExpText { get; }
+public Text CurrentHpText { get; }
+public Text CurrentMpText { get; }
+public List<Text> CurrentLvMpTextList { get; }
+public Text MaxHpText { get; }
+public Text MaxMpText { get; }
+public Text SeparationHPText { get; }
+public Text SeparationMPText { get; }
+public List<Text> SeparationLvMpTextList { get; }
+public Text MagicStoneNameText { get; }
+public Text FixedMpText { get; }
+public Image MasterImage { get; }
+FF6 Serial.FF6.UI.KeyInput.StatusDetailsController
+private StatusDetailsView view; // 0x70
+private AbilityCharaStatusController statusController; // 0x78
+private AbilityCharaStatusController gogoWindowStatusController; // 0x80
+private AbilityChangeController changeController; // 0x88
+FF6 Serial.FF6.UI.KeyInput.StatusDetailsView
+private Text fixedBattleCommandText; // 0x18
+private List<Text> battleCommandTextList; // 0x20
+private Text fixedExpText; // 0x28
+private Text expText; // 0x30
+private Text fixedNextExpText; // 0x38
+private Text nextExpText; // 0x40
+private Text fixedMagicalStoneText; // 0x48
+private Text magicalStoneText; // 0x50
+private Text fixedLevelUpBonusText; // 0x58
+private Text levelUpBonusText; // 0x60
+private Animator leftArrow; // 0x68
+private Animator rightArrow; // 0x70
+private KeyIconController leftKeyhelpIcon; // 0x78
+private KeyIconController rightKeyhelpIcon; // 0x80
+private GameObject magicStoneBase; // 0x88
+private GameObject defalutRoot; // 0x90
+private GameObject lineObjectBetweenCommandAndMagicStone; // 0x98
+private GameObject characterChangeParentObject; // 0xA0
+public Text FixedBattleCommandText { get; }
+public List<Text> BattleCommandTextList { get; }
+public Text FixedExpText { get; }
+public Text ExpText { get; }
+public Text FixedNextExpText { get; }
+public Text NextExpText { get; }
+public Text FixedMagicalStoneText { get; }
+public Text MagicalStoneText { get; }
+public Text FixedLevelUpBonusText { get; }
+public Text LevelUpBonusText { get; }
+public KeyIconController LeftKeyhelpIcon { get; }
+public KeyIconController RightKeyhelpIcon { get; }
+public Animator LeftArrow { get; }
+public Animator RightArrow { get; }
+public GameObject MagicStoneBase { get; }
+public GameObject DefalutRoot { get; }
+public GameObject LineObjectBetweenCommandAndMagicStone { get; }
+public GameObject LRParentObject { get; }
+FF6 Last.UI.KeyInput.ParameterContentView
+private Text fixedText; // 0x18
+private Text multipliedText; // 0x20
+private Text multipliedValueText; // 0x28
+private Text parameterValueText; // 0x30
+private Text percentText; // 0x38

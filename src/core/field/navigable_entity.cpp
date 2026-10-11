@@ -264,6 +264,7 @@ bool Entity::is_interactive() const
 bool Entity::is_alive() const
 {
     if (kind == Kind::ScriptTrigger) return true;
+    if (remote()) return true;   // another floor, from the baked data: nothing live to check
     if (!game || !live_entity(game)) return false;
     if (game_class && il2cpp::object_class(game) != game_class) return false;
     return entity_is_present(game);
@@ -288,6 +289,8 @@ bool Entity::is_opened() const
 
 std::wstring Entity::display_name() const
 {
+    // Another floor: whether the chest is opened is not known from here; the name alone.
+    if (remote() && kind == Kind::TreasureChest) return name;
     switch (kind) {
     case Kind::TreasureChest:
         return TF(is_opened() ? L"Opened {0}" : L"Unopened {0}", {name});
@@ -320,6 +323,9 @@ std::wstring Entity::type_name() const
 /// FormatDescription: "{name} ({steps} {direction}) - {type}".
 std::wstring Entity::format_description(unity::Vec3 player_pos) const
 {
+    // Another floor (user, 2026-10-11): "{name} ({floor}) - {type}". Steps and a direction
+    // mean nothing across floors.
+    if (remote()) return display_name() + L" (" + floor_name + L") - " + type_name();
     unity::Vec3 p = position();
     float distance = vec_distance(player_pos, p);
     std::wstring dir = direction_name(player_pos, p);

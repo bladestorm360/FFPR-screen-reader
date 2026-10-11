@@ -26,6 +26,7 @@ ref::Field fFieldController{kFieldMap, "fieldController"};
 
 ref::Class kFieldController{"Last.Map", "FieldController"};
 ref::Field fEntityList{kFieldController, "entityList"};
+ref::Field fColliderEntityList{kFieldController, "colliderEntityList"};
 ref::Field fTransportation{kFieldController, "transportation"};
 ref::Field fFootEvent{kFieldController, "footEvent"};
 ref::Field fMapManager{kFieldController, "mapManager"};
@@ -66,6 +67,7 @@ ref::Class kPropertyEntity{"Last.Map", "PropertyEntity"};
 ref::Field fPropTmeId{kPropertyEntity, "<TmeId>k__BackingField"};
 ref::Field fPropObjectId{kPropertyEntity, "<ObjectId>k__BackingField"};
 ref::Field fPropObjectType{kPropertyEntity, "<ObjectType>k__BackingField"};
+ref::Field fPropEntityId{kPropertyEntity, "<EntityId>k__BackingField"};
 ref::Field fPropName{kPropertyEntity, "<Name>k__BackingField"};
 ref::Field fPropTargetTransportationIdList{kPropertyEntity, "<TargetTransportationIdList>k__BackingField"};
 ref::Class kPropertyGotoMap{"Last.Map", "PropertyGotoMap"};

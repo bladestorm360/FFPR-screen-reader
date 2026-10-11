@@ -1,0 +1,6 @@
+1804a0f30	Poison.GeneratePoisonDamage
+1804a1430	Poison.UpdateGeneratePoisonText
+180910960	BattleUtility.CreateDamageView.unit
+180910740	BattleUtility.CreateDamageView.sprite
+1804e4680	DamageViewUIManager.CreateDamgeView
+1804b6a20	ViewDamageEntity.CreateDamageValue

@@ -1,0 +1,3801 @@
+[
+  {
+    "raw": "城１",
+    "translated": {
+      "en": "Castle 1",
+      "fr": "Château 1",
+      "it": "Castello 1",
+      "de": "Schloss 1",
+      "es": "Castillo 1",
+      "ko": "성 1",
+      "zht": "城堡 1",
+      "zhc": "城堡 1",
+      "ru": "Замок 1",
+      "th": "ปราสาท 1",
+      "pt": "Castelo 1"
+    },
+    "count": 18
+  },
+  {
+    "raw": "壊れたお城",
+    "translated": {
+      "en": "Ruined Castle",
+      "fr": "Château en ruine",
+      "it": "Castello in rovina",
+      "de": "Zerstörtes Schloss",
+      "es": "Castillo en ruinas",
+      "ko": "무너진 성",
+      "zht": "損毀的城堡",
+      "zhc": "损毁的城堡",
+      "ru": "Разрушенный замок",
+      "th": "ปราสาทที่พังทลาย",
+      "pt": "Castelo em Ruínas"
+    },
+    "count": 6
+  },
+  {
+    "raw": "塔（地上）",
+    "translated": {
+      "en": "Tower (Overworld)",
+      "fr": "Tour (Surface)",
+      "it": "Torre (Superficie)",
+      "de": "Turm (Oberwelt)",
+      "es": "Torre (Mundo superior)",
+      "ko": "탑 (지상 세계)",
+      "zht": "塔 (地表)",
+      "zhc": "塔 (地表)",
+      "ru": "Башня (Наземный мир)",
+      "th": "หอคอย (เหนือพิภพ)",
+      "pt": "Torre (Superfície)"
+    },
+    "count": 18
+  },
+  {
+    "raw": "ダムシアン城_崩壊前",
+    "translated": {
+      "en": "Damcyan Castle (Before Destruction)",
+      "fr": "Château de Damcyan (avant destruction)",
+      "it": "Castello di Damcyan (prima della distruzione)",
+      "de": "Burg Damcyan (vor der Zerstörung)",
+      "es": "Castillo de Damcyan (antes de la destrucción)",
+      "ko": "댐시안성 (붕괴 전)",
+      "zht": "達姆希安城 (崩壞前)",
+      "zhc": "达姆希安城 (崩坏前)",
+      "ru": "Замок Дамциан (до разрушения)",
+      "th": "ปราสาทดัมเชียน (ก่อนถูกทำลาย)",
+      "pt": "Castelo de Damcyan (Antes da Destruição)"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ダムシアン城_崩壊後",
+    "translated": {
+      "en": "Damcyan Castle (After Destruction)",
+      "fr": "Château de Damcyan (après destruction)",
+      "it": "Castello di Damcyan (dopo la distruzione)",
+      "de": "Burg Damcyan (nach der Zerstörung)",
+      "es": "Castillo de Damcyan (después de la destrucción)",
+      "ko": "댐시안성 (붕괴 후)",
+      "zht": "達姆希安城 (崩壞後)",
+      "zhc": "达姆希安城 (崩坏后)",
+      "ru": "Замок Дамциан (после разрушения)",
+      "th": "ปราสาทดัมเชียน (หลังถูกทำลาย)",
+      "pt": "Castelo de Damcyan (Após a Destruição)"
+    },
+    "count": 5
+  },
+  {
+    "raw": "",
+    "translated": {},
+    "count": 33
+  },
+  {
+    "raw": "TelepoPoint",
+    "translated": {},
+    "count": 329
+  },
+  {
+    "raw": "小爆破",
+    "translated": {
+      "en": "Small Explosion",
+      "fr": "Petite explosion",
+      "it": "Piccola esplosione",
+      "de": "Kleine Explosion",
+      "es": "Pequeña explosión",
+      "ko": "작은 폭파",
+      "zht": "小爆破",
+      "zhc": "小爆破",
+      "ru": "Небольшой взрыв",
+      "th": "ระเบิดเล็ก",
+      "pt": "Pequena Explosão"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ダムシアン城襲撃1",
+    "translated": {
+      "en": "Damcyan Castle Attack 1",
+      "fr": "Attaque du Château de Damcyan 1",
+      "it": "Attacco al Castello di Damcyan 1",
+      "de": "Angriff auf Burg Damcyan 1",
+      "es": "Ataque al Castillo de Damcyan 1",
+      "ko": "댐시안성 습격 1",
+      "zht": "達姆希安城襲擊 1",
+      "zhc": "达姆希安城袭击 1",
+      "ru": "Нападение на Замок Дамциан 1",
+      "th": "การโจมตีปราสาทดัมเชียน 1",
+      "pt": "Ataque ao Castelo de Damcyan 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ダムシアン城襲撃2",
+    "translated": {
+      "en": "Damcyan Castle Attack 2",
+      "fr": "Attaque du Château de Damcyan 2",
+      "it": "Attacco al Castello di Damcyan 2",
+      "de": "Angriff auf Burg Damcyan 2",
+      "es": "Ataque al Castillo de Damcyan 2",
+      "ko": "댐시안성 습격 2",
+      "zht": "達姆希安城襲擊 2",
+      "zhc": "达姆希安城袭击 2",
+      "ru": "Нападение на Замок Дамциан 2",
+      "th": "การโจมตีปราสาทดัมเชียน 2",
+      "pt": "Ataque ao Castelo de Damcyan 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ダムシアン城襲撃3",
+    "translated": {
+      "en": "Damcyan Castle Attack 3",
+      "fr": "Attaque du Château de Damcyan 3",
+      "it": "Attacco al Castello di Damcyan 3",
+      "de": "Angriff auf Burg Damcyan 3",
+      "es": "Ataque al Castillo de Damcyan 3",
+      "ko": "댐시안성 습격 3",
+      "zht": "達姆希安城襲擊 3",
+      "zhc": "达姆希安城袭击 3",
+      "ru": "Нападение на Замок Дамциан 3",
+      "th": "การโจมตีปราสาทดัมเชียน 3",
+      "pt": "Ataque ao Castelo de Damcyan 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ホバー船登場位置",
+    "translated": {
+      "en": "Hovercraft Appearance Point",
+      "fr": "Point d'apparition de l'Aéroglisseur",
+      "it": "Punto di apparizione dell'Eliscafo",
+      "de": "Erscheinungspunkt des Luftkissenboots",
+      "es": "Punto de aparición del Aerodeslizador",
+      "ko": "호버크래프트 등장 위치",
+      "zht": "氣墊船登場位置",
+      "zhc": "气垫船登场位置",
+      "ru": "Точка появления автолета",
+      "th": "ตำแหน่งปรากฏเรือโฮเวอร์คราฟต์",
+      "pt": "Ponto de Aparição do Aerobote"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ファブールの港から船出",
+    "translated": {
+      "en": "Set Sail from Fabul Port",
+      "fr": "Départ du port de Fabul",
+      "it": "Partenza dal porto di Fabul",
+      "de": "Abfahrt vom Hafen von Fabul",
+      "es": "Zarpar del puerto de Fabul",
+      "ko": "파불 항구에서 출항",
+      "zht": "從法布爾港出航",
+      "zhc": "从法布尔港出航",
+      "ru": "Отплытие из порта Фабула",
+      "th": "ออกเรือจากท่าเรือฟาบูล",
+      "pt": "Zarpar do Porto de Fabul"
+    },
+    "count": 1
+  },
+  {
+    "raw": "リヴァイアサン登場",
+    "translated": {
+      "en": "Leviathan Appears",
+      "fr": "Léviathan apparaît",
+      "it": "Leviatano appare",
+      "de": "Leviathan erscheint",
+      "es": "Leviatán aparece",
+      "ko": "리바이어던 등장",
+      "zht": "利維坦登場",
+      "zhc": "利维亚桑登场",
+      "ru": "Левиафан появляется",
+      "th": "เลวีอาธานปรากฏตัว",
+      "pt": "Leviatã Aparece"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水飛沫",
+    "translated": {
+      "en": "Water Splash",
+      "fr": "Éclaboussure",
+      "it": "Spruzzo d'acqua",
+      "de": "Wasserspritzer",
+      "es": "Salpicadura",
+      "ko": "물보라",
+      "zht": "水花",
+      "zhc": "水花",
+      "ru": "Брызги",
+      "th": "ละอองน้ำ",
+      "pt": "Respingo de Água"
+    },
+    "count": 8
+  },
+  {
+    "raw": "リヴァイアサン出現",
+    "translated": {
+      "en": "Leviathan Emerges",
+      "fr": "Léviathan surgit",
+      "it": "Leviatano emerge",
+      "de": "Leviathan taucht auf",
+      "es": "Leviatán emerge",
+      "ko": "리바이어던 출현",
+      "zht": "利維坦出現",
+      "zhc": "利维亚桑出现",
+      "ru": "Левиафан выныривает",
+      "th": "เลวีอาธานโผล่ขึ้นมา",
+      "pt": "Leviatã Emerge"
+    },
+    "count": 1
+  },
+  {
+    "raw": "リヴァイアサン退散",
+    "translated": {
+      "en": "Leviathan Retreats",
+      "fr": "Léviathan se retire",
+      "it": "Leviatano si ritira",
+      "de": "Leviathan zieht sich zurück",
+      "es": "Leviatán se retira",
+      "ko": "리바이어던 퇴장",
+      "zht": "利維坦退散",
+      "zhc": "利维亚桑退散",
+      "ru": "Левиафан уходит",
+      "th": "เลวีอาธานล่าถอย",
+      "pt": "Leviatã Recua"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水飛沫2",
+    "translated": {
+      "en": "Water Splash 2",
+      "fr": "Éclaboussure 2",
+      "it": "Spruzzo d'acqua 2",
+      "de": "Wasserspritzer 2",
+      "es": "Salpicadura 2",
+      "ko": "물보라 2",
+      "zht": "水花 2",
+      "zhc": "水花 2",
+      "ru": "Брызги 2",
+      "th": "ละอองน้ำ 2",
+      "pt": "Respingo de Água 2"
+    },
+    "count": 2
+  },
+  {
+    "raw": "水飛沫3",
+    "translated": {
+      "en": "Water Splash 3",
+      "fr": "Éclaboussure 3",
+      "it": "Spruzzo d'acqua 3",
+      "de": "Wasserspritzer 3",
+      "es": "Salpicadura 3",
+      "ko": "물보라 3",
+      "zht": "水花 3",
+      "zhc": "水花 3",
+      "ru": "Брызги 3",
+      "th": "ละอองน้ำ 3",
+      "pt": "Respingo de Água 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水飛沫4",
+    "translated": {
+      "en": "Water Splash 4",
+      "fr": "Éclaboussure 4",
+      "it": "Spruzzo d'acqua 4",
+      "de": "Wasserspritzer 4",
+      "es": "Salpicadura 4",
+      "ko": "물보라 4",
+      "zht": "水花 4",
+      "zhc": "水花 4",
+      "ru": "Брызги 4",
+      "th": "ละอองน้ำ 4",
+      "pt": "Respingo de Água 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水飛沫5",
+    "translated": {
+      "en": "Water Splash 5",
+      "fr": "Éclaboussure 5",
+      "it": "Spruzzo d'acqua 5",
+      "de": "Wasserspritzer 5",
+      "es": "Salpicadura 5",
+      "ko": "물보라 5",
+      "zht": "水花 5",
+      "zhc": "水花 5",
+      "ru": "Брызги 5",
+      "th": "ละอองน้ำ 5",
+      "pt": "Respingo de Água 5"
+    },
+    "count": 1
+  },
+  {
+    "raw": "飛空艇登場位置",
+    "translated": {
+      "en": "Airship Appearance Point",
+      "fr": "Point d'apparition de l'aéronef",
+      "it": "Punto di apparizione dell'aeronave",
+      "de": "Erscheinungspunkt des Luftschiffs",
+      "es": "Punto de aparición de la aeronave",
+      "ko": "비공정 등장 위치",
+      "zht": "飛空艇登場位置",
+      "zhc": "飞空艇登场位置",
+      "ru": "Точка появления воздушного корабля",
+      "th": "ตำแหน่งปรากฏเรือเหาะ",
+      "pt": "Ponto de Aparição da Aeronave"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ゾットの塔へ",
+    "translated": {
+      "en": "To Tower of Zot",
+      "fr": "Vers la Tour de Zott",
+      "it": "Alla torre di Zot",
+      "de": "Zum Turm von Zot",
+      "es": "A la torre de Zot",
+      "ko": "조트 탑으로",
+      "zht": "前往佐特塔",
+      "zhc": "前往佐特塔",
+      "ru": "К Башне Зот",
+      "th": "ไปหอคอยแห่งซ็อต",
+      "pt": "Para a Torre de Zot"
+    },
+    "count": 1
+  },
+  {
+    "raw": "（戻る用）ゾットの塔へ",
+    "translated": {
+      "en": "To Tower of Zot (Return)",
+      "fr": "Vers la Tour de Zott (Retour)",
+      "it": "Alla Torre di Zot (Ritorno)",
+      "de": "Zum Turm von Zot (Rückkehr)",
+      "es": "A la Torre de Zot (Regreso)",
+      "ko": "조트 탑으로 (복귀용)",
+      "zht": "前往佐特塔 (返回用)",
+      "zhc": "前往佐特塔 (返回用)",
+      "ru": "К Башне Зот (Возврат)",
+      "th": "ไปหอคอยแห่งซ็อต (ขากลับ)",
+      "pt": "Para a Torre de Zot (Retorno)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "地下への道開通",
+    "translated": {
+      "en": "Underground Path Opens",
+      "fr": "Le chemin souterrain s'ouvre",
+      "it": "Il percorso sotterraneo si apre",
+      "de": "Unterirdischer Weg öffnet sich",
+      "es": "El camino subterráneo se abre",
+      "ko": "지하로의 길 개통",
+      "zht": "地下通路開通",
+      "zhc": "地下通路开通",
+      "ru": "Подземный путь открывается",
+      "th": "ทางใต้ดินเปิด",
+      "pt": "Caminho Subterrâneo Abre"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドワーフ戦車隊と赤い翼の交戦",
+    "translated": {
+      "en": "Dwarven Tanks Engage Red Wings",
+      "fr": "Chars d'assaut nains contre Ailes Rouges",
+      "it": "Carri armati dei nani contro Ali Rosse",
+      "de": "Zwergenpanzer gegen Rotschwingen",
+      "es": "Tanques enanos contra Alas Rojas",
+      "ko": "드워프 전차 부대와 붉은 날개의 교전",
+      "zht": "矮人戰車隊與赤翼隊交戰",
+      "zhc": "矮人战车队与赤翼队交战",
+      "ru": "Бой танков гномов с Красными Крыльями",
+      "th": "รถถังคนแคระปะทะกองทัพปีกแดง",
+      "pt": "Tanques dos Anões contra Asas Vermelhas"
+    },
+    "count": 9
+  },
+  {
+    "raw": "地下への道がふさがる",
+    "translated": {
+      "en": "Path to Underworld Blocked",
+      "fr": "Passage vers le monde souterrain bloqué",
+      "it": "Passaggio per l'Inframondo bloccato",
+      "de": "Weg zur Unterwelt versperrt",
+      "es": "Camino al Inframundo bloqueado",
+      "ko": "지하 세계로 가는 길이 막힘",
+      "zht": "通往地底的道路被堵塞",
+      "zhc": "通往地底的道路被堵塞",
+      "ru": "Путь в подземный мир закрыт",
+      "th": "ทางสู่ใต้พิภพถูกปิด",
+      "pt": "Caminho para a Subterra Bloqueado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "山爆破アニメ",
+    "translated": {
+      "en": "Mountain Explosion Animation",
+      "fr": "Animation d'explosion de la montagne",
+      "it": "Animazione esplosione montagna",
+      "de": "Bergexplosion-Animation",
+      "es": "Animación de explosión de la montaña",
+      "ko": "산 폭파 애니메이션",
+      "zht": "山體爆破動畫",
+      "zhc": "山体爆破动画",
+      "ru": "Анимация взрыва горы",
+      "th": "แอนิเมชันระเบิดภูเขา",
+      "pt": "Animação de Explosão da Montanha"
+    },
+    "count": 1
+  },
+  {
+    "raw": "地上への穴が開く",
+    "translated": {
+      "en": "Hole to Overworld Opens",
+      "fr": "Le passage vers la surface s'ouvre",
+      "it": "Il varco verso la Superficie si apre",
+      "de": "Loch zur Oberwelt öffnet sich",
+      "es": "Se abre el paso al mundo superior",
+      "ko": "지상 세계로 통하는 구멍이 열림",
+      "zht": "通往地表的洞穴打開",
+      "zhc": "通往地表的洞穴打开",
+      "ru": "Открывается проход в наземный мир",
+      "th": "ช่องทางสู่เหนือพิภพเปิด",
+      "pt": "Buraco para a Superfície Abre"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バブイルの塔が光る",
+    "translated": {
+      "en": "Tower of Babel Glows",
+      "fr": "La Tour de Babil brille",
+      "it": "La Torre di Babele si illumina",
+      "de": "Turm von Babel leuchtet",
+      "es": "La Torre de Babel brilla",
+      "ko": "바빌 탑이 빛남",
+      "zht": "巴別塔發光",
+      "zhc": "巴别塔发光",
+      "ru": "Вавилонская башня сияет",
+      "th": "หอคอยแห่งบาเบลเปล่งแสง",
+      "pt": "Torre de Babel Brilha"
+    },
+    "count": 1
+  },
+  {
+    "raw": "渦",
+    "translated": {
+      "en": "Whirlpool",
+      "fr": "Tourbillon",
+      "it": "Vortice",
+      "de": "Strudel",
+      "es": "Remolino",
+      "ko": "소용돌이",
+      "zht": "漩渦",
+      "zhc": "漩涡",
+      "ru": "Водоворот",
+      "th": "น้ำวน",
+      "pt": "Redemoinho"
+    },
+    "count": 1
+  },
+  {
+    "raw": "魔導船（水引版）",
+    "translated": {
+      "en": "Lunar Whale (Water Wake)",
+      "fr": "Baleine lunaire (sillage d'eau)",
+      "it": "Traghetto lunare (scia d'acqua)",
+      "de": "Mondwal (Wasserspur)",
+      "es": "Ballena lunar (estela de agua)",
+      "ko": "마도선 (물결 버전)",
+      "zht": "魔導船 (水痕版)",
+      "zhc": "魔导船 (水痕版)",
+      "ru": "«Лунный кит» (водный след)",
+      "th": "เรือเหาะวาฬจันทรา (ระลอกน้ำ)",
+      "pt": "Baleia Lunar (Rastro de Água)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バブイル巨人",
+    "translated": {
+      "en": "Giant of Babel Event",
+      "fr": "Événement Géant de Babil",
+      "it": "Evento Gigante di Babele",
+      "de": "Ereignis Gigant von Babel",
+      "es": "Evento Gigante de Babel",
+      "ko": "바빌의 거인 이벤트",
+      "zht": "巴別巨人事件",
+      "zhc": "巴别巨人事件",
+      "ru": "Событие Вавилонского великана",
+      "th": "อีเวนท์ยักษ์แห่งบาเบล",
+      "pt": "Evento Gigante de Babel"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バブイルの巨人",
+    "translated": {
+      "en": "Giant of Babel",
+      "fr": "Géant de Babil",
+      "it": "Gigante di Babele",
+      "de": "Gigant von Babel",
+      "es": "Gigante de Babel",
+      "ko": "바빌의 거인",
+      "zht": "巴別巨人",
+      "zhc": "巴别巨人",
+      "ru": "Вавилонский великан",
+      "th": "ยักษ์แห่งบาเบล",
+      "pt": "Gigante de Babel"
+    },
+    "count": 1
+  },
+  {
+    "raw": "魔導船格納",
+    "translated": {
+      "en": "Lunar Whale Stowed",
+      "fr": "Baleine lunaire remisée",
+      "it": "Traghetto lunare rimessato",
+      "de": "Mondwal verstaut",
+      "es": "Ballena lunar guardada",
+      "ko": "마도선 격납",
+      "zht": "魔導船收納",
+      "zhc": "魔导船收纳",
+      "ru": "«Лунный кит» на стоянке",
+      "th": "เก็บเรือเหาะวาฬจันทรา",
+      "pt": "Baleia Lunar Guardada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "地下に降りる",
+    "translated": {
+      "en": "Descend to Underworld",
+      "fr": "Descendre dans le monde souterrain",
+      "it": "Scendere nell'Inframondo",
+      "de": "In die Unterwelt hinabsteigen",
+      "es": "Descender al Inframundo",
+      "ko": "지하 세계로 내려가기",
+      "zht": "下到地底",
+      "zhc": "下到地底",
+      "ru": "Спуск в подземный мир",
+      "th": "ลงสู่ใต้พิภพ",
+      "pt": "Descer à Subterra"
+    },
+    "count": 18
+  },
+  {
+    "raw": "塔（地底）",
+    "translated": {
+      "en": "Tower (Underworld)",
+      "fr": "Tour (Monde souterrain)",
+      "it": "Torre (Inframondo)",
+      "de": "Turm (Unterwelt)",
+      "es": "Torre (Inframundo)",
+      "ko": "탑 (지하 세계)",
+      "zht": "塔 (地底)",
+      "zhc": "塔 (地底)",
+      "ru": "Башня (Подземный мир)",
+      "th": "หอคอย (ใต้พิภพ)",
+      "pt": "Torre (Subterra)"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ワールドマップ（地底）城",
+    "translated": {
+      "en": "World Map (Underworld) Castle",
+      "fr": "Carte du monde (Monde souterrain) Château",
+      "it": "Mappa del mondo (Inframondo) Castello",
+      "de": "Weltkarte (Unterwelt) Schloss",
+      "es": "Mapa del mundo (Inframundo) Castillo",
+      "ko": "월드맵 (지하 세계) 성",
+      "zht": "世界地圖 (地底) 城堡",
+      "zhc": "世界地图 (地底) 城堡",
+      "ru": "Карта мира (Подземный мир) Замок",
+      "th": "แผนที่โลก (ใต้พิภพ) ปราสาท",
+      "pt": "Mapa Mundi (Subterra) Castelo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "戦車隊の攻撃1",
+    "translated": {
+      "en": "Tank Corps Attack 1",
+      "fr": "Attaque des chars d'assaut 1",
+      "it": "Attacco dei carri armati 1",
+      "de": "Panzerangriff 1",
+      "es": "Ataque de los tanques 1",
+      "ko": "전차 부대의 공격 1",
+      "zht": "戰車隊的攻擊 1",
+      "zhc": "战车队的攻击 1",
+      "ru": "Атака танков 1",
+      "th": "การโจมตีของรถถัง 1",
+      "pt": "Ataque dos Tanques 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "戦車隊の攻撃2",
+    "translated": {
+      "en": "Tank Corps Attack 2",
+      "fr": "Attaque des chars d'assaut 2",
+      "it": "Attacco dei carri armati 2",
+      "de": "Panzerangriff 2",
+      "es": "Ataque de los tanques 2",
+      "ko": "전차 부대의 공격 2",
+      "zht": "戰車隊的攻擊 2",
+      "zhc": "战车队的攻击 2",
+      "ru": "Атака танков 2",
+      "th": "การโจมตีของรถถัง 2",
+      "pt": "Ataque dos Tanques 2"
+    },
+    "count": 2
+  },
+  {
+    "raw": "戦車隊の攻撃3",
+    "translated": {
+      "en": "Tank Corps Attack 3",
+      "fr": "Attaque des chars d'assaut 3",
+      "it": "Attacco dei carri armati 3",
+      "de": "Panzerangriff 3",
+      "es": "Ataque de los tanques 3",
+      "ko": "전차 부대의 공격 3",
+      "zht": "戰車隊的攻擊 3",
+      "zhc": "战车队的攻击 3",
+      "ru": "Атака танков 3",
+      "th": "การโจมตีของรถถัง 3",
+      "pt": "Ataque dos Tanques 3"
+    },
+    "count": 2
+  },
+  {
+    "raw": "シド自爆",
+    "translated": {
+      "en": "Cid Self-Destruct",
+      "fr": "Autodestruction de Cid",
+      "it": "Autodistruzione di Cid",
+      "de": "Cids Selbstzerstörung",
+      "es": "Autodestrucción de Cid",
+      "ko": "시드 자폭",
+      "zht": "希德自爆",
+      "zhc": "西德自爆",
+      "ru": "Самоуничтожение Сида",
+      "th": "ซิดระเบิดตัวเอง",
+      "pt": "Autodestruição de Cid"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ドリルで地上への穴をあける",
+    "translated": {
+      "en": "Drill to Overworld",
+      "fr": "Forer vers la surface",
+      "it": "Trivellare verso la superficie",
+      "de": "Zur Oberwelt bohren",
+      "es": "Perforar hacia la superficie",
+      "ko": "드릴로 지상에 구멍 뚫기",
+      "zht": "鑽至地表",
+      "zhc": "钻至地表",
+      "ru": "Бурить к поверхности",
+      "th": "เจาะขึ้นสู่เหนือพิภพ",
+      "pt": "Perfurar até a Superfície"
+    },
+    "count": 9
+  },
+  {
+    "raw": "地下から地上に上る",
+    "translated": {
+      "en": "Ascend from Underworld to Overworld",
+      "fr": "Remonter du monde souterrain à la surface",
+      "it": "Risalire dall'Inframondo alla Superficie",
+      "de": "Von der Unterwelt zur Oberwelt aufsteigen",
+      "es": "Subir del Inframundo al mundo superior",
+      "ko": "지하 세계에서 지상 세계로 올라가기",
+      "zht": "從地底上到地表",
+      "zhc": "从地底上到地表",
+      "ru": "Подъем из подземного мира в наземный",
+      "th": "ขึ้นจากใต้พิภพสู่เหนือพิภพ",
+      "pt": "Subir da Subterra à Superfície"
+    },
+    "count": 9
+  },
+  {
+    "raw": "エンタープライズで地上へ遷移",
+    "translated": {
+      "en": "To Overworld by Enterprise",
+      "fr": "Vers la surface avec l'Entreprise",
+      "it": "Verso la Superficie con l'Enterprise",
+      "de": "Mit der Enterprise zur Oberwelt",
+      "es": "Al mundo superior en el Enterprise",
+      "ko": "엔터프라이즈로 지상 세계로 이동",
+      "zht": "乘企業號前往地表",
+      "zhc": "乘企业号前往地表",
+      "ru": "На «Эскападе» в наземный мир",
+      "th": "ไปเหนือพิภพด้วยเรือเหาะเอ็นเตอร์ไพรส์",
+      "pt": "Para a Superfície com a Enterprise"
+    },
+    "count": 9
+  },
+  {
+    "raw": "魔導船に乗って初めて月に到着した時の位置",
+    "translated": {
+      "en": "Lunar Whale First Arrival on the Moon",
+      "fr": "Première arrivée sur la Lune en Baleine lunaire",
+      "it": "Primo arrivo sulla Luna col Traghetto lunare",
+      "de": "Erste Ankunft auf dem Mond mit dem Mondwal",
+      "es": "Primera llegada a la Luna en la Ballena lunar",
+      "ko": "마도선으로 처음 달에 도착한 위치",
+      "zht": "首次乘魔導船抵達月球的位置",
+      "zhc": "首次乘魔导船抵达月球的位置",
+      "ru": "Место первого прибытия на Луну на «Лунном ките»",
+      "th": "ตำแหน่งที่มาถึงจันทราครั้งแรกด้วยเรือเหาะวาฬจันทรา",
+      "pt": "Primeira Chegada à Lua na Baleia Lunar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "スイッチ",
+    "translated": {
+      "en": "Switch",
+      "fr": "Interrupteur",
+      "it": "Interruttore",
+      "de": "Schalter",
+      "es": "Interruptor",
+      "ko": "스위치",
+      "zht": "開關",
+      "zhc": "开关",
+      "ru": "Переключатель",
+      "th": "สวิตช์",
+      "pt": "Interruptor"
+    },
+    "count": 10
+  },
+  {
+    "raw": "コリジョン",
+    "translated": {
+      "en": "Collision",
+      "fr": "Collision",
+      "it": "Collisione",
+      "de": "Kollision",
+      "es": "Colisión",
+      "ko": "충돌",
+      "zht": "碰撞",
+      "zhc": "碰撞",
+      "ru": "Столкновение",
+      "th": "การชน",
+      "pt": "Colisão"
+    },
+    "count": 34
+  },
+  {
+    "raw": "門が開く",
+    "translated": {
+      "en": "Gate Opens",
+      "fr": "Portail s'ouvre",
+      "it": "Cancello si apre",
+      "de": "Tor öffnet sich",
+      "es": "Portal se abre",
+      "ko": "문이 열림",
+      "zht": "門打開",
+      "zhc": "门打开",
+      "ru": "Ворота открываются",
+      "th": "ประตูใหญ่เปิด",
+      "pt": "Portão Abre"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ドアが開く（手前）",
+    "translated": {
+      "en": "Door Opens (Front)",
+      "fr": "Porte s'ouvre (avant)",
+      "it": "Porta si apre (davanti)",
+      "de": "Tür öffnet sich (vorne)",
+      "es": "Puerta se abre (frente)",
+      "ko": "문이 열림 (앞)",
+      "zht": "門打開 (前方)",
+      "zhc": "门打开 (前方)",
+      "ru": "Дверь открывается (перед)",
+      "th": "ประตูเปิด (ด้านหน้า)",
+      "pt": "Porta Abre (Frente)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ドアが開く（奥側）",
+    "translated": {
+      "en": "Door Opens (Back)",
+      "fr": "Porte s'ouvre (arrière)",
+      "it": "Porta si apre (dietro)",
+      "de": "Tür öffnet sich (hinten)",
+      "es": "Puerta se abre (atrás)",
+      "ko": "문이 열림 (뒤)",
+      "zht": "門打開 (後方)",
+      "zhc": "门打开 (后方)",
+      "ru": "Дверь открывается (зад)",
+      "th": "ประตูเปิด (ด้านหลัง)",
+      "pt": "Porta Abre (Fundo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "地下水脈使用まで通れない",
+    "translated": {
+      "en": "Blocked Until Underground Waterway",
+      "fr": "Bloqué jusqu'au Canal souterrain",
+      "it": "Bloccato fino al Fiume sotterraneo",
+      "de": "Kein Durchgang bis zum Unterirdischen Wasserweg",
+      "es": "Bloqueado hasta pasar el Lago sumergido",
+      "ko": "지하 수맥 이용 전까지 통과 불가",
+      "zht": "使用地下水脈前無法通過",
+      "zhc": "使用地下水脉前无法通过",
+      "ru": "Проход закрыт до Подземного канала",
+      "th": "ผ่านไม่ได้จนกว่าจะใช้ทางน้ำใต้ดิน",
+      "pt": "Bloqueado Até o Canal Subterrâneo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "プロローグ２（シドイベント）",
+    "translated": {
+      "en": "Prologue 2 (Cid Event)",
+      "fr": "Prologue 2 (Événement Cid)",
+      "it": "Prologo 2 (Evento Cid)",
+      "de": "Prolog 2 (Cid-Ereignis)",
+      "es": "Prólogo 2 (Evento Cid)",
+      "ko": "프롤로그 2 (시드 이벤트)",
+      "zht": "序章 2 (希德事件)",
+      "zhc": "序章 2 (西德事件)",
+      "ru": "Пролог 2 (Событие Сида)",
+      "th": "อารัมภบท 2 (อีเวนท์ซิด)",
+      "pt": "Prólogo 2 (Evento Cid)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "プロローグ4デモ",
+    "translated": {
+      "en": "Prologue 4 Demo",
+      "fr": "Démo prologue 4",
+      "it": "Demo prologo 4",
+      "de": "Prolog 4 Demo",
+      "es": "Demo prólogo 4",
+      "ko": "프롤로그 4 데모",
+      "zht": "序章 4 演示",
+      "zhc": "序章 4 演示",
+      "ru": "Демо пролога 4",
+      "th": "สาธิตอารัมภบท 4",
+      "pt": "Demo Prólogo 4"
+    },
+    "count": 2
+  },
+  {
+    "raw": "扉が開く",
+    "translated": {
+      "en": "Door Opens",
+      "fr": "Porte s'ouvre",
+      "it": "Porta si apre",
+      "de": "Tür öffnet sich",
+      "es": "Puerta se abre",
+      "ko": "문이 열림",
+      "zht": "門打開",
+      "zhc": "门打开",
+      "ru": "Дверь открывается",
+      "th": "ประตูเปิด",
+      "pt": "Porta Abre"
+    },
+    "count": 4
+  },
+  {
+    "raw": "プロローグ４デモ",
+    "translated": {
+      "en": "Prologue 4 Demo",
+      "fr": "Démo prologue 4",
+      "it": "Demo prologo 4",
+      "de": "Prolog 4 Demo",
+      "es": "Demo prólogo 4",
+      "ko": "프롤로그 4 데모",
+      "zht": "序章 4 演示",
+      "zhc": "序章 4 演示",
+      "ru": "Демо пролога 4",
+      "th": "สาธิตอารัมภบท 4",
+      "pt": "Demo Prólogo 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ベイガンと戦闘",
+    "translated": {
+      "en": "Battle with Baigan",
+      "fr": "Combat contre Baigan",
+      "it": "Battaglia con Baigan",
+      "de": "Kampf gegen Baigan",
+      "es": "Batalla contra Baigan",
+      "ko": "베이건과 전투",
+      "zht": "與貝迦恩戰鬥",
+      "zhc": "与贝迦恩战斗",
+      "ru": "Битва с Байганом",
+      "th": "ต่อสู้กับไบแกน",
+      "pt": "Batalha com Baigan"
+    },
+    "count": 1
+  },
+  {
+    "raw": "プロローグ（ローザイベント）",
+    "translated": {
+      "en": "Prologue (Rosa Event)",
+      "fr": "Prologue (Événement Rosa)",
+      "it": "Prologo (Evento Rosa)",
+      "de": "Prolog (Rosa-Ereignis)",
+      "es": "Prólogo (Evento Rosa)",
+      "ko": "프롤로그 (로자 이벤트)",
+      "zht": "序章 (羅莎事件)",
+      "zhc": "序章 (罗莎事件)",
+      "ru": "Пролог (Событие Розы)",
+      "th": "อารัมภบท (อีเวนท์โรซ่า)",
+      "pt": "Prólogo (Evento Rosa)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "回復",
+    "translated": {
+      "en": "Recovery",
+      "fr": "Récupération",
+      "it": "Recupero",
+      "de": "Erholung",
+      "es": "Recuperación",
+      "ko": "회복",
+      "zht": "恢復",
+      "zhc": "恢复",
+      "ru": "Восстановление",
+      "th": "การฟื้นตัว",
+      "pt": "Recuperação"
+    },
+    "count": 2
+  },
+  {
+    "raw": "バルバリシアと戦闘",
+    "translated": {
+      "en": "Battle with Barbariccia",
+      "fr": "Combat contre Barbariccia",
+      "it": "Battaglia con Barbariccia",
+      "de": "Kampf gegen Barbarizia",
+      "es": "Batalla contra Barbariccia",
+      "ko": "바르바리치아와 전투",
+      "zht": "與巴爾巴莉希亞戰鬥",
+      "zhc": "与巴尔巴莉希娅战斗",
+      "ru": "Битва с Барбариччей",
+      "th": "ต่อสู้กับบาร์บาริกเซีย",
+      "pt": "Batalha com Barbariccia"
+    },
+    "count": 1
+  },
+  {
+    "raw": "3本目の柱に戻される",
+    "translated": {
+      "en": "Sent Back to Pillar 3",
+      "fr": "Renvoi au pilier 3",
+      "it": "Rimandati al pilastro 3",
+      "de": "Zurück zu Säule 3",
+      "es": "Devuelto al pilar 3",
+      "ko": "3번째 기둥으로 되돌아감",
+      "zht": "被送回第3根柱子",
+      "zhc": "被送回第3根柱子",
+      "ru": "Возврат к колонне 3",
+      "th": "ถูกส่งกลับไปเสาที่ 3",
+      "pt": "Enviado de Volta ao Pilar 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "オーディンイベント",
+    "translated": {
+      "en": "Odin Event",
+      "fr": "Événement Odin",
+      "it": "Evento Odino",
+      "de": "Odin-Ereignis",
+      "es": "Evento Odín",
+      "ko": "오딘 이벤트",
+      "zht": "奧汀事件",
+      "zhc": "奥丁事件",
+      "ru": "Событие Одина",
+      "th": "อีเวนท์โอดิน",
+      "pt": "Evento Odin"
+    },
+    "count": 1
+  },
+  {
+    "raw": "亡きバロン王との会話",
+    "translated": {
+      "en": "Conversation with Late King of Baron",
+      "fr": "Conversation avec feu le roi de Baron",
+      "it": "Conversazione con il defunto re di Baron",
+      "de": "Gespräch mit dem verstorbenen König von Baron",
+      "es": "Conversación con el difunto rey de Baronia",
+      "ko": "고 바론 왕과의 대화",
+      "zht": "與已故巴隆王對話",
+      "zhc": "与已故巴隆王对话",
+      "ru": "Разговор с покойным королём Бароном",
+      "th": "บทสนทนากับราชาแห่งบารอนผู้ล่วงลับ",
+      "pt": "Conversa com o Falecido Rei de Baron"
+    },
+    "count": 1
+  },
+  {
+    "raw": "カイナッツォと戦闘",
+    "translated": {
+      "en": "Battle with Cagnazzo",
+      "fr": "Combat contre Cagnazzo",
+      "it": "Battaglia con Cagnazzo",
+      "de": "Kampf gegen Cagnazzo",
+      "es": "Batalla contra Cagnazzo",
+      "ko": "카냐초와 전투",
+      "zht": "與凱納槽戰鬥",
+      "zhc": "与凯纳槽战斗",
+      "ru": "Битва с Каньяццо",
+      "th": "ต่อสู้กับแคกนาซโซ",
+      "pt": "Batalha com Cagnazzo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "オープニング",
+    "translated": {
+      "en": "Opening",
+      "fr": "Introduction",
+      "it": "Introduzione",
+      "de": "Intro",
+      "es": "Introducción",
+      "ko": "오프닝",
+      "zht": "開場",
+      "zhc": "开场",
+      "ru": "Вступление",
+      "th": "ฉากเปิด",
+      "pt": "Abertura"
+    },
+    "count": 2
+  },
+  {
+    "raw": "Event発火用",
+    "translated": {
+      "en": "Event Trigger",
+      "fr": "Déclencheur d'événement",
+      "it": "Attivatore evento",
+      "de": "Ereignisauslöser",
+      "es": "Activador de evento",
+      "ko": "이벤트 발동용",
+      "zht": "事件觸發用",
+      "zhc": "事件触发用",
+      "ru": "Триггер события",
+      "th": "ตัวกระตุ้นอีเวนท์",
+      "pt": "Gatilho de Evento"
+    },
+    "count": 2
+  },
+  {
+    "raw": "プロローグ１（ローザイベント）",
+    "translated": {
+      "en": "Prologue 1 (Rosa Event)",
+      "fr": "Prologue 1 (Événement Rosa)",
+      "it": "Prologo 1 (Evento Rosa)",
+      "de": "Prolog 1 (Rosa-Ereignis)",
+      "es": "Prólogo 1 (Evento Rosa)",
+      "ko": "프롤로그 1 (로자 이벤트)",
+      "zht": "序章 1 (羅莎事件)",
+      "zhc": "序章 1 (罗莎事件)",
+      "ru": "Пролог 1 (Событие Розы)",
+      "th": "อารัมภบท 1 (อีเวนท์โรซ่า)",
+      "pt": "Prólogo 1 (Evento Rosa)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ToLayer",
+    "translated": {},
+    "count": 142
+  },
+  {
+    "raw": "武器屋には入れない",
+    "translated": {
+      "en": "Cannot Enter Weapon Shop",
+      "fr": "Impossible d'entrer dans l'arsenal",
+      "it": "Impossibile entrare nell'armeria",
+      "de": "Kein Zutritt zum Waffenladen",
+      "es": "No se puede entrar a la tienda de armas",
+      "ko": "무기 상점에는 들어갈 수 없음",
+      "zht": "無法進入武器店",
+      "zhc": "无法进入武器店",
+      "ru": "Нельзя войти в лавку оружия",
+      "th": "เข้าร้านขายอาวุธไม่ได้",
+      "pt": "Não Pode Entrar na Loja de Armas"
+    },
+    "count": 3
+  },
+  {
+    "raw": "昔の水路には入れない",
+    "translated": {
+      "en": "Cannot Enter Old Waterway",
+      "fr": "Impossible d'entrer dans l'Ancien aqueduc",
+      "it": "Impossibile entrare nel Vecchio canale",
+      "de": "Kein Zutritt zum Alten Wasserweg",
+      "es": "No se puede entrar al Antiguo canal",
+      "ko": "옛 수로에는 들어갈 수 없음",
+      "zht": "無法進入古老水路",
+      "zhc": "无法进入古老水路",
+      "ru": "Нельзя войти в Старый канал",
+      "th": "เข้าทางน้ำเก่าไม่ได้",
+      "pt": "Não Pode Entrar no Antigo Canal"
+    },
+    "count": 3
+  },
+  {
+    "raw": "武器屋鍵選択",
+    "translated": {
+      "en": "Weapon Shop Key Selection",
+      "fr": "Choix de clé : arsenal",
+      "it": "Scelta chiave Armeria",
+      "de": "Schlüsselwahl Waffenladen",
+      "es": "Elegir llave de la tienda de armas",
+      "ko": "무기 상점 열쇠 선택",
+      "zht": "武器店鑰匙選擇",
+      "zhc": "武器店钥匙选择",
+      "ru": "Выбор ключа: лавка оружия",
+      "th": "เลือกกุญแจร้านขายอาวุธ",
+      "pt": "Selecionar Chave da Loja de Armas"
+    },
+    "count": 1
+  },
+  {
+    "raw": "昔の水路鍵選択",
+    "translated": {
+      "en": "Old Waterway Key Selection",
+      "fr": "Choix de clé : Ancien aqueduc",
+      "it": "Scelta chiave Vecchio canale",
+      "de": "Schlüsselwahl Alter Wasserweg",
+      "es": "Elegir llave del Antiguo canal",
+      "ko": "옛 수로 열쇠 선택",
+      "zht": "古老水路鑰匙選擇",
+      "zhc": "古老水路钥匙选择",
+      "ru": "Выбор ключа: Старый канал",
+      "th": "เลือกกุญแจทางน้ำเก่า",
+      "pt": "Selecionar Chave do Antigo Canal"
+    },
+    "count": 1
+  },
+  {
+    "raw": "新聞",
+    "translated": {
+      "en": "Newspaper",
+      "fr": "Journal",
+      "it": "Giornale",
+      "de": "Zeitung",
+      "es": "Periódico",
+      "ko": "신문",
+      "zht": "報紙",
+      "zhc": "报纸",
+      "ru": "Газета",
+      "th": "หนังสือพิมพ์",
+      "pt": "Jornal"
+    },
+    "count": 3
+  },
+  {
+    "raw": "扉を開く",
+    "translated": {
+      "en": "Open Door",
+      "fr": "Ouvrir la porte",
+      "it": "Apri la porta",
+      "de": "Tür öffnen",
+      "es": "Abrir puerta",
+      "ko": "문 열기",
+      "zht": "開門",
+      "zhc": "开门",
+      "ru": "Открыть дверь",
+      "th": "เปิดประตู",
+      "pt": "Abrir Porta"
+    },
+    "count": 3
+  },
+  {
+    "raw": "世界の鳥　大図鑑",
+    "translated": {
+      "en": "Encyclopedia of World Birds",
+      "fr": "Encyclopédie des oiseaux du monde",
+      "it": "Enciclopedia degli uccelli del mondo",
+      "de": "Enzyklopädie der Vögel der Welt",
+      "es": "Enciclopedia de aves del mundo",
+      "ko": "세계의 새 대도감",
+      "zht": "世界鳥類大圖鑑",
+      "zhc": "世界鸟类大图鉴",
+      "ru": "Энциклопедия птиц мира",
+      "th": "สารานุกรมนกโลก",
+      "pt": "Enciclopédia de Aves do Mundo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "造船技術の歴史",
+    "translated": {
+      "en": "History of Shipbuilding",
+      "fr": "Histoire de la construction navale",
+      "it": "Storia della cantieristica navale",
+      "de": "Geschichte des Schiffbaus",
+      "es": "Historia de la construcción naval",
+      "ko": "조선 기술의 역사",
+      "zht": "造船技術的歷史",
+      "zhc": "造船技术的历史",
+      "ru": "История кораблестроения",
+      "th": "ประวัติการต่อเรือ",
+      "pt": "História da Construção Naval"
+    },
+    "count": 2
+  },
+  {
+    "raw": "暖炉",
+    "translated": {
+      "en": "Fireplace",
+      "fr": "Cheminée",
+      "it": "Camino",
+      "de": "Kamin",
+      "es": "Chimenea",
+      "ko": "벽난로",
+      "zht": "壁爐",
+      "zhc": "壁炉",
+      "ru": "Камин",
+      "th": "เตาผิง",
+      "pt": "Lareira"
+    },
+    "count": 3
+  },
+  {
+    "raw": "浮力とその原理",
+    "translated": {
+      "en": "Buoyancy and Its Principles",
+      "fr": "La flottabilité et ses principes",
+      "it": "Il galleggiamento e i suoi principi",
+      "de": "Auftrieb und seine Prinzipien",
+      "es": "Flotabilidad y sus principios",
+      "ko": "부력과 그 원리",
+      "zht": "浮力及其原理",
+      "zhc": "浮力及其原理",
+      "ru": "Плавучесть и её принципы",
+      "th": "แรงลอยตัวและหลักการ",
+      "pt": "Flutuação e Seus Princípios"
+    },
+    "count": 2
+  },
+  {
+    "raw": "隠し扉が開く",
+    "translated": {
+      "en": "Hidden Door Opens",
+      "fr": "Porte cachée s'ouvre",
+      "it": "Porta nascosta si apre",
+      "de": "Versteckte Tür öffnet sich",
+      "es": "Puerta oculta se abre",
+      "ko": "숨겨진 문이 열림",
+      "zht": "隱藏門打開",
+      "zhc": "隐藏门打开",
+      "ru": "Скрытая дверь открывается",
+      "th": "ประตูลับเปิด",
+      "pt": "Porta Oculta Abre"
+    },
+    "count": 1
+  },
+  {
+    "raw": "デビルロード",
+    "translated": {
+      "en": "Devil's Road",
+      "fr": "Chemin maudit",
+      "it": "Strada del diavolo",
+      "de": "Teufelsweg",
+      "es": "Camino del averno",
+      "ko": "데블 로드",
+      "zht": "魔鬼之路",
+      "zhc": "魔鬼之路",
+      "ru": "Дорога Дьявола",
+      "th": "ถนนปีศาจ",
+      "pt": "Passagem do Diabo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "踊り子用水飛沫",
+    "translated": {
+      "en": "Dancer Water Splash",
+      "fr": "Éclaboussure de la danseuse",
+      "it": "Spruzzo d'acqua della ballerina",
+      "de": "Wasserspritzer der Tänzerin",
+      "es": "Salpicadura de la bailarina",
+      "ko": "무희용 물보라",
+      "zht": "舞者用水花",
+      "zhc": "舞者用水花",
+      "ru": "Брызги танцовщицы",
+      "th": "ละอองน้ำของนักเต้น",
+      "pt": "Respingo de Água da Dançarina"
+    },
+    "count": 1
+  },
+  {
+    "raw": "リディアが仲間に",
+    "translated": {
+      "en": "Rydia Joins Party",
+      "fr": "Rydia rejoint le groupe",
+      "it": "Rydia si unisce al gruppo",
+      "de": "Rydia tritt der Gruppe bei",
+      "es": "Rydia se une al grupo",
+      "ko": "리디아가 파티에 합류",
+      "zht": "莉迪亞加入隊伍",
+      "zhc": "莉迪亚加入队伍",
+      "ru": "Ридия присоединяется",
+      "th": "รีเดียเข้าร่วมปาร์ตี้",
+      "pt": "Rydia Junta-se ao Grupo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "砂漠の高熱病には……",
+    "translated": {
+      "en": "For Desert Fever...",
+      "fr": "Pour la fièvre du désert...",
+      "it": "Per la febbre del deserto...",
+      "de": "Für das Wüstenfieber...",
+      "es": "Para la fiebre del desierto...",
+      "ko": "사막의 고열병에는...",
+      "zht": "沙漠高熱病...",
+      "zhc": "沙漠高热病...",
+      "ru": "От пустынной лихорадки...",
+      "th": "สำหรับไข้ทะเลทราย...",
+      "pt": "Para a febre do deserto..."
+    },
+    "count": 1
+  },
+  {
+    "raw": "Event",
+    "translated": {},
+    "count": 5
+  },
+  {
+    "raw": "アンナ死亡",
+    "translated": {
+      "en": "Anna Death",
+      "fr": "Mort d'Anna",
+      "it": "Morte di Anna",
+      "de": "Annas Tod",
+      "es": "Muerte de Anna",
+      "ko": "안나의 죽음",
+      "zht": "安娜死亡",
+      "zhc": "安娜死亡",
+      "ru": "Смерть Анны",
+      "th": "แอนนาเสียชีวิต",
+      "pt": "Morte de Anna"
+    },
+    "count": 1
+  },
+  {
+    "raw": "MP回復",
+    "translated": {
+      "en": "MP Recovery",
+      "fr": "Récupération PM",
+      "it": "Recupero PM",
+      "de": "MP Erholung",
+      "es": "Recuperación PM",
+      "ko": "MP 회복",
+      "zht": "MP 恢復",
+      "zhc": "MP 恢复",
+      "ru": "Восстановление MP",
+      "th": "ฟื้นฟู MP",
+      "pt": "Recuperação MP"
+    },
+    "count": 3
+  },
+  {
+    "raw": "HP回復",
+    "translated": {
+      "en": "HP Recovery",
+      "fr": "Récupération PV",
+      "it": "Recupero PV",
+      "de": "KP Erholung",
+      "es": "Recuperación PV",
+      "ko": "HP 회복",
+      "zht": "HP 恢復",
+      "zhc": "HP 恢复",
+      "ru": "Восстановление HP",
+      "th": "ฟื้นฟู HP",
+      "pt": "Recuperação HP"
+    },
+    "count": 3
+  },
+  {
+    "raw": "光1",
+    "translated": {
+      "en": "Light 1",
+      "fr": "Lumière 1",
+      "it": "Luce 1",
+      "de": "Licht 1",
+      "es": "Luz 1",
+      "ko": "빛 1",
+      "zht": "光 1",
+      "zhc": "光 1",
+      "ru": "Свет 1",
+      "th": "แสง 1",
+      "pt": "Luz 1"
+    },
+    "count": 24
+  },
+  {
+    "raw": "ファーブル防衛戦後1",
+    "translated": {
+      "en": "After Fabul Defense 1",
+      "fr": "Après la défense de Fabul 1",
+      "it": "Dopo la difesa di Fabul 1",
+      "de": "Nach der Verteidigung von Fabul 1",
+      "es": "Después de la defensa de Fabul 1",
+      "ko": "파브르 방어전 후 1",
+      "zht": "法布爾防衛戰後 1",
+      "zhc": "法布尔防卫战后 1",
+      "ru": "После защиты Фабула 1",
+      "th": "หลังศึกป้องกันฟาบูล 1",
+      "pt": "Após Defesa de Fabul 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉を開ける",
+    "translated": {
+      "en": "Open Door",
+      "fr": "Ouvrir la porte",
+      "it": "Apri la porta",
+      "de": "Tür öffnen",
+      "es": "Abrir puerta",
+      "ko": "문 열기",
+      "zht": "開門",
+      "zhc": "开门",
+      "ru": "Открыть дверь",
+      "th": "เปิดประตู",
+      "pt": "Abrir Porta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ファブール防衛戦",
+    "translated": {
+      "en": "Fabul Defense Battle",
+      "fr": "Bataille de défense de Fabul",
+      "it": "Battaglia di difesa di Fabul",
+      "de": "Verteidigung von Fabul",
+      "es": "Batalla de defensa de Fabul",
+      "ko": "파브르 방어전",
+      "zht": "法布爾防衛戰",
+      "zhc": "法布尔防卫战",
+      "ru": "Битва за Фабул",
+      "th": "ศึกป้องกันฟาบูล",
+      "pt": "Batalha de Defesa de Fabul"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ファブール防衛戦後",
+    "translated": {
+      "en": "After Fabul Defense",
+      "fr": "Après la défense de Fabul",
+      "it": "Dopo la difesa di Fabul",
+      "de": "Nach der Verteidigung von Fabul",
+      "es": "Después de la defensa de Fabul",
+      "ko": "파브르 방어전 후",
+      "zht": "法布爾防衛戰後",
+      "zhc": "法布尔防卫战后",
+      "ru": "После защиты Фабула",
+      "th": "หลังศึกป้องกันฟาบูล",
+      "pt": "Após Defesa de Fabul"
+    },
+    "count": 1
+  },
+  {
+    "raw": "魔導船出現デモ",
+    "translated": {
+      "en": "Lunar Whale Appearance Demo",
+      "fr": "Démo d'apparition de la Baleine lunaire",
+      "it": "Demo apparizione Traghetto lunare",
+      "de": "Mondwal Erscheinungsdemo",
+      "es": "Demo de aparición de la Ballena lunar",
+      "ko": "마도선 출현 데모",
+      "zht": "魔導船出現演示",
+      "zhc": "魔导船出现演示",
+      "ru": "Демо появления Лунного кита",
+      "th": "สาธิตการปรากฏเรือเหาะวาฬจันทรา",
+      "pt": "Demo de Aparição da Baleia Lunar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "踊り子_ミシディア",
+    "translated": {
+      "en": "Dancer (Mysidia)",
+      "fr": "Danseuse (Mysidia)",
+      "it": "Ballerina (Mysidia)",
+      "de": "Tänzerin (Mysidia)",
+      "es": "Bailarina (Mysidia)",
+      "ko": "무희 (미시디아)",
+      "zht": "舞者 (密西迪亞)",
+      "zhc": "舞者 (密西迪亚)",
+      "ru": "Танцовщица (Мисидия)",
+      "th": "นักเต้น (มิซิเดีย)",
+      "pt": "Dançarina (Mysidia)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "初めてのケアル",
+    "translated": {
+      "en": "The Cure Spell",
+      "fr": "Le sort Soin",
+      "it": "L'incantesimo Energia per principianti",
+      "de": "Der Vita-Zauber",
+      "es": "Cura para novatos",
+      "ko": "케알 첫걸음",
+      "zht": "初級療傷法",
+      "zhc": "初级治疗法",
+      "ru": "Исцеляющее заклинание",
+      "th": "คาถารักษา",
+      "pt": "O Feitiço de Cura"
+    },
+    "count": 1
+  },
+  {
+    "raw": "黒魔法大全……。",
+    "translated": {
+      "en": "Black Magic Encyclopedia...",
+      "fr": "Encyclopédie de magie noire...",
+      "it": "Enciclopedia della magia nera...",
+      "de": "Lexikon der Schwarzmagie...",
+      "es": "Enciclopedia de magia negra...",
+      "ko": "흑마법 대전집...",
+      "zht": "黑魔法大全...",
+      "zhc": "黑魔法大全...",
+      "ru": "Энциклопедия черной магии...",
+      "th": "สารานุกรมมนตร์ดำ...",
+      "pt": "Enciclopédia de Magia Negra..."
+    },
+    "count": 1
+  },
+  {
+    "raw": "火　土　水　風……　全ての源。",
+    "translated": {
+      "en": "Fire, Earth, Water, Wind: Origin of All",
+      "fr": "Feu, terre, eau et vent - forces élémentaires",
+      "it": "Fuoco, Terra, Acqua, Vento: l'origine di ogni cosa",
+      "de": "Feuer, Erde, Wasser, Wind: Der Ursprung allen Seins",
+      "es": "Orígenes de los Cuatro Elementos",
+      "ko": "불, 땅, 물, 바람 - 만물의 근원",
+      "zht": "火、土、水、風，萬物之源",
+      "zhc": "火、土、水、风，万物之源",
+      "ru": "Огонь, земля, вода, ветер: источник всего",
+      "th": "ไฟ ดิน น้ำ ลม: ต้นกำเนิดของทุกสิ่ง",
+      "pt": "Fogo, Terra, Água, Vento: A Origem de Tudo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "sc_e_0068発火用",
+    "translated": {
+      "en": "sc_e_0068 Ignition",
+      "fr": "sc_e_0068 Allumage",
+      "it": "sc_e_0068 Accensione",
+      "de": "sc_e_0068 Zündung",
+      "es": "sc_e_0068 Ignición",
+      "ko": "sc_e_0068 점화",
+      "zht": "sc_e_0068 點火",
+      "zhc": "sc_e_0068 点火",
+      "ru": "sc_e_0068 Зажигание",
+      "th": "sc_e_0068 จุดไฟ",
+      "pt": "sc_e_0068 Ignição"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ポスター",
+    "translated": {
+      "en": "Poster",
+      "fr": "Affiche",
+      "it": "Manifesto",
+      "de": "Plakat",
+      "es": "Póster",
+      "ko": "포스터",
+      "zht": "海報",
+      "zhc": "海报",
+      "ru": "Плакат",
+      "th": "โปสเตอร์",
+      "pt": "Cartaz"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ボムの指輪",
+    "translated": {
+      "en": "Bomb Ring",
+      "fr": "Anneau de bombo",
+      "it": "Anello piros",
+      "de": "Bombenring",
+      "es": "Anillo de bom",
+      "ko": "봄의 반지",
+      "zht": "炸彈戒指",
+      "zhc": "爆弹戒指",
+      "ru": "Взрывное кольцо",
+      "th": "แหวนระเบิด",
+      "pt": "Anel-bomba"
+    },
+    "count": 3
+  },
+  {
+    "raw": "火",
+    "translated": {
+      "en": "Fire",
+      "fr": "Feu",
+      "it": "Fuoco",
+      "de": "Feuer",
+      "es": "Fuego",
+      "ko": "불",
+      "zht": "火",
+      "zhc": "火",
+      "ru": "Огонь",
+      "th": "ไฟ",
+      "pt": "Fogo"
+    },
+    "count": 6
+  },
+  {
+    "raw": "ハート",
+    "translated": {
+      "en": "Heart",
+      "fr": "Cœur",
+      "it": "Cuore",
+      "de": "Herz",
+      "es": "Corazón",
+      "ko": "하트",
+      "zht": "愛心",
+      "zhc": "爱心",
+      "ru": "Сердце",
+      "th": "หัวใจ",
+      "pt": "Coração"
+    },
+    "count": 1
+  },
+  {
+    "raw": "隠し扉",
+    "translated": {
+      "en": "Hidden Door",
+      "fr": "Porte cachée",
+      "it": "Porta nascosta",
+      "de": "Versteckte Tür",
+      "es": "Puerta oculta",
+      "ko": "숨겨진 문",
+      "zht": "隱藏門",
+      "zhc": "隐藏门",
+      "ru": "Скрытая дверь",
+      "th": "ประตูลับ",
+      "pt": "Porta Oculta"
+    },
+    "count": 4
+  },
+  {
+    "raw": "熱がる",
+    "translated": {
+      "en": "Feels Hot",
+      "fr": "A chaud",
+      "it": "Sente caldo",
+      "de": "Fühlt sich heiß",
+      "es": "Siente calor",
+      "ko": "더움을 느낀",
+      "zht": "感到熱",
+      "zhc": "感到热",
+      "ru": "Жарко",
+      "th": "รู้สึกร้อน",
+      "pt": "Sente Calor"
+    },
+    "count": 3
+  },
+  {
+    "raw": "チョコボの生態……。",
+    "translated": {
+      "en": "Chocobo Ecology...",
+      "fr": "Écologie des Chocobos...",
+      "it": "Ecologia dei Chocobo...",
+      "de": "Chocobo-Ökologie...",
+      "es": "Ecología Chocobo...",
+      "ko": "초코보의 생태...",
+      "zht": "陸行鳥生態...",
+      "zhc": "陆行鸟生态...",
+      "ru": "Экология чокобо...",
+      "th": "นิเวศวิทยาโชโคโบะ...",
+      "pt": "Ecologia dos Chocobos..."
+    },
+    "count": 1
+  },
+  {
+    "raw": "あなたにも飼えるチョコボ……。",
+    "translated": {
+      "en": "You Can Raise a Chocobo Too...",
+      "fr": "Vous aussi pouvez élever un Chocobo...",
+      "it": "Anche tu puoi allevare un Chocobo...",
+      "de": "Auch du kannst einen Chocobo aufziehen...",
+      "es": "Tú también puedes criar un Chocobo...",
+      "ko": "당신도 초코보를 키울 수 있다...",
+      "zht": "你也能飼養陸行鳥...",
+      "zhc": "你也能饲养陆行鸟...",
+      "ru": "Вы тоже можете вырастить чокобо...",
+      "th": "คุณก็เลี้ยงโชโคโบะได้...",
+      "pt": "Você Também Pode Criar um Chocobo..."
+    },
+    "count": 1
+  },
+  {
+    "raw": "土のクリスタルを届ける",
+    "translated": {
+      "en": "Deliver Earth Crystal",
+      "fr": "Livrer le Cristal de la terre",
+      "it": "Consegnare il Cristallo della Terra",
+      "de": "Erdkristall abliefern",
+      "es": "Entregar el Cristal terrestre",
+      "ko": "땅의 크리스털을 전달",
+      "zht": "送交土之水晶",
+      "zhc": "送交土之水晶",
+      "ru": "Доставить Кристалл Земли",
+      "th": "ส่งมอบคริสตัลแห่งดิน",
+      "pt": "Entregar Cristal da Terra"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ギルバートの竪琴だ…",
+    "translated": {
+      "en": "Edward's Harp...",
+      "fr": "Harpe d'Edward...",
+      "it": "Arpa di Edward...",
+      "de": "Edwards Harfe...",
+      "es": "Arpa de Edward...",
+      "ko": "길버트의 하프...",
+      "zht": "吉爾伯特的豎琴...",
+      "zhc": "吉尔伯特的竖琴...",
+      "ru": "Арфа Эдварда...",
+      "th": "พิณของเอ็ดเวิร์ด...",
+      "pt": "Harpa de Edward..."
+    },
+    "count": 1
+  },
+  {
+    "raw": "ギルバートと再会",
+    "translated": {
+      "en": "Reunion with Edward",
+      "fr": "Retrouvailles avec Edward",
+      "it": "Riunione con Edward",
+      "de": "Wiedersehen mit Edward",
+      "es": "Reencuentro con Edward",
+      "ko": "길버트와 재회",
+      "zht": "與吉爾伯特重逢",
+      "zhc": "与吉尔伯特重逢",
+      "ru": "Встреча с Эдвардом",
+      "th": "พบเอ็ดเวิร์ดอีกครั้ง",
+      "pt": "Reencontro com Edward"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ギルバートに報告",
+    "translated": {
+      "en": "Report to Edward",
+      "fr": "Rapport à Edward",
+      "it": "Rapporto a Edward",
+      "de": "Bericht an Edward",
+      "es": "Informar a Edward",
+      "ko": "길버트에게 보고",
+      "zht": "向吉爾伯特報告",
+      "zhc": "向吉尔伯特报告",
+      "ru": "Доклад Эдварду",
+      "th": "รายงานเอ็ดเวิร์ด",
+      "pt": "Relatar a Edward"
+    },
+    "count": 1
+  },
+  {
+    "raw": "スイッチ扉2",
+    "translated": {
+      "en": "Switch Door 2",
+      "fr": "Porte à interrupteur 2",
+      "it": "Porta a interruttore 2",
+      "de": "Schaltertür 2",
+      "es": "Puerta de interruptor 2",
+      "ko": "스위치 문 2",
+      "zht": "開關門 2",
+      "zhc": "开关门 2",
+      "ru": "Дверь с переключателем 2",
+      "th": "ประตูสวิตช์ 2",
+      "pt": "Porta de Interruptor 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "スイッチ扉3",
+    "translated": {
+      "en": "Switch Door 3",
+      "fr": "Porte à interrupteur 3",
+      "it": "Porta a interruttore 3",
+      "de": "Schaltertür 3",
+      "es": "Puerta de interruptor 3",
+      "ko": "스위치 문 3",
+      "zht": "開關門 3",
+      "zhc": "开关门 3",
+      "ru": "Дверь с переключателем 3",
+      "th": "ประตูสวิตช์ 3",
+      "pt": "Porta de Interruptor 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "スイッチ扉4",
+    "translated": {
+      "en": "Switch Door 4",
+      "fr": "Porte à interrupteur 4",
+      "it": "Porta a interruttore 4",
+      "de": "Schaltertür 4",
+      "es": "Puerta de interruptor 4",
+      "ko": "스위치 문 4",
+      "zht": "開關門 4",
+      "zhc": "开关门 4",
+      "ru": "Дверь с переключателем 4",
+      "th": "ประตูสวิตช์ 4",
+      "pt": "Porta de Interruptor 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "スイッチ扉1",
+    "translated": {
+      "en": "Switch Door 1",
+      "fr": "Porte à interrupteur 1",
+      "it": "Porta a interruttore 1",
+      "de": "Schaltertür 1",
+      "es": "Puerta de interruptor 1",
+      "ko": "스위치 문 1",
+      "zht": "開關門 1",
+      "zhc": "开关门 1",
+      "ru": "Дверь с переключателем 1",
+      "th": "ประตูสวิตช์ 1",
+      "pt": "Porta de Interruptor 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "スイッチ（1→2→3→4→終了）",
+    "translated": {
+      "en": "Switch (1, 2, 3, 4, End)",
+      "fr": "Interrupteur (1, 2, 3, 4, fin)",
+      "it": "Interruttore (1, 2, 3, 4, fine)",
+      "de": "Schalter (1, 2, 3, 4, Ende)",
+      "es": "Interruptor (1, 2, 3, 4, fin)",
+      "ko": "스위치 (1, 2, 3, 4, 종료)",
+      "zht": "開關 (1、2、3、4、結束)",
+      "zhc": "开关 (1、2、3、4、结束)",
+      "ru": "Переключатель (1, 2, 3, 4, конец)",
+      "th": "สวิตช์ (1, 2, 3, 4, จบ)",
+      "pt": "Interruptor (1, 2, 3, 4, Fim)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉1のスイッチ",
+    "translated": {
+      "en": "Door 1 Switch",
+      "fr": "Interrupteur de la porte 1",
+      "it": "Interruttore porta 1",
+      "de": "Schalter für Tür 1",
+      "es": "Interruptor de la puerta 1",
+      "ko": "문 1의 스위치",
+      "zht": "門1的開關",
+      "zhc": "门1的开关",
+      "ru": "Переключатель двери 1",
+      "th": "สวิตช์ประตู 1",
+      "pt": "Interruptor da Porta 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉3のスイッチ",
+    "translated": {
+      "en": "Door 3 Switch",
+      "fr": "Interrupteur de la porte 3",
+      "it": "Interruttore porta 3",
+      "de": "Schalter für Tür 3",
+      "es": "Interruptor de la puerta 3",
+      "ko": "문 3의 스위치",
+      "zht": "門3的開關",
+      "zhc": "门3的开关",
+      "ru": "Переключатель двери 3",
+      "th": "สวิตช์ประตู 3",
+      "pt": "Interruptor da Porta 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉2のスイッチ",
+    "translated": {
+      "en": "Door 2 Switch",
+      "fr": "Interrupteur de la porte 2",
+      "it": "Interruttore porta 2",
+      "de": "Schalter für Tür 2",
+      "es": "Interruptor de la puerta 2",
+      "ko": "문 2의 스위치",
+      "zht": "門2的開關",
+      "zhc": "门2的开关",
+      "ru": "Переключатель двери 2",
+      "th": "สวิตช์ประตู 2",
+      "pt": "Interruptor da Porta 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉4のスイッチ",
+    "translated": {
+      "en": "Door 4 Switch",
+      "fr": "Interrupteur de la porte 4",
+      "it": "Interruttore porta 4",
+      "de": "Schalter für Tür 4",
+      "es": "Interruptor de la puerta 4",
+      "ko": "문 4의 스위치",
+      "zht": "門4的開關",
+      "zhc": "门4的开关",
+      "ru": "Переключатель двери 4",
+      "th": "สวิตช์ประตู 4",
+      "pt": "Interruptor da Porta 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "望遠鏡を覗く",
+    "translated": {
+      "en": "Look Through Telescope",
+      "fr": "Regarder dans le télescope",
+      "it": "Guardare nel telescopio",
+      "de": "Durch das Teleskop schauen",
+      "es": "Mirar por el telescopio",
+      "ko": "망원경을 들여다보다",
+      "zht": "透過望遠鏡觀看",
+      "zhc": "透过望远镜观看",
+      "ru": "Посмотреть в телескоп",
+      "th": "มองผ่านกล้องโทรทรรศน์",
+      "pt": "Olhar Pelo Telescópio"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アガルトの村の井戸でマグマの石をつかう",
+    "translated": {
+      "en": "Use Magma Rock at Agart Village Well",
+      "fr": "Utiliser le Rocher magmatique au puits du village d'Agart",
+      "it": "Usa la Pietra magmatica al pozzo del villaggio di Agart",
+      "de": "Magmastein am Brunnen von Agart benutzen",
+      "es": "Usar Piedra de magma en el pozo de la aldea de Agart",
+      "ko": "아가르트 마을 우물에서 마그마 돌 사용",
+      "zht": "在阿加爾特村的井中使用岩漿石",
+      "zhc": "在阿加尔特村的井中使用岩浆石",
+      "ru": "Использовать Магматический камень у колодца в деревне Агарт",
+      "th": "ใช้หินแม็กมาที่บ่อน้ำหมู่บ้านอการ์ต",
+      "pt": "Usar Pedra de Magma no Poço da Vila de Agart"
+    },
+    "count": 1
+  },
+  {
+    "raw": "HP・MP回復",
+    "translated": {
+      "en": "HP/MP Recovery",
+      "fr": "Récupération PV/PM",
+      "it": "Recupero PV/PM",
+      "de": "KP/MP Erholung",
+      "es": "Recuperación PV/PM",
+      "ko": "HP/MP 회복",
+      "zht": "HP/MP 恢復",
+      "zhc": "HP/MP 恢复",
+      "ru": "Восстановление HP/MP",
+      "th": "ฟื้นฟู HP/MP",
+      "pt": "Recuperação HP/MP"
+    },
+    "count": 1
+  },
+  {
+    "raw": "開発室メッセージ",
+    "translated": {
+      "en": "Developer Room Message",
+      "fr": "Message de la salle des développeurs",
+      "it": "Messaggio della stanza degli sviluppatori",
+      "de": "Nachricht des Entwicklerraums",
+      "es": "Mensaje de la sala de desarrolladores",
+      "ko": "개발실 메시지",
+      "zht": "開發室訊息",
+      "zhc": "开发室讯息",
+      "ru": "Сообщение комнаты разработчиков",
+      "th": "ข้อความห้องนักพัฒนา",
+      "pt": "Mensagem da Sala dos Desenvolvedores"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドワーフのクリスタル強奪",
+    "translated": {
+      "en": "Dwarf Crystal Theft",
+      "fr": "Vol du cristal des nains",
+      "it": "Furto del cristallo dei nani",
+      "de": "Zwergenkristalldiebstahl",
+      "es": "Robo del cristal enano",
+      "ko": "드워프 크리스털 강탈",
+      "zht": "矮人水晶被盜",
+      "zhc": "矮人水晶被盗",
+      "ru": "Кража кристалла гномов",
+      "th": "ขโมยคริสตัลคนแคระ",
+      "pt": "Roubo do Cristal Anão"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ルカの首飾り",
+    "translated": {
+      "en": "Luca's Necklace",
+      "fr": "Collier de Luca",
+      "it": "Collana di Luka",
+      "de": "Lucas Kette",
+      "es": "Collar de Luca",
+      "ko": "루카의 목걸이",
+      "zht": "露卡的項鏈",
+      "zhc": "露卡的项链",
+      "ru": "Ожерелье Люки",
+      "th": "สร้อยคอของลูคา",
+      "pt": "Colar da Luca"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドリル取り付け",
+    "translated": {
+      "en": "Drill Installation",
+      "fr": "Installation du foret",
+      "it": "Installazione del trapano",
+      "de": "Bohrer-Installation",
+      "es": "Instalación del taladro",
+      "ko": "드릴 설치",
+      "zht": "鑽頭安裝",
+      "zhc": "钻头安装",
+      "ru": "Установка бура",
+      "th": "ติดตั้งสว่าน",
+      "pt": "Instalação da Broca"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ギサールの野菜用",
+    "translated": {
+      "en": "For Gysahl Greens",
+      "fr": "Pour Légume Gysahl",
+      "it": "Per Erba ghisal",
+      "de": "Für Gizarkraut",
+      "es": "Para Verdura gysahl",
+      "ko": "기살의 야채용",
+      "zht": "基薩爾野菜用",
+      "zhc": "基萨尔野菜用",
+      "ru": "Для Гисальской зелени",
+      "th": "สำหรับผักกีซาล",
+      "pt": "Para Verduras de Gysahl"
+    },
+    "count": 12
+  },
+  {
+    "raw": "でぶチョコボイベント用",
+    "translated": {
+      "en": "Fat Chocobo Event",
+      "fr": "Événement Gros chocobo",
+      "it": "Evento Chocobo ciccio",
+      "de": "Ereignis Fetter Chocobo",
+      "es": "Evento Chocobo gordo",
+      "ko": "뚱보 초코보 이벤트",
+      "zht": "胖陸行鳥事件",
+      "zhc": "胖陆行鸟事件",
+      "ru": "Событие Жирного чокобо",
+      "th": "อีเวนท์โชโคโบะอ้วน",
+      "pt": "Evento Chocobo Gordo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "シド再会",
+    "translated": {
+      "en": "Cid Reunion",
+      "fr": "Retrouvailles avec Cid",
+      "it": "Riunione con Cid",
+      "de": "Wiedersehen mit Cid",
+      "es": "Reencuentro con Cid",
+      "ko": "시드 재회",
+      "zht": "與希德重逢",
+      "zhc": "与西德重逢",
+      "ru": "Встреча с Сидом",
+      "th": "พบซิดอีกครั้ง",
+      "pt": "Reencontro com Cid"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ワールドマップへ",
+    "translated": {
+      "en": "To World Map",
+      "fr": "Vers la carte du monde",
+      "it": "Alla mappa del mondo",
+      "de": "Zur Weltkarte",
+      "es": "Al mapa del mundo",
+      "ko": "월드맵으로",
+      "zht": "前往世界地圖",
+      "zhc": "前往世界地图",
+      "ru": "К карте мира",
+      "th": "ไปแผนที่โลก",
+      "pt": "Para o Mapa Mundi"
+    },
+    "count": 2
+  },
+  {
+    "raw": "セーブポイント",
+    "translated": {
+      "en": "Save Point",
+      "fr": "Point de sauvegarde",
+      "it": "Punto di salvataggio",
+      "de": "Speicherpunkt",
+      "es": "Punto de guardado",
+      "ko": "세이브 포인트",
+      "zht": "存檔點",
+      "zhc": "存档点",
+      "ru": "Точка сохранения",
+      "th": "จุดเซฟ",
+      "pt": "Ponto de Salva"
+    },
+    "count": 19
+  },
+  {
+    "raw": "奥義の書入手１",
+    "translated": {
+      "en": "Obtain Grimoire 1",
+      "fr": "Obtention du Grimoire 1",
+      "it": "Ottieni Grimorio 1",
+      "de": "Grimoire erhalten 1",
+      "es": "Obtener Grimorio 1",
+      "ko": "오의의 서 입수 1",
+      "zht": "取得奧義之書 1",
+      "zhc": "取得奥义之书 1",
+      "ru": "Получение Гримуара 1",
+      "th": "ได้รับตำราไสยเวท 1",
+      "pt": "Obter Grimório 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "奥義の書入手2",
+    "translated": {
+      "en": "Obtain Grimoire 2",
+      "fr": "Obtention du Grimoire 2",
+      "it": "Ottieni Grimorio 2",
+      "de": "Grimoire erhalten 2",
+      "es": "Obtener Grimorio 2",
+      "ko": "오의의 서 입수 2",
+      "zht": "取得奧義之書 2",
+      "zhc": "取得奥义之书 2",
+      "ru": "Получение Гримуара 2",
+      "th": "ได้รับตำราไสยเวท 2",
+      "pt": "Obter Grimório 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "焚火1",
+    "translated": {
+      "en": "Bonfire 1",
+      "fr": "Feu de camp 1",
+      "it": "Falò 1",
+      "de": "Lagerfeuer 1",
+      "es": "Hoguera 1",
+      "ko": "모닥불 1",
+      "zht": "營火 1",
+      "zhc": "营火 1",
+      "ru": "Костёр 1",
+      "th": "กองไฟ 1",
+      "pt": "Fogueira 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "焚火2",
+    "translated": {
+      "en": "Bonfire 2",
+      "fr": "Feu de camp 2",
+      "it": "Falò 2",
+      "de": "Lagerfeuer 2",
+      "es": "Hoguera 2",
+      "ko": "모닥불 2",
+      "zht": "營火 2",
+      "zhc": "营火 2",
+      "ru": "Костёр 2",
+      "th": "กองไฟ 2",
+      "pt": "Fogueira 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "フースーヤ",
+    "translated": {
+      "en": "Fusoya",
+      "fr": "Fusoya",
+      "it": "Fusoya",
+      "de": "Fusoya",
+      "es": "Fusoya",
+      "ko": "후스야",
+      "zht": "福索雅",
+      "zhc": "福索雅",
+      "ru": "Фусойя",
+      "th": "ฟูโซยา",
+      "pt": "Fusoya"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（青）⑥",
+    "translated": {
+      "en": "Crystal (Blue) 6",
+      "fr": "Cristal (bleu) 6",
+      "it": "Cristallo (blu) 6",
+      "de": "Kristall (blau) 6",
+      "es": "Cristal (azul) 6",
+      "ko": "크리스털 (파랑) 6",
+      "zht": "水晶 (藍) 6",
+      "zhc": "水晶 (蓝) 6",
+      "ru": "Кристалл (синий) 6",
+      "th": "คริสตัล (น้ำเงิน) 6",
+      "pt": "Cristal (azul) 6"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（黄）⑤",
+    "translated": {
+      "en": "Crystal (Yellow) 5",
+      "fr": "Cristal (jaune) 5",
+      "it": "Cristallo (giallo) 5",
+      "de": "Kristall (gelb) 5",
+      "es": "Cristal (amarillo) 5",
+      "ko": "크리스털 (노랑) 5",
+      "zht": "水晶 (黃) 5",
+      "zhc": "水晶 (黄) 5",
+      "ru": "Кристалл (жёлтый) 5",
+      "th": "คริสตัล (เหลือง) 5",
+      "pt": "Cristal (amarelo) 5"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（青）④",
+    "translated": {
+      "en": "Crystal (Blue) 4",
+      "fr": "Cristal (bleu) 4",
+      "it": "Cristallo (blu) 4",
+      "de": "Kristall (blau) 4",
+      "es": "Cristal (azul) 4",
+      "ko": "크리스털 (파랑) 4",
+      "zht": "水晶 (藍) 4",
+      "zhc": "水晶 (蓝) 4",
+      "ru": "Кристалл (синий) 4",
+      "th": "คริสตัล (น้ำเงิน) 4",
+      "pt": "Cristal (azul) 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（青）②",
+    "translated": {
+      "en": "Crystal (Blue) 2",
+      "fr": "Cristal (bleu) 2",
+      "it": "Cristallo (blu) 2",
+      "de": "Kristall (blau) 2",
+      "es": "Cristal (azul) 2",
+      "ko": "크리스털 (파랑) 2",
+      "zht": "水晶 (藍) 2",
+      "zhc": "水晶 (蓝) 2",
+      "ru": "Кристалл (синий) 2",
+      "th": "คริสตัล (น้ำเงิน) 2",
+      "pt": "Cristal (azul) 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（黄）③",
+    "translated": {
+      "en": "Crystal (Yellow) 3",
+      "fr": "Cristal (jaune) 3",
+      "it": "Cristallo (giallo) 3",
+      "de": "Kristall (gelb) 3",
+      "es": "Cristal (amarillo) 3",
+      "ko": "크리스털 (노랑) 3",
+      "zht": "水晶 (黃) 3",
+      "zhc": "水晶 (黄) 3",
+      "ru": "Кристалл (жёлтый) 3",
+      "th": "คริสตัล (เหลือง) 3",
+      "pt": "Cristal (amarelo) 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（黄）①",
+    "translated": {
+      "en": "Crystal (Yellow) 1",
+      "fr": "Cristal (jaune) 1",
+      "it": "Cristallo (giallo) 1",
+      "de": "Kristall (gelb) 1",
+      "es": "Cristal (amarillo) 1",
+      "ko": "크리스털 (노랑) 1",
+      "zht": "水晶 (黃) 1",
+      "zhc": "水晶 (黄) 1",
+      "ru": "Кристалл (жёлтый) 1",
+      "th": "คริสตัล (เหลือง) 1",
+      "pt": "Cristal (amarelo) 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（黄）⑦",
+    "translated": {
+      "en": "Crystal (Yellow) 7",
+      "fr": "Cristal (jaune) 7",
+      "it": "Cristallo (giallo) 7",
+      "de": "Kristall (gelb) 7",
+      "es": "Cristal (amarillo) 7",
+      "ko": "크리스털 (노랑) 7",
+      "zht": "水晶 (黃) 7",
+      "zhc": "水晶 (黄) 7",
+      "ru": "Кристалл (жёлтый) 7",
+      "th": "คริสตัล (เหลือง) 7",
+      "pt": "Cristal (amarelo) 7"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（青）⑧",
+    "translated": {
+      "en": "Crystal (Blue) 8",
+      "fr": "Cristal (bleu) 8",
+      "it": "Cristallo (blu) 8",
+      "de": "Kristall (blau) 8",
+      "es": "Cristal (azul) 8",
+      "ko": "크리스털 (파랑) 8",
+      "zht": "水晶 (藍) 8",
+      "zhc": "水晶 (蓝) 8",
+      "ru": "Кристалл (синий) 8",
+      "th": "คริสตัล (น้ำเงิน) 8",
+      "pt": "Cristal (azul) 8"
+    },
+    "count": 1
+  },
+  {
+    "raw": "通れないイベント",
+    "translated": {
+      "en": "Blocked Path Event",
+      "fr": "Événement passage bloqué",
+      "it": "Evento passaggio bloccato",
+      "de": "Ereignis: kein Durchgang",
+      "es": "Evento de paso bloqueado",
+      "ko": "통과 불가 이벤트",
+      "zht": "無法通過事件",
+      "zhc": "无法通过事件",
+      "ru": "Событие: проход закрыт",
+      "th": "อีเวนท์ผ่านไม่ได้",
+      "pt": "Evento de Passagem Bloqueada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "月の地下渓谷入口",
+    "translated": {
+      "en": "Lunar Subterrane Entrance",
+      "fr": "Entrée du souterrain lunaire",
+      "it": "Ingresso della Gola lunare",
+      "de": "Eingang zum Mond-Untergrund",
+      "es": "Entrada al subterráneo lunar",
+      "ko": "달의 지하 계곡 입구",
+      "zht": "月面地下溪谷入口",
+      "zhc": "月面地下溪谷入口",
+      "ru": "Вход в Лунное подземелье",
+      "th": "ทางเข้าหุบเหวจันทรา",
+      "pt": "Entrada do Subterrâneo Lunar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "でぶチョコボ用",
+    "translated": {
+      "en": "For Fat Chocobo",
+      "fr": "Pour le Gros chocobo",
+      "it": "Per il Chocobo ciccio",
+      "de": "Für den Fetten Chocobo",
+      "es": "Para el Chocobo gordo",
+      "ko": "뚱보 초코보용",
+      "zht": "胖陸行鳥用",
+      "zhc": "胖陆行鸟用",
+      "ru": "Для Жирного чокобо",
+      "th": "สำหรับโชโคโบะอ้วน",
+      "pt": "Para o Chocobo Gordo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "でぶチョコボ用イベント",
+    "translated": {
+      "en": "Fat Chocobo Event",
+      "fr": "Événement Gros chocobo",
+      "it": "Evento Chocobo ciccio",
+      "de": "Ereignis Fetter Chocobo",
+      "es": "Evento Chocobo gordo",
+      "ko": "뚱보 초코보 이벤트",
+      "zht": "胖陸行鳥事件",
+      "zhc": "胖陆行鸟事件",
+      "ru": "Событие Жирного чокобо",
+      "th": "อีเวนท์โชโคโบะอ้วน",
+      "pt": "Evento Chocobo Gordo"
+    },
+    "count": 4
+  },
+  {
+    "raw": "ギサールの野菜用（右）",
+    "translated": {
+      "en": "For Gysahl Greens (Right)",
+      "fr": "Pour Légume Gysahl (Droite)",
+      "it": "Per Erba ghisal (Destra)",
+      "de": "Für Gizarkraut (Rechts)",
+      "es": "Para Verdura gysahl (Derecha)",
+      "ko": "기살의 야채용 (오른쪽)",
+      "zht": "基薩爾野菜用 (右)",
+      "zhc": "基萨尔野菜用 (右)",
+      "ru": "Для Гисальской зелени (Справа)",
+      "th": "สำหรับผักกีซาล (ขวา)",
+      "pt": "Para Verduras de Gysahl (Direita)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "デブチョコボイベント用",
+    "translated": {
+      "en": "Fat Chocobo Event",
+      "fr": "Événement Gros chocobo",
+      "it": "Evento Chocobo ciccio",
+      "de": "Ereignis Fetter Chocobo",
+      "es": "Evento Chocobo gordo",
+      "ko": "뚱보 초코보 이벤트",
+      "zht": "胖陸行鳥事件",
+      "zhc": "胖陆行鸟事件",
+      "ru": "Событие Жирного чокобо",
+      "th": "อีเวนท์โชโคโบะอ้วน",
+      "pt": "Evento Chocobo Gordo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ギサールの野菜用（左）",
+    "translated": {
+      "en": "For Gysahl Greens (Left)",
+      "fr": "Pour Légume Gysahl (Gauche)",
+      "it": "Per Erba ghisal (Sinistra)",
+      "de": "Für Gizarkraut (Links)",
+      "es": "Para Verdura gysahl (Izquierda)",
+      "ko": "기살의 야채용 (왼쪽)",
+      "zht": "基薩爾野菜用 (左)",
+      "zhc": "基萨尔野菜用 (左)",
+      "ru": "Для Гисальской зелени (Слева)",
+      "th": "สำหรับผักกีซาล (ซ้าย)",
+      "pt": "Para Verduras de Gysahl (Esquerda)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "OP用：クリスタル（ミシディア）1",
+    "translated": {
+      "en": "Crystal (Mysidia) 1 (Opening)",
+      "fr": "Cristal (Mysidia) 1 (Introduction)",
+      "it": "Cristallo (Mysidia) 1 (Introduzione)",
+      "de": "Kristall (Mysidia) 1 (Intro)",
+      "es": "Cristal (Mysidia) 1 (Introducción)",
+      "ko": "크리스털 (미시디아) 1 (오프닝)",
+      "zht": "水晶 (密西迪亞) 1 (開場)",
+      "zhc": "水晶 (密西迪亚) 1 (开场)",
+      "ru": "Кристалл (Мисидия) 1 (Вступление)",
+      "th": "คริสตัล (มิซิเดีย) 1 (ฉากเปิด)",
+      "pt": "Cristal (Mysidia) 1 (Abertura)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "飛行モードにするレバー",
+    "translated": {
+      "en": "Flight Mode Lever",
+      "fr": "Levier du mode vol",
+      "it": "Leva modalità volo",
+      "de": "Flugmodus-Hebel",
+      "es": "Palanca de modo vuelo",
+      "ko": "비행 모드 레버",
+      "zht": "飛行模式操縱桿",
+      "zhc": "飞行模式操纵杆",
+      "ru": "Рычаг режима полёта",
+      "th": "คันโยกโหมดบิน",
+      "pt": "Alavanca de Modo de Voo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "月の魔導船から降りる",
+    "translated": {
+      "en": "Disembark Lunar Whale",
+      "fr": "Débarquer de la Baleine lunaire",
+      "it": "Sbarcare dal Traghetto lunare",
+      "de": "Vom Mondwal aussteigen",
+      "es": "Desembarcar de la Ballena lunar",
+      "ko": "마도선에서 내리기",
+      "zht": "從魔導船下船",
+      "zhc": "从魔导船下船",
+      "ru": "Сойти с Лунного кита",
+      "th": "ลงจากเรือเหาะวาฬจันทรา",
+      "pt": "Desembarcar da Baleia Lunar"
+    },
+    "count": 2
+  },
+  {
+    "raw": "でぶチョコボ会話用",
+    "translated": {
+      "en": "Fat Chocobo Conversation",
+      "fr": "Conversation Gros Chocobo",
+      "it": "Conversazione Chocobo grasso",
+      "de": "Dicker Chocobo Gespräch",
+      "es": "Conversación Chocobo gordo",
+      "ko": "뚱뚱한 초코보 대화",
+      "zht": "胖陸行鳥對話",
+      "zhc": "胖陆行鸟对话",
+      "ru": "Разговор с Толстым Чокобо",
+      "th": "บทสนทนาโชโคโบะอ้วน",
+      "pt": "Conversa Chocobo Gordo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "回復ベッド",
+    "translated": {
+      "en": "Recovery Bed",
+      "fr": "Lit de récupération",
+      "it": "Letto di recupero",
+      "de": "Erholungsbett",
+      "es": "Cama de recuperación",
+      "ko": "회복 침대",
+      "zht": "恢復床",
+      "zhc": "恢复床",
+      "ru": "Кровать восстановления",
+      "th": "เตียงพักฟื้น",
+      "pt": "Cama de Recuperação"
+    },
+    "count": 12
+  },
+  {
+    "raw": "クリスタル（赤）バブイルの巨人",
+    "translated": {
+      "en": "Crystal (Red) Giant of Babel",
+      "fr": "Cristal (rouge) Géant de Babil",
+      "it": "Cristallo (rosso) Gigante di Babele",
+      "de": "Kristall (rot) Gigant von Babel",
+      "es": "Cristal (rojo) Gigante de Babel",
+      "ko": "크리스털 (빨강) 바빌의 거인",
+      "zht": "水晶 (紅) 巴別巨人",
+      "zhc": "水晶 (红) 巴别巨人",
+      "ru": "Кристалл (красный) Вавилонский великан",
+      "th": "คริสตัล (แดง) ยักษ์แห่งบาเบล",
+      "pt": "Cristal (vermelho) Gigante de Babel"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（赤）デフォルト",
+    "translated": {
+      "en": "Crystal (Red) Default",
+      "fr": "Cristal (rouge) Default",
+      "it": "Cristallo (rosso) Default",
+      "de": "Kristall (rot) Default",
+      "es": "Cristal (rojo) Default",
+      "ko": "크리스털 (빨강) Default",
+      "zht": "水晶 (紅) Default",
+      "zhc": "水晶 (红) Default",
+      "ru": "Кристалл (красный) Default",
+      "th": "คริสตัล (แดง) Default",
+      "pt": "Cristal (vermelho) Default"
+    },
+    "count": 1
+  },
+  {
+    "raw": "地上に出る",
+    "translated": {
+      "en": "Return to Overworld",
+      "fr": "Retour à la surface",
+      "it": "Ritorno in superficie",
+      "de": "Zurück zur Oberwelt",
+      "es": "Volver a la superficie",
+      "ko": "지상 세계로 나가기",
+      "zht": "返回地表",
+      "zhc": "返回地表",
+      "ru": "Возврат в наземный мир",
+      "th": "กลับสู่เหนือพิภพ",
+      "pt": "Voltar à Superfície"
+    },
+    "count": 2
+  },
+  {
+    "raw": "魔導船発進",
+    "translated": {
+      "en": "Lunar Whale Launch",
+      "fr": "Lancement de la Baleine lunaire",
+      "it": "Lancio del Traghetto lunare",
+      "de": "Start des Mondwals",
+      "es": "Lanzamiento de la Ballena lunar",
+      "ko": "마도선 발진",
+      "zht": "魔導船發進",
+      "zhc": "魔导船发进",
+      "ru": "Запуск Лунного кита",
+      "th": "ปล่อยเรือเหาะวาฬจันทรา",
+      "pt": "Lançamento da Baleia Lunar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル",
+    "translated": {
+      "en": "Crystal",
+      "fr": "Cristal",
+      "it": "Cristallo",
+      "de": "Kristall",
+      "es": "Cristal",
+      "ko": "크리스털",
+      "zht": "水晶",
+      "zhc": "水晶",
+      "ru": "Кристалл",
+      "th": "คริสตัล",
+      "pt": "Cristal"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ミストドラゴン会話",
+    "translated": {
+      "en": "Mist Dragon Conversation",
+      "fr": "Conversation Dragon des brumes",
+      "it": "Conversazione Drago della nebbia",
+      "de": "Nebeldrache Gespräch",
+      "es": "Conversación Dragón de Mist",
+      "ko": "미스트 드래곤 대화",
+      "zht": "霧龍對話",
+      "zhc": "雾龙对话",
+      "ru": "Разговор с Туманным драконом",
+      "th": "บทสนทนามังกรหมอก",
+      "pt": "Conversa Dragão das Brumas"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ミストドラゴン戦闘",
+    "translated": {
+      "en": "Mist Dragon Battle",
+      "fr": "Combat Dragon des brumes",
+      "it": "Battaglia Drago della nebbia",
+      "de": "Nebeldrache Kampf",
+      "es": "Batalla Dragón de Mist",
+      "ko": "미스트 드래곤 전투",
+      "zht": "霧龍戰鬥",
+      "zhc": "雾龙战斗",
+      "ru": "Битва с Туманным драконом",
+      "th": "ต่อสู้มังกรหมอก",
+      "pt": "Batalha Dragão das Brumas"
+    },
+    "count": 1
+  },
+  {
+    "raw": "はじめてのキャンプ",
+    "translated": {
+      "en": "First Camp",
+      "fr": "Premier campement",
+      "it": "Primo accampamento",
+      "de": "Erstes Lager",
+      "es": "Primera acampada",
+      "ko": "첫 캠프",
+      "zht": "第一次露營",
+      "zhc": "第一次露营",
+      "ru": "Первый привал",
+      "th": "ตั้งแคมป์ครั้งแรก",
+      "pt": "Primeiro Acampamento"
+    },
+    "count": 1
+  },
+  {
+    "raw": "テントを張る",
+    "translated": {
+      "en": "Pitch Tent",
+      "fr": "Planter la tente",
+      "it": "Montare la tenda",
+      "de": "Zelt aufschlagen",
+      "es": "Montar la tienda de lona",
+      "ko": "텐트 치기",
+      "zht": "搭帳篷",
+      "zhc": "搭帐篷",
+      "ru": "Разбить палатку",
+      "th": "กางเต็นท์",
+      "pt": "Armar a Barraca"
+    },
+    "count": 1
+  },
+  {
+    "raw": "地下に通じる滝",
+    "translated": {
+      "en": "Waterfall to the Underground",
+      "fr": "Cascade souterraine",
+      "it": "Cascata sotterranea",
+      "de": "Wasserfall in die Tiefe",
+      "es": "Cataratas hacia el subsuelo",
+      "ko": "지하로 통하는 폭포",
+      "zht": "通往地下的瀑布",
+      "zhc": "通往地下的瀑布",
+      "ru": "Водопад в подземелье",
+      "th": "น้ำตกสู่ใต้ดิน",
+      "pt": "Cachoeira para o Subterrâneo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "流れが急で入れない",
+    "translated": {
+      "en": "Current Too Strong to Enter",
+      "fr": "Courant trop fort pour entrer",
+      "it": "Corrente troppo forte per entrare",
+      "de": "Strömung zu stark, kein Zutritt",
+      "es": "Corriente demasiado fuerte para entrar",
+      "ko": "물살이 세서 들어갈 수 없음",
+      "zht": "水流湍急無法進入",
+      "zhc": "水流湍急无法进入",
+      "ru": "Слишком сильное течение",
+      "th": "กระแสน้ำเชี่ยวเกินกว่าจะเข้าไป",
+      "pt": "Correnteza Forte Demais para Entrar"
+    },
+    "count": 2
+  },
+  {
+    "raw": "コリジョン2",
+    "translated": {
+      "en": "Collision 2",
+      "fr": "Collision 2",
+      "it": "Collisione 2",
+      "de": "Kollision 2",
+      "es": "Colisión 2",
+      "ko": "충돌 2",
+      "zht": "碰撞 2",
+      "zhc": "碰撞 2",
+      "ru": "Столкновение 2",
+      "th": "การชน 2",
+      "pt": "Colisão 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "氷の壁",
+    "translated": {
+      "en": "Ice Wall",
+      "fr": "Mur de glace",
+      "it": "Muro di ghiaccio",
+      "de": "Eiswand",
+      "es": "Muro de hielo",
+      "ko": "얼음 벽",
+      "zht": "冰牆",
+      "zhc": "冰墙",
+      "ru": "Ледяная стена",
+      "th": "กำแพงน้ำแข็ง",
+      "pt": "Parede de Gelo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "リディアがファイアを覚える",
+    "translated": {
+      "en": "Rydia Learns Fire",
+      "fr": "Rydia apprend Feu",
+      "it": "Rydia impara Fuoco",
+      "de": "Rydia lernt Feuer",
+      "es": "Rydia aprende Fuego",
+      "ko": "리디아가 파이어를 배운다",
+      "zht": "莉迪亞學會火焰",
+      "zhc": "莉迪亚学会火焰",
+      "ru": "Ридия изучает Огонь",
+      "th": "รีเดียเรียนรู้ไฟร์",
+      "pt": "Rydia Aprende Fogo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ヤンが仲間にR",
+    "translated": {
+      "en": "Yang Joins Party R",
+      "fr": "Yang rejoint le groupe D",
+      "it": "Yang si unisce al gruppo D",
+      "de": "Yang tritt der Gruppe bei R",
+      "es": "Yang se une al grupo D",
+      "ko": "양이 파티에 합류 R",
+      "zht": "楊加入隊伍 R",
+      "zhc": "杨加入队伍 R",
+      "ru": "Янг присоединяется П",
+      "th": "หยางเข้าร่วมปาร์ตี้ R",
+      "pt": "Yang Junta-se ao Grupo D"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ヤンが仲間にL",
+    "translated": {
+      "en": "Yang Joins Party L",
+      "fr": "Yang rejoint le groupe G",
+      "it": "Yang si unisce al gruppo S",
+      "de": "Yang tritt der Gruppe bei L",
+      "es": "Yang se une al grupo I",
+      "ko": "양이 파티에 합류 L",
+      "zht": "楊加入隊伍 L",
+      "zhc": "杨加入队伍 L",
+      "ru": "Янг присоединяется Л",
+      "th": "หยางเข้าร่วมปาร์ตี้ L",
+      "pt": "Yang Junta-se ao Grupo E"
+    },
+    "count": 1
+  },
+  {
+    "raw": "試練の山入り口",
+    "translated": {
+      "en": "Mt. Ordeals Entrance",
+      "fr": "Entrée du Mont du supplice",
+      "it": "Ingresso del Monte dell'ordalia",
+      "de": "Eingang zum Berg der Tortur",
+      "es": "Entrada al Monte Ordalía",
+      "ko": "시련의 산 입구",
+      "zht": "試煉之山入口",
+      "zhc": "试炼之山入口",
+      "ru": "Вход на Гору Испытаний",
+      "th": "ทางเข้าภูเขาทรมานตน",
+      "pt": "Entrada do Monte das Provações"
+    },
+    "count": 2
+  },
+  {
+    "raw": "テラと再会",
+    "translated": {
+      "en": "Reunion with Tellah",
+      "fr": "Retrouvailles avec Tellah",
+      "it": "Riunione con Tellah",
+      "de": "Wiedersehen mit Tellah",
+      "es": "Reencuentro con Tellah",
+      "ko": "테라와 재회",
+      "zht": "與泰拉重逢",
+      "zhc": "与泰拉重逢",
+      "ru": "Встреча с Теллой",
+      "th": "พบเทลล่าห์อีกครั้ง",
+      "pt": "Reencontro com Tellah"
+    },
+    "count": 1
+  },
+  {
+    "raw": "スカルミリョーネ1",
+    "translated": {
+      "en": "Scarmiglione 1",
+      "fr": "Scarmiglione 1",
+      "it": "Scarmiglione 1",
+      "de": "Scarmiglione 1",
+      "es": "Scarmiglione 1",
+      "ko": "스카르밀리오네 1",
+      "zht": "斯卡米留尼 1",
+      "zhc": "斯卡米留尼 1",
+      "ru": "Скармильоне 1",
+      "th": "สคาร์มิโลเน 1",
+      "pt": "Scarmiglione 1"
+    },
+    "count": 4
+  },
+  {
+    "raw": "スカルミリョーネ2",
+    "translated": {
+      "en": "Scarmiglione 2",
+      "fr": "Scarmiglione 2",
+      "it": "Scarmiglione 2",
+      "de": "Scarmiglione 2",
+      "es": "Scarmiglione 2",
+      "ko": "스카르밀리오네 2",
+      "zht": "斯卡米留尼 2",
+      "zhc": "斯卡米留尼 2",
+      "ru": "Скармильоне 2",
+      "th": "สคาร์มิโลเน 2",
+      "pt": "Scarmiglione 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "パラディン",
+    "translated": {
+      "en": "Paladin",
+      "fr": "Paladin",
+      "it": "Paladino",
+      "de": "Paladin",
+      "es": "Paladín",
+      "ko": "팔라딘",
+      "zht": "聖騎士",
+      "zhc": "圣骑士",
+      "ru": "Паладин",
+      "th": "อัศวินศักดิ์สิทธิ์",
+      "pt": "Paladino"
+    },
+    "count": 1
+  },
+  {
+    "raw": "金属が重い",
+    "translated": {
+      "en": "Metal is Heavy",
+      "fr": "Le métal est lourd",
+      "it": "Il metallo è pesante",
+      "de": "Metall ist schwer",
+      "es": "El metal es pesado",
+      "ko": "금속이 무겁다",
+      "zht": "金屬很重",
+      "zhc": "金属很重",
+      "ru": "Металл тяжёлый",
+      "th": "โลหะหนัก",
+      "pt": "Metal é Pesado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル青",
+    "translated": {
+      "en": "Crystal (Blue)",
+      "fr": "Cristal (bleu)",
+      "it": "Cristallo (blu)",
+      "de": "Kristall (blau)",
+      "es": "Cristal (azul)",
+      "ko": "크리스털 (파랑)",
+      "zht": "水晶 (藍)",
+      "zhc": "水晶 (蓝)",
+      "ru": "Кристалл (синий)",
+      "th": "คริสตัล (น้ำเงิน)",
+      "pt": "Cristal (Azul)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ワールドマップ戻る用",
+    "translated": {
+      "en": "Return to World Map",
+      "fr": "Retour à la carte du monde",
+      "it": "Ritorno alla mappa del mondo",
+      "de": "Zurück zur Weltkarte",
+      "es": "Volver al mapa del mundo",
+      "ko": "월드맵으로 돌아가기",
+      "zht": "返回世界地圖",
+      "zhc": "返回世界地图",
+      "ru": "Возврат на карту мира",
+      "th": "กลับแผนที่โลก",
+      "pt": "Voltar ao Mapa Mundi"
+    },
+    "count": 1
+  },
+  {
+    "raw": "メーガス三姉妹",
+    "translated": {
+      "en": "Magus Sisters",
+      "fr": "Sœurs Magus",
+      "it": "Sorelle Magus",
+      "de": "Magus-Schwestern",
+      "es": "Hermanas Magus",
+      "ko": "메이거스 세 자매",
+      "zht": "梅加斯三姐妹",
+      "zhc": "梅加斯三姐妹",
+      "ru": "Сестры Магус",
+      "th": "พี่น้องเมกัส",
+      "pt": "Irmãs Magus"
+    },
+    "count": 1
+  },
+  {
+    "raw": "テラ死亡",
+    "translated": {
+      "en": "Tellah Death",
+      "fr": "Mort de Tellah",
+      "it": "Morte di Tellah",
+      "de": "Tellahs Tod",
+      "es": "Muerte de Tellah",
+      "ko": "테라의 죽음",
+      "zht": "泰拉死亡",
+      "zhc": "泰拉死亡",
+      "ru": "Смерть Теллы",
+      "th": "เทลล่าห์เสียชีวิต",
+      "pt": "Morte de Tellah"
+    },
+    "count": 1
+  },
+  {
+    "raw": "鍵がかかって通れない",
+    "translated": {
+      "en": "Locked Cannot Pass",
+      "fr": "Verrouillé, impossible de passer",
+      "it": "Chiuso a chiave, non si può passare",
+      "de": "Verschlossen, kein Durchgang",
+      "es": "Cerrado, no se puede pasar",
+      "ko": "잠겨서 통과할 수 없다",
+      "zht": "上鎖無法通過",
+      "zhc": "上锁无法通过",
+      "ru": "Заперто, нельзя пройти",
+      "th": "ล็อคไม่สามารถผ่านได้",
+      "pt": "Trancado, Não Pode Passar"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ギロチン",
+    "translated": {
+      "en": "Guillotine",
+      "fr": "Guillotine",
+      "it": "Ghigliottina",
+      "de": "Guillotine",
+      "es": "Guillotina",
+      "ko": "길로틴",
+      "zht": "斷頭台",
+      "zhc": "断头台",
+      "ru": "Гильотина",
+      "th": "กิโยติน",
+      "pt": "Guilhotina"
+    },
+    "count": 4
+  },
+  {
+    "raw": "ローザ救出",
+    "translated": {
+      "en": "Rosa Rescue",
+      "fr": "Sauvetage de Rosa",
+      "it": "Salvataggio di Rosa",
+      "de": "Rosas Rettung",
+      "es": "Rescate de Rosa",
+      "ko": "로자 구출",
+      "zht": "羅莎救出",
+      "zhc": "罗莎救出",
+      "ru": "Спасение Розы",
+      "th": "ช่วยเหลือโรซ่า",
+      "pt": "Resgate de Rosa"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バルバリシア戦闘",
+    "translated": {
+      "en": "Barbariccia Battle",
+      "fr": "Combat Barbariccia",
+      "it": "Battaglia Barbariccia",
+      "de": "Barbarizia Kampf",
+      "es": "Batalla Barbariccia",
+      "ko": "바르바리치아 전투",
+      "zht": "巴爾巴莉希亞戰鬥",
+      "zhc": "巴尔巴莉希娅战斗",
+      "ru": "Битва с Барбариччей",
+      "th": "ต่อสู้บาร์บาริกเซีย",
+      "pt": "Batalha Barbariccia"
+    },
+    "count": 1
+  },
+  {
+    "raw": "カギのかかっている扉",
+    "translated": {
+      "en": "Locked Door",
+      "fr": "Porte verrouillée",
+      "it": "Porta chiusa a chiave",
+      "de": "Verschlossene Tür",
+      "es": "Puerta cerrada",
+      "ko": "잠긴 문",
+      "zht": "上鎖的門",
+      "zhc": "上锁的门",
+      "ru": "Запертая дверь",
+      "th": "ประตูล็อค",
+      "pt": "Porta Trancada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大砲室から追い出される",
+    "translated": {
+      "en": "Expelled from Cannon Room",
+      "fr": "Expulsé de la salle des canons",
+      "it": "Espulso dalla stanza dei cannoni",
+      "de": "Aus dem Kanonenraum vertrieben",
+      "es": "Expulsado de la sala de cañones",
+      "ko": "대포실에서 쫓겨남",
+      "zht": "被趕出砲台室",
+      "zhc": "被赶出炮台室",
+      "ru": "Изгнан из пушечной комнаты",
+      "th": "ถูกไล่ออกจากห้องปืนใหญ่",
+      "pt": "Expulso da Sala de Canhões"
+    },
+    "count": 1
+  },
+  {
+    "raw": "壊れた扉",
+    "translated": {
+      "en": "Broken Door",
+      "fr": "Porte cassée",
+      "it": "Porta rotta",
+      "de": "Kaputte Tür",
+      "es": "Puerta rota",
+      "ko": "부서진 문",
+      "zht": "損壞的門",
+      "zhc": "损坏的门",
+      "ru": "Сломанная дверь",
+      "th": "ประตูที่พัง",
+      "pt": "Porta Quebrada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ルゲイエのカギ使用イベント",
+    "translated": {
+      "en": "Dr. Lugae's Key Use Event",
+      "fr": "Événement utilisation Clef du Dr Lugae",
+      "it": "Evento uso Chiave di Lugae",
+      "de": "Dr. Lugaes Schlüssel-Ereignis",
+      "es": "Evento uso de llave del Dr. Lugae",
+      "ko": "르게이에의 열쇠 사용 이벤트",
+      "zht": "盧格的鑰匙使用事件",
+      "zhc": "卢格的钥匙使用事件",
+      "ru": "Событие использования ключа доктора Лугая",
+      "th": "อีเวนท์ใช้กุญแจของดร.ลูเก้",
+      "pt": "Evento de Uso da Chave do Dr. Lugae"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大砲室爆破",
+    "translated": {
+      "en": "Cannon Room Explosion",
+      "fr": "Explosion de la salle des canons",
+      "it": "Esplosione della stanza dei cannoni",
+      "de": "Kanonenraum-Explosion",
+      "es": "Explosión de la sala de cañones",
+      "ko": "대포실 폭파",
+      "zht": "砲台室爆炸",
+      "zhc": "炮台室爆炸",
+      "ru": "Взрыв пушечной комнаты",
+      "th": "ห้องปืนใหญ่ระเบิด",
+      "pt": "Explosão da Sala de Canhões"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ワープ装置",
+    "translated": {
+      "en": "Warp Device",
+      "fr": "Dispositif de téléportation",
+      "it": "Dispositivo di teletrasporto",
+      "de": "Warp-Gerät",
+      "es": "Dispositivo de teletransporte",
+      "ko": "워프 장치",
+      "zht": "傳送裝置",
+      "zhc": "传送装置",
+      "ru": "Устройство телепортации",
+      "th": "อุปกรณ์วาร์ป",
+      "pt": "Dispositivo de Teletransporte"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ルゲイエ博士とバトル",
+    "translated": {
+      "en": "Battle with Dr. Lugae",
+      "fr": "Combat contre Docteur Lugae",
+      "it": "Battaglia con Professor Lugae",
+      "de": "Kampf gegen Dr. Lugae",
+      "es": "Batalla contra Dr. Lugae",
+      "ko": "르게이에 박사와 전투",
+      "zht": "與盧格博士戰鬥",
+      "zhc": "与卢格博士战斗",
+      "ru": "Битва с доктором Лугаем",
+      "th": "ต่อสู้กับดร.ลูเก้",
+      "pt": "Batalha com Dr. Lugae"
+    },
+    "count": 1
+  },
+  {
+    "raw": "エッジとルビカンテ",
+    "translated": {
+      "en": "Edge and Rubicante",
+      "fr": "Edge et Rubicante",
+      "it": "Edge e Rubicante",
+      "de": "Edge und Rubicante",
+      "es": "Edge y Rubicante",
+      "ko": "엣지와 루비칸테",
+      "zht": "艾吉與盧比坎特",
+      "zhc": "艾吉与卢比坎特",
+      "ru": "Эдж и Рубиканте",
+      "th": "เอดจ์และรูบิคันเต้",
+      "pt": "Edge e Rubicante"
+    },
+    "count": 1
+  },
+  {
+    "raw": "階段の一番上",
+    "translated": {
+      "en": "Top of Stairs",
+      "fr": "Haut de l'escalier",
+      "it": "Cima delle scale",
+      "de": "Treppenbeginn",
+      "es": "Parte superior de las escaleras",
+      "ko": "계단 맨 위",
+      "zht": "階梯頂端",
+      "zhc": "阶梯顶端",
+      "ru": "Верх лестницы",
+      "th": "บนสุดบันได",
+      "pt": "Topo da Escada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（青）",
+    "translated": {
+      "en": "Crystal (Blue)",
+      "fr": "Cristal (bleu)",
+      "it": "Cristallo (blu)",
+      "de": "Kristall (blau)",
+      "es": "Cristal (azul)",
+      "ko": "크리스털 (파랑)",
+      "zht": "水晶 (藍)",
+      "zhc": "水晶 (蓝)",
+      "ru": "Кристалл (синий)",
+      "th": "คริสตัล (น้ำเงิน)",
+      "pt": "Cristal (Azul)"
+    },
+    "count": 4
+  },
+  {
+    "raw": "クリスタル（黄）",
+    "translated": {
+      "en": "Crystal (Yellow)",
+      "fr": "Cristal (jaune)",
+      "it": "Cristallo (giallo)",
+      "de": "Kristall (gelb)",
+      "es": "Cristal (amarillo)",
+      "ko": "크리스털 (노랑)",
+      "zht": "水晶 (黃)",
+      "zhc": "水晶 (黄)",
+      "ru": "Кристалл (жёлтый)",
+      "th": "คริสตัล (เหลือง)",
+      "pt": "Cristal (amarelo)"
+    },
+    "count": 3
+  },
+  {
+    "raw": "クリスタル（黄）右下用",
+    "translated": {
+      "en": "Crystal (Yellow) Bottom Right",
+      "fr": "Cristal (jaune) Bottom Right",
+      "it": "Cristallo (giallo) Bottom Right",
+      "de": "Kristall (gelb) Bottom Right",
+      "es": "Cristal (amarillo) Bottom Right",
+      "ko": "크리스털 (노랑) Bottom Right",
+      "zht": "水晶 (黃) Bottom Right",
+      "zhc": "水晶 (黄) Bottom Right",
+      "ru": "Кристалл (жёлтый) Bottom Right",
+      "th": "คริสตัล (เหลือง) Bottom Right",
+      "pt": "Cristal (amarelo) Bottom Right"
+    },
+    "count": 1
+  },
+  {
+    "raw": "トリガーの位置を通ろうとする",
+    "translated": {
+      "en": "Try to Pass Trigger Position",
+      "fr": "Tenter de passer la position du déclencheur",
+      "it": "Tentare di passare la posizione del trigger",
+      "de": "Versuchen, die Triggerposition zu passieren",
+      "es": "Intentar pasar la posición del activador",
+      "ko": "트리거 위치를 지나가려 한다",
+      "zht": "嘗試通過觸發位置",
+      "zhc": "尝试通过触发位置",
+      "ru": "Попытка пройти триггерную точку",
+      "th": "พยายามผ่านตำแหน่งทริกเกอร์",
+      "pt": "Tentar Passar pela Posição de Gatilho"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ファルコン号発進",
+    "translated": {
+      "en": "Falcon Launch",
+      "fr": "Lancement du Faucon",
+      "it": "Lancio del Falcon",
+      "de": "Falke-Start",
+      "es": "Lanzamiento del Falcon",
+      "ko": "팔콘호 발진",
+      "zht": "飛隼號發進",
+      "zhc": "飞隼号发进",
+      "ru": "Запуск «Сокола»",
+      "th": "ปล่อยฟัลคอน",
+      "pt": "Lançamento do Falcon"
+    },
+    "count": 2
+  },
+  {
+    "raw": "エブラーナ王と王妃",
+    "translated": {
+      "en": "King and Queen of Eblan",
+      "fr": "Roi et reine d'Éblana",
+      "it": "Re e regina di Eblan",
+      "de": "König und Königin von Eblan",
+      "es": "Rey y reina de Eblan",
+      "ko": "에블라나 왕과 왕비",
+      "zht": "艾布拉納王與王后",
+      "zhc": "艾布拉纳王与王后",
+      "ru": "Король и королева Эблана",
+      "th": "ราชาและราชินีแห่งเอบลัน",
+      "pt": "Rei e Rainha de Eblan"
+    },
+    "count": 1
+  },
+  {
+    "raw": "0059：ファルコン号発進",
+    "translated": {
+      "en": "0059: Falcon Launch",
+      "fr": "0059: Lancement du Faucon",
+      "it": "0059: Lancio del Falcon",
+      "de": "0059: Falke-Start",
+      "es": "0059: Lanzamiento del Falcon",
+      "ko": "0059: 팔콘호 발진",
+      "zht": "0059: 飛隼號發進",
+      "zhc": "0059: 飞隼号发进",
+      "ru": "0059: Запуск «Сокола»",
+      "th": "0059: ปล่อยฟัลคอน",
+      "pt": "0059: Lançamento do Falcon"
+    },
+    "count": 1
+  },
+  {
+    "raw": "奥義の書入手3",
+    "translated": {
+      "en": "Obtain Grimoire 3",
+      "fr": "Obtention du Grimoire 3",
+      "it": "Ottieni Grimorio 3",
+      "de": "Grimoire erhalten 3",
+      "es": "Obtener Grimorio 3",
+      "ko": "오의의 서 입수 3",
+      "zht": "取得奧義之書 3",
+      "zhc": "取得奥义之书 3",
+      "ru": "Получение Гримуара 3",
+      "th": "ได้รับตำราไสยเวท 3",
+      "pt": "Obter Grimório 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "幻獣イベント1",
+    "translated": {
+      "en": "Eidolon Event 1",
+      "fr": "Événement Esper 1",
+      "it": "Evento Eikon 1",
+      "de": "Esper-Ereignis 1",
+      "es": "Evento Eidolón 1",
+      "ko": "환수 이벤트 1",
+      "zht": "幻獸事件 1",
+      "zhc": "幻兽事件 1",
+      "ru": "Событие Эйдолона 1",
+      "th": "อีเวนท์อสูร 1",
+      "pt": "Evento Eidolon 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アイテム使用まで閉鎖",
+    "translated": {
+      "en": "Closed Until Item Used",
+      "fr": "Fermé jusqu'à utilisation d'un objet",
+      "it": "Chiuso finché non si usa un oggetto",
+      "de": "Geschlossen bis Gegenstand benutzt",
+      "es": "Cerrado hasta usar un objeto",
+      "ko": "아이템 사용까지 폐쇄",
+      "zht": "使用道具前封閉",
+      "zhc": "使用道具前封闭",
+      "ru": "Закрыто до использования предмета",
+      "th": "ปิดจนกว่าจะใช้ไอเทม",
+      "pt": "Fechado Até Usar Item"
+    },
+    "count": 1
+  },
+  {
+    "raw": "封印の洞窟の扉で『ルカの首飾り』を使用",
+    "translated": {
+      "en": "Use Luca's Necklace at Sealed Cavern Door",
+      "fr": "Utiliser le collier de Luca à la porte de la Grotte scellée",
+      "it": "Usa la Collana di Luka alla porta della caverna sigillata",
+      "de": "Lucas Halskette an der Tür der versiegelten Höhle benutzen",
+      "es": "Usar el collar de Luca en la puerta de la Cueva sellada",
+      "ko": "봉인의 동굴 문에서 루카의 목걸이 사용",
+      "zht": "在封印洞窟門前使用露卡的項鏈",
+      "zhc": "在封印洞窟门前使用露卡的项链",
+      "ru": "Использовать Ожерелье Люки у двери Запечатанной пещеры",
+      "th": "ใช้สร้อยคอของลูคาที่ประตูถ้ำปิดตาย",
+      "pt": "Usar Colar da Luca na Porta da Caverna Selada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "カインの裏切り",
+    "translated": {
+      "en": "Kain's Betrayal",
+      "fr": "Trahison de Kaïn",
+      "it": "Tradimento di Cain",
+      "de": "Kains Verrat",
+      "es": "Traición de Kain",
+      "ko": "카인의 배신",
+      "zht": "凱因的背叛",
+      "zhc": "凯因的背叛",
+      "ru": "Предательство Каина",
+      "th": "ไคน์ทรยศ",
+      "pt": "Traição de Kain"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アサルトドアー①",
+    "translated": {
+      "en": "Trap Door 1",
+      "fr": "Porte piégée 1",
+      "it": "Porta d'assalto 1",
+      "de": "Falltür 1",
+      "es": "Escotilla 1",
+      "ko": "어설트 도어 1",
+      "zht": "狂暴之門 1",
+      "zhc": "狂暴之门 1",
+      "ru": "Коварная дверь 1",
+      "th": "ประตูกับดัก 1",
+      "pt": "Porta Viva 1"
+    },
+    "count": 6
+  },
+  {
+    "raw": "綱渡り①",
+    "translated": {
+      "en": "Rope Bridge 1",
+      "fr": "Pont de corde 1",
+      "it": "Ponte di corda 1",
+      "de": "Seilbrücke 1",
+      "es": "Puente de cuerda 1",
+      "ko": "밧줄 다리 1",
+      "zht": "繩橋 1",
+      "zhc": "绳桥 1",
+      "ru": "Верёвочный мост 1",
+      "th": "สะพานเชือก 1",
+      "pt": "Ponte de Corda 1"
+    },
+    "count": 5
+  },
+  {
+    "raw": "綱渡り②",
+    "translated": {
+      "en": "Rope Bridge 2",
+      "fr": "Pont de corde 2",
+      "it": "Ponte di corda 2",
+      "de": "Seilbrücke 2",
+      "es": "Puente de cuerda 2",
+      "ko": "밧줄 다리 2",
+      "zht": "繩橋 2",
+      "zhc": "绳桥 2",
+      "ru": "Верёвочный мост 2",
+      "th": "สะพานเชือก 2",
+      "pt": "Ponte de Corda 2"
+    },
+    "count": 3
+  },
+  {
+    "raw": "アサルトドアー②",
+    "translated": {
+      "en": "Trap Door 2",
+      "fr": "Porte piégée 2",
+      "it": "Porta d'assalto 2",
+      "de": "Falltür 2",
+      "es": "Escotilla 2",
+      "ko": "어설트 도어 2",
+      "zht": "狂暴之門 2",
+      "zhc": "狂暴之门 2",
+      "ru": "Коварная дверь 2",
+      "th": "ประตูกับดัก 2",
+      "pt": "Porta Viva 2"
+    },
+    "count": 4
+  },
+  {
+    "raw": "綱渡り④",
+    "translated": {
+      "en": "Rope Bridge 4",
+      "fr": "Pont de corde 4",
+      "it": "Ponte di corda 4",
+      "de": "Seilbrücke 4",
+      "es": "Puente de cuerda 4",
+      "ko": "밧줄 다리 4",
+      "zht": "繩橋 4",
+      "zhc": "绳桥 4",
+      "ru": "Верёвочный мост 4",
+      "th": "สะพานเชือก 4",
+      "pt": "Ponte de Corda 4"
+    },
+    "count": 2
+  },
+  {
+    "raw": "綱渡り③",
+    "translated": {
+      "en": "Rope Bridge 3",
+      "fr": "Pont de corde 3",
+      "it": "Ponte di corda 3",
+      "de": "Seilbrücke 3",
+      "es": "Puente de cuerda 3",
+      "ko": "밧줄 다리 3",
+      "zht": "繩橋 3",
+      "zhc": "绳桥 3",
+      "ru": "Верёвочный мост 3",
+      "th": "สะพานเชือก 3",
+      "pt": "Ponte de Corda 3"
+    },
+    "count": 2
+  },
+  {
+    "raw": "デモンズウォール",
+    "translated": {
+      "en": "Demon Wall",
+      "fr": "Mur démonique",
+      "it": "Muro diabolico",
+      "de": "Dämonenwall",
+      "es": "Muro infernal",
+      "ko": "데몬즈 월",
+      "zht": "惡魔牆",
+      "zhc": "恶魔墙",
+      "ru": "Демоническая стена",
+      "th": "กำแพงปีศาจ",
+      "pt": "Muro Demoníaco"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アサルトドアー③",
+    "translated": {
+      "en": "Trap Door 3",
+      "fr": "Porte piégée 3",
+      "it": "Porta d'assalto 3",
+      "de": "Falltür 3",
+      "es": "Escotilla 3",
+      "ko": "어설트 도어 3",
+      "zht": "狂暴之門 3",
+      "zhc": "狂暴之门 3",
+      "ru": "Коварная дверь 3",
+      "th": "ประตูกับดัก 3",
+      "pt": "Porta Viva 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アサルトドアー④",
+    "translated": {
+      "en": "Trap Door 4",
+      "fr": "Porte piégée 4",
+      "it": "Porta d'assalto 4",
+      "de": "Falltür 4",
+      "es": "Escotilla 4",
+      "ko": "어설트 도어 4",
+      "zht": "狂暴之門 4",
+      "zhc": "狂暴之门 4",
+      "ru": "Коварная дверь 4",
+      "th": "ประตูกับดัก 4",
+      "pt": "Porta Viva 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アサルトドアー⑤",
+    "translated": {
+      "en": "Trap Door 5",
+      "fr": "Porte piégée 5",
+      "it": "Porta d'assalto 5",
+      "de": "Falltür 5",
+      "es": "Escotilla 5",
+      "ko": "어설트 도어 5",
+      "zht": "狂暴之門 5",
+      "zhc": "狂暴之门 5",
+      "ru": "Коварная дверь 5",
+      "th": "ประตูกับดัก 5",
+      "pt": "Porta Viva 5"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アサルトドアー⑥",
+    "translated": {
+      "en": "Trap Door 6",
+      "fr": "Porte piégée 6",
+      "it": "Porta d'assalto 6",
+      "de": "Falltür 6",
+      "es": "Escotilla 6",
+      "ko": "어설트 도어 6",
+      "zht": "狂暴之門 6",
+      "zhc": "狂暴之门 6",
+      "ru": "Коварная дверь 6",
+      "th": "ประตูกับดัก 6",
+      "pt": "Porta Viva 6"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アサルトドアー⑦",
+    "translated": {
+      "en": "Trap Door 7",
+      "fr": "Porte piégée 7",
+      "it": "Porta d'assalto 7",
+      "de": "Falltür 7",
+      "es": "Escotilla 7",
+      "ko": "어설트 도어 7",
+      "zht": "狂暴之門 7",
+      "zhc": "狂暴之门 7",
+      "ru": "Коварная дверь 7",
+      "th": "ประตูกับดัก 7",
+      "pt": "Porta Viva 7"
+    },
+    "count": 1
+  },
+  {
+    "raw": "四天王",
+    "translated": {
+      "en": "Four Fiends",
+      "fr": "Quatre Démons",
+      "it": "Quattro Demoni",
+      "de": "Vier Dämonen",
+      "es": "Cuatro Demonios",
+      "ko": "사천왕",
+      "zht": "四天王",
+      "zhc": "四天王",
+      "ru": "Четыре Злодея",
+      "th": "สี่อสูร",
+      "pt": "Quatro Demônios"
+    },
+    "count": 1
+  },
+  {
+    "raw": "制御装置",
+    "translated": {
+      "en": "Control System",
+      "fr": "Système de contrôle",
+      "it": "Sistema di controllo",
+      "de": "Steuersystem",
+      "es": "Sistema de control",
+      "ko": "제어 장치",
+      "zht": "控制裝置",
+      "zhc": "控制装置",
+      "ru": "Система управления",
+      "th": "ระบบควบคุม",
+      "pt": "Sistema de Controle"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ほーりーらんす",
+    "translated": {
+      "en": "Holy Lance",
+      "fr": "Lance sacrée",
+      "it": "Lancia sacra",
+      "de": "Heilige Lanze",
+      "es": "Lanza sagrada",
+      "ko": "홀리 랜스",
+      "zht": "神聖之槍",
+      "zhc": "神圣之枪",
+      "ru": "Священное копьё",
+      "th": "หอกศักดิ์สิทธิ์",
+      "pt": "Lança Sagrada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0118",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "まさむね",
+    "translated": {
+      "en": "Masamune",
+      "fr": "Masamune",
+      "it": "Masamune",
+      "de": "Masamune",
+      "es": "Masamune",
+      "ko": "마사무네",
+      "zht": "正宗",
+      "zhc": "正宗",
+      "ru": "Масамунэ",
+      "th": "มาซามูเนะ",
+      "pt": "Masamune"
+    },
+    "count": 1
+  },
+  {
+    "raw": "最後の戦い",
+    "translated": {
+      "en": "The Final Battle",
+      "fr": "La bataille finale",
+      "it": "La battaglia finale",
+      "de": "Die letzte Schlacht",
+      "es": "La batalla final",
+      "ko": "최후의 전투",
+      "zht": "最終之戰",
+      "zhc": "最终之战",
+      "ru": "Последняя битва",
+      "th": "ศึกสุดท้าย",
+      "pt": "A Batalha Final"
+    },
+    "count": 1
+  },
+  {
+    "raw": "むらさめ",
+    "translated": {
+      "en": "Murasame",
+      "fr": "Murasame",
+      "it": "Murasame",
+      "de": "Murasame",
+      "es": "Murasame",
+      "ko": "무라사메",
+      "zht": "村雨",
+      "zhc": "村雨",
+      "ru": "Мурасамэ",
+      "th": "มูราซาเมะ",
+      "pt": "Murasame"
+    },
+    "count": 1
+  },
+  {
+    "raw": "らぐなろく",
+    "translated": {
+      "en": "Ragnarok",
+      "fr": "Ragnarok",
+      "it": "Ragnarok",
+      "de": "Ragnarok",
+      "es": "Ragnarok",
+      "ko": "라그나로크",
+      "zht": "拉格納洛克",
+      "zhc": "拉格纳洛克",
+      "ru": "Рагнарок",
+      "th": "แรกนาร็อค",
+      "pt": "Ragnarok"
+    },
+    "count": 1
+  }
+]

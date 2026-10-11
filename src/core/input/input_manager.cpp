@@ -275,6 +275,7 @@ bool both(const char* a, const char* b)
 
 Context determine_context(bool on_demand)
 {
+    if (queries::is("ReviewBuffer.IsResults")) return Context::Results;
     // The key-help / controls overlay takes priority while shown.
     if (queries::is("KeyHelpReader.IsScreenActive")) return Context::KeyHelp;
     if (both("StatusNavigationTracker.IsNavigationActive", "StatusNavigationTracker.ValidateState")) return Context::Status;
@@ -285,7 +286,7 @@ Context determine_context(bool on_demand)
     if (queries::is("ShopMenuTracker.IsShopMenuActive") && queries::is("ShopMenuTracker.ValidateState")) return Context::Shop;
     // Field keys only while on a field map with no menu open; otherwise Global, so the field
     // keys are silent and the global info keys still work.
-    if (is_on_valid_map(on_demand) && !menu_state::any_active()) return Context::Field;
+    if (queries::is("GameStatePatches.IsFieldPlayerState") && is_on_valid_map(on_demand) && !menu_state::any_active()) return Context::Field;
     return Context::Global;
 }
 
@@ -303,7 +304,7 @@ bool any_modifier_held() { return shift_held() || ctrl_held() || alt_held(); }
 
 bool is_buffer_context(Context c)
 {
-    return c == Context::Status || c == Context::BestiaryDetail || c == Context::KeyHelp;
+    return c == Context::Status || c == Context::BestiaryDetail || c == Context::Results || c == Context::KeyHelp;
 }
 
 void dispatch_registered_bindings(Context active, Mod mods)
@@ -325,12 +326,13 @@ void dispatch_registered_bindings(Context active, Mod mods)
 
 void handle_function_key_input()
 {
+    if (key_pressed(Key::F1)) actions::run("GameToggles.ReportSpeed");
+    if (key_pressed(Key::F3)) actions::run("GameToggles.ReportEncounters");
     if (key_pressed(Key::F7)) actions::run("Mod.ToggleAutoDetail");
 
     if (key_pressed(Key::F5)) {
-        // Enemy HP Display is a battle feature: gated on in-battle (IsFieldActive is false there).
         if (queries::is("BattleStateHelper.IsInBattle")) {
-            const int next = (ui::prefs::enemy_hp_display() + 1) % 3;
+            const int next = (std::clamp(ui::prefs::enemy_hp_display(), 0, 2) + 1) % 3;
             ui::prefs::set_enemy_hp_display(next);
             const std::wstring options[] = {T(L"Numbers"), T(L"Percentage"), T(L"Hidden")};
             ffpr::say(TF(L"Enemy HP: {0}", {options[next]}), true);
@@ -389,13 +391,9 @@ void update()
     // Per-frame footstep tile-crossing poll (field-active gated, silent in vehicles).
     if (actions::defined("MovementSoundPatches.PollFootsteps")) actions::run("MovementSoundPatches.PollFootsteps");
 
-    // BattleCommandState.CurrentActor reset edge (Mod.AnnounceCharacterStatus).
-    mod::tick();
 
     // The mod's modal windows take all keyboard input while open.
     if (ui::handle_modal_input()) return;
-    // A game module's own modal window (FF5's battle-results log) reads its own keys.
-    if (queries::is("BattleResultNavigator.IsOpen")) return;
 
     // Game-context hotkeys only while the game window is the foreground window.
     if (!game_window_focused()) return;

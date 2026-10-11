@@ -5,6 +5,8 @@
 #include "menus_internal.h"
 #include "../core.h"
 #include "../dedup.h"
+#include "../displayed_ui.h"
+#include "../frame.h"
 #include "../hooks.h"
 #include "../log.h"
 #include "../modtext.h"
@@ -12,6 +14,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../ui/review_buffer.h"
 
 namespace ffpr::menus {
 namespace {
@@ -41,6 +44,41 @@ ref::Method mEquipSelectSelectContent{kEquipmentSelectWindowController, "SelectC
 
 ref::Class  kEquipmentCommandController{"Last.UI.KeyInput", "EquipmentCommandController"};
 ref::Method mEquipCommandSetFocus{kEquipmentCommandController, "SetFocus", 2};
+
+ref::Class kEquipmentStatus{"Last.UI.KeyInput", "EquipmentStatusController"};
+ref::Method mDifference{kEquipmentStatus, "SetDifferenceData", 3};
+using Difference = void (*)(void*, void*, void*, int32_t, const void*);
+Difference o_difference;
+unsigned g_comparison_generation = 0;
+
+void d_difference(void* self, void* data, void* item, int32_t slot, const void* mi)
+{
+    ++g_comparison_generation;
+    frame::cancel_label("Equipment.Comparison");
+    if (ui::review::owns(self)) ui::review::clear();
+    o_difference(self, data, item, slot, mi);
+    hooks::guarded("Equipment.DisplayedComparison", [self] {
+        const unsigned generation = ++g_comparison_generation;
+        frame::cancel_label("Equipment.Comparison");
+        frame::next_frame([self, generation] {
+            if (generation != g_comparison_generation || !detail::equip_menu_active() || !displayed::visible(self)) return;
+            std::vector<std::wstring> rows;
+            void* list = displayed::field(self, "contentList");
+            for (int i = 0; i < unity::list_count(list); ++i) {
+                auto line = displayed::comparison(displayed::field(unity::list_at(list, i), "view"));
+                if (!line.empty()) rows.push_back(std::move(line));
+            }
+            auto description = detail::equip_description_from_ui();
+            auto comparisons = text::join(rows, L". ");
+            if (!description.empty()) rows.push_back(std::move(description));
+            ui::review::Options options;
+            options.domain = ui::review::Domain::Information;
+            options.announce = false;
+            ui::review::show(self, {}, std::move(rows), options);
+            if (!comparisons.empty()) ffpr::say(comparisons, false);
+        }, "Equipment.Comparison");
+    });
+}
 
 ref::Class  kEquipmentDescriptionWindowController{"Last.UI.KeyInput", "EquipmentDescriptionWindowController"};
 ref::Field  fEquipDescWindowView{kEquipmentDescriptionWindowController, "view"};
@@ -228,6 +266,9 @@ void d_EquipWindowSetActive(void* self, bool is_active, const void* mi)
     o_EquipWindowSetActive(self, is_active, mi);
     hooks::guarded("EquipmentWindowController.SetActive", [&] {
         if (is_active) return;
+        ++g_comparison_generation;
+        frame::cancel_label("Equipment.Comparison");
+        if (ui::review::domain() == ui::review::Domain::Information) ui::review::clear();
         bool restore_shop = g_entered_from_shop;   // captured before the reset clears it
         clear_state();
         if (restore_shop) detail::shop_set_menu_active();
@@ -297,6 +338,9 @@ int install()
 {
     // EquipMenuState's static constructor.
     menu_state::register_reset(menu_state::EQUIP_MENU, [] {
+        ++g_comparison_generation;
+        frame::cancel_label("Equipment.Comparison");
+        if (ui::review::domain() == ui::review::Domain::Information) ui::review::clear();
         g_entered_from_shop = false;
         g_have_target = false;
         dedup::reset(kCtxCharacter);
@@ -314,6 +358,7 @@ int install()
     n += hooks::attach(mEquipWindowSetActive, &d_EquipWindowSetActive, &o_EquipWindowSetActive) ? 1 : 0;
     n += hooks::attach(mEquipSelectSelectContent, &d_EquipSelectSelectContent, &o_EquipSelectSelectContent) ? 1 : 0;
     n += hooks::attach(mEquipCommandSetFocus, &d_EquipCommandSetFocus, &o_EquipCommandSetFocus) ? 1 : 0;
+    n += hooks::attach(mDifference, &d_difference, &o_difference) ? 1 : 0;
     return n;
 }
 
@@ -333,7 +378,7 @@ std::wstring equip_description_from_ui()
     void* view = ref::rd<void*>(controller, fEquipDescWindowView);
     if (!view) return {};
     void* text_component = ref::rd<void*>(view, fEquipDescViewDescriptionText);
-    return text_component ? unity::ui_text(text_component) : std::wstring();
+    return displayed::text(text_component);
 }
 
 } // namespace detail

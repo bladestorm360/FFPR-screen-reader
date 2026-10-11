@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF2 Patches/MagicMenuPatches.cs (MagicMenuState and MagicMenuPatches), the
 // AbilityWindowController.SetActive(false) postfix of MenuTransitionPatches
 // (Core/FFII_ScreenReaderMod.cs) and FF2Constants.MagicMenuStates (Utils/FF2Constants.cs).
@@ -480,24 +481,8 @@ void d_UseSetCursor(void* self, void* cursor, const void* mi)
         void* content = unity::list_at(list, index);
         void* character = content ? ref::rd<void*>(content, fTargetCurrentData) : nullptr;
         if (!character) return;
-        std::wstring announcement = ref::call_str(mCharName, character);
-        if (text::is_blank(announcement)) return;
-
-        hooks::guarded("FF2.Magic.TargetVitals", [&] {
-            void* param = ref::call<void*>(mCharParameter, character);
-            if (!param) return;
-            announcement += L", " + T(L"HP") + L" " + text::num(ref::rd<int32_t>(param, fParamCurrentHP)) + L"/" +
-                            text::num(virtual_int(mConfirmedMaxHp, param));
-            announcement += L", " + T(L"MP") + L" " + text::num(ref::rd<int32_t>(param, fParamCurrentMP)) + L"/" +
-                            text::num(virtual_int(mConfirmedMaxMp, param));
-            void* conditions = ref::call<void*>(mParamConditionList, param);
-            std::vector<std::wstring> names;
-            for (int i = 0, n = unity::list_count(conditions); i < n; ++i) {
-                std::wstring c = menus::condition_name(unity::list_at(conditions, i));
-                if (!text::is_blank(c)) names.push_back(c);
-            }
-            if (!names.empty()) announcement += L", " + text::join(names, L", ");
-        });
+        std::wstring announcement = displayed::target(content);
+        if (announcement.empty()) return;
 
         sync();
         if (!dedup::text(kCtxTarget, announcement)) return;

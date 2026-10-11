@@ -5,6 +5,7 @@
 // DataElement<T>.<DataList>k__BackingField Dictionary<int, T>), so the port reads that
 // dictionary directly: DataType.Map = 0 and DataType.Area = 1 in all five games.
 #include <map>
+#include "entity_translator.h"
 #include "field_internal.h"
 #include "map_names.h"
 #include "../core.h"
@@ -57,6 +58,55 @@ void* master_list(void* master_manager, int data_type)
 }
 
 std::wstring message(const std::wstring& key) { return get_message(key); }
+
+/// A title from data/<game>/map_titles.json for a map the master leaves untitled. A string is
+/// a message key of the game's own text ("MSG_MAP_NAME_11"). An object is a label inferred
+/// from the map's baked contents (the user's rules, 2026-10-11: a named NPC's house, a
+/// generic NPC's "House", else the event or key item the room holds, else nothing):
+///   {"text": K}   the mod text K ("Church", "Pub", "Throne Room");
+///   {"owner": N}  "N's House", {"room": N} "N's Room": N is the NPC's baked (Japanese) name,
+///                 translated as the entity list translates it (data/<game>/translation.json),
+///                 without a descriptor in parentheses ("Salina (Woman 2)" -> "Salina");
+///   {"entity": E} the translated name of the baked object E that defines the room (FF3's
+///                 "Resurrection" and "Healing Spring" points);
+///   {"item": M}   "I Room" for the key item named by the game message M.
+/// A list joins its parts with spaces ("Rebel Hideout Revival Chamber").
+std::wstring without_descriptor(std::wstring name)
+{
+    for (wchar_t open : {L'(', L'（'}) {
+        const size_t at = name.find(open);
+        if (at != std::wstring::npos && at > 0) name = name.substr(0, at);
+    }
+    while (!name.empty() && (name.back() == L' ' || name.back() == L'　')) name.pop_back();
+    return name;
+}
+
+std::wstring override_title(const json::Value& v)
+{
+    if (v.is_string()) return v.s.empty() ? L"" : message(v.s);
+    if (v.type == json::Value::Type::Array) {
+        std::wstring out;
+        for (const json::Value& part : v.arr) {
+            std::wstring t = override_title(part);
+            if (t.empty()) continue;
+            if (!out.empty()) out += L" ";
+            out += t;
+        }
+        return out;
+    }
+    if (!v.is_object()) return L"";
+    if (const json::Value* t = v.get(L"text"))
+        if (t->is_string() && !t->s.empty()) return T(t->s);
+    if (const json::Value* o = v.get(L"owner"))
+        if (o->is_string() && !o->s.empty()) return TF(L"{0}'s House", {without_descriptor(translate_entity_name(o->s))});
+    if (const json::Value* r = v.get(L"room"))
+        if (r->is_string() && !r->s.empty()) return TF(L"{0}'s Room", {without_descriptor(translate_entity_name(r->s))});
+    if (const json::Value* e = v.get(L"entity"))
+        if (e->is_string() && !e->s.empty()) return without_descriptor(translate_entity_name(e->s));
+    if (const json::Value* i = v.get(L"item"))
+        if (i->is_string() && !i->s.empty()) return TF(L"{0} Room", {message(i->s)});
+    return L"";
+}
 
 } // namespace
 
@@ -132,19 +182,22 @@ std::wstring resolve_map_name_by_id(int map_id)
         std::wstring area_name;
         if (!area_name_key.empty()) area_name = message(area_name_key);
 
-        // Localized map title ("1F", "B1", "Entrance")
-        std::wstring title_key = ref::call_str(r::mMapGetMapTitle, map);
+        // An authored title first: data/<game>/map_titles.json, by map id, for a map the
+        // master leaves untitled (FF2's late Altair rebel hideout rooms are "Altair" alone;
+        // user, 2026-10-10) or titles wrongly (FF1's churches are "2F" in the master; user,
+        // 2026-10-11): a message key of the game's own text or a label inferred from the
+        // room's contents (override_title).
         std::wstring title;
-        if (!title_key.empty() && title_key != L"None" && text::lower(title_key) != L"none")
-            title = message(title_key);
-
-        // A title the master lacks: data/<game>/map_titles.json, by map id (FF2's late Altair
-        // rebel hideout rooms are "Altair" alone in the master; user, 2026-10-10). The value is
-        // a message key, so the text is still the game's own.
-        if (title.empty()) {
+        {
             const json::Value& overrides = data::game_json("maptitles");
-            if (const json::Value* v = overrides.get(std::to_wstring(map_id)))
-                if (v->is_string() && !v->s.empty()) title = message(v->s);
+            if (const json::Value* v = overrides.get(std::to_wstring(map_id))) title = override_title(*v);
+        }
+
+        // Localized map title ("1F", "B1", "Entrance")
+        if (title.empty()) {
+            std::wstring title_key = ref::call_str(r::mMapGetMapTitle, map);
+            if (!title_key.empty() && title_key != L"None" && text::lower(title_key) != L"none")
+                title = message(title_key);
         }
 
         // No title from the message table: the Floor field

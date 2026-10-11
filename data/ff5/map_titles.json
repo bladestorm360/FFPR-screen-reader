@@ -1,0 +1,21 @@
+{
+  "_comment": "Titles for maps the game's map master leaves untitled (map.txt map_title None, floor 0), by map id; resolved by src/core/field/map_names.cpp override_title: a string is a game message key; {\"text\": mod text key}; {\"owner\": baked NPC name} = N's House; {\"room\": baked NPC name} = N's Room; {\"entity\": baked object name} = that object's translated name; {\"item\": item message} = I Room; a list joins its parts. Labels inferred from the baked contents under the user's rules of 2026-10-11 (a named NPC's house, a generic NPC's House, else the defining event or point, else nothing). MSG_ARA_NAME_02 = 'Item Shop', the title the other item shops carry: Moore's and Castle of Bal's untitled shops sell product group 35/36, both 'Items'. Evidence per entry: docs/MAP_LABELS.md.",
+  "49": {"text": "House"},
+  "94": {"text": "House"},
+  "137": {"text": "House"},
+  "138": {"entity": "モーグリの着ぐるみ"},
+  "139": {"text": "House"},
+  "150": "MSG_ARA_NAME_02",
+  "170": "MSG_ARA_NAME_02",
+  "185": {"text": "House"},
+  "188": {"text": "House"},
+  "197": {"room": "ボコ"},
+  "209": {"entity": "クリスタル"},
+  "313": {"entity": "sc_e_0527:回復の泉"},
+  "382": {"entity": "回復の泉"},
+  "471": {"text": "House"},
+  "535": {"text": "House"},
+  "536": {"text": "House"},
+  "537": {"text": "House"},
+  "540": {"text": "House"}
+}

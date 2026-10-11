@@ -3,6 +3,7 @@
 // FFI_ScreenReaderMod.ClearOtherMenuStates (Core/FFI_ScreenReaderMod.cs, ManualPatches),
 // Il2CppInterop's `new List<T>(IEnumerable<T>)`, MasterManager.GetData<T>/GetList<T>, and the
 // character reads of Patches/ItemMenuPatches.cs and Patches/MagicTargetPatches.cs.
+#include "../ui/preferences.h"
 #include "menus_internal.h"
 
 #include <cstring>
@@ -24,12 +25,6 @@ ref::Method mGetMessage{kMessageManager, "GetMessage", 2};
 ref::Class  kMenuManager{"Last.UI", "MenuManager"};
 ref::Method mMenuIsOpen{kMenuManager, "get_IsOpen", 0};
 
-ref::Class  kIEnumerable{"System.Collections", "IEnumerable"};
-ref::Method mGetEnumerator{kIEnumerable, "GetEnumerator", 0};
-ref::Class  kIEnumerator{"System.Collections", "IEnumerator"};
-ref::Method mMoveNext{kIEnumerator, "MoveNext", 0};
-ref::Method mGetCurrent{kIEnumerator, "get_Current", 0};
-
 ref::Class  kOwnedCharacterData{"Last.Data.User", "OwnedCharacterData"};
 ref::Method mCharacterGetName{kOwnedCharacterData, "get_Name", 0};
 ref::Method mCharacterGetParameter{kOwnedCharacterData, "get_Parameter", 0};
@@ -45,18 +40,9 @@ ref::Class  kMasterManager{"Last.Data.Master", "MasterManager"};
 ref::Field  fMasterList{kMasterManager, "masterList"};
 ref::Field  fMasterTypeList{kMasterManager, "masterTypeList"};
 
-// Il2CppInterop walked any IEnumerable; a game list longer than this is not a menu list.
-constexpr int kMaxEnumerated = 4096;
-
 bool class_is(il2cpp::Class* k, const char* ns, const char* name)
 {
     return k && std::strcmp(il2cpp::class_name(k), name) == 0 && std::strcmp(il2cpp::class_namespace(k), ns) == 0;
-}
-
-bool ends_with(const char* s, const char* suffix)
-{
-    size_t a = std::strlen(s), b = std::strlen(suffix);
-    return a >= b && std::strcmp(s + a - b, suffix) == 0;
 }
 
 // DataElement<T>.DataList (the Dictionary<int, T> behind GetList<T>) of one masterList value.
@@ -124,59 +110,14 @@ bool menu_manager_open()
     return mm && ref::call<bool>(mMenuIsOpen, mm);
 }
 
-bool auto_detail() { return settings::get_bool("AutoDetail", true); }
+bool auto_detail() { return ui::prefs::auto_detail_enabled(); }
 
 void clear_other_menu_states(const char* except_menu)
 {
     ffpr::system::clear_other_menu_states(except_menu ? except_menu : "");
 }
 
-bool enumerate(void* e, std::vector<void*>& out)
-{
-    out.clear();
-    if (!e) return false;
-    il2cpp::Class* k = il2cpp::object_class(e);
-    if (!k) return false;
-
-    if (class_is(k, "System.Collections.Generic", "List`1")) {
-        int n = unity::list_count(e);
-        if (n > kMaxEnumerated) n = kMaxEnumerated;
-        out.reserve(static_cast<size_t>(n));
-        for (int i = 0; i < n; ++i) out.push_back(unity::list_at(e, i));
-        return true;
-    }
-    if (ends_with(il2cpp::class_name(k), "[]")) {
-        int n = unity::array_length(e);
-        if (n > kMaxEnumerated) n = kMaxEnumerated;
-        out.reserve(static_cast<size_t>(n));
-        for (int i = 0; i < n; ++i) out.push_back(unity::array_at(e, i));
-        return true;
-    }
-
-    // Any other IEnumerable (a LINQ iterator): enumerate it the way the List constructor did.
-    il2cpp::Method* get_enum = mGetEnumerator.get();
-    if (!get_enum) return false;
-    void* it = il2cpp::invoke_ptr(il2cpp::virtual_method(e, get_enum), e, nullptr, 0);
-    if (!it) return false;
-    il2cpp::Class* ik = il2cpp::object_class(it);
-    il2cpp::Class* parent = ik ? il2cpp::class_parent(ik) : nullptr;
-    if (parent && class_is(parent, "System", "ValueType")) {
-        static bool logged = false;
-        if (!logged) {
-            logged = true;
-            LOGF("menus: cannot walk a boxed %s enumerator", il2cpp::class_name(ik));
-        }
-        return false;
-    }
-    il2cpp::Method* move_next = mMoveNext.get();
-    il2cpp::Method* current = mGetCurrent.get();
-    if (!move_next || !current) return false;
-    move_next = il2cpp::virtual_method(it, move_next);
-    current = il2cpp::virtual_method(it, current);
-    for (int i = 0; i < kMaxEnumerated && il2cpp::invoke_bool(move_next, it, nullptr, 0); ++i)
-        out.push_back(il2cpp::invoke_ptr(current, it, nullptr, 0));
-    return true;
-}
+bool enumerate(void* e, std::vector<void*>& out) { return unity::enumerate(e, out); }
 
 int call_virtual_int(ref::Method& m, void* obj)
 {

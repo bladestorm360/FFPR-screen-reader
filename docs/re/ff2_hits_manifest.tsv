@@ -1,0 +1,6 @@
+18028d6d0	Last.Map.FieldController public bool SwitchDashMode() { }
+18030b500	Last.Map.MapUIManager public void AutoDashOperationSwitch(bool isAutoDash) { }
+1804e47c0	Last.UI.DamageViewUIManager public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target) { }
+1804916f0	Last.Battle.HitCountEntity public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+1804920b0	Last.Battle.HitCountEntity private void SetNumSprite(int value) { }
+180491e70	Last.Battle.HitCountEntity private void SetHitSprite(int value) { }

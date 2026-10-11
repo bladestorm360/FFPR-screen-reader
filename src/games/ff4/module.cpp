@@ -27,7 +27,6 @@ void configure(game::Flags& f)
     f.has_airship = true;
     f.has_vehicle_pads = true;
     f.has_hidden_passages = true;
-    f.multi_hit_setting = false;
     f.atb = true;
     f.timer_freeze = true;   // FF4 had Shift+T too (timers.cpp)
     f.bestiary_steal = true;       // the bestiary lists stealable items (Steal ability)

@@ -1,0 +1,7 @@
+180c088a0	DataStorage.ClearMapLocal
+180c08840	DataStorage.ClearAreaLocal
+18030ce80	MapUIManager.GetTreasureFlag
+180c557d0	FieldTresureBox.Init
+180c55980	FieldTresureBox.Open
+180304810	MapModel.SetEntities
+180304350	MapModel.GetMapScriptName

@@ -1,0 +1,3818 @@
+[
+  {
+    "raw": "トーザスへ移動",
+    "translated": {
+      "en": "Move to Tozas",
+      "fr": "Aller à Tozas",
+      "it": "Vai a Tozas",
+      "de": "Reise nach Tozas",
+      "es": "Ir a Tozas",
+      "ko": "토자스로 이동",
+      "zht": "前往托札斯",
+      "zhc": "前往托札斯",
+      "ru": "Перемещение в Тозас",
+      "th": "ย้ายไปโทซัส",
+      "pt": "Ir para Tozas"
+    },
+    "count": 3
+  },
+  {
+    "raw": "サスーン城",
+    "translated": {
+      "en": "Castle Sasune",
+      "fr": "Château de Sasune",
+      "it": "Castello di Sasune",
+      "de": "Schloss Sasune",
+      "es": "Castillo de Sasune",
+      "ko": "사순성",
+      "zht": "薩斯恩城",
+      "zhc": "萨斯恩城",
+      "ru": "Замок Сасунэ",
+      "th": "ปราสาทซาซูน",
+      "pt": "Castelo Sasune"
+    },
+    "count": 3
+  },
+  {
+    "raw": "オーエンの塔",
+    "translated": {
+      "en": "Tower of Owen",
+      "fr": "Tour d'Owen",
+      "it": "Torre di Owen",
+      "de": "Turm des Owen",
+      "es": "Torre de Owen",
+      "ko": "오웬의 탑",
+      "zht": "歐文塔",
+      "zhc": "欧文塔",
+      "ru": "Башня Оуэна",
+      "th": "หอคอยแห่งโอเวน",
+      "pt": "Torre de Owen"
+    },
+    "count": 3
+  },
+  {
+    "raw": "アーガス城",
+    "translated": {
+      "en": "Castle Argus",
+      "fr": "Château d'Argus",
+      "it": "Castello di Argus",
+      "de": "Schloss Argus",
+      "es": "Castillo de Argus",
+      "ko": "아거스성",
+      "zht": "阿加斯城",
+      "zhc": "阿加斯城",
+      "ru": "Замок Аргуса",
+      "th": "ปราสาทอาร์กัส",
+      "pt": "Castelo de Argus"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ネプト神殿",
+    "translated": {
+      "en": "Nepto Temple",
+      "fr": "Temple de Nepto",
+      "it": "Tempio di Nepto",
+      "de": "Nepto-Tempel",
+      "es": "Templo de Nepto",
+      "ko": "넵토 신전",
+      "zht": "涅普特神殿",
+      "zhc": "涅普特神殿",
+      "ru": "Храм Непто",
+      "th": "วิหารเนปโต",
+      "pt": "Templo de Nepto"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ドラゴンの山はじめて",
+    "translated": {
+      "en": "Dragon's Peak First Visit",
+      "fr": "Première visite au Pic du dragon",
+      "it": "Prima visita al Picco del drago",
+      "de": "Erster Besuch am Drachenberg",
+      "es": "Primera visita al Pico del dragón",
+      "ko": "드래곤의 산 첫 방문",
+      "zht": "首次造訪巨龍峰",
+      "zhc": "首次造访巨龙峰",
+      "ru": "Первый визит на Драконий Пик",
+      "th": "เยือนยอดเขามังกรครั้งแรก",
+      "pt": "Primeira Visita ao Pico do Dragão"
+    },
+    "count": 3
+  },
+  {
+    "raw": "飛空艇で大岩に体当たり",
+    "translated": {
+      "en": "Ram Boulder with Airship",
+      "fr": "Percuter le rocher avec l'aéronef",
+      "it": "Sfonda il masso con l'aeronave",
+      "de": "Mit dem Luftschiff den Felsbrocken rammen",
+      "es": "Embestir la gran roca con el barco volador",
+      "ko": "비공정으로 큰 바위에 돌진",
+      "zht": "駕飛空艇撞擊巨岩",
+      "zhc": "驾飞空艇撞击巨岩",
+      "ru": "Протаранить валун воздушным кораблём",
+      "th": "พุ่งชนก้อนหินใหญ่ด้วยเรือเหาะ",
+      "pt": "Colidir com a Rocha Usando o Navio Voador"
+    },
+    "count": 2
+  },
+  {
+    "raw": "岩が壊れるまで通行不可",
+    "translated": {
+      "en": "Impassable Until Rock Is Destroyed",
+      "fr": "Passage bloqué jusqu'à la destruction du rocher",
+      "it": "Invalicabile finché la roccia non è distrutta",
+      "de": "Unpassierbar, bis der Felsen zerstört ist",
+      "es": "Intransitable hasta destruir la roca",
+      "ko": "바위가 부서질 때까지 통행 불가",
+      "zht": "岩石被破壞前無法通行",
+      "zhc": "岩石被破坏前无法通行",
+      "ru": "Не пройти, пока камень не разрушен",
+      "th": "ผ่านไม่ได้จนกว่าหินจะถูกทำลาย",
+      "pt": "Intransponível Até a Pedra Ser Destruída"
+    },
+    "count": 2
+  },
+  {
+    "raw": "石像（赤）",
+    "translated": {
+      "en": "Stone Statue (Red)",
+      "fr": "Statue de pierre (rouge)",
+      "it": "Statua di pietra (rossa)",
+      "de": "Steinstatue (rot)",
+      "es": "Estatua de piedra (roja)",
+      "ko": "석상 (빨강)",
+      "zht": "石像 (紅)",
+      "zhc": "石像 (红)",
+      "ru": "Каменная статуя (красная)",
+      "th": "รูปปั้นหิน (แดง)",
+      "pt": "Estátua de Pedra (Vermelha)"
+    },
+    "count": 4
+  },
+  {
+    "raw": "石像（青）",
+    "translated": {
+      "en": "Stone Statue (Blue)",
+      "fr": "Statue de pierre (bleue)",
+      "it": "Statua di pietra (blu)",
+      "de": "Steinstatue (blau)",
+      "es": "Estatua de piedra (azul)",
+      "ko": "석상 (파랑)",
+      "zht": "石像 (藍)",
+      "zhc": "石像 (蓝)",
+      "ru": "Каменная статуя (синяя)",
+      "th": "รูปปั้นหิน (น้ำเงิน)",
+      "pt": "Estátua de Pedra (Azul)"
+    },
+    "count": 6
+  },
+  {
+    "raw": "石像（緑）",
+    "translated": {
+      "en": "Stone Statue (Green)",
+      "fr": "Statue de pierre (verte)",
+      "it": "Statua di pietra (verde)",
+      "de": "Steinstatue (grün)",
+      "es": "Estatua de piedra (verde)",
+      "ko": "석상 (초록)",
+      "zht": "石像 (綠)",
+      "zhc": "石像 (绿)",
+      "ru": "Каменная статуя (зелёная)",
+      "th": "รูปปั้นหิน (เขียว)",
+      "pt": "Estátua de Pedra (Verde)"
+    },
+    "count": 8
+  },
+  {
+    "raw": "石像（茶）",
+    "translated": {
+      "en": "Stone Statue (Brown)",
+      "fr": "Statue de pierre (marron)",
+      "it": "Statua di pietra (marrone)",
+      "de": "Steinstatue (braun)",
+      "es": "Estatua de piedra (marrón)",
+      "ko": "석상 (갈색)",
+      "zht": "石像 (棕)",
+      "zhc": "石像 (棕)",
+      "ru": "Каменная статуя (коричневая)",
+      "th": "รูปปั้นหิน (น้ำตาล)",
+      "pt": "Estátua de Pedra (Marrom)"
+    },
+    "count": 10
+  },
+  {
+    "raw": "各種牙を所持して通行すると発生",
+    "translated": {
+      "en": "Triggers When Passing with the Fangs",
+      "fr": "Se déclenche en passant avec les crocs",
+      "it": "Si attiva passando con le zanne",
+      "de": "Wird beim Passieren mit den Zähnen ausgelöst",
+      "es": "Se activa al pasar con los colmillos",
+      "ko": "각종 송곳니를 소지하고 지나가면 발생",
+      "zht": "持有各種牙通過時觸發",
+      "zhc": "持有各种牙通过时触发",
+      "ru": "Срабатывает при проходе с клыками",
+      "th": "เกิดขึ้นเมื่อผ่านพร้อมเขี้ยวต่างๆ",
+      "pt": "Ativa ao Passar com as Presas"
+    },
+    "count": 14
+  },
+  {
+    "raw": "浮遊大陸へ移動：エンタープライズ",
+    "translated": {
+      "en": "Move to Floating Continent: Enterprise",
+      "fr": "Aller au Continent flottant : Entreprise",
+      "it": "Vai al Continente fluttuante: Enterprise",
+      "de": "Reise zum Schwebenden Kontinent: Enterprise",
+      "es": "Ir al Continente flotante: Enterprise",
+      "ko": "부유 대륙으로 이동: 엔터프라이즈",
+      "zht": "前往浮游大陸：企業號",
+      "zhc": "前往浮游大陆：企业号",
+      "ru": "Перемещение на Парящий континент: «Эскапада»",
+      "th": "ย้ายไปทวีปลอยฟ้า: เรือไร้พ่ายเอ็นเตอร์ไพรส์",
+      "pt": "Ir para o Continente Flutuante: Enterprise"
+    },
+    "count": 10
+  },
+  {
+    "raw": "浮遊大陸へ移動：ノーチラス",
+    "translated": {
+      "en": "Move to Floating Continent: Nautilus",
+      "fr": "Aller au Continent flottant : Nautilus",
+      "it": "Vai al Continente fluttuante: Nautilus",
+      "de": "Reise zum Schwebenden Kontinent: Nautilus",
+      "es": "Ir al Continente flotante: Nautilus",
+      "ko": "부유 대륙으로 이동: 노틸러스",
+      "zht": "前往浮游大陸：鸚鵡螺號",
+      "zhc": "前往浮游大陆：鹦鹉螺号",
+      "ru": "Перемещение на Парящий континент: «Наутилус»",
+      "th": "ย้ายไปทวีปลอยฟ้า: เรือดำน้ำนอติลุส",
+      "pt": "Ir para o Continente Flutuante: Nautilus"
+    },
+    "count": 10
+  },
+  {
+    "raw": "浮遊大陸へ移動：インビンシブル",
+    "translated": {
+      "en": "Move to Floating Continent: Invincible",
+      "fr": "Aller au Continent flottant : Invincible",
+      "it": "Vai al Continente fluttuante: Invincibile",
+      "de": "Reise zum Schwebenden Kontinent: Invincible",
+      "es": "Ir al Continente flotante: Invencible",
+      "ko": "부유 대륙으로 이동: 인빈서블",
+      "zht": "前往浮游大陸：無敵號",
+      "zhc": "前往浮游大陆：无敌号",
+      "ru": "Перемещение на Парящий континент: «Непобедимый»",
+      "th": "ย้ายไปทวีปลอยฟ้า: เรืออินวินซิเบิ้ล",
+      "pt": "Ir para o Continente Flutuante: Invencível"
+    },
+    "count": 10
+  },
+  {
+    "raw": "水の神殿",
+    "translated": {
+      "en": "Temple of Water",
+      "fr": "Temple de l'eau",
+      "it": "Tempio dell'Acqua",
+      "de": "Wassertempel",
+      "es": "Templo del Agua",
+      "ko": "물의 신전",
+      "zht": "水之神殿",
+      "zhc": "水之神殿",
+      "ru": "Храм Воды",
+      "th": "วิหารแห่งน้ำ",
+      "pt": "Templo da Água"
+    },
+    "count": 7
+  },
+  {
+    "raw": "サロニア城",
+    "translated": {
+      "en": "Castle Saronia",
+      "fr": "Château de Saronia",
+      "it": "Castello di Saronia",
+      "de": "Schloss Saronia",
+      "es": "Castillo de Saronia",
+      "ko": "사로니아성",
+      "zht": "薩羅尼亞城",
+      "zhc": "萨罗尼亚城",
+      "ru": "Замок Саронии",
+      "th": "ปราสาทซาโรเนีย",
+      "pt": "Castelo Saronia"
+    },
+    "count": 6
+  },
+  {
+    "raw": "ゴールドルの館",
+    "translated": {
+      "en": "Goldor Manor",
+      "fr": "Manoir de Goldor",
+      "it": "Palazzo di Goldor",
+      "de": "Goldors Anwesen",
+      "es": "Mansión de Goldor",
+      "ko": "골도르의 저택",
+      "zht": "金德爾的宅邸",
+      "zhc": "金德尔庄园",
+      "ru": "Поместье Голдора",
+      "th": "คฤหาสน์โกลดอร์",
+      "pt": "Mansão do Goldor"
+    },
+    "count": 6
+  },
+  {
+    "raw": "ドーガの館",
+    "translated": {
+      "en": "Doga's Manor",
+      "fr": "Manoir de Doga",
+      "it": "Palazzo di Doga",
+      "de": "Dogas Schloss",
+      "es": "Mansión de Doga",
+      "ko": "도가의 저택",
+      "zht": "多加的宅邸",
+      "zhc": "多加庄园",
+      "ru": "Поместье Доги",
+      "th": "คฤหาสน์ของโดกา",
+      "pt": "Mansão de Doga"
+    },
+    "count": 6
+  },
+  {
+    "raw": "クリスタルタワー",
+    "translated": {
+      "en": "Crystal Tower",
+      "fr": "Tour de cristal",
+      "it": "Torre di cristallo",
+      "de": "Kristallturm",
+      "es": "Torre del Cristal",
+      "ko": "크리스털 타워",
+      "zht": "水晶塔",
+      "zhc": "水晶塔",
+      "ru": "Хрустальная башня",
+      "th": "หอคอยคริสตัล",
+      "pt": "Torre de Cristal"
+    },
+    "count": 6
+  },
+  {
+    "raw": "バリアではじかれる：ノーチラス①",
+    "translated": {
+      "en": "Repelled by Barrier: Nautilus 1",
+      "fr": "Repoussé par la barrière : Nautilus 1",
+      "it": "Respinto dalla barriera: Nautilus 1",
+      "de": "Von Barriere abgewiesen: Nautilus 1",
+      "es": "Repelido por la barrera: Nautilus 1",
+      "ko": "배리어에 튕겨남: 노틸러스 1",
+      "zht": "被護罩彈開：鸚鵡螺號 1",
+      "zhc": "被护罩弹开：鹦鹉螺号 1",
+      "ru": "Отброшен барьером: «Наутилус» 1",
+      "th": "ถูกบาเรียดีดกลับ: เรือดำน้ำนอติลุส 1",
+      "pt": "Repelido pela Barreira: Nautilus 1"
+    },
+    "count": 2
+  },
+  {
+    "raw": "バリアではじかれる：ノーチラス②",
+    "translated": {
+      "en": "Repelled by Barrier: Nautilus 2",
+      "fr": "Repoussé par la barrière : Nautilus 2",
+      "it": "Respinto dalla barriera: Nautilus 2",
+      "de": "Von Barriere abgewiesen: Nautilus 2",
+      "es": "Repelido por la barrera: Nautilus 2",
+      "ko": "배리어에 튕겨남: 노틸러스 2",
+      "zht": "被護罩彈開：鸚鵡螺號 2",
+      "zhc": "被护罩弹开：鹦鹉螺号 2",
+      "ru": "Отброшен барьером: «Наутилус» 2",
+      "th": "ถูกบาเรียดีดกลับ: เรือดำน้ำนอติลุส 2",
+      "pt": "Repelido pela Barreira: Nautilus 2"
+    },
+    "count": 3
+  },
+  {
+    "raw": "バリアではじかれる：ノーチラス③",
+    "translated": {
+      "en": "Repelled by Barrier: Nautilus 3",
+      "fr": "Repoussé par la barrière : Nautilus 3",
+      "it": "Respinto dalla barriera: Nautilus 3",
+      "de": "Von Barriere abgewiesen: Nautilus 3",
+      "es": "Repelido por la barrera: Nautilus 3",
+      "ko": "배리어에 튕겨남: 노틸러스 3",
+      "zht": "被護罩彈開：鸚鵡螺號 3",
+      "zhc": "被护罩弹开：鹦鹉螺号 3",
+      "ru": "Отброшен барьером: «Наутилус» 3",
+      "th": "ถูกบาเรียดีดกลับ: เรือดำน้ำนอติลุส 3",
+      "pt": "Repelido pela Barreira: Nautilus 3"
+    },
+    "count": 4
+  },
+  {
+    "raw": "バリアではじかれる：ノーチラス④",
+    "translated": {
+      "en": "Repelled by Barrier: Nautilus 4",
+      "fr": "Repoussé par la barrière : Nautilus 4",
+      "it": "Respinto dalla barriera: Nautilus 4",
+      "de": "Von Barriere abgewiesen: Nautilus 4",
+      "es": "Repelido por la barrera: Nautilus 4",
+      "ko": "배리어에 튕겨남: 노틸러스 4",
+      "zht": "被護罩彈開：鸚鵡螺號 4",
+      "zhc": "被护罩弹开：鹦鹉螺号 4",
+      "ru": "Отброшен барьером: «Наутилус» 4",
+      "th": "ถูกบาเรียดีดกลับ: เรือดำน้ำนอติลุส 4",
+      "pt": "Repelido pela Barreira: Nautilus 4"
+    },
+    "count": 5
+  },
+  {
+    "raw": "バリアではじかれる：エンタープライズ①",
+    "translated": {
+      "en": "Repelled by Barrier: Enterprise 1",
+      "fr": "Repoussé par la barrière : Entreprise 1",
+      "it": "Respinto dalla barriera: Enterprise 1",
+      "de": "Von Barriere abgewiesen: Enterprise 1",
+      "es": "Repelido por la barrera: Enterprise 1",
+      "ko": "배리어에 튕겨남: 엔터프라이즈 1",
+      "zht": "被護罩彈開：企業號 1",
+      "zhc": "被护罩弹开：企业号 1",
+      "ru": "Отброшен барьером: «Эскапада» 1",
+      "th": "ถูกบาเรียดีดกลับ: เรือไร้พ่ายเอ็นเตอร์ไพรส์ 1",
+      "pt": "Repelido pela Barreira: Enterprise 1"
+    },
+    "count": 2
+  },
+  {
+    "raw": "バリアではじかれる：エンタープライズ②",
+    "translated": {
+      "en": "Repelled by Barrier: Enterprise 2",
+      "fr": "Repoussé par la barrière : Entreprise 2",
+      "it": "Respinto dalla barriera: Enterprise 2",
+      "de": "Von Barriere abgewiesen: Enterprise 2",
+      "es": "Repelido por la barrera: Enterprise 2",
+      "ko": "배리어에 튕겨남: 엔터프라이즈 2",
+      "zht": "被護罩彈開：企業號 2",
+      "zhc": "被护罩弹开：企业号 2",
+      "ru": "Отброшен барьером: «Эскапада» 2",
+      "th": "ถูกบาเรียดีดกลับ: เรือไร้พ่ายเอ็นเตอร์ไพรส์ 2",
+      "pt": "Repelido pela Barreira: Enterprise 2"
+    },
+    "count": 3
+  },
+  {
+    "raw": "バリアではじかれる：エンタープライズ③",
+    "translated": {
+      "en": "Repelled by Barrier: Enterprise 3",
+      "fr": "Repoussé par la barrière : Entreprise 3",
+      "it": "Respinto dalla barriera: Enterprise 3",
+      "de": "Von Barriere abgewiesen: Enterprise 3",
+      "es": "Repelido por la barrera: Enterprise 3",
+      "ko": "배리어에 튕겨남: 엔터프라이즈 3",
+      "zht": "被護罩彈開：企業號 3",
+      "zhc": "被护罩弹开：企业号 3",
+      "ru": "Отброшен барьером: «Эскапада» 3",
+      "th": "ถูกบาเรียดีดกลับ: เรือไร้พ่ายเอ็นเตอร์ไพรส์ 3",
+      "pt": "Repelido pela Barreira: Enterprise 3"
+    },
+    "count": 4
+  },
+  {
+    "raw": "バリアではじかれる：エンタープライズ④",
+    "translated": {
+      "en": "Repelled by Barrier: Enterprise 4",
+      "fr": "Repoussé par la barrière : Entreprise 4",
+      "it": "Respinto dalla barriera: Enterprise 4",
+      "de": "Von Barriere abgewiesen: Enterprise 4",
+      "es": "Repelido por la barrera: Enterprise 4",
+      "ko": "배리어에 튕겨남: 엔터프라이즈 4",
+      "zht": "被護罩彈開：企業號 4",
+      "zhc": "被护罩弹开：企业号 4",
+      "ru": "Отброшен барьером: «Эскапада» 4",
+      "th": "ถูกบาเรียดีดกลับ: เรือไร้พ่ายเอ็นเตอร์ไพรส์ 4",
+      "pt": "Repelido pela Barreira: Enterprise 4"
+    },
+    "count": 5
+  },
+  {
+    "raw": "",
+    "translated": {},
+    "count": 6
+  },
+  {
+    "raw": "地上全体へ：エンタープライズ",
+    "translated": {
+      "en": "To Surface World: Enterprise",
+      "fr": "Vers le monde de la surface : Entreprise",
+      "it": "Al mondo di superficie: Enterprise",
+      "de": "Zur Oberfläche: Enterprise",
+      "es": "Al mundo de la superficie: Enterprise",
+      "ko": "지상 세계로: 엔터프라이즈",
+      "zht": "前往地上世界：企業號",
+      "zhc": "前往地上世界：企业号",
+      "ru": "На поверхность: «Эскапада»",
+      "th": "สู่โลกพื้นผิว: เรือไร้พ่ายเอ็นเตอร์ไพรส์",
+      "pt": "Para o Mundo da Superfície: Enterprise"
+    },
+    "count": 508
+  },
+  {
+    "raw": "地上全体へ：ノーチラス",
+    "translated": {
+      "en": "To Surface World: Nautilus",
+      "fr": "Vers le monde de la surface : Nautilus",
+      "it": "Al mondo di superficie: Nautilus",
+      "de": "Zur Oberfläche: Nautilus",
+      "es": "Al mundo de la superficie: Nautilus",
+      "ko": "지상 세계로: 노틸러스",
+      "zht": "前往地上世界：鸚鵡螺號",
+      "zhc": "前往地上世界：鹦鹉螺号",
+      "ru": "На поверхность: «Наутилус»",
+      "th": "สู่โลกพื้นผิว: เรือดำน้ำนอติลุส",
+      "pt": "Para o Mundo da Superfície: Nautilus"
+    },
+    "count": 508
+  },
+  {
+    "raw": "地上全体へ：インビンシブル",
+    "translated": {
+      "en": "To Surface World: Invincible",
+      "fr": "Vers le monde de la surface : Invincible",
+      "it": "Al mondo di superficie: Invincibile",
+      "de": "Zur Oberfläche: Invincible",
+      "es": "Al mundo de la superficie: Invencible",
+      "ko": "지상 세계로: 인빈서블",
+      "zht": "前往地上世界：無敵號",
+      "zhc": "前往地上世界：无敌号",
+      "ru": "На поверхность: «Непобедимый»",
+      "th": "สู่โลกพื้นผิว: เรืออินวินซิเบิ้ล",
+      "pt": "Para o Mundo da Superfície: Invencível"
+    },
+    "count": 508
+  },
+  {
+    "raw": "TelepoPoint",
+    "translated": {},
+    "count": 301
+  },
+  {
+    "raw": "トーザスの抜け道",
+    "translated": {
+      "en": "Tozus Tunnel",
+      "fr": "Tunnel de Tozus",
+      "it": "Passaggio per Tozus",
+      "de": "Tozus-Passage",
+      "es": "Pasadizo de Tozus",
+      "ko": "토저스 샛길",
+      "zht": "托扎斯的近道",
+      "zhc": "托扎斯的近道",
+      "ru": "Тоннель Тозус",
+      "th": "อุโมงค์โทซุส",
+      "pt": "Túnel de Tozus"
+    },
+    "count": 1
+  },
+  {
+    "raw": "世界一周",
+    "translated": {
+      "en": "Around the World",
+      "fr": "Tour du monde",
+      "it": "Giro del mondo",
+      "de": "Weltumrundung",
+      "es": "Vuelta al mundo",
+      "ko": "세계 일주",
+      "zht": "環遊世界",
+      "zhc": "环游世界",
+      "ru": "Кругосветное путешествие",
+      "th": "เดินทางรอบโลก",
+      "pt": "Volta ao Mundo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドールの湖に移動",
+    "translated": {
+      "en": "Move to Lake Dohr",
+      "fr": "Aller au lac Dohr",
+      "it": "Vai al Lago Dohr",
+      "de": "Reise zum Dohr-See",
+      "es": "Ir al Lago Dohr",
+      "ko": "도르 호수로 이동",
+      "zht": "前往多爾湖",
+      "zhc": "前往多尔湖",
+      "ru": "Перемещение к озеру Дор",
+      "th": "ย้ายไปทะเลสาบดอร์",
+      "pt": "Ir para o Lago Dohr"
+    },
+    "count": 7
+  },
+  {
+    "raw": "飛び回るドラゴン",
+    "translated": {
+      "en": "Dragon Flying Around",
+      "fr": "Dragon virevoltant",
+      "it": "Drago in volo",
+      "de": "Umherfliegender Drache",
+      "es": "Dragón revoloteando",
+      "ko": "날아다니는 드래곤",
+      "zht": "四處飛翔的飛龍",
+      "zhc": "四处飞翔的飞龙",
+      "ru": "Летающий дракон",
+      "th": "มังกรที่บินวนไปมา",
+      "pt": "Dragão Voando"
+    },
+    "count": 1
+  },
+  {
+    "raw": "シドと別れるまでは山に入れない",
+    "translated": {
+      "en": "Cannot Enter Mountains Until Parting with Cid",
+      "fr": "Montagnes inaccessibles avant de se séparer de Cid",
+      "it": "Non puoi entrare nelle montagne finché non ti separi da Cid",
+      "de": "Kein Zutritt zu den Bergen, bevor man sich von Cid trennt",
+      "es": "No se puede entrar en las montañas hasta separarse de Cid",
+      "ko": "시드와 헤어지기 전까지 산에 들어갈 수 없다",
+      "zht": "與希德分別前無法進入山區",
+      "zhc": "与西德分别前无法进入山区",
+      "ru": "Нельзя войти в горы, пока не расстанешься с Сидом",
+      "th": "เข้าภูเขาไม่ได้จนกว่าจะแยกทางกับซิด",
+      "pt": "Não é Possível Entrar nas Montanhas Até Se Separar de Cid"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バハムート",
+    "translated": {
+      "en": "Bahamut",
+      "fr": "Bahamut",
+      "it": "Bahamut",
+      "de": "Bahamut",
+      "es": "Bahamut",
+      "ko": "바하무트",
+      "zht": "巴哈姆特",
+      "zhc": "巴哈姆特",
+      "ru": "Бахамут",
+      "th": "บาฮามุต",
+      "pt": "Bahamut"
+    },
+    "count": 1
+  },
+  {
+    "raw": "生きている森で回る",
+    "translated": {
+      "en": "Navigate Living Woods",
+      "fr": "Naviguer dans les Bois vivants",
+      "it": "Naviga nella foresta vivente",
+      "de": "Durch den lebenden Wald navigieren",
+      "es": "Navegar por el bosque viviente",
+      "ko": "살아있는 숲 탐색",
+      "zht": "穿越生命之森",
+      "zhc": "穿越生命之森",
+      "ru": "Пройти через Живую рощу",
+      "th": "สำรวจป่ามีชีวิต",
+      "pt": "Navegar pela Floresta Viva"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ネプト竜の妨害",
+    "translated": {
+      "en": "Nepto Dragon Obstruction",
+      "fr": "Obstruction du Dragon de Nepto",
+      "it": "Ostruzione del Drago Nepto",
+      "de": "Blockade durch den Nepto-Drachen",
+      "es": "Obstrucción del Neptodragón",
+      "ko": "넵토 용의 방해",
+      "zht": "涅普特龍的阻撓",
+      "zhc": "涅普特龙的阻挠",
+      "ru": "Помеха от Дракона Непто",
+      "th": "การขัดขวางของมังกรเนปโต",
+      "pt": "Obstrução do Dragão Nepto"
+    },
+    "count": 1
+  },
+  {
+    "raw": "エンタープライズ（船）",
+    "translated": {
+      "en": "The Enterprise (Ship)",
+      "fr": "Entreprise (Navire)",
+      "it": "Enterprise (Nave)",
+      "de": "Enterprise (Schiff)",
+      "es": "Enterprise (Barco)",
+      "ko": "엔터프라이즈 (선박)",
+      "zht": "企業號 (船)",
+      "zhc": "企业号 (船)",
+      "ru": "«Эскапада» (Корабль)",
+      "th": "เรือไร้พ่ายเอ็นเตอร์ไพรส์ (เรือ)",
+      "pt": "Enterprise (Navio)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "地上一部→浮遊大陸",
+    "translated": {
+      "en": "Surface to Floating Continent",
+      "fr": "Surface vers le continent flottant",
+      "it": "Superficie al Continente fluttuante",
+      "de": "Oberfläche zum schwebenden Kontinent",
+      "es": "Superficie al continente flotante",
+      "ko": "지상에서 부유대륙으로",
+      "zht": "地面前往浮游大陸",
+      "zhc": "地面前往浮游大陆",
+      "ru": "С поверхности на парящий континент",
+      "th": "พื้นผิวสู่ทวีปลอยฟ้า",
+      "pt": "Superfície para o Continente Flutuante"
+    },
+    "count": 1
+  },
+  {
+    "raw": "難破船",
+    "translated": {
+      "en": "Wrecked Ship",
+      "fr": "Épave",
+      "it": "Relitto",
+      "de": "Schiffswrack",
+      "es": "Barco naufragado",
+      "ko": "난파선",
+      "zht": "遇難船",
+      "zhc": "遇难船",
+      "ru": "Разбитый корабль",
+      "th": "เรืออับปาง",
+      "pt": "Navio Naufragado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "浮遊大陸",
+    "translated": {
+      "en": "Floating Continent",
+      "fr": "Continent flottant",
+      "it": "Continente fluttuante",
+      "de": "Schwebender Kontinent",
+      "es": "Continente flotante",
+      "ko": "부유 대륙",
+      "zht": "浮游大陸",
+      "zhc": "浮游大陆",
+      "ru": "Парящий континент",
+      "th": "ทวีปลอยฟ้า",
+      "pt": "Continente Flutuante"
+    },
+    "count": 2
+  },
+  {
+    "raw": "エンタープライズ（舟）",
+    "translated": {
+      "en": "The Enterprise (Boat)",
+      "fr": "Entreprise (Barque)",
+      "it": "Enterprise (Barca)",
+      "de": "Enterprise (Boot)",
+      "es": "Enterprise (Bote)",
+      "ko": "엔터프라이즈 (보트)",
+      "zht": "企業號 (小舟)",
+      "zhc": "企业号 (小舟)",
+      "ru": "«Эскапада» (Лодка)",
+      "th": "เรือไร้พ่ายเอ็นเตอร์ไพรส์ (เรือเล็ก)",
+      "pt": "Enterprise (Barco)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "時の神殿へ移動",
+    "translated": {
+      "en": "Move to Temple of Time",
+      "fr": "Aller au Temple du temps",
+      "it": "Vai al Santuario del tempo",
+      "de": "Reise zum Tempel der Zeit",
+      "es": "Ir al Templo del tiempo",
+      "ko": "시간의 신전으로 이동",
+      "zht": "前往時之神殿",
+      "zhc": "前往时之神殿",
+      "ru": "Перемещение в Храм Времени",
+      "th": "ย้ายไปวิหารแห่งกาล",
+      "pt": "Ir para o Templo do Tempo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "サロニアの地下迷路へ移動",
+    "translated": {
+      "en": "Move to Saronia Catacombs",
+      "fr": "Aller aux Catacombes de Saronia",
+      "it": "Vai alle Catacombe di Saronia",
+      "de": "Reise zu den Katakomben von Saronia",
+      "es": "Ir a las Catacumbas de Saronia",
+      "ko": "사로니아 지하 미궁으로 이동",
+      "zht": "前往薩羅尼亞的地下迷宮",
+      "zhc": "前往萨罗尼亚地下迷宫",
+      "ru": "Перемещение в Катакомбы Саронии",
+      "th": "ย้ายไปอุโมงค์ใต้ดินซาโรเนีย",
+      "pt": "Ir para as Catacumbas de Saronia"
+    },
+    "count": 1
+  },
+  {
+    "raw": "海底洞窟へ移動",
+    "translated": {
+      "en": "Move to Sunken Cave",
+      "fr": "Aller à la Grotte sous-marine",
+      "it": "Vai alla Grotta sommersa",
+      "de": "Reise zur Versunkenen Höhle",
+      "es": "Ir a la Caverna sumergida",
+      "ko": "해저 동굴로 이동",
+      "zht": "前往海底洞窟",
+      "zhc": "前往海底洞窟",
+      "ru": "Перемещение в Затопленную пещеру",
+      "th": "ย้ายไปถ้ำใต้สมุทร",
+      "pt": "Ir para a Caverna Submersa"
+    },
+    "count": 1
+  },
+  {
+    "raw": "インビシブル",
+    "translated": {
+      "en": "The Invincible",
+      "fr": "Invincible",
+      "it": "Invincibile",
+      "de": "Die Invincible",
+      "es": "El Invencible",
+      "ko": "인빈서블",
+      "zht": "無敵號",
+      "zhc": "无敌号",
+      "ru": "«Непобедимый»",
+      "th": "เรืออินวินซิเบิ้ล",
+      "pt": "Invencível"
+    },
+    "count": 1
+  },
+  {
+    "raw": "石像が破壊されるときの爆発エフェクト※エフェクトがないため仮置き",
+    "translated": {
+      "en": "Statue Destruction Explosion Effect",
+      "fr": "Effet d'explosion à la destruction de la statue",
+      "it": "Effetto esplosione alla distruzione della statua",
+      "de": "Explosionseffekt bei Zerstörung der Statue",
+      "es": "Efecto de explosión al destruir la estatua",
+      "ko": "석상이 파괴될 때의 폭발 이펙트",
+      "zht": "石像被破壞時的爆炸特效",
+      "zhc": "石像被破坏时的爆炸特效",
+      "ru": "Эффект взрыва при разрушении статуи",
+      "th": "เอฟเฟกต์ระเบิดตอนรูปปั้นถูกทำลาย",
+      "pt": "Efeito de Explosão ao Destruir a Estátua"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バリアではじかれる：インビンシブル①",
+    "translated": {
+      "en": "Repelled by Barrier: Invincible 1",
+      "fr": "Repoussé par la barrière : Invincible 1",
+      "it": "Respinto dalla barriera: Invincibile 1",
+      "de": "Von Barriere abgewiesen: Invincible 1",
+      "es": "Repelido por la barrera: Invencible 1",
+      "ko": "배리어에 튕겨남: 인빈서블 1",
+      "zht": "被護罩彈開：無敵號 1",
+      "zhc": "被护罩弹开：无敌号 1",
+      "ru": "Отброшен барьером: «Непобедимый» 1",
+      "th": "ถูกบาเรียดีดกลับ: เรืออินวินซิเบิ้ล 1",
+      "pt": "Repelido pela Barreira: Invencível 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バリアではじかれる：インビンシブル②",
+    "translated": {
+      "en": "Repelled by Barrier: Invincible 2",
+      "fr": "Repoussé par la barrière : Invincible 2",
+      "it": "Respinto dalla barriera: Invincibile 2",
+      "de": "Von Barriere abgewiesen: Invincible 2",
+      "es": "Repelido por la barrera: Invencible 2",
+      "ko": "배리어에 튕겨남: 인빈서블 2",
+      "zht": "被護罩彈開：無敵號 2",
+      "zhc": "被护罩弹开：无敌号 2",
+      "ru": "Отброшен барьером: «Непобедимый» 2",
+      "th": "ถูกบาเรียดีดกลับ: เรืออินวินซิเบิ้ล 2",
+      "pt": "Repelido pela Barreira: Invencível 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バリアではじかれる：インビンシブル③",
+    "translated": {
+      "en": "Repelled by Barrier: Invincible 3",
+      "fr": "Repoussé par la barrière : Invincible 3",
+      "it": "Respinto dalla barriera: Invincibile 3",
+      "de": "Von Barriere abgewiesen: Invincible 3",
+      "es": "Repelido por la barrera: Invencible 3",
+      "ko": "배리어에 튕겨남: 인빈서블 3",
+      "zht": "被護罩彈開：無敵號 3",
+      "zhc": "被护罩弹开：无敌号 3",
+      "ru": "Отброшен барьером: «Непобедимый» 3",
+      "th": "ถูกบาเรียดีดกลับ: เรืออินวินซิเบิ้ล 3",
+      "pt": "Repelido pela Barreira: Invencível 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バリアではじかれる：インビンシブル④",
+    "translated": {
+      "en": "Repelled by Barrier: Invincible 4",
+      "fr": "Repoussé par la barrière : Invincible 4",
+      "it": "Respinto dalla barriera: Invincibile 4",
+      "de": "Von Barriere abgewiesen: Invincible 4",
+      "es": "Repelido por la barrera: Invencible 4",
+      "ko": "배리어에 튕겨남: 인빈서블 4",
+      "zht": "被護罩彈開：無敵號 4",
+      "zhc": "被护罩弹开：无敌号 4",
+      "ru": "Отброшен барьером: «Непобедимый» 4",
+      "th": "ถูกบาเรียดีดกลับ: เรืออินวินซิเบิ้ล 4",
+      "pt": "Repelido pela Barreira: Invencível 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ファルガバード入口",
+    "translated": {
+      "en": "Falgabard Entrance",
+      "fr": "Entrée de Falgabard",
+      "it": "Ingresso di Falgabard",
+      "de": "Eingang nach Falgabard",
+      "es": "Entrada de Falgabard",
+      "ko": "팔가바드 마을 입구",
+      "zht": "法爾加巴德村入口",
+      "zhc": "法尔加巴德村入口",
+      "ru": "Вход в Фальгабард",
+      "th": "ทางเข้าฟัลกาบาร์ด",
+      "pt": "Entrada de Falgabard"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ドーガの館に行けない（プレイヤー）",
+    "translated": {
+      "en": "Cannot Reach Doga's Manor (Player)",
+      "fr": "Impossible d'atteindre le Manoir de Doga (Joueur)",
+      "it": "Impossibile raggiungere il Palazzo di Doga (Giocatore)",
+      "de": "Dogas Schloss nicht erreichbar (Spieler)",
+      "es": "No se puede llegar a la Mansión de Doga (Jugador)",
+      "ko": "도가의 저택에 갈 수 없음 (플레이어)",
+      "zht": "無法前往多加的宅邸 (玩家)",
+      "zhc": "无法前往多加庄园 (玩家)",
+      "ru": "Нельзя попасть в Поместье Доги (Игрок)",
+      "th": "ไปคฤหาสน์ของโดกาไม่ได้ (ผู้เล่น)",
+      "pt": "Não é Possível Chegar à Mansão de Doga (Jogador)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドーガの館に行けない（インビンシブル）",
+    "translated": {
+      "en": "Cannot Reach Doga's Manor (Invincible)",
+      "fr": "Impossible d'atteindre le Manoir de Doga (Invincible)",
+      "it": "Impossibile raggiungere il Palazzo di Doga (Invincibile)",
+      "de": "Dogas Schloss nicht erreichbar (Invincible)",
+      "es": "No se puede llegar a la Mansión de Doga (Invencible)",
+      "ko": "도가의 저택에 갈 수 없음 (인빈서블)",
+      "zht": "無法前往多加的宅邸 (無敵號)",
+      "zhc": "无法前往多加庄园 (无敌号)",
+      "ru": "Нельзя попасть в Поместье Доги («Непобедимый»)",
+      "th": "ไปคฤหาสน์ของโดกาไม่ได้ (เรืออินวินซิเบิ้ล)",
+      "pt": "Não é Possível Chegar à Mansão de Doga (Invencível)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドーガの館に行けない（エンタープライズ）",
+    "translated": {
+      "en": "Cannot Reach Doga's Manor (Enterprise)",
+      "fr": "Impossible d'atteindre le Manoir de Doga (Entreprise)",
+      "it": "Impossibile raggiungere il Palazzo di Doga (Enterprise)",
+      "de": "Dogas Schloss nicht erreichbar (Enterprise)",
+      "es": "No se puede llegar a la Mansión de Doga (Enterprise)",
+      "ko": "도가의 저택에 갈 수 없음 (엔터프라이즈)",
+      "zht": "無法前往多加的宅邸 (企業號)",
+      "zhc": "无法前往多加庄园 (企业号)",
+      "ru": "Нельзя попасть в Поместье Доги («Эскапада»)",
+      "th": "ไปคฤหาสน์ของโดกาไม่ได้ (เรือไร้พ่ายเอ็นเตอร์ไพรส์)",
+      "pt": "Não é Possível Chegar à Mansão de Doga (Enterprise)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大砲右",
+    "translated": {
+      "en": "Right Cannon",
+      "fr": "Canon droit",
+      "it": "Cannone destro",
+      "de": "Rechte Kanone",
+      "es": "Cañón derecho",
+      "ko": "오른쪽 대포",
+      "zht": "右大砲",
+      "zhc": "右大炮",
+      "ru": "Правая пушка",
+      "th": "ปืนใหญ่ขวา",
+      "pt": "Canhão Direito"
+    },
+    "count": 8
+  },
+  {
+    "raw": "大砲左",
+    "translated": {
+      "en": "Left Cannon",
+      "fr": "Canon gauche",
+      "it": "Cannone sinistro",
+      "de": "Linke Kanone",
+      "es": "Cañón izquierdo",
+      "ko": "왼쪽 대포",
+      "zht": "左大砲",
+      "zhc": "左大炮",
+      "ru": "Левая пушка",
+      "th": "ปืนใหญ่ซ้าย",
+      "pt": "Canhão Esquerdo"
+    },
+    "count": 8
+  },
+  {
+    "raw": "砲弾",
+    "translated": {
+      "en": "Cannonball",
+      "fr": "Boulet de canon",
+      "it": "Palla di cannone",
+      "de": "Kanonenkugel",
+      "es": "Bala de cañón",
+      "ko": "포탄",
+      "zht": "砲彈",
+      "zhc": "炮弹",
+      "ru": "Пушечное ядро",
+      "th": "ลูกปืนใหญ่",
+      "pt": "Bala de Canhão"
+    },
+    "count": 2
+  },
+  {
+    "raw": "古代遺跡用チップ",
+    "translated": {
+      "en": "Ancient Ruins Tile",
+      "fr": "Tuile des Ruines antiques",
+      "it": "Tessera delle Antiche rovine",
+      "de": "Kachel der Alten Ruinen",
+      "es": "Casilla de las Ruinas antiguas",
+      "ko": "고대 유적용 타일",
+      "zht": "古代遺跡用圖塊",
+      "zhc": "古代遗迹用图块",
+      "ru": "Тайл Древних руин",
+      "th": "ไทล์ซากโบราณ",
+      "pt": "Bloco das Ruínas Antigas"
+    },
+    "count": 1
+  },
+  {
+    "raw": "飛空艇大破",
+    "translated": {
+      "en": "Airship Wrecked",
+      "fr": "Aéronef détruit",
+      "it": "Aeronave distrutta",
+      "de": "Luftschiff zerstört",
+      "es": "Barco volador destrozado",
+      "ko": "비공정 대파",
+      "zht": "飛空艇毀損",
+      "zhc": "飞空艇毁损",
+      "ru": "Воздушный корабль разбит",
+      "th": "เรือเหาะพังยับ",
+      "pt": "Navio Voador Destruído"
+    },
+    "count": 18
+  },
+  {
+    "raw": "鎖",
+    "translated": {
+      "en": "Chain",
+      "fr": "Chaîne",
+      "it": "Catena",
+      "de": "Kette",
+      "es": "Cadena",
+      "ko": "사슬",
+      "zht": "鎖鏈",
+      "zhc": "锁链",
+      "ru": "Цепь",
+      "th": "โซ่",
+      "pt": "Corrente"
+    },
+    "count": 1
+  },
+  {
+    "raw": "船が鎖でつながれている１",
+    "translated": {
+      "en": "Ship Bound by Chains 1",
+      "fr": "Navire enchaîné 1",
+      "it": "Nave incatenata 1",
+      "de": "Angekettetes Schiff 1",
+      "es": "Barco encadenado 1",
+      "ko": "사슬에 묶인 배 1",
+      "zht": "被鎖鏈拴住的船 1",
+      "zhc": "被锁链拴住的船 1",
+      "ru": "Корабль в цепях 1",
+      "th": "เรือถูกล่ามโซ่ 1",
+      "pt": "Navio Acorrentado 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "船が鎖でつながれている２",
+    "translated": {
+      "en": "Ship Bound by Chains 2",
+      "fr": "Navire enchaîné 2",
+      "it": "Nave incatenata 2",
+      "de": "Angekettetes Schiff 2",
+      "es": "Barco encadenado 2",
+      "ko": "사슬에 묶인 배 2",
+      "zht": "被鎖鏈拴住的船 2",
+      "zhc": "被锁链拴住的船 2",
+      "ru": "Корабль в цепях 2",
+      "th": "เรือถูกล่ามโซ่ 2",
+      "pt": "Navio Acorrentado 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "船が鎖でつながれている４",
+    "translated": {
+      "en": "Ship Bound by Chains 4",
+      "fr": "Navire enchaîné 4",
+      "it": "Nave incatenata 4",
+      "de": "Angekettetes Schiff 4",
+      "es": "Barco encadenado 4",
+      "ko": "사슬에 묶인 배 4",
+      "zht": "被鎖鏈拴住的船 4",
+      "zhc": "被锁链拴住的船 4",
+      "ru": "Корабль в цепях 4",
+      "th": "เรือถูกล่ามโซ่ 4",
+      "pt": "Navio Acorrentado 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "船が鎖でつながれている３",
+    "translated": {
+      "en": "Ship Bound by Chains 3",
+      "fr": "Navire enchaîné 3",
+      "it": "Nave incatenata 3",
+      "de": "Angekettetes Schiff 3",
+      "es": "Barco encadenado 3",
+      "ko": "사슬에 묶인 배 3",
+      "zht": "被鎖鏈拴住的船 3",
+      "zhc": "被锁链拴住的船 3",
+      "ru": "Корабль в цепях 3",
+      "th": "เรือถูกล่ามโซ่ 3",
+      "pt": "Navio Acorrentado 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "底なし沼に落ちてゲームオーバー",
+    "translated": {
+      "en": "Fall into Bottomless Bog - Game Over",
+      "fr": "Chute dans le Marécage - Game Over",
+      "it": "Caduta nella Palude senza fondo - Game Over",
+      "de": "Sturz in den Bodenlosen Sumpf - Game Over",
+      "es": "Caída en la Ciénaga sin fondo - Fin del juego",
+      "ko": "바닥 없는 늪에 빠져 게임 오버",
+      "zht": "掉進無底沼澤，遊戲結束",
+      "zhc": "掉进无底沼泽，游戏结束",
+      "ru": "Падение в Бездонную трясину - конец игры",
+      "th": "ตกบึงไร้ก้น - เกมโอเวอร์",
+      "pt": "Queda no Abismo Pantanoso - Fim de Jogo"
+    },
+    "count": 2
+  },
+  {
+    "raw": "HP/MP回復",
+    "translated": {
+      "en": "HP/MP Recovery",
+      "fr": "Récupération PV/PM",
+      "it": "Recupero PV/PM",
+      "de": "KP/MP-Erholung",
+      "es": "Recuperación PV/PM",
+      "ko": "HP/MP 회복",
+      "zht": "HP/MP恢復",
+      "zhc": "HP/MP恢复",
+      "ru": "Восстановление HP/MP",
+      "th": "ฟื้นฟู HP/MP",
+      "pt": "Recuperação de HP/MP"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ロウソク",
+    "translated": {
+      "en": "Candle",
+      "fr": "Bougie",
+      "it": "Candela",
+      "de": "Kerze",
+      "es": "Vela",
+      "ko": "촛불",
+      "zht": "蠟燭",
+      "zhc": "蜡烛",
+      "ru": "Свеча",
+      "th": "เทียน",
+      "pt": "Vela"
+    },
+    "count": 33
+  },
+  {
+    "raw": "sc_e_0211:ウルの村：音楽再生②",
+    "translated": {
+      "en": "Ur: Play Music 2",
+      "fr": "Ullr : Jouer la musique 2",
+      "it": "Ur: Riproduci musica 2",
+      "de": "Ur: Musik abspielen 2",
+      "es": "Ur: Reproducir música 2",
+      "ko": "우르 마을: 음악 재생 2",
+      "zht": "烏爾村：播放音樂 2",
+      "zhc": "乌尔村：播放音乐 2",
+      "ru": "Ур: Воспроизведение музыки 2",
+      "th": "อูร์: เล่นเพลง 2",
+      "pt": "Ur: Tocar Música 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0210:ウルの村：音楽再生①",
+    "translated": {
+      "en": "Ur: Play Music 1",
+      "fr": "Ullr : Jouer la musique 1",
+      "it": "Ur: Riproduci musica 1",
+      "de": "Ur: Musik abspielen 1",
+      "es": "Ur: Reproducir música 1",
+      "ko": "우르 마을: 음악 재생 1",
+      "zht": "烏爾村：播放音樂 1",
+      "zhc": "乌尔村：播放音乐 1",
+      "ru": "Ур: Воспроизведение музыки 1",
+      "th": "อูร์: เล่นเพลง 1",
+      "pt": "Ur: Tocar Música 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "魔法屋の柱",
+    "translated": {
+      "en": "Magic Shop Pillar",
+      "fr": "Pilier de la boutique de magie",
+      "it": "Pilastro del negozio di magia",
+      "de": "Magieladen-Säule",
+      "es": "Pilar de la tienda de magia",
+      "ko": "마법 상점 기둥",
+      "zht": "魔法店之柱",
+      "zhc": "魔法店之柱",
+      "ru": "Столп магазина магии",
+      "th": "เสาร้านเวทมนตร์",
+      "pt": "Pilar da Loja de Magia"
+    },
+    "count": 43
+  },
+  {
+    "raw": "sc_e_0209:回復の泉",
+    "translated": {
+      "en": "Healing Spring",
+      "fr": "Source de guérison",
+      "it": "Sorgente curativa",
+      "de": "Heilquelle",
+      "es": "Manantial curativo",
+      "ko": "회복의 샘",
+      "zht": "恢復之泉",
+      "zhc": "恢复之泉",
+      "ru": "Целебный источник",
+      "th": "น้ำพุฟื้นฟู",
+      "pt": "Fonte de Cura"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_XXXX:生き返りの泉",
+    "translated": {
+      "en": "Resurrection Spring",
+      "fr": "Source de résurrection",
+      "it": "Sorgente della resurrezione",
+      "de": "Quelle der Wiederbelebung",
+      "es": "Manantial de resurrección",
+      "ko": "부활의 샘",
+      "zht": "復活之泉",
+      "zhc": "复活之泉",
+      "ru": "Источник воскрешения",
+      "th": "น้ำพุชุบชีวิต",
+      "pt": "Fonte da Ressurreição"
+    },
+    "count": 1
+  },
+  {
+    "raw": "隠し扉を開ける①",
+    "translated": {
+      "en": "Open Hidden Door 1",
+      "fr": "Ouvrir la porte cachée 1",
+      "it": "Apri la porta nascosta 1",
+      "de": "Versteckte Tür öffnen 1",
+      "es": "Abrir puerta oculta 1",
+      "ko": "숨겨진 문 열기 1",
+      "zht": "打開隱藏門 1",
+      "zhc": "打开隐藏门 1",
+      "ru": "Открыть скрытую дверь 1",
+      "th": "เปิดประตูลับ 1",
+      "pt": "Abrir Porta Oculta 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "隠し扉",
+    "translated": {
+      "en": "Hidden Door",
+      "fr": "Porte cachée",
+      "it": "Porta nascosta",
+      "de": "Versteckte Tür",
+      "es": "Puerta oculta",
+      "ko": "숨겨진 문",
+      "zht": "隱藏門",
+      "zhc": "隐藏门",
+      "ru": "Скрытая дверь",
+      "th": "ประตูลับ",
+      "pt": "Porta Oculta"
+    },
+    "count": 11
+  },
+  {
+    "raw": "ロウソク①",
+    "translated": {
+      "en": "Candle 1",
+      "fr": "Bougie 1",
+      "it": "Candela 1",
+      "de": "Kerze 1",
+      "es": "Vela 1",
+      "ko": "촛불 1",
+      "zht": "蠟燭 1",
+      "zhc": "蜡烛 1",
+      "ru": "Свеча 1",
+      "th": "เทียน 1",
+      "pt": "Vela 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ロウソク②",
+    "translated": {
+      "en": "Candle 2",
+      "fr": "Bougie 2",
+      "it": "Candela 2",
+      "de": "Kerze 2",
+      "es": "Vela 2",
+      "ko": "촛불 2",
+      "zht": "蠟燭 2",
+      "zhc": "蜡烛 2",
+      "ru": "Свеча 2",
+      "th": "เทียน 2",
+      "pt": "Vela 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "焚火",
+    "translated": {
+      "en": "Bonfire",
+      "fr": "Feu de camp",
+      "it": "Falò",
+      "de": "Lagerfeuer",
+      "es": "Hoguera",
+      "ko": "모닥불",
+      "zht": "營火",
+      "zhc": "营火",
+      "ru": "Костёр",
+      "th": "กองไฟ",
+      "pt": "Fogueira"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ev_e_0019",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "HP/MP回復(右)",
+    "translated": {
+      "en": "HP/MP Recovery (Right)",
+      "fr": "Récupération PV/PM (droite)",
+      "it": "Recupero PV/PM (destra)",
+      "de": "KP/MP-Erholung (rechts)",
+      "es": "Recuperación PV/PM (derecha)",
+      "ko": "HP/MP 회복 (오른쪽)",
+      "zht": "HP/MP恢復（右）",
+      "zhc": "HP/MP恢复（右）",
+      "ru": "Восстановление HP/MP (право)",
+      "th": "ฟื้นฟู HP/MP (ขวา)",
+      "pt": "Recuperação de HP/MP (Direita)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "HP/MP回復(左)",
+    "translated": {
+      "en": "HP/MP Recovery (Left)",
+      "fr": "Récupération PV/PM (gauche)",
+      "it": "Recupero PV/PM (sinistra)",
+      "de": "KP/MP-Erholung (links)",
+      "es": "Recuperación PV/PM (izquierda)",
+      "ko": "HP/MP 회복 (왼쪽)",
+      "zht": "HP/MP恢復（左）",
+      "zhc": "HP/MP恢复（左）",
+      "ru": "Восстановление HP/MP (лево)",
+      "th": "ฟื้นฟู HP/MP (ซ้าย)",
+      "pt": "Recuperação de HP/MP (Esquerda)"
+    },
+    "count": 3
+  },
+  {
+    "raw": "回復",
+    "translated": {
+      "en": "Recovery",
+      "fr": "Récupération",
+      "it": "Recupero",
+      "de": "Erholung",
+      "es": "Recuperación",
+      "ko": "회복",
+      "zht": "恢復",
+      "zhc": "恢复",
+      "ru": "Восстановление",
+      "th": "การฟื้นตัว",
+      "pt": "Recuperação"
+    },
+    "count": 6
+  },
+  {
+    "raw": "sc_e_0333:シドの飛空艇入手",
+    "translated": {
+      "en": "Obtain Cid's Airship",
+      "fr": "Obtenir l'aéronef de Cid",
+      "it": "Ottieni l'aeronave di Cid",
+      "de": "Cids Luftschiff erhalten",
+      "es": "Obtener el barco de Cid",
+      "ko": "시드의 비공정 입수",
+      "zht": "取得希德的飛空艇",
+      "zhc": "取得西德飞空艇",
+      "ru": "Получить воздушный корабль Сида",
+      "th": "ได้รับเรือเหาะของซิด",
+      "pt": "Obter o Navio Voador do Cid"
+    },
+    "count": 1
+  },
+  {
+    "raw": "サラ姫のベッドで寝る",
+    "translated": {
+      "en": "Sleep in Princess Sara's Bed",
+      "fr": "Dormir dans le lit de la princesse Sara",
+      "it": "Dormi nel letto della principessa Sara",
+      "de": "In Prinzessin Saras Bett schlafen",
+      "es": "Dormir en la cama de la princesa Sara",
+      "ko": "사라 공주의 침대에서 자기",
+      "zht": "在莎拉公主的床上睡覺",
+      "zhc": "在莎拉公主的床上睡觉",
+      "ru": "Спать в кровати принцессы Сары",
+      "th": "นอนบนเตียงของเจ้าหญิงซารา",
+      "pt": "Dormir na Cama da Princesa Sara"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水しぶき",
+    "translated": {
+      "en": "Water Splash",
+      "fr": "Éclaboussure",
+      "it": "Spruzzo d'acqua",
+      "de": "Wasserspritzer",
+      "es": "Salpicadura",
+      "ko": "물보라",
+      "zht": "水花",
+      "zhc": "水花",
+      "ru": "Брызги воды",
+      "th": "น้ำกระเซ็น",
+      "pt": "Respingo de Água"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ToLayer",
+    "translated": {},
+    "count": 95
+  },
+  {
+    "raw": "シドと別れる",
+    "translated": {
+      "en": "Part Ways with Cid",
+      "fr": "Se séparer de Cid",
+      "it": "Separati da Cid",
+      "de": "Sich von Cid trennen",
+      "es": "Separarse de Cid",
+      "ko": "시드와 헤어지기",
+      "zht": "與希德分別",
+      "zhc": "与西德分别",
+      "ru": "Расстаться с Сидом",
+      "th": "แยกทางกับซิด",
+      "pt": "Separar-se de Cid"
+    },
+    "count": 1
+  },
+  {
+    "raw": "暖炉",
+    "translated": {
+      "en": "Fireplace",
+      "fr": "Cheminée",
+      "it": "Caminetto",
+      "de": "Kamin",
+      "es": "Chimenea",
+      "ko": "벽난로",
+      "zht": "壁爐",
+      "zhc": "壁炉",
+      "ru": "Камин",
+      "th": "เตาผิง",
+      "pt": "Lareira"
+    },
+    "count": 2
+  },
+  {
+    "raw": "いきかえり",
+    "translated": {
+      "en": "Resurrection",
+      "fr": "Résurrection",
+      "it": "Resurrezione",
+      "de": "Wiederbelebung",
+      "es": "Resurrección",
+      "ko": "부활",
+      "zht": "復活",
+      "zhc": "复活",
+      "ru": "Воскрешение",
+      "th": "การฟื้นคืนชีพ",
+      "pt": "Ressurreição"
+    },
+    "count": 11
+  },
+  {
+    "raw": "壁を消す",
+    "translated": {
+      "en": "Remove Wall",
+      "fr": "Supprimer le mur",
+      "it": "Rimuovi il muro",
+      "de": "Wand entfernen",
+      "es": "Eliminar muro",
+      "ko": "벽 제거",
+      "zht": "移除牆壁",
+      "zhc": "移除墙壁",
+      "ru": "Убрать стену",
+      "th": "ลบกำแพง",
+      "pt": "Remover Parede"
+    },
+    "count": 4
+  },
+  {
+    "raw": "大砲を撃つ",
+    "translated": {
+      "en": "Fire Cannon",
+      "fr": "Tirer le canon",
+      "it": "Spara il cannone",
+      "de": "Kanone abfeuern",
+      "es": "Disparar cañón",
+      "ko": "대포 발사",
+      "zht": "發射大砲",
+      "zhc": "发射大炮",
+      "ru": "Выстрелить из пушки",
+      "th": "ยิงปืนใหญ่",
+      "pt": "Disparar Canhão"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ハインの城に連れ去られる",
+    "translated": {
+      "en": "Taken Away to Castle Hein",
+      "fr": "Emmenés au Château de Hein",
+      "it": "Portati al Castello di Hein",
+      "de": "Nach Schloss Hein verschleppt",
+      "es": "Llevados al Castillo de Hein",
+      "ko": "하인의 성으로 끌려가다",
+      "zht": "被帶往海因城",
+      "zhc": "被带往海因城",
+      "ru": "Уведены в Замок Хейна",
+      "th": "ถูกพาตัวไปปราสาทไฮน์",
+      "pt": "Levados para o Castelo Hein"
+    },
+    "count": 1
+  },
+  {
+    "raw": "イベント後まで侵入不可",
+    "translated": {
+      "en": "No Entry Until After Event",
+      "fr": "Accès interdit avant la fin de l'événement",
+      "it": "Accesso vietato fino a dopo l'evento",
+      "de": "Kein Zutritt bis nach dem Ereignis",
+      "es": "No se puede entrar hasta después del evento",
+      "ko": "이벤트 후까지 진입 불가",
+      "zht": "事件結束前無法進入",
+      "zhc": "事件结束前无法进入",
+      "ru": "Вход закрыт до окончания события",
+      "th": "เข้าไม่ได้จนกว่าจะจบอีเวนต์",
+      "pt": "Entrada Bloqueada Até Após o Evento"
+    },
+    "count": 1
+  },
+  {
+    "raw": "デブチョコボ用コリジョン1",
+    "translated": {
+      "en": "Fat Chocobo Collision 1",
+      "fr": "Collision gros Chocobo 1",
+      "it": "Collisione Chocobo ciccione 1",
+      "de": "Fetter-Chocobo-Kollision 1",
+      "es": "Colisión Chocobo gordo 1",
+      "ko": "뚱초코보 충돌 1",
+      "zht": "胖陸行鳥碰撞 1",
+      "zhc": "胖陆行鸟碰撞 1",
+      "ru": "Столкновение толстого чокобо 1",
+      "th": "การชนโชโคโบะอ้วน 1",
+      "pt": "Colisão Chocobo Gordo 1"
+    },
+    "count": 17
+  },
+  {
+    "raw": "デブチョコボを呼ぶ",
+    "translated": {
+      "en": "Summon Fat Chocobo",
+      "fr": "Invoquer le gros Chocobo",
+      "it": "Evoca il Chocobo ciccione",
+      "de": "Fetten Chocobo beschwören",
+      "es": "Invocar al Chocobo gordo",
+      "ko": "뚱초코보 소환",
+      "zht": "召喚胖陸行鳥",
+      "zhc": "召唤胖陆行鸟",
+      "ru": "Призвать толстого чокобо",
+      "th": "เรียกโชโคโบะอ้วน",
+      "pt": "Invocar Chocobo Gordo"
+    },
+    "count": 28
+  },
+  {
+    "raw": "魔法の鍵で入れる",
+    "translated": {
+      "en": "Enter with Magic Key",
+      "fr": "Entrer avec la clé magique",
+      "it": "Entra con la chiave magica",
+      "de": "Mit Magieschlüssel eintreten",
+      "es": "Entrar con la llave mágica",
+      "ko": "마법 열쇠로 들어가기",
+      "zht": "用魔法鑰匙進入",
+      "zhc": "用魔法钥匙进入",
+      "ru": "Войти с магическим ключом",
+      "th": "เข้าด้วยกุญแจวิเศษ",
+      "pt": "Entrar com a Chave Mágica"
+    },
+    "count": 13
+  },
+  {
+    "raw": "隠し扉を消す",
+    "translated": {
+      "en": "Remove Hidden Door",
+      "fr": "Supprimer la porte cachée",
+      "it": "Rimuovi la porta nascosta",
+      "de": "Versteckte Tür entfernen",
+      "es": "Eliminar puerta oculta",
+      "ko": "숨겨진 문 제거",
+      "zht": "移除隱藏門",
+      "zhc": "移除隐藏门",
+      "ru": "Убрать скрытую дверь",
+      "th": "ลบประตูลับ",
+      "pt": "Remover Porta Oculta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "②の壁を消す",
+    "translated": {
+      "en": "Remove Wall 2",
+      "fr": "Supprimer le mur 2",
+      "it": "Rimuovi il muro 2",
+      "de": "Wand 2 entfernen",
+      "es": "Eliminar muro 2",
+      "ko": "벽 2 제거",
+      "zht": "移除牆壁 2",
+      "zhc": "移除墙壁 2",
+      "ru": "Убрать стену 2",
+      "th": "ลบกำแพง 2",
+      "pt": "Remover Parede 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水晶",
+    "translated": {
+      "en": "Crystal Ball",
+      "fr": "Boule de cristal",
+      "it": "Sfera di cristallo",
+      "de": "Kristallkugel",
+      "es": "Bola de cristal",
+      "ko": "수정 구슬",
+      "zht": "水晶球",
+      "zhc": "水晶球",
+      "ru": "Хрустальный шар",
+      "th": "ลูกแก้ว",
+      "pt": "Bola de Cristal"
+    },
+    "count": 14
+  },
+  {
+    "raw": "カブ",
+    "translated": {
+      "en": "Turnip",
+      "fr": "Navet",
+      "it": "Rapa",
+      "de": "Rübe",
+      "es": "Nabo",
+      "ko": "순무",
+      "zht": "蕪菁",
+      "zhc": "芜菁",
+      "ru": "Репа",
+      "th": "หัวผักกาด",
+      "pt": "Nabo"
+    },
+    "count": 25
+  },
+  {
+    "raw": "畑の人に怒られる",
+    "translated": {
+      "en": "Farmer Gets Angry",
+      "fr": "Le fermier se fâche",
+      "it": "Il contadino si arrabbia",
+      "de": "Bauer wird wütend",
+      "es": "El granjero se enfada",
+      "ko": "농부가 화를 내다",
+      "zht": "農夫生氣了",
+      "zhc": "农夫生气了",
+      "ru": "Фермер сердится",
+      "th": "ชาวนาโกรธ",
+      "pt": "Fazendeiro Fica Bravo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ピアノ演奏D",
+    "translated": {
+      "en": "Piano Performance D",
+      "fr": "Performance au piano D",
+      "it": "Esecuzione al pianoforte D",
+      "de": "Klaviervorführung D",
+      "es": "Interpretación de piano D",
+      "ko": "피아노 연주 D",
+      "zht": "鋼琴演奏 D",
+      "zhc": "钢琴演奏 D",
+      "ru": "Игра на фортепиано D",
+      "th": "การเล่นเปียโน D",
+      "pt": "Performance de Piano D"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ピアノ演奏C",
+    "translated": {
+      "en": "Piano Performance C",
+      "fr": "Performance au piano C",
+      "it": "Esecuzione al pianoforte C",
+      "de": "Klaviervorführung C",
+      "es": "Interpretación de piano C",
+      "ko": "피아노 연주 C",
+      "zht": "鋼琴演奏 C",
+      "zhc": "钢琴演奏 C",
+      "ru": "Игра на фортепиано C",
+      "th": "การเล่นเปียโน C",
+      "pt": "Performance de Piano C"
+    },
+    "count": 1
+  },
+  {
+    "raw": "トックルの村人との会話",
+    "translated": {
+      "en": "Talk with Tokkul Villagers",
+      "fr": "Conversation avec les villageois de Tokkul",
+      "it": "Conversazione con gli abitanti di Tokkul",
+      "de": "Gespräch mit den Dorfbewohnern von Tokkul",
+      "es": "Conversación con los aldeanos de Tokkul",
+      "ko": "토클 마을 주민과의 대화",
+      "zht": "與托庫爾村村民的對話",
+      "zhc": "与托库尔村村民的对话",
+      "ru": "Разговор с жителями Токкула",
+      "th": "สนทนากับชาวบ้านทกกูล",
+      "pt": "Conversa com os Aldeões de Tokkul"
+    },
+    "count": 1
+  },
+  {
+    "raw": "見えない壁に阻まれる",
+    "translated": {
+      "en": "Blocked by Invisible Wall",
+      "fr": "Bloqué par un mur invisible",
+      "it": "Bloccato da un muro invisibile",
+      "de": "Von unsichtbarer Wand blockiert",
+      "es": "Bloqueado por un muro invisible",
+      "ko": "보이지 않는 벽에 막힘",
+      "zht": "被隱形牆阻擋",
+      "zhc": "被隐形墙阻挡",
+      "ru": "Преграждено невидимой стеной",
+      "th": "ถูกกำแพงล่องหนกั้น",
+      "pt": "Bloqueado por Parede Invisível"
+    },
+    "count": 1
+  },
+  {
+    "raw": "元々あった角",
+    "translated": {
+      "en": "Original Horn",
+      "fr": "Corne originale",
+      "it": "Corno originale",
+      "de": "Originalhorn",
+      "es": "Cuerno original",
+      "ko": "원래 뿔",
+      "zht": "原始之角",
+      "zhc": "原始之角",
+      "ru": "Оригинальный рог",
+      "th": "เขาดั้งเดิม",
+      "pt": "Chifre Original"
+    },
+    "count": 4
+  },
+  {
+    "raw": "角を置く場所確認",
+    "translated": {
+      "en": "Check Horn Placement Spot",
+      "fr": "Vérifier l'emplacement de la corne",
+      "it": "Controlla dove posare il corno",
+      "de": "Ablageort des Horns prüfen",
+      "es": "Comprobar el lugar para colocar el cuerno",
+      "ko": "뿔을 놓는 장소 확인",
+      "zht": "確認放置角的地點",
+      "zhc": "确认放置角的地点",
+      "ru": "Проверить место для рога",
+      "th": "ตรวจสอบจุดวางเขา",
+      "pt": "Verificar Local do Chifre"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドワーフの角",
+    "translated": {
+      "en": "Horn of Ice",
+      "fr": "Corne des nains",
+      "it": "Corno dei nani",
+      "de": "Horn des Eises",
+      "es": "Cuerno de hielo",
+      "ko": "드워프의 뿔",
+      "zht": "矮人的角",
+      "zhc": "矮人之角",
+      "ru": "Ледяной рог",
+      "th": "เขาน้ำแข็ง",
+      "pt": "Chifre de Gelo"
+    },
+    "count": 4
+  },
+  {
+    "raw": "岩が道をふさいでいる",
+    "translated": {
+      "en": "Rock Blocking the Path",
+      "fr": "Rocher bloquant le chemin",
+      "it": "Roccia che blocca il sentiero",
+      "de": "Felsen blockiert den Weg",
+      "es": "Roca bloqueando el camino",
+      "ko": "바위가 길을 막고 있다",
+      "zht": "岩石擋住了道路",
+      "zhc": "岩石挡住了道路",
+      "ru": "Камень преграждает путь",
+      "th": "หินขวางทาง",
+      "pt": "Pedra Bloqueando o Caminho"
+    },
+    "count": 1
+  },
+  {
+    "raw": "地底湖入口通常",
+    "translated": {
+      "en": "Subterranean Lake Entrance (Normal)",
+      "fr": "Entrée du Lac souterrain (normal)",
+      "it": "Ingresso del Lago sotterraneo (normale)",
+      "de": "Eingang zum Unterirdischen See (normal)",
+      "es": "Entrada del Lago subterráneo (normal)",
+      "ko": "지하 호수 입구 (일반)",
+      "zht": "地底湖入口 (通常)",
+      "zhc": "地底湖入口 (通常)",
+      "ru": "Вход в Подземное озеро (обычный)",
+      "th": "ทางเข้าทะเลสาบใต้ดิน (ปกติ)",
+      "pt": "Entrada do Lago Subterrâneo (Normal)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "風の牙をもらう",
+    "translated": {
+      "en": "Receive Fang of Wind",
+      "fr": "Recevoir le Croc du vent",
+      "it": "Ricevi la Zanna d'aria",
+      "de": "Zahn des Windes erhalten",
+      "es": "Recibir el Colmillo del Aire",
+      "ko": "바람의 송곳니 받기",
+      "zht": "獲得風之牙",
+      "zhc": "获得风之牙",
+      "ru": "Получить Клык воздуха",
+      "th": "ได้รับเขี้ยวลม",
+      "pt": "Receber a Presa do Vento"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタルのかけら",
+    "translated": {
+      "en": "Crystal Shard",
+      "fr": "Éclat de cristal",
+      "it": "Frammento di cristallo",
+      "de": "Kristallsplitter",
+      "es": "Fragmento de cristal",
+      "ko": "크리스털 조각",
+      "zht": "水晶碎片",
+      "zhc": "水晶碎片",
+      "ru": "Осколок кристалла",
+      "th": "เศษคริสตัล",
+      "pt": "Fragmento de Cristal"
+    },
+    "count": 1
+  },
+  {
+    "raw": "鍵がかかっている",
+    "translated": {
+      "en": "Locked",
+      "fr": "Verrouillé",
+      "it": "Chiuso a chiave",
+      "de": "Verschlossen",
+      "es": "Cerrado con llave",
+      "ko": "잠겨 있다",
+      "zht": "已上鎖",
+      "zhc": "已上锁",
+      "ru": "Заперто",
+      "th": "ล็อคอยู่",
+      "pt": "Trancado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "柵",
+    "translated": {
+      "en": "Fence",
+      "fr": "Clôture",
+      "it": "Recinzione",
+      "de": "Zaun",
+      "es": "Cerca",
+      "ko": "울타리",
+      "zht": "柵欄",
+      "zhc": "栅栏",
+      "ru": "Забор",
+      "th": "รั้ว",
+      "pt": "Cerca"
+    },
+    "count": 1
+  },
+  {
+    "raw": "曲に合わせて踊る",
+    "translated": {
+      "en": "Dance to the Music",
+      "fr": "Danser au rythme de la musique",
+      "it": "Balla a ritmo di musica",
+      "de": "Zur Musik tanzen",
+      "es": "Bailar al ritmo de la música",
+      "ko": "곡에 맞춰 춤추기",
+      "zht": "隨著樂曲跳舞",
+      "zhc": "随着乐曲跳舞",
+      "ru": "Танцевать под музыку",
+      "th": "เต้นตามเพลง",
+      "pt": "Dançar ao Som da Música"
+    },
+    "count": 2
+  },
+  {
+    "raw": "飛空艇ノーチラスを入手",
+    "translated": {
+      "en": "Obtain the Nautilus",
+      "fr": "Obtenir l'aéronef Nautilus",
+      "it": "Ottieni l'aeronave Nautilus",
+      "de": "Luftschiff Nautilus erhalten",
+      "es": "Obtener el barco volador Nautilus",
+      "ko": "비공정 노틸러스 입수",
+      "zht": "取得飛空艇鸚鵡螺號",
+      "zhc": "取得飞空艇鹦鹉螺号",
+      "ru": "Получить воздушный корабль «Наутилус»",
+      "th": "ได้รับเรือดำน้ำนอติลุส",
+      "pt": "Obter o Navio Voador Nautilus"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ガルーダ撃破まで入れない",
+    "translated": {
+      "en": "Cannot Enter Until Garuda Defeated",
+      "fr": "Accès impossible tant que Garuda n'est pas vaincu",
+      "it": "Non puoi entrare finché Garuda non è sconfitto",
+      "de": "Kein Eintritt bis Garuda besiegt ist",
+      "es": "No se puede entrar hasta derrotar a Garuda",
+      "ko": "가루다를 쓰러뜨릴 때까지 들어갈 수 없다",
+      "zht": "擊敗迦樓羅前無法進入",
+      "zhc": "击败迦楼罗前无法进入",
+      "ru": "Нельзя войти, пока Гаруда не побеждена",
+      "th": "เข้าไม่ได้จนกว่าจะปราบครุฑ",
+      "pt": "Não é Possível Entrar Até Derrotar Garuda"
+    },
+    "count": 5
+  },
+  {
+    "raw": "生き返り",
+    "translated": {
+      "en": "Resurrection",
+      "fr": "Résurrection",
+      "it": "Resurrezione",
+      "de": "Wiederbelebung",
+      "es": "Resurrección",
+      "ko": "부활",
+      "zht": "復活",
+      "zhc": "复活",
+      "ru": "Воскрешение",
+      "th": "การฟื้นคืนชีพ",
+      "pt": "Ressurreição"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ev_e_0075",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "図書館の本を読む⑨",
+    "translated": {
+      "en": "Read Library Book 9",
+      "fr": "Lire le livre de la bibliothèque 9",
+      "it": "Leggi il libro della biblioteca 9",
+      "de": "Bibliotheksbuch lesen 9",
+      "es": "Leer libro de la biblioteca 9",
+      "ko": "도서관 책 읽기 9",
+      "zht": "閱讀圖書館的書 9",
+      "zhc": "阅读图书馆的书 9",
+      "ru": "Прочитать книгу из библиотеки 9",
+      "th": "อ่านหนังสือห้องสมุด 9",
+      "pt": "Ler Libro da Biblioteca 9"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む⑧",
+    "translated": {
+      "en": "Read Library Book 8",
+      "fr": "Lire le livre de la bibliothèque 8",
+      "it": "Leggi il libro della biblioteca 8",
+      "de": "Bibliotheksbuch lesen 8",
+      "es": "Leer libro de la biblioteca 8",
+      "ko": "도서관 책 읽기 8",
+      "zht": "閱讀圖書館的書 8",
+      "zhc": "阅读图书馆的书 8",
+      "ru": "Прочитать книгу из библиотеки 8",
+      "th": "อ่านหนังสือห้องสมุด 8",
+      "pt": "Ler Libro da Biblioteca 8"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む⑦",
+    "translated": {
+      "en": "Read Library Book 7",
+      "fr": "Lire le livre de la bibliothèque 7",
+      "it": "Leggi il libro della biblioteca 7",
+      "de": "Bibliotheksbuch lesen 7",
+      "es": "Leer libro de la biblioteca 7",
+      "ko": "도서관 책 읽기 7",
+      "zht": "閱讀圖書館的書 7",
+      "zhc": "阅读图书馆的书 7",
+      "ru": "Прочитать книгу из библиотеки 7",
+      "th": "อ่านหนังสือห้องสมุด 7",
+      "pt": "Ler Libro da Biblioteca 7"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む⑥",
+    "translated": {
+      "en": "Read Library Book 6",
+      "fr": "Lire le livre de la bibliothèque 6",
+      "it": "Leggi il libro della biblioteca 6",
+      "de": "Bibliotheksbuch lesen 6",
+      "es": "Leer libro de la biblioteca 6",
+      "ko": "도서관 책 읽기 6",
+      "zht": "閱讀圖書館的書 6",
+      "zhc": "阅读图书馆的书 6",
+      "ru": "Прочитать книгу из библиотеки 6",
+      "th": "อ่านหนังสือห้องสมุด 6",
+      "pt": "Ler Libro da Biblioteca 6"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む⑤",
+    "translated": {
+      "en": "Read Library Book 5",
+      "fr": "Lire le livre de la bibliothèque 5",
+      "it": "Leggi il libro della biblioteca 5",
+      "de": "Bibliotheksbuch lesen 5",
+      "es": "Leer libro de la biblioteca 5",
+      "ko": "도서관 책 읽기 5",
+      "zht": "閱讀圖書館的書 5",
+      "zhc": "阅读图书馆的书 5",
+      "ru": "Прочитать книгу из библиотеки 5",
+      "th": "อ่านหนังสือห้องสมุด 5",
+      "pt": "Ler Libro da Biblioteca 5"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む④",
+    "translated": {
+      "en": "Read Library Book 4",
+      "fr": "Lire le livre de la bibliothèque 4",
+      "it": "Leggi il libro della biblioteca 4",
+      "de": "Bibliotheksbuch lesen 4",
+      "es": "Leer libro de la biblioteca 4",
+      "ko": "도서관 책 읽기 4",
+      "zht": "閱讀圖書館的書 4",
+      "zhc": "阅读图书馆的书 4",
+      "ru": "Прочитать книгу из библиотеки 4",
+      "th": "อ่านหนังสือห้องสมุด 4",
+      "pt": "Ler Libro da Biblioteca 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む③",
+    "translated": {
+      "en": "Read Library Book 3",
+      "fr": "Lire le livre de la bibliothèque 3",
+      "it": "Leggi il libro della biblioteca 3",
+      "de": "Bibliotheksbuch lesen 3",
+      "es": "Leer libro de la biblioteca 3",
+      "ko": "도서관 책 읽기 3",
+      "zht": "閱讀圖書館的書 3",
+      "zhc": "阅读图书馆的书 3",
+      "ru": "Прочитать книгу из библиотеки 3",
+      "th": "อ่านหนังสือห้องสมุด 3",
+      "pt": "Ler Libro da Biblioteca 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む②",
+    "translated": {
+      "en": "Read Library Book 2",
+      "fr": "Lire le livre de la bibliothèque 2",
+      "it": "Leggi il libro della biblioteca 2",
+      "de": "Bibliotheksbuch lesen 2",
+      "es": "Leer libro de la biblioteca 2",
+      "ko": "도서관 책 읽기 2",
+      "zht": "閱讀圖書館的書 2",
+      "zhc": "阅读图书馆的书 2",
+      "ru": "Прочитать книгу из библиотеки 2",
+      "th": "อ่านหนังสือห้องสมุด 2",
+      "pt": "Ler Libro da Biblioteca 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "図書館の本を読む①",
+    "translated": {
+      "en": "Read Library Book 1",
+      "fr": "Lire le livre de la bibliothèque 1",
+      "it": "Leggi il libro della biblioteca 1",
+      "de": "Bibliotheksbuch lesen 1",
+      "es": "Leer libro de la biblioteca 1",
+      "ko": "도서관 책 읽기 1",
+      "zht": "閱讀圖書館的書 1",
+      "zhc": "阅读图书馆的书 1",
+      "ru": "Прочитать книгу из библиотеки 1",
+      "th": "อ่านหนังสือห้องสมุด 1",
+      "pt": "Ler Libro da Biblioteca 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドーガの館はじめて",
+    "translated": {
+      "en": "Doga's Manor First Visit",
+      "fr": "Première visite au manoir de Doga",
+      "it": "Prima visita al Palazzo di Doga",
+      "de": "Erster Besuch in Dogas Schloss",
+      "es": "Primera visita a la mansión de Doga",
+      "ko": "도가의 저택 첫 방문",
+      "zht": "首次造訪多加的宅邸",
+      "zhc": "首次造访多加庄园",
+      "ru": "Первый визит в поместье Доги",
+      "th": "เยือนคฤหาสน์ของโดกาครั้งแรก",
+      "pt": "Primeira Visita à Mansão de Doga"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ウネとドーガに会いに行く",
+    "translated": {
+      "en": "Go Meet Unei and Doga",
+      "fr": "Aller voir Unéi et Doga",
+      "it": "Vai a incontrare Unei e Doga",
+      "de": "Unei und Doga besuchen",
+      "es": "Ir a ver a Unei y Doga",
+      "ko": "우네와 도가를 만나러 가기",
+      "zht": "去見烏內和多加",
+      "zhc": "去见乌内和多加",
+      "ru": "Отправиться к Унеи и Доге",
+      "th": "ไปพบอูเน่และโดกา",
+      "pt": "Ir Encontrar Unei e Doga"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ギサールのやさいを使う",
+    "translated": {
+      "en": "Use Gysahl Greens",
+      "fr": "Utiliser le Légume de Gysahl",
+      "it": "Usa l'Erba ghisal",
+      "de": "Gizarkraut benutzen",
+      "es": "Usar las Verduras gysahl",
+      "ko": "기살의 야채 사용",
+      "zht": "使用基薩爾野菜",
+      "zhc": "使用基萨尔野菜",
+      "ru": "Использовать Гисальскую зелень",
+      "th": "ใช้ผักกีซาล",
+      "pt": "Usar Verduras de Gysahl"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドーガの館：魔法陣の洞窟への穴に入る",
+    "translated": {
+      "en": "Doga's Manor: Enter Hole to Cave of the Circle",
+      "fr": "Manoir de Doga : Entrer dans le trou menant à la Galerie du portail",
+      "it": "Palazzo di Doga: Entra nel buco verso la Grotta del portale",
+      "de": "Dogas Schloss: In das Loch zur Höhle des Kreises steigen",
+      "es": "Mansión de Doga: Entrar en el agujero hacia la Cueva del círculo mágico",
+      "ko": "도가의 저택: 마법진 동굴로 가는 구멍에 들어가기",
+      "zht": "多加的宅邸：進入通往魔法陣洞窟的洞穴",
+      "zhc": "多加庄园：进入通往魔法阵洞窟的洞穴",
+      "ru": "Поместье Доги: Войти в проход в Пещеру Круга",
+      "th": "คฤหาสน์ของโดกา: ลงหลุมไปถ้ำแห่งวงเวท",
+      "pt": "Mansão de Doga: Entrar no Buraco para a Caverna do Círculo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ほのおのきばを入手",
+    "translated": {
+      "en": "Obtain Fang of Fire",
+      "fr": "Obtenir le Croc du feu",
+      "it": "Ottieni la Zanna di fuoco",
+      "de": "Zahn des Feuers erhalten",
+      "es": "Obtener el Colmillo del Fuego",
+      "ko": "불의 송곳니 입수",
+      "zht": "取得火之牙",
+      "zhc": "取得火之牙",
+      "ru": "Получить Клык огня",
+      "th": "ได้รับเขี้ยวไฟ",
+      "pt": "Obter a Presa do Fogo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "魔法屋",
+    "translated": {
+      "en": "Magic Shop",
+      "fr": "Boutique de magie",
+      "it": "Negozio di magia",
+      "de": "Magieladen",
+      "es": "Tienda de magia",
+      "ko": "마법 상점",
+      "zht": "魔法店",
+      "zhc": "魔法店",
+      "ru": "Магазин магии",
+      "th": "ร้านเวทมนตร์",
+      "pt": "Loja de Magia"
+    },
+    "count": 2
+  },
+  {
+    "raw": "武器屋",
+    "translated": {
+      "en": "Weapon Shop",
+      "fr": "Boutique d'armes",
+      "it": "Negozio di armi",
+      "de": "Waffenladen",
+      "es": "Tienda de armas",
+      "ko": "무기 상점",
+      "zht": "武器店",
+      "zhc": "武器店",
+      "ru": "Магазин оружия",
+      "th": "ร้านอาวุธ",
+      "pt": "Loja de Armas"
+    },
+    "count": 2
+  },
+  {
+    "raw": "防具屋",
+    "translated": {
+      "en": "Armor Shop",
+      "fr": "Boutique d'armures",
+      "it": "Negozio di armature",
+      "de": "Rüstungsladen",
+      "es": "Tienda de armaduras",
+      "ko": "방어구 상점",
+      "zht": "防具店",
+      "zhc": "防具店",
+      "ru": "Магазин доспехов",
+      "th": "ร้านเกราะ",
+      "pt": "Loja de Armaduras"
+    },
+    "count": 2
+  },
+  {
+    "raw": "道具屋",
+    "translated": {
+      "en": "Item Shop",
+      "fr": "Boutique d'objets",
+      "it": "Negozio di oggetti",
+      "de": "Gegenstandsladen",
+      "es": "Tienda de objetos",
+      "ko": "도구 상점",
+      "zht": "道具店",
+      "zhc": "道具店",
+      "ru": "Магазин предметов",
+      "th": "ร้านไอเทม",
+      "pt": "Loja de Itens"
+    },
+    "count": 2
+  },
+  {
+    "raw": "地上全体へ",
+    "translated": {
+      "en": "To Surface World",
+      "fr": "Vers le monde de la surface",
+      "it": "Al mondo di superficie",
+      "de": "Zur Oberfläche",
+      "es": "Al mundo de la superficie",
+      "ko": "지상 세계로",
+      "zht": "前往地上世界",
+      "zhc": "前往地上世界",
+      "ru": "На поверхность",
+      "th": "สู่โลกพื้นผิว",
+      "pt": "Para o Mundo da Superfície"
+    },
+    "count": 1
+  },
+  {
+    "raw": "インビンシブルはじめて",
+    "translated": {
+      "en": "Invincible First Time",
+      "fr": "Première fois avec l'Invincible",
+      "it": "Invincibile per la prima volta",
+      "de": "Invincible zum ersten Mal",
+      "es": "Invencible por primera vez",
+      "ko": "인빈서블 처음",
+      "zht": "首次取得無敵號",
+      "zhc": "首次取得无敌号",
+      "ru": "«Непобедимый» в первый раз",
+      "th": "เรืออินวินซิเบิ้ลครั้งแรก",
+      "pt": "Invencível pela Primeira Vez"
+    },
+    "count": 1
+  },
+  {
+    "raw": "インビンシブルを操作する",
+    "translated": {
+      "en": "Control Invincible",
+      "fr": "Contrôler l'Invincible",
+      "it": "Controlla l'Invincibile",
+      "de": "Invincible steuern",
+      "es": "Controlar el Invencible",
+      "ko": "인빈서블 조종",
+      "zht": "操控無敵號",
+      "zhc": "操控无敌号",
+      "ru": "Управлять «Непобедимым»",
+      "th": "ควบคุมเรืออินวินซิเบิ้ล",
+      "pt": "Controlar o Invencível"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ファルガバードからワールドマップへ",
+    "translated": {
+      "en": "From Falgabard to World Map",
+      "fr": "De Falgabard à la mappemonde",
+      "it": "Da Falgabard al mappamondo",
+      "de": "Von Falgabard zur Oberwelt",
+      "es": "De Falgabard al mapamundi",
+      "ko": "팔가바드에서 월드맵으로",
+      "zht": "從法爾加巴德到世界地圖",
+      "zhc": "从法尔加巴德到世界地图",
+      "ru": "Из Фалгабарда на карту мира",
+      "th": "จากฟาลกาบาร์ดสู่แผนที่โลก",
+      "pt": "De Falgabard para o Mapa do Mundo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "状態異常回復",
+    "translated": {
+      "en": "Status Ailment Recovery",
+      "fr": "Soin des altérations d'état",
+      "it": "Cura alterazioni di stato",
+      "de": "Statusleiden-Heilung",
+      "es": "Recuperación de estados alterados",
+      "ko": "상태이상 회복",
+      "zht": "狀態異常恢復",
+      "zhc": "状态异常恢复",
+      "ru": "Излечение статусных эффектов",
+      "th": "รักษาสถานะผิดปกติ",
+      "pt": "Recuperação de Anomalias de Estado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "HP/MP全回復",
+    "translated": {
+      "en": "Full HP/MP Recovery",
+      "fr": "Récupération totale PV/PM",
+      "it": "Recupero completo PV/PM",
+      "de": "Volle KP/MP-Erholung",
+      "es": "Recuperación total de PV/PM",
+      "ko": "HP/MP 전체 회복",
+      "zht": "HP/MP全恢復",
+      "zhc": "HP/MP全恢复",
+      "ru": "Полное восстановление HP/MP",
+      "th": "ฟื้นฟู HP/MP เต็ม",
+      "pt": "Recuperação Total de HP/MP"
+    },
+    "count": 2
+  },
+  {
+    "raw": "浮遊大陸へ",
+    "translated": {
+      "en": "To Floating Continent",
+      "fr": "Vers le Continent flottant",
+      "it": "Al Continente fluttuante",
+      "de": "Zum Schwebenden Kontinent",
+      "es": "Al Continente flotante",
+      "ko": "부유 대륙으로",
+      "zht": "前往浮游大陸",
+      "zhc": "前往浮游大陆",
+      "ru": "На Парящий континент",
+      "th": "สู่ทวีปลอยฟ้า",
+      "pt": "Para o Continente Flutuante"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0003:壁開けスイッチ：左",
+    "translated": {
+      "en": "Wall Switch: Left",
+      "fr": "Interrupteur mural : gauche",
+      "it": "Interruttore a muro: sinistra",
+      "de": "Wandschalter: links",
+      "es": "Interruptor de pared: izquierdo",
+      "ko": "벽 스위치: 왼쪽",
+      "zht": "牆壁開關：左",
+      "zhc": "墙壁开关：左",
+      "ru": "Настенный переключатель: левый",
+      "th": "สวิตช์ผนัง: ซ้าย",
+      "pt": "Interruptor de Parede: Esquerdo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0003:壁開く前のコリジョン",
+    "translated": {
+      "en": "Wall Collision Before Opening",
+      "fr": "Collision du mur avant l'ouverture",
+      "it": "Collisione del muro prima dell'apertura",
+      "de": "Wandkollision vor dem Öffnen",
+      "es": "Colisión del muro antes de abrir",
+      "ko": "열리기 전 벽 충돌",
+      "zht": "開啟前的牆壁碰撞",
+      "zhc": "开启前的墙壁碰撞",
+      "ru": "Столкновение со стеной до открытия",
+      "th": "การชนผนังก่อนเปิด",
+      "pt": "Colisão da Parede Antes de Abrir"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0002:岩が怪しい",
+    "translated": {
+      "en": "Suspicious Rock",
+      "fr": "Rocher suspect",
+      "it": "Roccia sospetta",
+      "de": "Verdächtiger Felsen",
+      "es": "Roca sospechosa",
+      "ko": "수상한 바위",
+      "zht": "可疑的岩石",
+      "zhc": "可疑的岩石",
+      "ru": "Подозрительный камень",
+      "th": "หินน่าสงสัย",
+      "pt": "Pedra Suspeita"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アイコン「！」",
+    "translated": {
+      "en": "Exclamation Mark Icon",
+      "fr": "Icône point d'exclamation",
+      "it": "Icona punto esclamativo",
+      "de": "Ausrufezeichen-Symbol",
+      "es": "Icono de exclamación",
+      "ko": "느낌표 아이콘",
+      "zht": "驚嘆號圖示",
+      "zhc": "感叹号图标",
+      "ru": "Значок восклицательного знака",
+      "th": "ไอคอนเครื่องหมายตกใจ",
+      "pt": "Ícone de Exclamação"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0006:回復の泉",
+    "translated": {
+      "en": "Healing Spring",
+      "fr": "Source de guérison",
+      "it": "Sorgente curativa",
+      "de": "Heilquelle",
+      "es": "Manantial curativo",
+      "ko": "회복의 샘",
+      "zht": "恢復之泉",
+      "zhc": "恢复之泉",
+      "ru": "Целебный источник",
+      "th": "น้ำพุฟื้นฟู",
+      "pt": "Fonte de Cura"
+    },
+    "count": 2
+  },
+  {
+    "raw": "sc_e_0005:泉が怪しい",
+    "translated": {
+      "en": "Suspicious Spring",
+      "fr": "Source suspecte",
+      "it": "Sorgente sospetta",
+      "de": "Verdächtige Quelle",
+      "es": "Manantial sospechoso",
+      "ko": "수상한 샘",
+      "zht": "可疑的泉水",
+      "zhc": "可疑的泉水",
+      "ru": "Подозрительный источник",
+      "th": "น้ำพุน่าสงสัย",
+      "pt": "Fonte Suspeita"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ワープ",
+    "translated": {
+      "en": "Warp",
+      "fr": "Téléportation",
+      "it": "Teletrasporto",
+      "de": "Teleport",
+      "es": "Teletransporte",
+      "ko": "워프",
+      "zht": "傳送",
+      "zhc": "传送",
+      "ru": "Телепорт",
+      "th": "วาร์ป",
+      "pt": "Teletransporte"
+    },
+    "count": 5
+  },
+  {
+    "raw": "クリスタル（スクリプト）",
+    "translated": {
+      "en": "Crystal (Script)",
+      "fr": "Cristal (Script)",
+      "it": "Cristallo (Script)",
+      "de": "Kristall (Skript)",
+      "es": "Cristal (Script)",
+      "ko": "크리스털 (스크립트)",
+      "zht": "水晶 (腳本)",
+      "zhc": "水晶 (脚本)",
+      "ru": "Кристалл (Скрипт)",
+      "th": "คริสตัล (สคริปต์)",
+      "pt": "Cristal (Script)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0007:ランドタートル戦",
+    "translated": {
+      "en": "Land Turtle Battle",
+      "fr": "Combat contre Géokhélone",
+      "it": "Battaglia con Testuggine",
+      "de": "Kampf gegen Landschildkröte",
+      "es": "Batalla contra Geotortuga",
+      "ko": "랜드 터틀 전투",
+      "zht": "陸龜之戰",
+      "zhc": "陆龟之战",
+      "ru": "Бой с Сухопутной черепахой",
+      "th": "การต่อสู้กับเต่าบก",
+      "pt": "Batalha contra Jabuti"
+    },
+    "count": 1
+  },
+  {
+    "raw": "2の道が開く",
+    "translated": {
+      "en": "Path 2 Opens",
+      "fr": "Chemin 2 s'ouvre",
+      "it": "Sentiero 2 si apre",
+      "de": "Weg 2 öffnet sich",
+      "es": "Camino 2 se abre",
+      "ko": "2의 길이 열린다",
+      "zht": "道路 2 開啟",
+      "zhc": "道路 2 开启",
+      "ru": "Путь 2 открывается",
+      "th": "เส้นทาง 2 เปิด",
+      "pt": "Caminho 2 Abre"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ジン戦",
+    "translated": {
+      "en": "Djinn Battle",
+      "fr": "Combat contre Djinn",
+      "it": "Battaglia con Jinn",
+      "de": "Kampf gegen Dschinn",
+      "es": "Batalla contra Djinn",
+      "ko": "진 전투",
+      "zht": "靈魔之戰",
+      "zhc": "魔人之战",
+      "ru": "Бой с Джинном",
+      "th": "การต่อสู้กับจินน์",
+      "pt": "Batalha contra Djinn"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ワールドマップへ移動",
+    "translated": {
+      "en": "Move to World Map",
+      "fr": "Aller sur la mappemonde",
+      "it": "Vai al mappamondo",
+      "de": "Reise zur Oberwelt",
+      "es": "Ir al mapamundi",
+      "ko": "월드 맵으로 이동",
+      "zht": "前往世界地圖",
+      "zhc": "前往世界地图",
+      "ru": "Перемещение на карту мира",
+      "th": "ย้ายไปแผนที่โลก",
+      "pt": "Ir para o Mapa do Mundo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "デッシュ登場",
+    "translated": {
+      "en": "Desch Appears",
+      "fr": "Apparition de Desch",
+      "it": "Comparsa di Desch",
+      "de": "Desch erscheint",
+      "es": "Aparición de Desch",
+      "ko": "데슈 등장",
+      "zht": "德修登場",
+      "zhc": "德修登场",
+      "ru": "Появление Деша",
+      "th": "เด็ชปรากฏตัว",
+      "pt": "Desch Aparece"
+    },
+    "count": 1
+  },
+  {
+    "raw": "小さな穴",
+    "translated": {
+      "en": "Small Hole",
+      "fr": "Petit trou",
+      "it": "Piccolo buco",
+      "de": "Kleines Loch",
+      "es": "Agujero pequeño",
+      "ko": "작은 구멍",
+      "zht": "小洞",
+      "zhc": "小洞",
+      "ru": "Маленькая дыра",
+      "th": "รูเล็กๆ",
+      "pt": "Pequeno Buraco"
+    },
+    "count": 1
+  },
+  {
+    "raw": "目を返さなければ",
+    "translated": {
+      "en": "Must Return the Eye",
+      "fr": "Il faut rendre l'œil",
+      "it": "Bisogna restituire l'occhio",
+      "de": "Das Auge muss zurück",
+      "es": "Hay que devolver el ojo",
+      "ko": "눈을 돌려줘야 한다",
+      "zht": "必須歸還眼睛",
+      "zhc": "必须归还眼睛",
+      "ru": "Нужно вернуть глаз",
+      "th": "ต้องคืนดวงตา",
+      "pt": "É Preciso Devolver o Olho"
+    },
+    "count": 1
+  },
+  {
+    "raw": "目を返した後",
+    "translated": {
+      "en": "After Returning the Eye",
+      "fr": "Après avoir rendu l'œil",
+      "it": "Dopo aver restituito l'occhio",
+      "de": "Nach Rückgabe des Auges",
+      "es": "Después de devolver el ojo",
+      "ko": "눈을 돌려준 후",
+      "zht": "歸還眼睛後",
+      "zhc": "归还眼睛后",
+      "ru": "После возвращения глаза",
+      "th": "หลังคืนดวงตา",
+      "pt": "Após Devolver o Olho"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ネプトのめ",
+    "translated": {
+      "en": "Nepto Eye",
+      "fr": "Œil du dragon de Nepto",
+      "it": "Occhio di Nepto",
+      "de": "Nepto-Auge",
+      "es": "Ojo de Nepto",
+      "ko": "넵토의 눈",
+      "zht": "涅普特之眼",
+      "zhc": "涅普特之眼",
+      "ru": "Глаз Непто",
+      "th": "ดวงตาของเนปโต",
+      "pt": "Olho de Nepto"
+    },
+    "count": 2
+  },
+  {
+    "raw": "トード使用前・後",
+    "translated": {
+      "en": "Before/After Using Toad",
+      "fr": "Avant/Après l'utilisation de Crapaud",
+      "it": "Prima/Dopo aver usato Rospo",
+      "de": "Vor/Nach Benutzung von Kröte",
+      "es": "Antes/Después de usar Sapo",
+      "ko": "두꺼비 사용 전/후",
+      "zht": "使用蟾蜍前/後",
+      "zhc": "使用蟾蜍前/后",
+      "ru": "До/После использования Жабы",
+      "th": "ก่อน/หลังใช้คางคก",
+      "pt": "Antes/Depois de Usar Sapo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ディッシュとの別れ",
+    "translated": {
+      "en": "Farewell to Desch",
+      "fr": "Adieux à Desch",
+      "it": "Addio a Desch",
+      "de": "Abschied von Desch",
+      "es": "Despedida de Desch",
+      "ko": "데슈와의 이별",
+      "zht": "與德修的離別",
+      "zhc": "与德修的离别",
+      "ru": "Прощание с Дешем",
+      "th": "การจากลากับเด็ช",
+      "pt": "Despedida de Desch"
+    },
+    "count": 1
+  },
+  {
+    "raw": "謎の声（1階）",
+    "translated": {
+      "en": "Mysterious Voice (Floor 1)",
+      "fr": "Voix mystérieuse (étage 1)",
+      "it": "Voce misteriosa (piano 1)",
+      "de": "Geheimnisvolle Stimme (Ebene 1)",
+      "es": "Voz misteriosa (piso 1)",
+      "ko": "수수께끼의 목소리 (1층)",
+      "zht": "神秘的聲音 (1樓)",
+      "zhc": "神秘的声音 (1楼)",
+      "ru": "Таинственный голос (1-й этаж)",
+      "th": "เสียงปริศนา (ชั้น 1)",
+      "pt": "Voz Misteriosa (1º Andar)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "謎の声（4階）",
+    "translated": {
+      "en": "Mysterious Voice (Floor 4)",
+      "fr": "Voix mystérieuse (étage 4)",
+      "it": "Voce misteriosa (piano 4)",
+      "de": "Geheimnisvolle Stimme (Ebene 4)",
+      "es": "Voz misteriosa (piso 4)",
+      "ko": "수수께끼의 목소리 (4층)",
+      "zht": "神秘的聲音 (4樓)",
+      "zhc": "神秘的声音 (4楼)",
+      "ru": "Таинственный голос (4-й этаж)",
+      "th": "เสียงปริศนา (ชั้น 4)",
+      "pt": "Voz Misteriosa (4º Andar)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "オーエンの塔：隠し扉を開ける",
+    "translated": {
+      "en": "Tower of Owen: Open Hidden Door",
+      "fr": "Tour d'Owen : Ouvrir la porte cachée",
+      "it": "Torre di Owen: Apri la porta nascosta",
+      "de": "Turm des Owen: Versteckte Tür öffnen",
+      "es": "Torre de Owen: Abrir puerta oculta",
+      "ko": "오웬의 탑: 숨겨진 문 열기",
+      "zht": "歐文塔：打開隱藏門",
+      "zhc": "欧文塔：打开隐藏门",
+      "ru": "Башня Оуэна: открыть скрытую дверь",
+      "th": "หอคอยแห่งโอเวน: เปิดประตูลับ",
+      "pt": "Torre de Owen: Abrir Porta Oculta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "謎の声（5階）",
+    "translated": {
+      "en": "Mysterious Voice (Floor 5)",
+      "fr": "Voix mystérieuse (étage 5)",
+      "it": "Voce misteriosa (piano 5)",
+      "de": "Geheimnisvolle Stimme (Ebene 5)",
+      "es": "Voz misteriosa (piso 5)",
+      "ko": "수수께끼의 목소리 (5층)",
+      "zht": "神秘的聲音 (5樓)",
+      "zhc": "神秘的声音 (5楼)",
+      "ru": "Таинственный голос (5-й этаж)",
+      "th": "เสียงปริศนา (ชั้น 5)",
+      "pt": "Voz Misteriosa (5º Andar)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "炎イベント",
+    "translated": {
+      "en": "Fire Event",
+      "fr": "Événement du feu",
+      "it": "Evento del fuoco",
+      "de": "Feuer-Ereignis",
+      "es": "Evento de fuego",
+      "ko": "불꽃 이벤트",
+      "zht": "火焰事件",
+      "zhc": "火焰事件",
+      "ru": "Событие с огнём",
+      "th": "อีเวนต์ไฟ",
+      "pt": "Evento do Fogo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ほのおの洞窟：隠し扉を開ける",
+    "translated": {
+      "en": "Molten Cave: Open Hidden Door",
+      "fr": "Grotte en fusion: Ouvrir la porte cachée",
+      "it": "Caverna fusa: Apri la porta nascosta",
+      "de": "Geschmolzene Höhle: Versteckte Tür öffnen",
+      "es": "Cueva fundida: Abrir puerta oculta",
+      "ko": "용암 동굴: 숨겨진 문 열기",
+      "zht": "熔岩洞窟: 打開隱藏門",
+      "zhc": "熔岩洞窟: 打开隐藏门",
+      "ru": "Расплавленная пещера: Открыть скрытую дверь",
+      "th": "ถ้ำลาวา: เปิดประตูลับ",
+      "pt": "Caverna de Lava: Abrir Porta Oculta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル（イベント用）",
+    "translated": {
+      "en": "Crystal (Event)",
+      "fr": "Cristal (Événement)",
+      "it": "Cristallo (Evento)",
+      "de": "Kristall (Ereignis)",
+      "es": "Cristal (Evento)",
+      "ko": "크리스털 (이벤트)",
+      "zht": "水晶 (事件)",
+      "zhc": "水晶 (事件)",
+      "ru": "Кристалл (Событие)",
+      "th": "คริสตัล (อีเวนต์)",
+      "pt": "Cristal (Evento)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "サラマンダー戦",
+    "translated": {
+      "en": "Salamander Battle",
+      "fr": "Combat contre Salamandre",
+      "it": "Battaglia con Salamandra",
+      "de": "Kampf gegen Salamander",
+      "es": "Batalla contra Salamandra",
+      "ko": "샐러맨더 전투",
+      "zht": "火焰蜥蜴之戰",
+      "zhc": "火焰蜥蜴之战",
+      "ru": "Бой с Саламандрой",
+      "th": "การต่อสู้กับซาลาแมนเดอร์",
+      "pt": "Batalha contra Salamandra"
+    },
+    "count": 1
+  },
+  {
+    "raw": "抜け穴を通る",
+    "translated": {
+      "en": "Pass Through Secret Passage",
+      "fr": "Passer par le passage secret",
+      "it": "Attraversa il passaggio segreto",
+      "de": "Durch den Geheimgang gehen",
+      "es": "Pasar por el pasaje secreto",
+      "ko": "비밀 통로를 지나가다",
+      "zht": "通過秘密通道",
+      "zhc": "通过秘密通道",
+      "ru": "Пройти через тайный ход",
+      "th": "ผ่านทางลับ",
+      "pt": "Passar pela Passagem Secreta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉が封印されている",
+    "translated": {
+      "en": "Sealed Door",
+      "fr": "Porte scellée",
+      "it": "Porta sigillata",
+      "de": "Versiegelte Tür",
+      "es": "Puerta sellada",
+      "ko": "문이 봉인되어 있다",
+      "zht": "門被封印了",
+      "zhc": "门被封印了",
+      "ru": "Дверь запечатана",
+      "th": "ประตูถูกผนึก",
+      "pt": "Porta Selada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉の封印をとく",
+    "translated": {
+      "en": "Unseal the Door",
+      "fr": "Desceller la porte",
+      "it": "Togli il sigillo dalla porta",
+      "de": "Tür entsiegeln",
+      "es": "Romper el sello de la puerta",
+      "ko": "문의 봉인을 해제하다",
+      "zht": "解除門的封印",
+      "zhc": "解除门的封印",
+      "ru": "Снять печать с двери",
+      "th": "ปลดผนึกประตู",
+      "pt": "Desselar a Porta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水のクリスタル（スクリプト）",
+    "translated": {
+      "en": "Water Crystal (Script)",
+      "fr": "Cristal de l'eau (Script)",
+      "it": "Cristallo dell'Acqua (Script)",
+      "de": "Wasserkristall (Skript)",
+      "es": "Cristal del Agua (Script)",
+      "ko": "물의 크리스털 (스크립트)",
+      "zht": "水之水晶 (腳本)",
+      "zhc": "水之水晶 (脚本)",
+      "ru": "Кристалл Воды (Скрипт)",
+      "th": "คริสตัลแห่งน้ำ (สคริปต์)",
+      "pt": "Cristal da Água (Script)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "呪いの矢",
+    "translated": {
+      "en": "Cursed Arrow",
+      "fr": "Flèche maudite",
+      "it": "Freccia maledetta",
+      "de": "Verfluchter Pfeil",
+      "es": "Flecha maldita",
+      "ko": "저주의 화살",
+      "zht": "詛咒之箭",
+      "zhc": "诅咒之箭",
+      "ru": "Проклятая стрела",
+      "th": "ธนูสาป",
+      "pt": "Flecha Amaldiçoada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水のクリスタル",
+    "translated": {
+      "en": "Water Crystal",
+      "fr": "Cristal de l'eau",
+      "it": "Cristallo dell'Acqua",
+      "de": "Wasserkristall",
+      "es": "Cristal del Agua",
+      "ko": "물의 크리스털",
+      "zht": "水之水晶",
+      "zhc": "水之水晶",
+      "ru": "Кристалл Воды",
+      "th": "คริสตัลแห่งน้ำ",
+      "pt": "Cristal da Água"
+    },
+    "count": 1
+  },
+  {
+    "raw": "4人のおじいさんを助ける",
+    "translated": {
+      "en": "Rescue the Four Old Men",
+      "fr": "Sauver les quatre vieillards",
+      "it": "Salva i quattro anziani",
+      "de": "Die vier alten Männer retten",
+      "es": "Rescatar a los cuatro ancianos",
+      "ko": "네 명의 노인을 구출하다",
+      "zht": "拯救四位老人",
+      "zhc": "拯救四位老人",
+      "ru": "Спасти четырёх старцев",
+      "th": "ช่วยเหลือชายชราทั้งสี่",
+      "pt": "Resgatar os Quatro Anciões"
+    },
+    "count": 1
+  },
+  {
+    "raw": "デリラと話す",
+    "translated": {
+      "en": "Talk to Delilah",
+      "fr": "Parler à Delilah",
+      "it": "Parla con Delilah",
+      "de": "Mit Delilah sprechen",
+      "es": "Hablar con Dalila",
+      "ko": "델릴라와 대화",
+      "zht": "與德莉拉對話",
+      "zhc": "与德莉拉对话",
+      "ru": "Поговорить с Делайлой",
+      "th": "คุยกับเดลิลาห์",
+      "pt": "Falar com Delilah"
+    },
+    "count": 1
+  },
+  {
+    "raw": "浮遊草の靴",
+    "translated": {
+      "en": "Levigrass Shoes",
+      "fr": "Bottes de lévitation",
+      "it": "Scarpe di levitolina",
+      "de": "Levigrasschuhe",
+      "es": "Botas voladoras",
+      "ko": "부유초 신발",
+      "zht": "浮游草鞋",
+      "zhc": "浮游草鞋",
+      "ru": "Обувь из левитравки",
+      "th": "รองเท้าลอยได้",
+      "pt": "Sapatos de Leviterra"
+    },
+    "count": 1
+  },
+  {
+    "raw": "金のクリスタル",
+    "translated": {
+      "en": "Gold Crystal",
+      "fr": "Cristal d'or",
+      "it": "Cristallo d'Oro",
+      "de": "Goldkristall",
+      "es": "Cristal de Oro",
+      "ko": "금의 크리스털",
+      "zht": "金水晶",
+      "zhc": "金水晶",
+      "ru": "Золотой кристалл",
+      "th": "คริสตัลทอง",
+      "pt": "Cristal de Ouro"
+    },
+    "count": 1
+  },
+  {
+    "raw": "鎖の鍵",
+    "translated": {
+      "en": "Chain Key",
+      "fr": "Clé de chaîne",
+      "it": "Chiave della catena",
+      "de": "Kettenschlüssel",
+      "es": "Llave de cadena",
+      "ko": "사슬 열쇠",
+      "zht": "鎖鏈鑰匙",
+      "zhc": "锁链钥匙",
+      "ru": "Ключ от цепей",
+      "th": "กุญแจโซ่",
+      "pt": "Chave da Corrente"
+    },
+    "count": 1
+  },
+  {
+    "raw": "海底へ移動",
+    "translated": {
+      "en": "Move to Undersea",
+      "fr": "Aller sous la mer",
+      "it": "Vai nel sottomarino",
+      "de": "Reise unter Wasser",
+      "es": "Ir al fondo marino",
+      "ko": "해저로 이동",
+      "zht": "前往海底",
+      "zhc": "前往海底",
+      "ru": "Перемещение под воду",
+      "th": "ย้ายไปใต้ทะเล",
+      "pt": "Ir para o Fundo do Mar"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ノーチラスが海底に行けるようになる",
+    "translated": {
+      "en": "Nautilus Can Now Go Underwater",
+      "fr": "Le Nautilus peut maintenant aller sous l'eau",
+      "it": "Il Nautilus ora può andare sott'acqua",
+      "de": "Die Nautilus kann jetzt unter Wasser fahren",
+      "es": "El Nautilus ahora puede ir bajo el agua",
+      "ko": "노틸러스가 해저로 갈 수 있게 되었다",
+      "zht": "鸚鵡螺號現在可以潛入海底",
+      "zhc": "鹦鹉螺号现在可以潜入海底",
+      "ru": "Наутилус теперь может погружаться",
+      "th": "นอติลุสสามารถดำน้ำได้แล้ว",
+      "pt": "Nautilus Agora Pode Ir para o Fundo do Mar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "リュート",
+    "translated": {
+      "en": "Noah's Lute",
+      "fr": "Luth de Noah",
+      "it": "Liuto di Noah",
+      "de": "Noahs Laute",
+      "es": "Laúd de Noé",
+      "ko": "노아의 류트",
+      "zht": "諾亞之琴",
+      "zhc": "诺亚之琴",
+      "ru": "Лютня Ноя",
+      "th": "ลูตของโนอาห์",
+      "pt": "Alaúde de Noah"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アダマンタイト1",
+    "translated": {
+      "en": "Adamantite 1",
+      "fr": "Adamantite 1",
+      "it": "Adamantite 1",
+      "de": "Adamantit 1",
+      "es": "Adamantita 1",
+      "ko": "아다만타이트 1",
+      "zht": "精金石 1",
+      "zhc": "精金石 1",
+      "ru": "Адамантит 1",
+      "th": "อดามันไทต์ 1",
+      "pt": "Adamantita 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アダマンタイト2",
+    "translated": {
+      "en": "Adamantite 2",
+      "fr": "Adamantite 2",
+      "it": "Adamantite 2",
+      "de": "Adamantit 2",
+      "es": "Adamantita 2",
+      "ko": "아다만타이트 2",
+      "zht": "精金石 2",
+      "zhc": "精金石 2",
+      "ru": "Адамантит 2",
+      "th": "อดามันไทต์ 2",
+      "pt": "Adamantita 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アダマンタイト3",
+    "translated": {
+      "en": "Adamantite 3",
+      "fr": "Adamantite 3",
+      "it": "Adamantite 3",
+      "de": "Adamantit 3",
+      "es": "Adamantita 3",
+      "ko": "아다만타이트 3",
+      "zht": "精金石 3",
+      "zhc": "精金石 3",
+      "ru": "Адамантит 3",
+      "th": "อดามันไทต์ 3",
+      "pt": "Adamantita 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アダマンタイト4",
+    "translated": {
+      "en": "Adamantite 4",
+      "fr": "Adamantite 4",
+      "it": "Adamantite 4",
+      "de": "Adamantit 4",
+      "es": "Adamantita 4",
+      "ko": "아다만타이트 4",
+      "zht": "精金石 4",
+      "zhc": "精金石 4",
+      "ru": "Адамантит 4",
+      "th": "อดามันไทต์ 4",
+      "pt": "Adamantita 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アダマンタイトを壊す",
+    "translated": {
+      "en": "Destroy Adamantite",
+      "fr": "Détruire l'adamantite",
+      "it": "Distruggi l'adamantite",
+      "de": "Adamantit zerstören",
+      "es": "Destruir la adamantita",
+      "ko": "아다만타이트 파괴",
+      "zht": "破壞精金石",
+      "zhc": "破坏精金石",
+      "ru": "Уничтожить адамантит",
+      "th": "ทำลายอดามันไทต์",
+      "pt": "Destruir Adamantita"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ワールドマップに出る",
+    "translated": {
+      "en": "Exit to World Map",
+      "fr": "Sortir vers la mappemonde",
+      "it": "Esci al mappamondo",
+      "de": "Zur Oberwelt gehen",
+      "es": "Salir al mapamundi",
+      "ko": "월드맵으로 나가기",
+      "zht": "前往世界地圖",
+      "zhc": "前往世界地图",
+      "ru": "Выход на карту мира",
+      "th": "ออกสู่แผนที่โลก",
+      "pt": "Sair para o Mapa do Mundo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "バハムート戦",
+    "translated": {
+      "en": "Bahamut Battle",
+      "fr": "Combat contre Bahamut",
+      "it": "Battaglia con Bahamut",
+      "de": "Kampf gegen Bahamut",
+      "es": "Batalla contra Bahamut",
+      "ko": "바하무트 전투",
+      "zht": "巴哈姆特之戰",
+      "zhc": "巴哈姆特之战",
+      "ru": "Бой с Бахамутом",
+      "th": "การต่อสู้กับบาฮามุต",
+      "pt": "Batalha contra Bahamut"
+    },
+    "count": 1
+  },
+  {
+    "raw": "土の牙",
+    "translated": {
+      "en": "Fang of Earth",
+      "fr": "Croc de la terre",
+      "it": "Zanna di terra",
+      "de": "Zahn der Erde",
+      "es": "Colmillo de la Tierra",
+      "ko": "땅의 송곳니",
+      "zht": "土之牙",
+      "zhc": "土之牙",
+      "ru": "Клык земли",
+      "th": "เขี้ยวดิน",
+      "pt": "Presa da Terra"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ドーガ戦、ウネ戦",
+    "translated": {
+      "en": "Doga and Unei Battle",
+      "fr": "Combat contre Doga et Unéi",
+      "it": "Battaglia con Doga e Unei",
+      "de": "Kampf gegen Doga und Unei",
+      "es": "Batalla contra Doga y Unei",
+      "ko": "도가와 우네 전투",
+      "zht": "多加與烏內之戰",
+      "zhc": "多加与乌内之战",
+      "ru": "Бой с Догой и Унеи",
+      "th": "การต่อสู้กับโดกาและอูเน่",
+      "pt": "Batalha contra Doga e Unei"
+    },
+    "count": 1
+  },
+  {
+    "raw": "エウレカの鍵、シルクスの鍵を入手",
+    "translated": {
+      "en": "Obtain Eureka Key and Syrcus Key",
+      "fr": "Obtenir la Clef d'Eurêka et la Clef de Syrcus",
+      "it": "Ottieni la Chiave di Eureka e la Chiave di Syrcus",
+      "de": "Eureka-Schlüssel und Syrcus-Schlüssel erhalten",
+      "es": "Obtener la Llave de Eureka y la Llave de Syrcus",
+      "ko": "에우레카의 열쇠, 시르쿠스의 열쇠 입수",
+      "zht": "取得艾蕾卡之鑰與希爾科斯之鑰",
+      "zhc": "取得优雷卡之键与希尔科斯之键",
+      "ru": "Получить Ключ от Эврики и Хрустальный ключ",
+      "th": "ได้รับกุญแจยูเรก้าและกุญแจซีร์คัส",
+      "pt": "Obter a Chave de Eureka e a Chave de Syrcus"
+    },
+    "count": 1
+  },
+  {
+    "raw": "土のクリスタル（イベント）",
+    "translated": {
+      "en": "Earth Crystal (Event)",
+      "fr": "Cristal de la terre (Événement)",
+      "it": "Cristallo della Terra (Evento)",
+      "de": "Erdkristall (Ereignis)",
+      "es": "Cristal de la Tierra (Evento)",
+      "ko": "땅의 크리스털 (이벤트)",
+      "zht": "土之水晶 (事件)",
+      "zhc": "土之水晶 (事件)",
+      "ru": "Кристалл Земли (Событие)",
+      "th": "คริสตัลแห่งดิน (อีเวนต์)",
+      "pt": "Cristal da Terra (Evento)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ティターン戦",
+    "translated": {
+      "en": "Titan Battle",
+      "fr": "Combat contre Titan",
+      "it": "Battaglia con Titano",
+      "de": "Kampf gegen Titan",
+      "es": "Batalla contra Titán",
+      "ko": "티탄 전투",
+      "zht": "泰坦之戰",
+      "zhc": "泰坦之战",
+      "ru": "Бой с Титаном",
+      "th": "การต่อสู้กับไททัน",
+      "pt": "Batalha contra Titã"
+    },
+    "count": 1
+  },
+  {
+    "raw": "シルクスの鍵を使うと扉が開く",
+    "translated": {
+      "en": "Door Opens with Syrcus Key",
+      "fr": "La porte s'ouvre avec la Clef de Syrcus",
+      "it": "La porta si apre con la Chiave di Syrcus",
+      "de": "Tür öffnet sich mit Syrcus-Schlüssel",
+      "es": "La puerta se abre con la Llave de Syrcus",
+      "ko": "시르쿠스의 열쇠로 문이 열린다",
+      "zht": "使用希爾科斯之鑰開門",
+      "zhc": "使用希尔科斯之键开门",
+      "ru": "Дверь открывается Хрустальным ключом",
+      "th": "ประตูเปิดด้วยกุญแจซีร์คัส",
+      "pt": "Porta Abre com a Chave de Syrcus"
+    },
+    "count": 1
+  },
+  {
+    "raw": "闇の世界へ",
+    "translated": {
+      "en": "To World of Darkness",
+      "fr": "Vers le Monde des ténèbres",
+      "it": "Al Mondo dell'oscurità",
+      "de": "Zur Welt der Dunkelheit",
+      "es": "Al Mundo de la Oscuridad",
+      "ko": "어둠의 세계로",
+      "zht": "前往黑暗的世界",
+      "zhc": "前往暗之世界",
+      "ru": "В Мир Тьмы",
+      "th": "สู่โลกแห่งความมืด",
+      "pt": "Para o Mundo das Trevas"
+    },
+    "count": 1
+  },
+  {
+    "raw": "光が収束するエフェクト※エフェクトないため仮置き",
+    "translated": {
+      "en": "Light Converging Effect",
+      "fr": "Effet de convergence de lumière",
+      "it": "Effetto di luce convergente",
+      "de": "Lichtbündelungseffekt",
+      "es": "Efecto de luz convergente",
+      "ko": "빛이 수렴하는 이펙트",
+      "zht": "光芒收斂特效",
+      "zhc": "光芒收敛特效",
+      "ru": "Эффект сходящегося света",
+      "th": "เอฟเฟกต์แสงหลอมรวม",
+      "pt": "Efeito de Luz Convergindo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "エウレカへ移動",
+    "translated": {
+      "en": "Move to Eureka",
+      "fr": "Aller à Eureka",
+      "it": "Vai a Eureka",
+      "de": "Reise nach Eureka",
+      "es": "Ir a Eureka",
+      "ko": "에우레카로 이동",
+      "zht": "前往尤利卡",
+      "zhc": "前往尤利卡",
+      "ru": "Перемещение в Эврику",
+      "th": "ย้ายไปยูเรก้า",
+      "pt": "Ir para Eureka"
+    },
+    "count": 1
+  },
+  {
+    "raw": "鏡の警告、鍵を使うと通行可能に",
+    "translated": {
+      "en": "Mirror Warning - Use Key to Pass",
+      "fr": "Avertissement du miroir - Utiliser la clé pour passer",
+      "it": "Avviso dello specchio - Usa la chiave per passare",
+      "de": "Spiegelwarnung - Schlüssel benutzen zum Passieren",
+      "es": "Advertencia del espejo - Usar llave para pasar",
+      "ko": "거울의 경고 - 열쇠를 사용하면 통행 가능",
+      "zht": "鏡之警告——使用鑰匙即可通過",
+      "zhc": "镜之警告——使用钥匙即可通过",
+      "ru": "Предупреждение зеркала — используйте ключ",
+      "th": "คำเตือนกระจก - ใช้กุญแจเพื่อผ่าน",
+      "pt": "Aviso do Espelho - Use a Chave para Passar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "デーモン",
+    "translated": {
+      "en": "Demon",
+      "fr": "Démon",
+      "it": "Demone",
+      "de": "Dämon",
+      "es": "Demonio",
+      "ko": "데몬",
+      "zht": "惡魔",
+      "zhc": "恶魔",
+      "ru": "Демон",
+      "th": "เดมอน",
+      "pt": "Demônio"
+    },
+    "count": 5
+  },
+  {
+    "raw": "５つの心をあつめる",
+    "translated": {
+      "en": "Gather the Five Hearts",
+      "fr": "Réunir les cinq cœurs",
+      "it": "Raccogli i cinque cuori",
+      "de": "Die fünf Herzen sammeln",
+      "es": "Reunir los cinco corazones",
+      "ko": "다섯 개의 마음을 모으다",
+      "zht": "收集五顆心",
+      "zhc": "收集五颗心",
+      "ru": "Собрать пять сердец",
+      "th": "รวบรวมห้าหัวใจ",
+      "pt": "Reunir os Cinco Corações"
+    },
+    "count": 1
+  },
+  {
+    "raw": "泉を調べると生き返り",
+    "translated": {
+      "en": "Inspect Spring to Revive",
+      "fr": "Examiner la source pour ressusciter",
+      "it": "Esamina la sorgente per rianimare",
+      "de": "Quelle untersuchen zur Wiederbelebung",
+      "es": "Investigar el manantial para revivir",
+      "ko": "샘을 조사하면 부활",
+      "zht": "調查泉水即可復活",
+      "zhc": "调查泉水即可复活",
+      "ru": "Осмотреть источник для воскрешения",
+      "th": "ตรวจสอบน้ำพุเพื่อชุบชีวิต",
+      "pt": "Examinar a Fonte para Reviver"
+    },
+    "count": 2
+  },
+  {
+    "raw": "調べると壁が開く",
+    "translated": {
+      "en": "Inspect to Open Wall",
+      "fr": "Examiner pour ouvrir le mur",
+      "it": "Esamina per aprire il muro",
+      "de": "Untersuchen, um die Wand zu öffnen",
+      "es": "Investigar para abrir el muro",
+      "ko": "조사하면 벽이 열린다",
+      "zht": "調查後牆壁會打開",
+      "zhc": "调查后墙壁会打开",
+      "ru": "Осмотреть, чтобы открыть стену",
+      "th": "ตรวจสอบเพื่อเปิดกำแพง",
+      "pt": "Examinar para Abrir a Parede"
+    },
+    "count": 4
+  },
+  {
+    "raw": "壁が開くと通行可能に",
+    "translated": {
+      "en": "Passable Once Wall Opens",
+      "fr": "Passage possible une fois le mur ouvert",
+      "it": "Percorribile quando il muro si apre",
+      "de": "Passierbar, sobald sich die Wand öffnet",
+      "es": "Transitable cuando se abre el muro",
+      "ko": "벽이 열리면 통행 가능",
+      "zht": "牆壁打開後即可通行",
+      "zhc": "墙壁打开后即可通行",
+      "ru": "Можно пройти, когда стена откроется",
+      "th": "ผ่านได้เมื่อกำแพงเปิด",
+      "pt": "Passável Quando a Parede Abrir"
+    },
+    "count": 2
+  },
+  {
+    "raw": "泉を調べると回復",
+    "translated": {
+      "en": "Inspect Spring to Recover",
+      "fr": "Examiner la source pour récupérer",
+      "it": "Esamina la sorgente per recuperare",
+      "de": "Quelle untersuchen zum Erholen",
+      "es": "Investigar el manantial para recuperarse",
+      "ko": "샘을 조사하면 회복",
+      "zht": "調查泉水即可恢復",
+      "zhc": "调查泉水即可恢复",
+      "ru": "Осмотреть источник для восстановления",
+      "th": "ตรวจสอบน้ำพุเพื่อฟื้นฟู",
+      "pt": "Examinar a Fonte para Recuperar"
+    },
+    "count": 2
+  },
+  {
+    "raw": "調べるとアモスとバトル、円月輪入手",
+    "translated": {
+      "en": "Inspect to Battle Amon - Get Moonring Blade",
+      "fr": "Examiner pour combattre Amon - Obtenir Pleine lune",
+      "it": "Esamina per combattere Amon - Ottieni Cerchio lunare",
+      "de": "Untersuchen für Kampf gegen Amon - Vollmondklinge erhalten",
+      "es": "Examinar para luchar contra Amon - Obtener Sable lunar",
+      "ko": "조사하면 아몬과 전투 - 원월륜 입수",
+      "zht": "調查觸發阿蒙戰鬥——獲得圓月輪",
+      "zhc": "调查触发阿蒙战斗——获得圆月轮",
+      "ru": "Осмотреть для боя с Амоном — получить Лунный диск",
+      "th": "ตรวจสอบเพื่อสู้กับอามอน - ได้ดาบวงแหวนจันทรา",
+      "pt": "Inspecionar para Lutar com Amon - Obter Lâmina Lunar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "調べるとくのいちと戦闘、その後まさむねを入手",
+    "translated": {
+      "en": "Inspect to Battle Kunoichi - Get Masamune",
+      "fr": "Examiner pour combattre Kunoichi - Obtenir Masamune",
+      "it": "Esamina per combattere Kunoichi - Ottieni Masamune",
+      "de": "Untersuchen für Kampf gegen Kunoichi - Masamune erhalten",
+      "es": "Examinar para luchar contra Kunoichi - Obtener Masamune",
+      "ko": "조사하면 쿠노이치와 전투 - 마사무네 입수",
+      "zht": "調查觸發女忍者戰鬥——獲得正宗",
+      "zhc": "调查触发女忍者战斗——获得正宗",
+      "ru": "Осмотреть для боя с Куноити — получить Масамунэ",
+      "th": "ตรวจสอบเพื่อสู้กับคุโนะอิชิ - ได้มาซามุเนะ",
+      "pt": "Inspecionar para Lutar com Kunoichi - Obter Masamune"
+    },
+    "count": 1
+  },
+  {
+    "raw": "調べるとジェネラルと戦闘、その後エクスカリバー入手",
+    "translated": {
+      "en": "Inspect to Battle General - Get Excalibur",
+      "fr": "Examiner pour combattre le Général - Obtenir Excalibur",
+      "it": "Esamina per combattere il Generale - Ottieni Excalibur",
+      "de": "Untersuchen für Kampf gegen General - Exkalibur erhalten",
+      "es": "Examinar para luchar contra General - Obtener Excálibur",
+      "ko": "조사하면 제너럴과 전투 - 엑스칼리버 입수",
+      "zht": "調查觸發將軍戰鬥——獲得石中劍",
+      "zhc": "调查触发将军战斗——获得王者之剑",
+      "ru": "Осмотреть для боя с Генералом — получить Экскалибур",
+      "th": "ตรวจสอบเพื่อสู้กับแม่ทัพ - ได้เอ็กซ์คาลิเบอร์",
+      "pt": "Inspecionar para Lutar com General - Obter Excalibur"
+    },
+    "count": 1
+  },
+  {
+    "raw": "調べるとスキュラと戦闘、その後長老の杖入手",
+    "translated": {
+      "en": "Inspect to Battle Scylla - Get Elder Staff",
+      "fr": "Examiner pour combattre Scylla - Obtenir le Bâton du patriarche",
+      "it": "Esamina per combattere Scilla - Ottieni l'Asta del patriarca",
+      "de": "Untersuchen für Kampf gegen Scylla - Ältestenstab erhalten",
+      "es": "Examinar para luchar contra Escila - Obtener Bastón arcano",
+      "ko": "조사하면 스킬라와 전투 - 장로의 지팡이 입수",
+      "zht": "調查觸發斯庫拉戰鬥——獲得長老之杖",
+      "zhc": "调查触发六兽妖战斗——获得长老之杖",
+      "ru": "Осмотреть для боя со Сциллой — получить Посох старейшины",
+      "th": "ตรวจสอบเพื่อสู้กับซิลลา - ได้ไม้เท้าผู้เฒ่า",
+      "pt": "Inspecionar para Lutar com Scylla - Obter Cajado Ancião"
+    },
+    "count": 1
+  },
+  {
+    "raw": "調べるとガーディアンと戦闘、その後ラグナロク入手",
+    "translated": {
+      "en": "Inspect to Battle Guardian - Get Ragnarok",
+      "fr": "Examiner pour combattre le Gardien - Obtenir Ragnarok",
+      "it": "Esamina per combattere il Guardiano - Ottieni Ragnarok",
+      "de": "Untersuchen für Kampf gegen Wächter - Ragnarök erhalten",
+      "es": "Examinar para luchar contra Guardián - Obtener Ragnarok",
+      "ko": "조사하면 가디언과 전투 - 라그나로크 입수",
+      "zht": "調查觸發守護者戰鬥——獲得諸神黃昏",
+      "zhc": "调查触发守护者战斗——获得诸神之黄昏",
+      "ru": "Осмотреть для боя со Стражем — получить Рагнарёк",
+      "th": "ตรวจสอบเพื่อสู้กับผู้พิทักษ์ - ได้แร็กนาร็อก",
+      "pt": "Inspecionar para Lutar com Guardião - Obter Ragnarok"
+    },
+    "count": 1
+  },
+  {
+    "raw": "暗闇の雲の中心部が収束する※エフェクトがないため仮置き",
+    "translated": {
+      "en": "Cloud of Darkness Core Converging",
+      "fr": "Noyau de la nuage de ténèbres converge",
+      "it": "Il nucleo della Nube oscura converge",
+      "de": "Kern der Wolke der Dunkelheit konvergiert",
+      "es": "Núcleo de la Nube de oscuridad converge",
+      "ko": "어둠의 구름의 중심부가 수렴한다",
+      "zht": "黑暗之雲核心收斂",
+      "zhc": "暗黑之云核心收敛",
+      "ru": "Ядро Облака Тьмы сходится",
+      "th": "แกนกลางเมฆาแห่งความมืดหลอมรวม",
+      "pt": "Núcleo da Nuvem de Trevas Convergindo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "くらやみのくも戦～エンディング",
+    "translated": {
+      "en": "Cloud of Darkness Battle to Ending",
+      "fr": "Combat contre la nuage de ténèbres jusqu'à la fin",
+      "it": "Battaglia con la Nube di oscurità fino al finale",
+      "de": "Wolke der Dunkelheit Kampf bis zum Ende",
+      "es": "Batalla contra Nube de oscuridad hasta el final",
+      "ko": "어둠의 구름 전투부터 엔딩까지",
+      "zht": "暗闇之雲戰鬥至結局",
+      "zhc": "暗闇之云战斗至结局",
+      "ru": "Бой с Облаком Тьмы до финала",
+      "th": "การต่อสู้กับเมฆแห่งความมืดจนจบ",
+      "pt": "Batalha contra Nuvem das Trevas até o Final"
+    },
+    "count": 1
+  },
+  {
+    "raw": "闇のクリスタル（スクリプト）",
+    "translated": {
+      "en": "Dark Crystal (Script)",
+      "fr": "Cristal des ténèbres (Script)",
+      "it": "Cristallo oscuro (Script)",
+      "de": "Dunkler Kristall (Skript)",
+      "es": "Cristal oscuro (Script)",
+      "ko": "어둠의 크리스털 (스크립트)",
+      "zht": "暗之水晶 (腳本)",
+      "zhc": "暗之水晶 (脚本)",
+      "ru": "Тёмный кристалл (Скрипт)",
+      "th": "คริสตัลมืด (สคริปต์)",
+      "pt": "Cristal das Trevas (Script)"
+    },
+    "count": 4
+  },
+  {
+    "raw": "ケルベロス戦",
+    "translated": {
+      "en": "Cerberus Battle",
+      "fr": "Combat contre Cerbère",
+      "it": "Battaglia con Cerbero",
+      "de": "Kampf gegen Zerberus",
+      "es": "Batalla contra Cerbero",
+      "ko": "케르베로스 전투",
+      "zht": "地獄三頭犬之戰",
+      "zhc": "刻耳柏洛斯之战",
+      "ru": "Бой с Цербером",
+      "th": "การต่อสู้กับเซอร์เบอรัส",
+      "pt": "Batalha contra Cérbero"
+    },
+    "count": 1
+  },
+  {
+    "raw": "2ヘッドドラゴン戦",
+    "translated": {
+      "en": "Two-Headed Dragon Battle",
+      "fr": "Combat contre le dragon bicéphale",
+      "it": "Battaglia con il drago bicefalo",
+      "de": "Kampf gegen Zweiköpfigen Drachen",
+      "es": "Batalla contra dragón bicéfalo",
+      "ko": "투헤드 드래곤 전투",
+      "zht": "雙頭龍之戰",
+      "zhc": "双头龙之战",
+      "ru": "Бой с двуглавым драконом",
+      "th": "การต่อสู้กับมังกรสองหัว",
+      "pt": "Batalha contra Dragão de Duas Cabeças"
+    },
+    "count": 1
+  },
+  {
+    "raw": "エキドナ戦",
+    "translated": {
+      "en": "Echidna Battle",
+      "fr": "Combat contre Échidna",
+      "it": "Battaglia con Echidna",
+      "de": "Kampf gegen Echidna",
+      "es": "Batalla contra Equidna",
+      "ko": "에키드나 전투",
+      "zht": "艾奇德娜之戰",
+      "zhc": "艾奇德娜之战",
+      "ru": "Бой с Ехидной",
+      "th": "การต่อสู้กับอีคิดนา",
+      "pt": "Batalha contra Equidna"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アーリマン戦",
+    "translated": {
+      "en": "Ahriman Battle",
+      "fr": "Combat contre Ahriman",
+      "it": "Battaglia con Alyman",
+      "de": "Kampf gegen Ahriman",
+      "es": "Batalla contra Arimán",
+      "ko": "아리만 전투",
+      "zht": "惡精靈之戰",
+      "zhc": "阿里曼之战",
+      "ru": "Бой с Ариманом",
+      "th": "การต่อสู้กับอหริมัน",
+      "pt": "Batalha contra Ahriman"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ミスリルの洞窟：隠し扉を開ける",
+    "translated": {
+      "en": "Mythril Mines: Open Hidden Door",
+      "fr": "Mine de mithril : Ouvrir la porte cachée",
+      "it": "Miniere di mithril: Apri la porta nascosta",
+      "de": "Mithril-Minen: Versteckte Tür öffnen",
+      "es": "Minas de mitrilo: Abrir puerta oculta",
+      "ko": "미스릴 광산: 숨겨진 문 열기",
+      "zht": "秘銀礦山：打開隱藏門",
+      "zhc": "秘银矿山：打开隐藏门",
+      "ru": "Мифриловые шахты: Открыть скрытую дверь",
+      "th": "เหมืองมิธริล: เปิดประตูลับ",
+      "pt": "Minas de Mithril: Abrir Porta Oculta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ミスリルの洞窟：隠し扉を開ける スイッチ①",
+    "translated": {
+      "en": "Mythril Mines: Hidden Door Switch 1",
+      "fr": "Mine de mithril : Interrupteur de la porte cachée 1",
+      "it": "Miniere di mithril: Interruttore della porta nascosta 1",
+      "de": "Mithril-Minen: Schalter der versteckten Tür 1",
+      "es": "Minas de mitrilo: Interruptor de la puerta oculta 1",
+      "ko": "미스릴 광산: 숨겨진 문 스위치 1",
+      "zht": "秘銀礦山：隱藏門開關 1",
+      "zhc": "秘银矿山：隐藏门开关 1",
+      "ru": "Мифриловые шахты: Переключатель скрытой двери 1",
+      "th": "เหมืองมิธริล: สวิตช์ประตูลับ 1",
+      "pt": "Minas de Mithril: Interruptor da Porta Oculta 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタル",
+    "translated": {
+      "en": "Crystal",
+      "fr": "Cristal",
+      "it": "Cristallo",
+      "de": "Kristall",
+      "es": "Cristal",
+      "ko": "크리스털",
+      "zht": "水晶",
+      "zhc": "水晶",
+      "ru": "Кристалл",
+      "th": "คริสตัล",
+      "pt": "Cristal"
+    },
+    "count": 1
+  }
+]

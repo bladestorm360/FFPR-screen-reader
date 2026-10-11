@@ -1,0 +1,7949 @@
+[
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 851,
+    "raw": "ガデアの村",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_1",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 851,
+    "raw": "ガデアの村",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_2",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_3",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_4",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_5",
+    "group": "entity_default",
+    "id": 928,
+    "raw": "パンデモニウム",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 851,
+    "raw": "ガデアの村",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 934,
+    "raw": "キャンプ",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_6",
+    "group": "entity_default",
+    "id": 935,
+    "raw": "キャンプ",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 851,
+    "raw": "ガデアの村",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_7",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_00000_8",
+    "group": "entity_default",
+    "id": 927,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 356,
+    "raw": "カシュオーン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 357,
+    "raw": "ディストの城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 358,
+    "raw": "闘技場",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 360,
+    "raw": "ミシディアの塔",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 361,
+    "raw": "パラメキア城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 362,
+    "raw": "フィン城",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 364,
+    "raw": "ミシディアA",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 365,
+    "raw": "ミシディアB",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 385,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 388,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 389,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 390,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 391,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 392,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 393,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 394,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 395,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 396,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 837,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 838,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 839,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 840,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 841,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 842,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 844,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 845,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 846,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 851,
+    "raw": "ガデアの村",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 858,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 859,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 860,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 861,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 862,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 863,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 905,
+    "raw": "大戦艦停泊所コリジョン1",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 906,
+    "raw": "大戦艦停泊所コリジョン2",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 907,
+    "raw": "大戦艦停泊所コリジョン3",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 908,
+    "raw": "大戦艦停泊所コリジョン4",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 909,
+    "raw": "大戦艦停泊所コリジョン5",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 910,
+    "raw": "大戦艦停泊所コリジョン6",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 911,
+    "raw": "大戦艦停泊所コリジョン7",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 912,
+    "raw": "大戦艦停泊所コリジョン8",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 409,
+    "raw": "定期船(アイコンあり)",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 913,
+    "raw": "定期船(アイコンなし)",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 947,
+    "raw": "ミシディアC",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 955,
+    "raw": "ミシディアの塔上部コリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "entity_default",
+    "id": 961,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 613,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 614,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 615,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 655,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 775,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 776,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 777,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 811,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0001",
+    "id": 812,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 276,
+    "raw": "大戦艦完成",
+    "type": 2,
+    "label": "Event trigger",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 619,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 620,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 621,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 656,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 778,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 779,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 780,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 813,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0019",
+    "id": 814,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 622,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 623,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 624,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 657,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 781,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 782,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 783,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 817,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0022",
+    "id": 818,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0035",
+    "id": 320,
+    "raw": "飛空艇",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0035",
+    "id": 321,
+    "raw": "大戦艦",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 376,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 377,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 378,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 379,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 380,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 381,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 382,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 383,
+    "raw": "大戦艦停泊所のコリジョン",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 628,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 629,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 630,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 659,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 787,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 788,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 789,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 821,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0036",
+    "id": 822,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 293,
+    "raw": "大戦艦爆発",
+    "type": 2,
+    "label": "Event trigger",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 631,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 632,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 633,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 660,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 790,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 791,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 792,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 823,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0039",
+    "id": 824,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 882,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 883,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 884,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 885,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 886,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 887,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 888,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 889,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0040",
+    "id": 890,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 323,
+    "raw": "sc_e_0044:海賊船",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 634,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 635,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 636,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 661,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 793,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 794,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 795,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 825,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0044",
+    "id": 826,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 637,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 638,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 639,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 662,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 796,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 797,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 798,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 827,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0054",
+    "id": 828,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 359,
+    "raw": "キャンプ",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 643,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 644,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 645,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 663,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 799,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 800,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 801,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 829,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 830,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 843,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 951,
+    "raw": "キャンプ",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0057",
+    "id": 952,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 646,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 647,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 648,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 664,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 802,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 803,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 804,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 831,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0063",
+    "id": 832,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 295,
+    "raw": "リバイアサン",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 649,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 650,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 651,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 665,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 805,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 806,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 807,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 833,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0070",
+    "id": 834,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 296,
+    "raw": "船を奪還",
+    "type": 2,
+    "label": "Event trigger",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 652,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 653,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 654,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 666,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 808,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 809,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 810,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 835,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0073",
+    "id": 836,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0080",
+    "id": 973,
+    "raw": "Event",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0081",
+    "id": 405,
+    "raw": "竜巻突入トリガー",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 946,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 962,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 963,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 964,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 965,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 966,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 967,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 968,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0086",
+    "id": 969,
+    "raw": "パラメキア城潜入",
+    "type": 21,
+    "label": "Vehicle interaction",
+    "reason": "native vehicle action type"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0087",
+    "id": 466,
+    "raw": "ジェイドへの入口①",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0087",
+    "id": 467,
+    "raw": "ジェイドへの入口②",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0087",
+    "id": 468,
+    "raw": "ジェイドへの入口③",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0087",
+    "id": 892,
+    "raw": "ジェイドへの入口④",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_10010",
+    "group": "ev_e_0087",
+    "id": 895,
+    "raw": "パンデモニウム",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20011_10",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "教会",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20011_2",
+    "group": "ev_e_0002",
+    "id": 206,
+    "raw": "リングの光",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20011_3",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "魔法陣",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20011_3",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "生き返りの間",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20021_5",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "教会",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 182,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 184,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 185,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 186,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 187,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 188,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 189,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 190,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 191,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 192,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 193,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 194,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 195,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 196,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 197,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 198,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 199,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 200,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 201,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 202,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 203,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 204,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 205,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 206,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 207,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 208,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 209,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 210,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 211,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 212,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 213,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 214,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 215,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 216,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 217,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 218,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 219,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 220,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 221,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 222,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 223,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 224,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 225,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 226,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 227,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 228,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 229,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 230,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 231,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 232,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 233,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 234,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 235,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 236,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 237,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 238,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 239,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 240,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 241,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 242,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "entity_default",
+    "id": 243,
+    "raw": "ワールドマップへ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "ev_e_0004",
+    "id": 153,
+    "raw": "sc_e_0004trigger",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "ev_e_0004",
+    "id": 154,
+    "raw": "sc_e_0004trigger",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20030",
+    "group": "ev_e_0004",
+    "id": 155,
+    "raw": "sc_e_0004trigger",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20031_1",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "隠し通路",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20031_6",
+    "group": "ev_e_0001",
+    "id": 22,
+    "raw": "リングの光",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20031_9",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "境界",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 184,
+    "raw": "柵１",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 185,
+    "raw": "柵２",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 186,
+    "raw": "柵３",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 187,
+    "raw": "柵４",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 188,
+    "raw": "柵５",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 190,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 191,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 192,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 193,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 194,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 195,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 196,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 197,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 198,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 199,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 200,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 201,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 202,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 203,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 204,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 205,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 206,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_1",
+    "group": "entity_default",
+    "id": 207,
+    "raw": "ワールドマップ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20041_16",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_16",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "ワープ",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20041_5",
+    "group": "ev_e_0001",
+    "id": 5,
+    "raw": "鏡",
+    "type": 5,
+    "label": "Mirror",
+    "reason": "bare interactible-object noun"
+  },
+  {
+    "submap": "Map_20041_5",
+    "group": "ev_e_0080",
+    "id": 7,
+    "raw": "鏡",
+    "type": 5,
+    "label": "Mirror",
+    "reason": "bare interactible-object noun"
+  },
+  {
+    "submap": "Map_20041_5",
+    "group": "ev_e_0080",
+    "id": 10,
+    "raw": "光",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_5",
+    "group": "ev_e_0118",
+    "id": 6,
+    "raw": "鏡",
+    "type": 5,
+    "label": "Mirror",
+    "reason": "bare interactible-object noun"
+  },
+  {
+    "submap": "Map_20041_5",
+    "group": "ev_e_0118",
+    "id": 8,
+    "raw": "光",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_5",
+    "group": "ev_e_0118",
+    "id": 26,
+    "raw": "飛竜の卵",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20041_7",
+    "group": "entity_default",
+    "id": 59,
+    "raw": "隠し通路",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20041_7",
+    "group": "entity_default",
+    "id": 104,
+    "raw": "通路",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 98,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 99,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 100,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 101,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 102,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 103,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 104,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 105,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 106,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 107,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 108,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20060",
+    "group": "entity_default",
+    "id": 109,
+    "raw": "ToLayer",
+    "type": 4,
+    "label": "Layer transition",
+    "reason": "native layer-transition type"
+  },
+  {
+    "submap": "Map_20071_5",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "協会",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20081_2",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "協会",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20101_6",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "協会",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20101_7",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "本棚",
+    "type": 5,
+    "label": "Bookshelf",
+    "reason": "bare interactible-object noun"
+  },
+  {
+    "submap": "Map_20101_7",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "本棚",
+    "type": 5,
+    "label": "Bookshelf",
+    "reason": "bare interactible-object noun"
+  },
+  {
+    "submap": "Map_20101_8",
+    "group": "ev_e_0001",
+    "id": 3,
+    "raw": "女神像",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20101_8",
+    "group": "ev_e_0065",
+    "id": 4,
+    "raw": "女神像",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20131_11",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "教会",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20131_6",
+    "group": "ev_e_0040",
+    "id": 62,
+    "raw": "王の死",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_20131_8",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "魔法陣",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_20131_8",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "生き返りの間",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_20141_5",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "教会",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30011_1",
+    "group": "entity_default",
+    "id": 26,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_1",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_1",
+    "group": "ev_e_0002",
+    "id": 25,
+    "raw": "通路をふさぐ岩(ヨーゼフ加入前)",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30011_1",
+    "group": "ev_e_0024",
+    "id": 24,
+    "raw": "sc_e_0025:隠し通路の蓋",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30011_10",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_11",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_12",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_13",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_14",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_15",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_16",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_17",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_18",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_2",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_2",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_2",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_2",
+    "group": "entity_default",
+    "id": 42,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_2",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_3",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_4",
+    "group": "entity_default",
+    "id": 11,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_4",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_5",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_5",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_5",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_5",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_5",
+    "group": "entity_default",
+    "id": 42,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_6",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_6",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_7",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_7",
+    "group": "entity_default",
+    "id": 20,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_7",
+    "group": "entity_default",
+    "id": 21,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_8",
+    "group": "entity_default",
+    "id": 26,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_8",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_8",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_8",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30011_9",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30021_3",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30021_3",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "ワープ",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30031_1",
+    "group": "ev_e_0028",
+    "id": 13,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30031_1",
+    "group": "ev_e_0028",
+    "id": 14,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30031_1",
+    "group": "ev_e_0028",
+    "id": 15,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30031_1",
+    "group": "ev_e_0028",
+    "id": 16,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30031_1",
+    "group": "ev_e_0028",
+    "id": 22,
+    "raw": "大岩",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30031_8",
+    "group": "entity_default",
+    "id": 25,
+    "raw": "通路になる仕掛け",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30031_8",
+    "group": "ev_e_0028",
+    "id": 8,
+    "raw": "女神のベルトリガー用",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30031_8",
+    "group": "ev_e_0028",
+    "id": 24,
+    "raw": "女神のベル",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30031_8",
+    "group": "ev_e_0028",
+    "id": 26,
+    "raw": "SE用カラオブジェクト",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "entity_default",
+    "id": 48,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "entity_default",
+    "id": 49,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "entity_default",
+    "id": 50,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "entity_default",
+    "id": 51,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0029",
+    "id": 22,
+    "raw": "扉の封印",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0029",
+    "id": 65,
+    "raw": "太陽の炎トリガー用",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0030",
+    "id": 36,
+    "raw": "光",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0030",
+    "id": 57,
+    "raw": "大戦艦に捕われる飛空艇①",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0030",
+    "id": 58,
+    "raw": "大戦艦に捕われる飛空艇②",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0030",
+    "id": 59,
+    "raw": "大戦艦に捕われる飛空艇④",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0030",
+    "id": 60,
+    "raw": "大戦艦に捕われる飛空艇③",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0030",
+    "id": 61,
+    "raw": "大戦艦に捕われる飛空艇⑤",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0030",
+    "id": 63,
+    "raw": "太陽の炎トリガー用",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0034",
+    "id": 37,
+    "raw": "炎",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0034",
+    "id": 52,
+    "raw": "大戦艦に捕われる飛空艇①",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0034",
+    "id": 53,
+    "raw": "大戦艦に捕われる飛空艇②",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0034",
+    "id": 54,
+    "raw": "大戦艦に捕われる飛空艇④",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0034",
+    "id": 55,
+    "raw": "大戦艦に捕われる飛空艇③",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_1",
+    "group": "ev_e_0034",
+    "id": 56,
+    "raw": "大戦艦に捕われる飛空艇⑤",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30041_10",
+    "group": "entity_default",
+    "id": 13,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_11",
+    "group": "entity_default",
+    "id": 11,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_12",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_13",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_14",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_15",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_2",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_2",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_2",
+    "group": "ev_e_0032",
+    "id": 12,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30041_2",
+    "group": "ev_e_0032",
+    "id": 13,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30041_2",
+    "group": "ev_e_0032",
+    "id": 14,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30041_3",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_4",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_4",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_5",
+    "group": "entity_default",
+    "id": 13,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_5",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 44,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 45,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 46,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 47,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 48,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 49,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_6",
+    "group": "entity_default",
+    "id": 50,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_7",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_8",
+    "group": "entity_default",
+    "id": 31,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_8",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_8",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_8",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_8",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30041_9",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30051_3",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "開かない鉄格子(メッセージ用)",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30051_3",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "鉄格子①",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30051_3",
+    "group": "ev_e_0001",
+    "id": 19,
+    "raw": "開く鉄格子(トリガー要)",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30051_3",
+    "group": "ev_e_0001",
+    "id": 37,
+    "raw": "鉄格子②",
+    "type": 10,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30051_9",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "大戦艦のエンジン",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30051_9",
+    "group": "ev_e_0038",
+    "id": 13,
+    "raw": "ヒルダ救出前エンジン",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30051_9",
+    "group": "ev_e_0039",
+    "id": 7,
+    "raw": "炎",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30051_9",
+    "group": "ev_e_0039",
+    "id": 8,
+    "raw": "炎",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30051_9",
+    "group": "ev_e_0039",
+    "id": 9,
+    "raw": "炎",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30051_9",
+    "group": "ev_e_0039",
+    "id": 10,
+    "raw": "炎",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30051_9",
+    "group": "ev_e_0039",
+    "id": 12,
+    "raw": "大戦艦爆破トリガー",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30061_1",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_1",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_1",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_1",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_1",
+    "group": "entity_default",
+    "id": 42,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_1",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_2",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_3",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_4",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_4",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_4",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_4",
+    "group": "entity_default",
+    "id": 37,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_4",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_5",
+    "group": "entity_default",
+    "id": 13,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_5",
+    "group": "ev_e_0050",
+    "id": 15,
+    "raw": "飛竜の卵",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30061_6",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30061_7",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_1",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_1",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_1",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "entity_default",
+    "id": 42,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "entity_default",
+    "id": 44,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "ev_e_0049",
+    "id": 35,
+    "raw": "ペンダント",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30071_2",
+    "group": "ev_e_0049",
+    "id": 45,
+    "raw": "ペンダントの光",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30071_3",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "落とし穴1",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30071_3",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_3",
+    "group": "entity_default",
+    "id": 31,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_3",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_3",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_3",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_4",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "落とし穴の煙",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30071_4",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_4",
+    "group": "entity_default",
+    "id": 20,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_4",
+    "group": "entity_default",
+    "id": 21,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_4",
+    "group": "entity_default",
+    "id": 22,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 49,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 50,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 51,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 52,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 53,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 54,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 55,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "entity_default",
+    "id": 56,
+    "raw": "命の泉",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30071_5",
+    "group": "ev_e_0051",
+    "id": 68,
+    "raw": "飛竜の卵",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30071_6",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_7",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30071_8",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30081_1",
+    "group": "entity_default",
+    "id": 52,
+    "raw": "柵１",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_1",
+    "group": "entity_default",
+    "id": 53,
+    "raw": "柵２",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_1",
+    "group": "entity_default",
+    "id": 54,
+    "raw": "柵３",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_1",
+    "group": "ev_e_0054",
+    "id": 44,
+    "raw": "sc_e_0054:ベヒーモス",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30081_1",
+    "group": "ev_e_0054",
+    "id": 46,
+    "raw": "大きな鉄格子",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_1",
+    "group": "ev_e_0054",
+    "id": 47,
+    "raw": "上がる鉄格子A",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_1",
+    "group": "ev_e_0054",
+    "id": 48,
+    "raw": "上がる鉄格子B",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_2",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "柵",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_2",
+    "group": "ev_e_0055",
+    "id": 29,
+    "raw": "鉄格子",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30081_5",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "柵",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_5",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "柵",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_5",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "柵",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30081_5",
+    "group": "ev_e_0056",
+    "id": 8,
+    "raw": "鉄格子",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30091_1",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_2",
+    "group": "entity_default",
+    "id": 31,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_2",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_2",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_3",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_3",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_3",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_3",
+    "group": "entity_default",
+    "id": 37,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_3",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_3",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_3",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 37,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_4",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_5",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_5",
+    "group": "entity_default",
+    "id": 37,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_5",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_5",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_6",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30091_6",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30091_6",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "ワープ",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30091_7",
+    "group": "entity_default",
+    "id": 24,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_1",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_1",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_1",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_1",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_1",
+    "group": "ev_e_0068",
+    "id": 31,
+    "raw": "黒い仮面",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30101_10",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_10",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_11",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_12",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_13",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_14",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_15",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_16",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_17",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_18",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_19",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_2",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_2",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_20",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_21",
+    "group": "entity_default",
+    "id": 5,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_3",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_3",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_3",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_3",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_3",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_3",
+    "group": "entity_default",
+    "id": 37,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_4",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_4",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_5",
+    "group": "entity_default",
+    "id": 22,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_5",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_5",
+    "group": "entity_default",
+    "id": 24,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_6",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_6",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_7",
+    "group": "entity_default",
+    "id": 25,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_7",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_7",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_7",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_7",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_8",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_9",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30101_9",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30111_3",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "sc_e_0073",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_1",
+    "group": "entity_default",
+    "id": 24,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_1",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "sc_e_0074",
+    "type": 10,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_10",
+    "group": "entity_default",
+    "id": 48,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_10",
+    "group": "entity_default",
+    "id": 49,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_10",
+    "group": "entity_default",
+    "id": 50,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_10",
+    "group": "entity_default",
+    "id": 51,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_11",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_11",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_12",
+    "group": "entity_default",
+    "id": 42,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_12",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_12",
+    "group": "entity_default",
+    "id": 44,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_12",
+    "group": "entity_default",
+    "id": 45,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_12",
+    "group": "entity_default",
+    "id": 46,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_13",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_13",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_14",
+    "group": "entity_default",
+    "id": 64,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_14",
+    "group": "entity_default",
+    "id": 65,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_14",
+    "group": "entity_default",
+    "id": 66,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_14",
+    "group": "entity_default",
+    "id": 67,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_14",
+    "group": "entity_default",
+    "id": 68,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_14",
+    "group": "entity_default",
+    "id": 69,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_14",
+    "group": "entity_default",
+    "id": 70,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_15",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_15",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_16",
+    "group": "entity_default",
+    "id": 37,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_16",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_16",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_16",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_16",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_17",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_17",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_18",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_18",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_18",
+    "group": "ev_e_0077",
+    "id": 8,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30121_18",
+    "group": "ev_e_0077",
+    "id": 11,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30121_18",
+    "group": "ev_e_0077",
+    "id": 12,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30121_18",
+    "group": "ev_e_0077",
+    "id": 13,
+    "raw": "吹き出し”！”",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30121_18",
+    "group": "ev_e_0077",
+    "id": 15,
+    "raw": "扉の封印",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "精神が上がるオーブ",
+    "type": 10,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "知性が上がるオーブ",
+    "type": 10,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "entity_default",
+    "id": 44,
+    "raw": "素早さが上がるオーブ",
+    "type": 10,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "entity_default",
+    "id": 45,
+    "raw": "力が上がるオーブ",
+    "type": 10,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "entity_default",
+    "id": 52,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "ev_e_0079",
+    "id": 22,
+    "raw": "アルテマの本",
+    "type": 10,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "ev_e_0080",
+    "id": 51,
+    "raw": "ワープゾーン",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30121_19",
+    "group": "ev_e_0080",
+    "id": 63,
+    "raw": "ワープ",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30121_2",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_2",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_2",
+    "group": "entity_default",
+    "id": 31,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_20",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_21",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_22",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_23",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_24",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_25",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_26",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_27",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_28",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_29",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_3",
+    "group": "entity_default",
+    "id": 49,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_3",
+    "group": "entity_default",
+    "id": 50,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_3",
+    "group": "entity_default",
+    "id": 51,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_3",
+    "group": "entity_default",
+    "id": 52,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_3",
+    "group": "entity_default",
+    "id": 53,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_3",
+    "group": "entity_default",
+    "id": 54,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_30",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_31",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_32",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_33",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_34",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_35",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_36",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_4",
+    "group": "entity_default",
+    "id": 11,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_4",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_5",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_5",
+    "group": "entity_default",
+    "id": 24,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_5",
+    "group": "entity_default",
+    "id": 25,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_6",
+    "group": "entity_default",
+    "id": 26,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_6",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_6",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_9",
+    "group": "entity_default",
+    "id": 11,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30121_9",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_1",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_1",
+    "group": "entity_default",
+    "id": 13,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_1",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "ワープゾーン",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30131_1",
+    "group": "entity_default",
+    "id": 20,
+    "raw": "ワープ",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30131_10",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_11",
+    "group": "entity_default",
+    "id": 7,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_2",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_2",
+    "group": "entity_default",
+    "id": 20,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_2",
+    "group": "entity_default",
+    "id": 21,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_2",
+    "group": "entity_default",
+    "id": 22,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_3",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_3",
+    "group": "entity_default",
+    "id": 34,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_3",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_3",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_4",
+    "group": "entity_default",
+    "id": 21,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_4",
+    "group": "entity_default",
+    "id": 22,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_4",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_4",
+    "group": "entity_default",
+    "id": 24,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_5",
+    "group": "entity_default",
+    "id": 22,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_5",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_5",
+    "group": "entity_default",
+    "id": 24,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_5",
+    "group": "entity_default",
+    "id": 25,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_6",
+    "group": "entity_default",
+    "id": 35,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_6",
+    "group": "entity_default",
+    "id": 36,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_6",
+    "group": "entity_default",
+    "id": 37,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_6",
+    "group": "entity_default",
+    "id": 38,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_6",
+    "group": "entity_default",
+    "id": 39,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_6",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_6",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_7",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_7",
+    "group": "ev_e_0081",
+    "id": 5,
+    "raw": "sc_e_0082:皇帝１",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30131_7",
+    "group": "ev_e_0081",
+    "id": 6,
+    "raw": "sc_e_0082:皇帝１",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30131_7",
+    "group": "ev_e_0081",
+    "id": 7,
+    "raw": "sc_e_0082:皇帝１",
+    "type": 2,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30131_8",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30131_9",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_1",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_1",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_1",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_1",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_1",
+    "group": "entity_default",
+    "id": 31,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_10",
+    "group": "entity_default",
+    "id": 26,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_10",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_10",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_10",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_11",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_12",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_2",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "落とし穴",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30141_2",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_3",
+    "group": "entity_default",
+    "id": 20,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_4",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "落とし穴に落ちたときの煙",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30141_4",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_4",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_4",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_5",
+    "group": "entity_default",
+    "id": 31,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_5",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_5",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_6",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_6",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_7",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_7",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_7",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_8",
+    "group": "entity_default",
+    "id": 26,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_9",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_9",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30141_9",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_1",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_1",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "ジェイドからの出口",
+    "type": 5,
+    "label": "Conversation",
+    "reason": "script presents dialogue; text/participants withheld"
+  },
+  {
+    "submap": "Map_30151_10",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_10",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_11",
+    "group": "entity_default",
+    "id": 26,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_11",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_11",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_11",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "壁紙",
+    "type": 5,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30151_12",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_12",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_13",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "パンデモニウムの入り口",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30151_13",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_13",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30151_14",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_15",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_16",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_17",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_18",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_19",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_2",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_2",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_2",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_2",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_20",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_21",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_22",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_23",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_24",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_25",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_26",
+    "group": "entity_default",
+    "id": 6,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_3",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_3",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_4",
+    "group": "entity_default",
+    "id": 50,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_4",
+    "group": "entity_default",
+    "id": 51,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_4",
+    "group": "entity_default",
+    "id": 52,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_4",
+    "group": "entity_default",
+    "id": 53,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_4",
+    "group": "entity_default",
+    "id": 54,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_4",
+    "group": "entity_default",
+    "id": 55,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_5",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_5",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_6",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_6",
+    "group": "entity_default",
+    "id": 44,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_6",
+    "group": "entity_default",
+    "id": 45,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_6",
+    "group": "entity_default",
+    "id": 46,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_6",
+    "group": "entity_default",
+    "id": 47,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_6",
+    "group": "entity_default",
+    "id": 48,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_6",
+    "group": "entity_default",
+    "id": 49,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_7",
+    "group": "entity_default",
+    "id": 9,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_7",
+    "group": "entity_default",
+    "id": 11,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_8",
+    "group": "entity_default",
+    "id": 27,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_8",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_8",
+    "group": "entity_default",
+    "id": 29,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_8",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30151_9",
+    "group": "entity_default",
+    "id": 18,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_1",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_1",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_1",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "ジェイドへのワープ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_10",
+    "group": "entity_default",
+    "id": 11,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_10",
+    "group": "entity_default",
+    "id": 13,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_10",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "パンデモニウム8へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_10",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "パンデモニウム10へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_11",
+    "group": "entity_default",
+    "id": 10,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_11",
+    "group": "entity_default",
+    "id": 12,
+    "raw": "パンデモニウム9へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_11",
+    "group": "ev_e_0089",
+    "id": 7,
+    "raw": "皇帝死亡",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_2",
+    "group": "entity_default",
+    "id": 13,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_2",
+    "group": "entity_default",
+    "id": 14,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_2",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "パンデモニウム3へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_3",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_3",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_3",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "パンデモニウム2へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_3",
+    "group": "entity_default",
+    "id": 21,
+    "raw": "パンデモニウム4へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 31,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 32,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 33,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 40,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 41,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 42,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 43,
+    "raw": "パンデモニウム3へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 45,
+    "raw": "パンデモニウム7へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_4",
+    "group": "entity_default",
+    "id": 47,
+    "raw": "パンデモニウム6へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_5",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_5",
+    "group": "entity_default",
+    "id": 25,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_5",
+    "group": "entity_default",
+    "id": 26,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_6",
+    "group": "entity_default",
+    "id": 8,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_7",
+    "group": "entity_default",
+    "id": 24,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_7",
+    "group": "entity_default",
+    "id": 25,
+    "raw": "TelepoPoint",
+    "type": 20,
+    "label": "Warp tile",
+    "reason": "native teleport type"
+  },
+  {
+    "submap": "Map_30161_7",
+    "group": "entity_default",
+    "id": 28,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_7",
+    "group": "entity_default",
+    "id": 30,
+    "raw": "パンデモニウム4へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_8",
+    "group": "entity_default",
+    "id": 15,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_8",
+    "group": "entity_default",
+    "id": 16,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_8",
+    "group": "entity_default",
+    "id": 17,
+    "raw": "パンデモニウム4へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_8",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "パンデモニウム8へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_9",
+    "group": "entity_default",
+    "id": 19,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_9",
+    "group": "entity_default",
+    "id": 20,
+    "raw": "ワープゾーン　色変え1",
+    "type": 10,
+    "label": "Interactive object",
+    "reason": "neutral fallback; no supported inference"
+  },
+  {
+    "submap": "Map_30161_9",
+    "group": "entity_default",
+    "id": 21,
+    "raw": "パンデモニウム7へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  },
+  {
+    "submap": "Map_30161_9",
+    "group": "entity_default",
+    "id": 23,
+    "raw": "パンデモニウム9へ",
+    "type": 2,
+    "label": "Scene trigger",
+    "reason": "script action; outcome withheld"
+  }
+]

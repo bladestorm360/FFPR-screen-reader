@@ -13,6 +13,7 @@
 // State: FF1's ClearOtherMenuStates("BattleMagic") then BATTLE_MAGIC active. The command
 // window's back-out re-announce (FF3 NotifyCommandSubmenuActive) is run through
 // "BattleCommandPatches.NotifyCommandSubmenuActive" when the battle area defines it.
+#include "../../core/ui/preferences.h"
 #include <cstdint>
 #include <string>
 #include "../../core/core.h"
@@ -70,7 +71,7 @@ std::wstring format_spell(void* controller, void* ability, std::wstring& descrip
         }
     }
     description = ffpr::menus::spell_description(ability);
-    if (settings::get_bool("AutoDetail", true) && !text::is_blank(description)) line += L". " + description;
+    if (ui::prefs::auto_detail_enabled() && !text::is_blank(description)) line += L". " + description;
     return line;
 }
 

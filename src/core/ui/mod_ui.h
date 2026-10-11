@@ -48,6 +48,8 @@ bool is_open();
 void open();
 /// Closes the menu: "Mod menu closed". No-op when closed.
 void close();
+/// Return to the category list, retaining focus; close when already at the root.
+void back();
 /// Keyboard while open: Up/Down move, Left/Right change, Enter or Space toggle, I describes,
 /// Escape or F8 close. True while open (all keys are consumed).
 bool handle_input();

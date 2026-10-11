@@ -11,6 +11,7 @@
 //
 // JobContentListController is a shared Last.UI.KeyInput class (all five dumps); masked to FF1
 // because only FF1's module hooks it here.
+#include "../../core/ui/preferences.h"
 #include <windows.h>
 #include <cstdint>
 #include <string>
@@ -104,7 +105,7 @@ void announce_job(void* ctrl, const std::wstring& job_name, int index, int count
 {
     std::wstring announcement = job_name;
     // The description only with Auto Detail on; otherwise the detail key reads it on demand.
-    if (settings::get_bool("AutoDetail", true)) {
+    if (ui::prefs::auto_detail_enabled()) {
         std::wstring description = safe_description(ctrl);
         if (!description.empty()) announcement = job_name + L". " + description;
     }

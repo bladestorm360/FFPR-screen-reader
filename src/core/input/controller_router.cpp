@@ -54,6 +54,7 @@ const wchar_t* context_name(Context c)
     case Context::Battle: return L"Battle";
     case Context::Status: return L"Status";
     case Context::BestiaryDetail: return L"BestiaryDetail";
+    case Context::Results: return L"Results";
     case Context::KeyHelp: return L"KeyHelp";
     default: return L"Global";
     }
@@ -99,6 +100,8 @@ void announce_mod_mode_controls()
     const std::wstring west = button_label(kWest);
     if (in_dialogue()) {
         ffpr::say(TF(L"{0} to repeat dialogue. {1} to cancel.", {west, back}), true);
+    } else if (queries::is("ReviewBuffer.IsActive")) {
+        ffpr::say(TF(L"{0} for displayed result details. Shoulders review lines. {1} to cancel.", {west, back}), true);
     } else if (in_battle()) {
         ffpr::say(TF(L"{0} for party HP. {1} to cancel.", {west, back}), true);
     } else {
@@ -116,7 +119,7 @@ void announce_mod_menu_controls()
     const std::wstring confirm = button_label(kSouth);
     const std::wstring close = button_label(kEast);
     const std::wstring start = button_label(kStart);
-    ffpr::say(TF(L"D-pad or Left Stick Up, Down to navigate. Left, Right to adjust values. {0} to toggle. {1} or {2} to close.",
+    ffpr::say(TF(L"D-pad or Left Stick Up, Down to navigate. Left, Right to adjust values. {0} to select. {1} to go back. {2} to close.",
                  {confirm, close, start}), true);
 }
 
@@ -295,9 +298,16 @@ void handle_mod_mode_state()
     // Dialogue first: with a message window up the player wants the message again.
     if (in_dialogue()) {
         if (button_pressed(kWest)) { run_action("MessageWindowPatches.RepeatLastDialogue"); g_state = RouterState::Normal; return; }
+    } else if (queries::is("ReviewBuffer.IsActive")) {
+        if (button_pressed(kWest)) { run_action("ReviewBuffer.Details"); return; }
+        if (button_pressed(kRightShoulder)) { run_action("ReviewBuffer.Next"); return; }
+        if (button_pressed(kLeftShoulder)) { run_action("ReviewBuffer.Previous"); return; }
     } else if (in_battle()) {
         // Battle mod mode: X = party HP.
         if (button_pressed(kWest)) { run_action("Mod.AnnounceCharacterStatus"); g_state = RouterState::Normal; return; }
+        if (button_pressed(kNorth)) { run_action("BattleParty.ActiveTurn"); g_state = RouterState::Normal; return; }
+        if (button_pressed(kRightShoulder)) { run_action("BattleParty.Next"); return; }
+        if (button_pressed(kLeftShoulder)) { run_action("BattleParty.Previous"); return; }
     } else {
         // Field mod mode: X = Gil, Y = location, A = vehicle, RB = puzzle guide, LB = stop it.
         if (button_pressed(kWest)) { run_action("Mod.AnnounceGilAmount"); g_state = RouterState::Normal; return; }
@@ -345,7 +355,7 @@ void handle_mod_menu_state()
     if (right) ui::mod_menu::adjust_current_item(1);
 
     if (button_pressed(kSouth)) ui::mod_menu::toggle_current_item();
-    if (button_pressed(kEast)) close_mod_menu();
+    if (button_pressed(kEast)) ui::mod_menu::back();
 
     // Right stick down: mod menu controls.
     if (gamepad::rstick_down_pressed()) announce_mod_menu_controls();
@@ -393,8 +403,7 @@ bool suppress_game_input()
 {
     return g_state == RouterState::ModMode
         || g_state == RouterState::ModMenu
-        || ui::any_modal_open()    // ModMenu.IsOpen || TextInputWindow.IsOpen || ConfirmationDialog.IsOpen
-        || queries::is("BattleResultNavigator.IsOpen");   // FF5's results log (game module)
+        || ui::any_modal_open();   // ModMenu.IsOpen || TextInputWindow.IsOpen || ConfirmationDialog.IsOpen
 }
 
 /// Keeps the router in step with the mod menu however it was opened or closed (F8 / Escape /

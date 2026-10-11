@@ -1,13 +1,13 @@
 {
-  "_comment": "Guided puzzle solutions for FINAL FANTASY VI (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff6_master/map.txt); cells are baked tile coordinates (tools/mapdump/ff6_objects.jsonl). Authored 2026-10-10 from the dumps' developer labels and the games' known answers; not yet tested in game. Still to author (OPEN_ISSUES.md): Phoenix Cave and Kefka's Tower switch sets, the Cave to the Sealed Gate's moving islands, Owzer's second painting, the Opera House levers, the Phantom Train and Dreamscape levers.",
+  "_comment": "Guided puzzle solutions for FINAL FANTASY VI (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff6_master/map.txt); cells are baked tile coordinates, one row above the dumps' ty for tile objects since the 2026-10-11 bottom-edge fix in bake_maps.py (tools/mapdump/ff6_objects.jsonl). Authored 2026-10-10 from the dumps' developer labels and the games' known answers; not yet tested in game. Still to author (OPEN_ISSUES.md): Phoenix Cave and Kefka's Tower switch sets, the Cave to the Sealed Gate's moving islands, Owzer's second painting, the Opera House levers, the Phantom Train and Dreamscape levers.",
   "puzzles": [
     {
       "id": "zozo_clock",
       "_about": "Zozo: the clock in the weapon shop building (map 387, (125,46)) is set to 6:10:50; the wall at (10,19) in the inn (map 386) then opens.",
       "maps": [386, 387],
       "steps": [
-        {"map": 387, "x": 125, "y": 46, "layer": 1, "examine": true, "text": "Set the clock to 6:10:50"},
-        {"map": 386, "x": 10, "y": 19, "layer": 1, "examine": false, "text": "Go through the hidden door"}
+        {"map": 387, "x": 125, "y": 45, "layer": 1, "examine": true, "text": "Set the clock to 6:10:50"},
+        {"map": 386, "x": 10, "y": 18, "layer": 1, "examine": false, "text": "Go through the hidden door"}
       ]
     },
     {
@@ -15,8 +15,8 @@
       "_about": "Darill's Tomb B2: examining the stone at (28,43) on map 458 makes a door appear (the passage at (28,40)); the stone at (76,13) on map 463 does the same there.",
       "maps": [458, 463],
       "steps": [
-        {"map": 458, "x": 28, "y": 43, "layer": 1, "examine": true, "text": "Examine the gravestone"},
-        {"map": 463, "x": 76, "y": 13, "layer": 1, "examine": true, "text": "Examine the gravestone"}
+        {"map": 458, "x": 28, "y": 42, "layer": 1, "examine": true, "text": "Examine the gravestone"},
+        {"map": 463, "x": 76, "y": 12, "layer": 1, "examine": true, "text": "Examine the gravestone"}
       ]
     },
     {
@@ -24,8 +24,8 @@
       "_about": "Ancient Castle: the hidden switch at (34,15) on map 517 makes the hidden stairs appear in the queen's room on map 518 (the stair cells around (31..34,67)).",
       "maps": [517, 518],
       "steps": [
-        {"map": 517, "x": 34, "y": 15, "layer": 1, "examine": true, "text": "Examine the hidden switch"},
-        {"map": 518, "x": 34, "y": 67, "layer": 1, "examine": false, "text": "Go through the hidden door"}
+        {"map": 517, "x": 34, "y": 14, "layer": 1, "examine": true, "text": "Examine the hidden switch"},
+        {"map": 518, "x": 34, "y": 66, "layer": 1, "examine": false, "text": "Go through the hidden door"}
       ]
     },
     {
@@ -33,7 +33,7 @@
       "_about": "Cultists' Tower: the hidden switch at (9,9) on map 478 makes the door appear.",
       "maps": [478],
       "steps": [
-        {"map": 478, "x": 9, "y": 9, "layer": 1, "examine": true, "text": "Examine the hidden switch"}
+        {"map": 478, "x": 9, "y": 8, "layer": 1, "examine": true, "text": "Examine the hidden switch"}
       ]
     },
     {
@@ -41,7 +41,7 @@
       "_about": "Owzer's Mansion: the flower painting at (111,18) on map 442 is examined (a battle follows).",
       "maps": [442],
       "steps": [
-        {"map": 442, "x": 111, "y": 18, "layer": 1, "examine": true, "text": "Examine the painting"}
+        {"map": 442, "x": 111, "y": 17, "layer": 1, "examine": true, "text": "Examine the painting"}
       ]
     }
   ]

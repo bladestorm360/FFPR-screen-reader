@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF4 Patches/PartySettingPatches.cs (the party setting screen: character list and party
 // slot grid) and Patches/FormationRowPatches.cs (the row a character moves to when the status
 // window's row switch is pressed).
@@ -95,15 +96,14 @@ std::wstring party_assignment(void* controller, void* character)
 std::wstring character_announcement(void* controller, void* character, int index)
 {
     std::vector<std::wstring> parts;
-    std::wstring name = character_name(character);
-    parts.push_back(text::is_blank(name) ? TF(L"Character {0}", {text::num(index + 1)}) : name);
-    if (void* p = character_parameter(character)) {
-        parts.push_back(T(L"Level") + L" " + text::num(call_virtual_int(mConfirmedLevel, p)));
-        parts.push_back(T(L"HP") + L" " + text::num(ref::call<int32_t>(mGetCurrentHP, p)) + L"/" +
-                        text::num(call_virtual_int(mConfirmedMaxHp, p)));
-        parts.push_back(T(L"MP") + L" " + text::num(ref::call<int32_t>(mGetCurrentMP, p)) + L"/" +
-                        text::num(call_virtual_int(mConfirmedMaxMp, p)));
-    }
+    void* view = displayed::field(controller, "view");
+    auto name = displayed::text_field(view, "currentCharacterNameText");
+    if (name.empty()) return {};
+    parts.push_back(name);
+    auto job = displayed::text_field(view, "currentChracterJobText");
+    auto level = displayed::pair(view, "fixedLevelText", "currentLevelText");
+    auto vitals = displayed::vitals(view);
+    for (auto value : {job, level, vitals}) if (!value.empty()) parts.push_back(std::move(value));
     std::wstring assignment = party_assignment(controller, character);
     if (!text::is_blank(assignment)) parts.push_back(assignment);
     std::wstring out;

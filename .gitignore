@@ -5,3 +5,7 @@ build_log.txt
 __pycache__/
 releases/
 build_check/
+docs/re/*.c
+docs/re/*.log
+docs/re_state_ff2.c
+docs/re_state_ff2.c.log

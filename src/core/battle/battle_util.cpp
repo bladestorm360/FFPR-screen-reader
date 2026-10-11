@@ -8,8 +8,24 @@
 #include "../modtext.h"
 #include "../text.h"
 #include "../unity.h"
+#include "../ui/preferences.h"
 
 namespace ffpr::battle {
+
+std::wstring optional_enemy_hp(void* enemy)
+{
+    const int mode = ui::prefs::enemy_hp_display();
+    if (!enemy || (mode != 0 && mode != 1)) return {};
+    void* parameter = unit_parameter(enemy);
+    if (!parameter) return {};
+    const int current = param_current_hp(parameter);
+    const int maximum = param_confirmed_or_base(parameter, Stat::MaxHp);
+    if (mode == 0)
+        return TF(L": HP {0}/{1}", {std::to_wstring(current), std::to_wstring(maximum)});
+    if (maximum <= 0) return {};
+    const long long percent = static_cast<long long>(current) * 100 / maximum;
+    return L": " + std::to_wstring(percent) + L"%";
+}
 
 ref::Class kBattleUnitData{"Last.Battle", "BattleUnitData"};
 ref::Class kBattlePlayerData{"", "BattlePlayerData"};

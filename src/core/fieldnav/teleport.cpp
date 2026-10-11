@@ -40,6 +40,11 @@ void teleport_in_direction(float ox, float oy)
             ffpr::say(T(L"No entity selected"), true);
             return;
         }
+        // Another floor's entry (2026-10-11) has no position on this map: nothing to teleport to.
+        if (entity.remote_map_id > 0) {
+            ffpr::say(T(L"Not on map"), true);
+            return;
+        }
 
         // Target position: entity position + offset
         unity::Vec3 target{entity.position.x + ox, entity.position.y + oy, entity.position.z + 0.0f};

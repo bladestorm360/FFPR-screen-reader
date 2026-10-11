@@ -12,6 +12,7 @@
 // Not ported: StatusMenuHelpers.GetCharacterRow (FF1 never calls it - "FF1 doesn't use front/back
 // row") and the unreachable GetMemberData(0) fallback is kept only for a faulting read.
 #include "status.h"
+#include "../displayed_ui.h"
 #include "../core.h"
 #include "../dedup.h"
 #include "../frame.h"
@@ -60,19 +61,6 @@ ref::Method mAbilityWindowSetActiveFF4{kAbilityWindowFF4, "SetActive", 1};
 ref::Method mAbilityWindowSetActiveFF5{kAbilityWindowFF5, "SetActive", 1};
 ref::Method mAbilityWindowSetActiveFF6{kAbilityWindowFF6, "SetActive", 1};
 
-// FF1's status details screen. ExitDisplay's body is FOLDED in FF1 (RVA 0x29B6F0 is shared by
-// 11 methods, among them Touch StatusDetailsController.ExitDisplay, NewGameWindowController
-// .ExitNameSelect and DetectionScriptInputManager.RemoveInput): its detour class-checks self.
-ref::Class  kStatusDetailsFF1{"Serial.FF1.UI.KeyInput", "StatusDetailsController", game::kFF1};
-ref::Field  fDetailsStatusController{kStatusDetailsFF1, "statusController"};
-ref::Method mDetailsInitDisplay{kStatusDetailsFF1, "InitDisplay", 0};
-ref::Method mDetailsExitDisplay{kStatusDetailsFF1, "ExitDisplay", 0};
-ref::Class  kCharaStatusFF1{"Serial.FF1.UI.KeyInput", "AbilityCharaStatusController", game::kFF1};
-ref::Field  fCharaStatusTargetData{kCharaStatusFF1, "targetData"};
-ref::Class  kDetailsBase{"Serial.Template.UI", "StatusDetailsControllerBase", game::kFF1};
-ref::Method mSetNextPlayer{kDetailsBase, "SetNextPlayer", 0};
-ref::Method mSetPrevPlayer{kDetailsBase, "SetPrevPlayer", 0};
-
 ref::Class  kUserDataManager{"Last.Management", "UserDataManager"};
 ref::Method mUserDataInstance{kUserDataManager, "Instance", 0};
 ref::Method mGetMemberData{kUserDataManager, "GetMemberData", 1};
@@ -119,31 +107,6 @@ Tracker g_tracker;
 
 // --- StatusDetailsHelpers -------------------------------------------------------------------
 
-// GetCharacterDataFromController: statusController (AbilityCharaStatusController) -> targetData.
-void* character_data_from_controller(void* controller)
-{
-    if (!controller) return nullptr;
-    try {
-        void* status_controller = ref::rd<void*>(controller, fDetailsStatusController);
-        if (!status_controller) {
-            LOGF("[Status Details] statusController is null");
-            return nullptr;
-        }
-        void* target = ref::rd<void*>(status_controller, fCharaStatusTargetData);
-        if (!target) {
-            LOGF("[Status Details] targetData is null");
-            return nullptr;
-        }
-        return target;
-    } catch (...) {
-        LOGF("[Status Details] Error getting character data from the controller");
-    }
-
-    // Fallback: the first party member (only after a faulting read).
-    void* udm = ref::call_static<void*>(mUserDataInstance);
-    return udm ? ref::call<void*>(mGetMemberData, udm, static_cast<int32_t>(0)) : nullptr;
-}
-
 // --- StatusMenuPatches.SelectContent_Postfix ------------------------------------------------
 
 void on_select_content(void* contents, int index)
@@ -165,24 +128,13 @@ void on_select_content(void* contents, int index)
     ffpr::system::clear_other_menu_states("Status");
     menu_state::set_active(menu_state::STATUS_MENU, true);
 
-    std::wstring name = character_name(data);
-    if (text::is_blank(name)) return;
-    std::wstring announcement = name;
-
-    // FF2 has no jobs (game::flags().reads_job_slot; user, 2026-10-10).
-    std::wstring job = game::flags().reads_job_slot ? current_job_name(data) : std::wstring();
+    void* view = displayed::field(content, "view");
+    std::wstring announcement = displayed::character(view);
+    auto job = displayed::text_field(view, "jobNameText");
+    auto level = displayed::pair(view, "fixedLevelText", "currentLevelText");
     if (!job.empty()) announcement += L", " + job;
-
-    // Row information removed: FF1 has no front/back row system.
-
-    if (void* param = character_parameter(data)) {
-        int level = param_level_or_base(param);
-        if (level > 0 && game::flags().has_levels) announcement += L", " + TF(L"Level {0}", {text::num(level)});
-        announcement += L", " + TF(L"HP {0}/{1}", {text::num(param_current_hp(param)), text::num(param_max_hp(param))});
-        if (game::flags().has_mp)
-            announcement += L", " + TF(L"MP {0}/{1}", {text::num(ref::rd<int32_t>(param, fParamCurrentMp)),
-                                                     text::num(ref::call<int32_t>(mConfirmedMaxMp, param))});
-    }
+    if (!level.empty()) announcement += L", " + level;
+    if (announcement.empty()) return;
 
     ffpr::say(announcement, true);
 }
@@ -237,121 +189,6 @@ void d_StatusWindowSetActive(void* self, bool is_active, const void* mi)
     });
 }
 
-// --- StatusDetailsPatches (FF1) -------------------------------------------------------------
-
-// DelayedStatusInit: one frame after InitDisplay, when the UI has updated.
-void delayed_status_init(void* controller)
-{
-    if (!unity::alive(controller)) return;
-    // Only initialize when the status screen is actually visible.
-    if (!unity::active_in_hierarchy(controller)) return;
-
-    void* data = character_data_from_controller(controller);
-    if (!data) {
-        LOGF("[Status Details] Could not get character data");
-        return;
-    }
-
-    Tracker& t = tracker();
-    t.is_navigation_active = true;
-    t.current_stat_index = 0;
-    t.active_controller = controller;
-    t.current_character_data = data;
-    dedup::reset(kCtxCharacter);
-    dedup::text(kCtxCharacter, character_name(data), dedup::Scope::Session);
-
-    set_current_character_data(data);
-    initialize_stat_list();
-
-    std::wstring status = read_status_details(controller);
-    if (!text::is_blank(status)) ffpr::say(status);
-}
-
-using Void_t = void (*)(void* self, const void* mi);
-
-Void_t o_InitDisplay;
-void d_InitDisplay(void* self, const void* mi)
-{
-    o_InitDisplay(self, mi);
-    hooks::guarded("StatusDetailsController.InitDisplay", [&] {
-        if (!kStatusDetailsFF1.is(self)) return;
-        // Status details active immediately: clear the other states and set this one.
-        ffpr::system::clear_other_menu_states("StatusDetails");
-        menu_state::set_active(menu_state::STATUS_DETAILS, true);
-        void* controller = self;
-        frame::next_frame([controller] {
-            hooks::guarded("StatusDetails.DelayedStatusInit", [&] { delayed_status_init(controller); });
-        }, "StatusDetails.Init");
-    });
-}
-
-Void_t o_ExitDisplay;
-void d_ExitDisplay(void* self, const void* mi)
-{
-    o_ExitDisplay(self, mi);
-    hooks::guarded("StatusDetailsController.ExitDisplay", [&] {
-        if (!kStatusDetailsFF1.is(self)) return;   // folded body: other classes share it
-        clear_current_character_data();
-        tracker().reset();
-        menu_state::reset(menu_state::STATUS_DETAILS);
-    });
-}
-
-// DelayedPlayerSwitchInit: one frame after SetNextPlayer / SetPrevPlayer (RB / LB).
-void delayed_player_switch_init(void* controller)
-{
-    if (!unity::alive(controller) || !status_details_active()) return;
-    if (!unity::active_in_hierarchy(controller)) return;
-
-    void* data = character_data_from_controller(controller);
-    if (!data) {
-        LOGF("[Status Details] Could not get character data after switch");
-        return;
-    }
-
-    // Skip if it is the character already shown (redundant calls).
-    Tracker& t = tracker();
-    if (t.current_character_data) {
-        if (!dedup::text(kCtxCharacter, character_name(data), dedup::Scope::Session)) return;
-    } else {
-        dedup::reset(kCtxCharacter);
-        dedup::text(kCtxCharacter, character_name(data), dedup::Scope::Session);
-    }
-
-    t.current_character_data = data;
-    t.current_stat_index = 0;
-    t.active_controller = controller;
-    set_current_character_data(data);
-
-    std::wstring status = read_status_details(controller);
-    if (!text::is_blank(status)) ffpr::say(status, true);
-}
-
-void handle_player_switch(void* self)
-{
-    if (!status_details_active()) return;
-    if (!tracker().is_navigation_active) return;
-    if (!kStatusDetailsFF1.is(self)) return;
-    void* controller = self;
-    frame::next_frame([controller] {
-        hooks::guarded("StatusDetails.DelayedPlayerSwitch", [&] { delayed_player_switch_init(controller); });
-    }, "StatusDetails.Switch");
-}
-
-Void_t o_SetNextPlayer;
-void d_SetNextPlayer(void* self, const void* mi)
-{
-    o_SetNextPlayer(self, mi);
-    hooks::guarded("StatusDetailsControllerBase.SetNextPlayer", [&] { handle_player_switch(self); });
-}
-
-Void_t o_SetPrevPlayer;
-void d_SetPrevPlayer(void* self, const void* mi)
-{
-    o_SetPrevPlayer(self, mi);
-    hooks::guarded("StatusDetailsControllerBase.SetPrevPlayer", [&] { handle_player_switch(self); });
-}
-
 // --- installs -------------------------------------------------------------------------------
 
 // StatusMenuPatches + CharacterSelectTransitionPatches + StatusWindowSetActivePatch (all games).
@@ -378,23 +215,6 @@ int install_status_menu()
 }
 
 core::Install s_status_menu{"StatusMenu", &install_status_menu, 120};
-
-// StatusDetailsPatches (FF1's status details controller).
-int install_status_details()
-{
-    int n = 0;
-    if (hooks::attach(mDetailsInitDisplay, &d_InitDisplay, &o_InitDisplay)) ++n;
-    else LOGF("[Status Details] Could not find InitDisplay method");
-    if (hooks::attach(mDetailsExitDisplay, &d_ExitDisplay, &o_ExitDisplay)) ++n;
-    else LOGF("[Status Details] Could not find ExitDisplay method");
-    if (hooks::attach(mSetNextPlayer, &d_SetNextPlayer, &o_SetNextPlayer)) ++n;
-    else LOGF("[Status Details] Could not find SetNextPlayer method");
-    if (hooks::attach(mSetPrevPlayer, &d_SetPrevPlayer, &o_SetPrevPlayer)) ++n;
-    else LOGF("[Status Details] Could not find SetPrevPlayer method");
-    return n;
-}
-
-core::Install s_status_details{"StatusDetails", &install_status_details, 120, game::kFF1};
 
 } // namespace
 
@@ -432,21 +252,10 @@ void* get_current_character_data() { return g_reader_character; }
 std::wstring read_status_details(void* controller)
 {
     if (!controller) return {};
-    std::vector<std::wstring> parts;
-    if (void* data = g_reader_character) {
-        std::wstring name = character_name(data);
-        if (!text::is_blank(name)) parts.push_back(name);
-        if (void* param = character_parameter(data)) {
-            if (game::flags().has_levels) parts.push_back(TF(L"Level {0}", {text::num(param_confirmed_level(param))}));
-            parts.push_back(TF(L"HP: {0} / {1}", {text::num(param_current_hp(param)), text::num(param_max_hp(param))}));
-        }
-    }
-    std::wstring out;
-    for (size_t i = 0; i < parts.size(); ++i) {
-        if (i) out += L". ";
-        out += parts[i];
-    }
-    return out;
+    void* view = displayed::field(displayed::field(controller, "statusController"), "view");
+    auto result = displayed::character(view);
+    auto level = displayed::pair(view, "fixedLevelText", "currentLevelText");
+    return result + (level.empty() ? L"" : L", " + level);
 }
 
 // --- characters -----------------------------------------------------------------------------

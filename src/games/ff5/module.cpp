@@ -20,7 +20,6 @@ void configure(game::Flags& f)
     f.has_mp = true;
     f.has_vehicle_pads = true;
     f.has_hidden_passages = true;
-    f.multi_hit_setting = false;
     f.atb = true;
     f.has_jobs = true;
     f.timer_freeze = true;

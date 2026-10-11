@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF5 Patches/JobAbilityPatches.cs (JobMenuTracker, AbilityMenuTracker, AbilitySlotMenuTracker,
 // AbilityEquipMenuTracker, JobAbilityTrackerHelper, the five navigation patches, the four details
 // announcers and FieldJobAbilityReannouncePatches), Utils/JobEquipData.cs, and the FF5 job/ability
@@ -564,9 +565,8 @@ bool announce_use_target(void* self, int index)
     void* content = ui::list_item(list, index);
     void* data = content ? ref::rd<void*>(content, fTargetCurrentData) : nullptr;
     if (!data) return false;
-    std::wstring name = battle::character_name(data);
-    if (name.empty()) return false;
-    std::wstring announcement = name + full_status(battle::character_parameter(data));
+    std::wstring announcement = displayed::target(content);
+    if (announcement.empty()) return false;
     announcement = ui::menu_position(announcement, index, list ? unity::list_count(list) : 0);
     if (!is_new(kCtxUseTarget, index)) return false;
     ffpr::say(announcement);

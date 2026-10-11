@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF6 Patches/PartySettingPatches.cs (PartySettingMenuBaseController.SelectContent: the
 // party division screen, used when FF6 splits the characters into two or three parties - the
 // character list and the party slot grid, with the section transitions). The commented-out
@@ -115,15 +116,14 @@ std::wstring party_assignment(void* controller, void* character)
 std::wstring character_announcement(void* controller, void* character, int index)
 {
     std::vector<std::wstring> parts;
-    std::wstring name = status::character_name(character);
-    parts.push_back(text::is_blank(name) ? TF(L"Character {0}", {text::num(index + 1)}) : name);
-    if (void* p = status::character_parameter(character)) {
-        parts.push_back(T(L"Level") + L" " + text::num(status::param_confirmed_level(p)));
-        parts.push_back(T(L"HP") + L" " + text::num(status::param_current_hp(p)) + L"/" +
-                        text::num(status::param_max_hp(p)));
-        parts.push_back(T(L"MP") + L" " + text::num(ref::rd<int32_t>(p, fParamCurrentMp)) + L"/" +
-                        text::num(ref::call<int32_t>(mConfirmedMaxMp, p)));
-    }
+    void* view = displayed::field(controller, "view");
+    auto name = displayed::text_field(view, "currentCharacterNameText");
+    if (name.empty()) return {};
+    parts.push_back(name);
+    auto job = displayed::text_field(view, "currentChracterJobText");
+    auto level = displayed::pair(view, "fixedLevelText", "currentLevelText");
+    auto vitals = displayed::vitals(view);
+    for (auto value : {job, level, vitals}) if (!value.empty()) parts.push_back(std::move(value));
     std::wstring assignment = party_assignment(controller, character);
     if (!text::is_blank(assignment)) parts.push_back(assignment);
     std::wstring out;

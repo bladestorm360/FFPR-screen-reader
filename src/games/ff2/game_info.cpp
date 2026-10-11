@@ -26,62 +26,6 @@
 namespace ffpr::ff2 {
 namespace {
 
-ref::Class kOwnedCharacter{"Last.Data.User", "OwnedCharacterData", game::kFF2};
-ref::Method mCharName{kOwnedCharacter, "get_Name", 0};
-ref::Method mCharParameter{kOwnedCharacter, "get_Parameter", 0};
-ref::Class kParamBase{"Last.Data", "CharacterParameterBase", game::kFF2};
-ref::Method mGetCurrentHP{kParamBase, "get_CurrentHP", 0};
-ref::Method mGetCurrentMP{kParamBase, "get_CurrentMP", 0};
-ref::Method mConditionList{kParamBase, "get_CurrentConditionList", 0};
-ref::Method mConfirmedMaxHp{kParamBase, "ConfirmedMaxHp", 0};
-ref::Method mConfirmedMaxMp{kParamBase, "ConfirmedMaxMp", 0};
-
-int virtual_int(ref::Method& m, void* obj)
-{
-    il2cpp::Method* base = m.get();
-    if (!base || !obj) return 0;
-    return il2cpp::invoke_int(il2cpp::virtual_method(obj, base), obj, nullptr, 0);
-}
-
-/// BattleCommandPatches.BuildStatusSuffix: ", Poison, Blind" (distinct names), or empty.
-std::wstring status_suffix(void* param)
-{
-    std::vector<std::wstring> names;
-    void* list = ref::call<void*>(mConditionList, param);
-    for (int i = 0, n = unity::list_count(list); i < n; ++i) {
-        std::wstring c = menus::condition_name(unity::list_at(list, i));
-        if (text::is_blank(c)) continue;
-        bool seen = false;
-        for (const std::wstring& s : names) seen = seen || s == c;
-        if (!seen) names.push_back(c);
-    }
-    return names.empty() ? std::wstring() : L", " + text::join(names, L", ");
-}
-
-void announce_character_status()
-{
-    if (!queries::is("BattleStateHelper.IsInBattle")) {
-        ffpr::say(T(L"Party status only available in battle"), true);
-        return;
-    }
-    void* actor = battle::current_actor();
-    if (!actor) {
-        ffpr::say(T(L"No active character"), true);
-        return;
-    }
-    void* param = ref::call<void*>(mCharParameter, actor);
-    if (!param) {
-        ffpr::say(T(L"Character status not available"), true);
-        return;
-    }
-    std::wstring line = TF(L"{0}: HP {1}/{2}, MP {3}/{4}",
-                           {ref::call_str(mCharName, actor), text::num(ref::call<int32_t>(mGetCurrentHP, param)),
-                            text::num(virtual_int(mConfirmedMaxHp, param)), text::num(ref::call<int32_t>(mGetCurrentMP, param)),
-                            text::num(virtual_int(mConfirmedMaxMp, param))});
-    line += hooks::guarded_r("FF2.CharacterStatus.Conditions", std::wstring(), [&] { return status_suffix(param); });
-    ffpr::say(line, true);
-}
-
 void announce_equip_restrictions()
 {
     if (queries::is("ShopMenuTracker.ValidateState") || queries::is("EquipMenuState.IsActive"))
@@ -90,7 +34,6 @@ void announce_equip_restrictions()
 
 int install()
 {
-    actions::define("Mod.AnnounceCharacterStatus", [] { announce_character_status(); });
     actions::define("UsableByAnnouncer.AnnounceForCurrentContext", [] { announce_equip_restrictions(); });
     return 0;
 }

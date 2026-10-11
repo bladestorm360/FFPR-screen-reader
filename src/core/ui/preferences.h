@@ -19,7 +19,14 @@ namespace ui::prefs {
 
 // --- keys ---------------------------------------------------------------------------------
 // key                                                                    FF1 display name
-inline constexpr const char* kPathfindingFilter = "PathfindingFilter";      // Pathfinding Filter
+inline constexpr const char* kPathfindingFilter = "PathfindingFilter";      // Pathfinding Filter (the old on/off; read once for the mode)
+// Pathfinding filter mode (user, 2026-10-11): 0 Current floor (walking reaches it on this
+// sub-map), 1 Current map with vehicles (a vehicle the party has here reaches it too),
+// 2 Current map (everything; a target cut off on this floor is routed through another floor).
+inline constexpr const char* kPathfindingFilterMode = "PathfindingFilterMode";
+inline constexpr int kFilterCurrentFloor = 0;
+inline constexpr int kFilterCurrentMapWithVehicles = 1;
+inline constexpr int kFilterCurrentMap = 2;
 inline constexpr const char* kMapExitFilter = "MapExitFilter";              // Map Exit Filter
 inline constexpr const char* kToLayerFilter = "ToLayerFilter";              // Layer Transition Filter
 inline constexpr const char* kWallTones = "WallTones";                      // Wall Tones
@@ -51,10 +58,10 @@ inline constexpr bool kToLayerFilterDefault = false;
 inline constexpr bool kWallTonesDefault = false;
 inline constexpr bool kFootstepsDefault = false;
 inline constexpr bool kAudioBeaconsDefault = false;
-inline constexpr bool kAutoDetailDefault = true;
+inline constexpr bool kAutoDetailDefault = false;
 inline constexpr bool kStickClickNormalizationDefault = false;
 inline constexpr bool kAnnounceOnBeaconRestartDefault = false;
-inline constexpr bool kMenuPositionAnnouncementsDefault = true;
+inline constexpr bool kMenuPositionAnnouncementsDefault = false;
 inline constexpr bool kExpCounterDefault = true;
 inline constexpr int kWallBumpVolumeDefault = 50;
 inline constexpr int kFootstepVolumeDefault = 50;
@@ -72,6 +79,10 @@ inline constexpr int kVolumeMin = 0;
 inline constexpr int kVolumeMax = 100;
 inline constexpr int kEnemyHPDisplayMax = 2;
 inline constexpr int kMultiHitDamageMax = 1;
+inline constexpr int kPathfindingFilterModeDefault = kFilterCurrentMap;
+inline constexpr int kPathfindingFilterModeMax = 2;
+/// The spoken names of the three modes, mod-text keys in mode order.
+inline const wchar_t* const kPathfindingFilterModeNames[3] = {L"Current floor", L"Current map with vehicles", L"Current map"};
 
 // --- change notification ------------------------------------------------------------------
 /// Run "Settings.Changed.<key>" when an area defines it.

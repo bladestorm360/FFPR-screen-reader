@@ -1,6 +1,7 @@
 // Ports FF4 Core/MenuState.cs (MenuStateRegistry.SetActiveExclusive for FF4's own keys),
 // Utils/MessageHelper.cs, Utils/TextUtils.cs (StripIconMarkup) and Utils/CharacterStatusHelper.cs.
 // Shared by the files of the FF4 module (ff4.h).
+#include "../../core/ui/preferences.h"
 #include "ff4.h"
 #include <vector>
 #include "../../core/core.h"
@@ -71,7 +72,7 @@ std::wstring strip_icon(std::wstring_view s)
     return text::trim(text::strip_markup(s));
 }
 
-bool auto_detail() { return settings::get_bool("AutoDetail", true); }
+bool auto_detail() { return ui::prefs::auto_detail_enabled(); }
 
 int call_virtual_int(ref::Method& m, void* obj)
 {

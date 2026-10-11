@@ -11,8 +11,11 @@ if not exist "out\hid.dll" ( echo ERROR: out\hid.dll missing - run build.bat fir
 if not exist "out\smoke_host.exe" ( echo ERROR: out\smoke_host.exe missing - run build.bat first. & exit /b 1 )
 
 set "SMOKE=%~dp0build\smoke"
-if exist "%SMOKE%" rmdir /s /q "%SMOKE%"
-mkdir "%SMOKE%"
+if not exist "%SMOKE%" mkdir "%SMOKE%"
+REM Reuse the isolated host directory; discard only its previous log so a stale
+REM successful run cannot satisfy this test. No recursive deletion is necessary.
+if exist "%SMOKE%\ffpr_screen_reader.log" del /q "%SMOKE%\ffpr_screen_reader.log"
+if exist "%SMOKE%\ffpr_screen_reader.log" ( echo ERROR: smoke log is in use & exit /b 1 )
 copy /Y "out\hid.dll" "%SMOKE%\hid.dll" >nul || ( echo ERROR: could not stage hid.dll & exit /b 1 )
 copy /Y "out\smoke_host.exe" "%SMOKE%\smoke_host.exe" >nul || ( echo ERROR: could not stage smoke_host.exe & exit /b 1 )
 

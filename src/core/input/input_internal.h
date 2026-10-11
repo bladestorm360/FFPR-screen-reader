@@ -52,9 +52,4 @@ void announce_current_vehicle();
 void handle_item_details_key();
 } // namespace global_hotkeys
 
-namespace mod {
-/// Per-frame part of the CurrentActor tracking (BattleCommandState reset edge).
-void tick();
-} // namespace mod
-
 } // namespace input

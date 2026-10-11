@@ -158,10 +158,10 @@ void boot_guarded(bool smoke)
     if (!module) {
         // One spoken line, then passive. The proxy keeps forwarding hid.dll.
         hooks::apply();   // applies the gate disarm
+        il2cpp::detach_current_thread();
         speech::request_load();
         speech::wait_and_load(kSpeechWaitMs);
         ffpr::say(L"FFPR screen reader: this game is not supported.", true);
-        il2cpp::detach_current_thread();
         return;
     }
 
@@ -173,14 +173,17 @@ void boot_guarded(bool smoke)
         LOGF("boot: frame tick unavailable - hotkeys and deferred reads will not run");
     int n = core::install_all();
     if (module->install) n += module->install();
+    // Resolve shared lazy refs while hooks are still disabled. Class/Field/Method caches
+    // are deliberately lock-free on the main thread; enabling readers before this pass
+    // made their first use race this boot thread's writes to tried_/cached values.
+    ref::self_check();
+    // This uses mod text; finish it before main-thread hooks can change the language.
+    warn_old_mod(module);
     hooks::apply();
     LOGF("boot: %d hooks installed, %d failed", hooks::installed(), hooks::failed());
 
-    ref::self_check();
-    warn_old_mod(module);
-
-    speech::wait_and_load(kSpeechWaitMs);
     il2cpp::detach_current_thread();
+    speech::wait_and_load(kSpeechWaitMs);
     LOGF("boot: startup complete");
     (void)smoke;
 }
@@ -196,6 +199,8 @@ DWORD WINAPI boot(LPVOID)
     __except (EXCEPTION_EXECUTE_HANDLER) {
         OutputDebugStringA("[FFPR reader] boot faulted; mod disabled, game continues\n");
     }
+    // A startup fault after attachment must not retain a GC-registered speech worker.
+    il2cpp::detach_current_thread();
     __try {
         speech::pump();
     }
@@ -215,7 +220,8 @@ BOOL APIENTRY DllMain(HMODULE module, DWORD reason, LPVOID)
         bool smoke = false;
         if (host_should_boot(smoke)) {
             g_args.smoke = smoke;
-            CreateThread(nullptr, 0, boot, nullptr, 0, nullptr);
+            HANDLE thread = CreateThread(nullptr, 0, boot, nullptr, 0, nullptr);
+            if (thread) CloseHandle(thread); // The boot thread owns its lifetime.
         }
         break;
     }

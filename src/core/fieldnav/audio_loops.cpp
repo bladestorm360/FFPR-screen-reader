@@ -38,6 +38,7 @@
 #include "../refs.h"
 #include "../settings.h"
 #include "../unity.h"
+#include "../field/baked_nav.h"
 #include "../field/field_api.h"
 #include "../field/path_search.h"
 
@@ -73,8 +74,23 @@ struct TargetRef {
     nav_target::Kind kind = nav_target::Kind::None;
     const void* ptr = nullptr;
     waypoints::EntityPtr keep;   // keeps a waypoint alive so its address cannot be reused
+    ::field::TargetKind route_kind = ::field::TargetKind::Infer;   // where the route to it ends
     bool same(const TargetRef& o) const { return kind == o.kind && ptr == o.ptr; }
 };
+
+/// The scanner's category (field::Target::category) as a route target kind: chests and NPCs
+/// are reached from beside and faced, exits are stepped on, vehicles stood on; an event by
+/// what is baked at its cell.
+::field::TargetKind route_kind_of_category(int category)
+{
+    switch (category) {
+    case 1:   // Chests
+    case 2: return ::field::TargetKind::Interact;   // NPCs
+    case 3: return ::field::TargetKind::Transition; // MapExits
+    case 5: return ::field::TargetKind::Spot;       // Vehicles
+    default: return ::field::TargetKind::Infer;
+    }
+}
 
 // Loop state ("coroutine running")
 bool g_wall_running = false;
@@ -216,13 +232,18 @@ void beacon_iteration(double now)
 {
     TargetRef target;
     unity::Vec3 target_pos{};
+    int remote_map_id = 0;   // the selected entity is on another floor (baked data): routed by its cell
+    ::field::baked_route::Cell remote_cell;
     switch (nav_target::last_kind()) {
     case nav_target::Kind::Entity: {
         ::field::Target e = ::field::selected();
         if (e.valid) {
             target.kind = nav_target::Kind::Entity;
             target.ptr = e.identity;
+            target.route_kind = route_kind_of_category(e.category);
             target_pos = e.position;
+            remote_map_id = e.remote_map_id;
+            remote_cell = ::field::baked_route::Cell{e.cell_layer, e.cell_x, e.cell_y};
         }
         break;
     }
@@ -232,6 +253,7 @@ void beacon_iteration(double now)
             target.kind = nav_target::Kind::Waypoint;
             target.ptr = w.get();
             target.keep = w;
+            target.route_kind = ::field::TargetKind::Spot;
             target_pos = w->position;
         }
         break;
@@ -267,22 +289,57 @@ void beacon_iteration(double now)
     }
 
     float dist_tiles = distance(player_pos, target_pos) / kTileSize;
+    unity::Vec3 aim = target_pos;   // what the ping points at
 
-    // Mode selection: expensive (A* per beacon tick) but only 1-5 Hz. PathSearchMode.Quick (FF5):
-    // the beacon never pays for breadcrumb chaining.
+    // On a baked map the beacon leads along the planned route, corner by corner (the FFXII
+    // mod's model; user, 2026-10-11): it points at the end of the current leg, not across walls
+    // at the target, speeds up as that corner nears, moves on silently at the corner, and goes
+    // quiet on the route's last cell. The plan is the spoken route's own (baked_nav), so the
+    // voice and the beacon never disagree; off the route it re-plans silently. A map the baked
+    // data does not know keeps the old test: a path exists (Quick, never chaining) or not.
     bool path_valid;
-    try {
-        ::field::PathInfo path_info = ::field::find_path_to_quick(player_pos, target_pos, ::field::map_handle(), player);
-        path_valid = path_info.success;
-    } catch (...) {
-        path_valid = false;
+    bool following = false;
+    void* map = ::field::map_handle();
+    if (::field::baked_nav::available(map)) {
+        ::field::baked_nav::Corner corner;
+        if (remote_map_id > 0) {
+            // Another floor (user, 2026-10-11): the leg to the exit to take, and after the
+            // transition the next one. With no route there is nothing to point at.
+            ::field::baked_nav::MapGoal goal;
+            goal.map_id = remote_map_id;
+            goal.cell = remote_cell;
+            path_valid = ::field::baked_nav::follow_goal(map, player, goal, target.route_kind, corner);
+            if (!path_valid) {
+                g_next_beacon_time = now + 0.5;
+                return;
+            }
+        } else {
+            path_valid = ::field::baked_nav::follow(map, player, target_pos, target.route_kind, corner);
+        }
+        if (path_valid) {
+            if (corner.arrived) {
+                g_beacon_silenced = true;
+                g_next_beacon_time = now + 0.2;
+                return;
+            }
+            following = true;
+            aim = corner.point;
+            dist_tiles = distance(player_pos, aim) / kTileSize;
+        }
+    } else {
+        try {
+            ::field::PathInfo path_info = ::field::find_path_to_quick(player_pos, target_pos, map, player);
+            path_valid = path_info.success;
+        } catch (...) {
+            path_valid = false;
+        }
     }
 
     float interval;
     bool low_pitch;
     if (path_valid) {
         // Mode A: valid path
-        if (dist_tiles <= kBeaconStopTiles) {
+        if (!following && dist_tiles <= kBeaconStopTiles) {
             g_beacon_silenced = true;
             g_next_beacon_time = now + 0.2;
             return;
@@ -312,11 +369,12 @@ void beacon_iteration(double now)
     float volume_scale = clamp(1.0f - (dist_tiles * kTileSize / max_dist), 0.15f, 0.60f);
 
     // FF1 computed pan as Clamp(dx / 100, -1, 1) * 0.5 + 0.5 for its 0..1 SoundPlayer; sound.h
-    // takes -1 (left) .. 1 (right), which is the same position without the shift.
-    float delta_x = target_pos.x - player_pos.x;
+    // takes -1 (left) .. 1 (right), which is the same position without the shift. The ping
+    // points at the next corner of the route when one is being followed, else at the target.
+    float delta_x = aim.x - player_pos.x;
     float pan = clamp(delta_x / 100.0f, -1.0f, 1.0f);
 
-    bool is_south = target_pos.y < player_pos.y - 8.0f;
+    bool is_south = aim.y < player_pos.y - 8.0f;
 
     // Debounce: at least 80% of the current interval since the last ping
     double time_since_last = now - g_last_beacon_played_at;
@@ -539,6 +597,8 @@ int install()
     });
 
     events::on(events::Kind::SceneLoaded, [] { on_scene_loaded(); });
+    events::on(events::Kind::BattleStart, [] { stop_all(); });
+    events::on(events::Kind::BattleEnd, [] { start_if_enabled(); });
 
     // Loops are NOT started here: they start after a scene load on a field scene, or from the
     // player's toggle (as in FF1).

@@ -111,6 +111,9 @@ void* function_unit(void* fn);
 void* player_owned_character(void* unit);
 /// BattleEnemyData.GetMesIdName() resolved through MessageManager (isReplace true); empty on miss.
 std::wstring enemy_name(void* enemy);
+/// User-approved legacy disclosure (2026-10-11): Numbers, Percentage or Hidden.
+/// HP is not part of the native target panel. Hidden never reads the parameters.
+std::wstring optional_enemy_hp(void* enemy);
 /// BattleMessagePatches.GetUnitName: character name, enemy name, else T("Unknown").
 std::wstring unit_name(void* unit);
 

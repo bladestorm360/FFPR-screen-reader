@@ -1,0 +1,72 @@
+===== ff1
+  TARGET 0x4E3BA0  public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target) { }
+      <- 0x86989A in public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCount
+  TARGET 0x451F60  public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+      <- 0x4E3CAA in public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target)
+  TARGET 0x452920  public class HitCountEntity : ViewEntity :: private void SetNumSprite(int value) { }
+      <- 0x451F80 in public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+  TARGET 0x869820  public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCountValue) { }
+      <- 0xA2FE8A in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0xA32681 in public class BattleContinuousFunction : BattleBasicFunction :: protected override void CreateViewEntity(BattleUnitData data, bool isRecovery = False) { }
+  TARGET 0xA2FCE0  public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0xA30652 in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: public void HitCount() { }
+===== ff2
+  TARGET 0x4E47C0  public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target) { }
+      <- 0x910C2A in public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCount
+  TARGET 0x4916F0  public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+      <- 0x4E48CA in public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target)
+  TARGET 0x4920B0  public class HitCountEntity : ViewEntity :: private void SetNumSprite(int value) { }
+      <- 0x491710 in public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+  TARGET 0x910BB0  public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCountValue) { }
+      <- 0x63D86A in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x64018C in public class BattleContinuousFunction : BattleBasicFunction :: protected override void CreateViewEntity(BattleUnitData data, bool isRecovery = False) { }
+  TARGET 0x63D6C0  public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x63E042 in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: public void HitCount() { }
+===== ff3
+  TARGET 0x435640  public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target) { }
+      <- 0x6EE4DA in public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCount
+  TARGET 0x670070  public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+      <- 0x43574A in public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target)
+  TARGET 0x670A30  public class HitCountEntity : ViewEntity :: private void SetNumSprite(int value) { }
+      <- 0x670090 in public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+  TARGET 0x6EE460  public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCountValue) { }
+      <- 0x94B98A in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x94E625 in public class BattleContinuousFunction : BattleBasicFunction :: protected override void CreateViewEntity(BattleUnitData data, bool isRecovery = False) { }
+  TARGET 0x94B7E0  public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x94C142 in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: public void HitCount() { }
+===== ff4
+  TARGET 0x415C20  public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target) { }
+      <- 0x5BC8FA in public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCount
+  TARGET 0x5CCB80  public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+      <- 0x415D2A in public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target)
+  TARGET 0x5CD540  public class HitCountEntity : ViewEntity :: private void SetNumSprite(int value) { }
+      <- 0x5CCBA0 in public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+  TARGET 0x5BC880  public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCountValue) { }
+      <- 0x7CB82A in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x7CE535 in public class BattleContinuousFunction : BattleBasicFunction :: protected override void CreateViewEntity(BattleUnitData data, bool isRecovery = False) { }
+  TARGET 0x7CB680  public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x7CC0F2 in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: public void HitCount() { }
+===== ff5
+  TARGET 0x584C70  public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target) { }
+      <- 0x99E32A in public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCount
+  TARGET 0x75CF20  public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+      <- 0x584D7A in public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target)
+  TARGET 0x75D8E0  public class HitCountEntity : ViewEntity :: private void SetNumSprite(int value) { }
+      <- 0x75CF40 in public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+  TARGET 0x99E2B0  public class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCountValue) { }
+      <- 0x889B9A in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x88C81E in public class BattleContinuousFunction : BattleBasicFunction :: protected override void CreateViewEntity(BattleUnitData data, bool isRecovery = False) { }
+  TARGET 0x8899F0  public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x88A512 in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: public void HitCount() { }
+===== ff6
+  TARGET 0x45B3B0  public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target) { }
+      <- 0x91FB8A in public static class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCount
+  TARGET 0x895020  public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+      <- 0x45B4BA in public class DamageViewUIManager : SingletonMonoBehaviour<DamageViewUIManager> :: public HitCountEntity CreateHitCount(int hitCountValue, BattleSpriteEntity attack, BattleSpriteEntity target)
+  TARGET 0x8959E0  public class HitCountEntity : ViewEntity :: private void SetNumSprite(int value) { }
+      <- 0x895040 in public class HitCountEntity : ViewEntity :: public void CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int value) { }
+  TARGET 0x91FB10  public static class BattleUtility :: public static HitCountEntity CreateHitCount(BattleSpriteEntity attack, BattleSpriteEntity target, int hitCountValue) { }
+      <- 0x97E5BA in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x981A75 in public class BattleContinuousFunction : BattleBasicFunction :: protected override void CreateViewEntity(BattleUnitData data, bool isRecovery = False) { }
+  TARGET 0x97E410  public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: protected void CreateHitCount() { }
+      <- 0x97F1D2 in public abstract class BattleBasicFunction : BattleBaseFunction, IViewEntityFunction, IView :: public void HitCount() { }

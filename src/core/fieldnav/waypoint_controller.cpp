@@ -109,11 +109,12 @@ void pathfind_to_current_waypoint()
     }
 
     ::field::PathInfo path_info = ::field::find_path_to(player_pos, waypoint->position,
-                                                        ::field::map_handle(), ::field::player());
+                                                        ::field::map_handle(), ::field::player(),
+                                                        ::field::TargetKind::Spot);
 
     std::wstring announcement = (path_info.success && !path_info.description.empty())
         ? path_info.description
-        : T(L"No path");
+        : (!path_info.reason.empty() ? path_info.reason : T(L"No path"));
 
     ffpr::say(announcement);
 }

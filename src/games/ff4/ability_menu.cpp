@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF4 Patches/AbilityMenuPatches.cs: the field Ability menu, which is FF4's magic list
 // (white, black and summon magic per character, plus Cecil's and others' abilities).
 //
@@ -169,10 +170,8 @@ void d_UseSelectContent(void* self, void* target_contents, void* cursor, const v
         if (!selected) return;
         void* data = ref::rd<void*>(selected, fTargetCurrentData);
         if (!data) return;
-        std::wstring name = character_name(data);
-        if (name.empty()) return;
-
-        std::wstring announcement = name + full_status(character_parameter(data));
+        std::wstring announcement = displayed::target(selected);
+        if (announcement.empty()) return;
         if (!dedup::text(kCtxUseTarget, announcement)) return;
 
         set_active_exclusive(ABILITY);

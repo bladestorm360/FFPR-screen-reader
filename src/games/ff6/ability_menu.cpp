@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF6 Patches/AbilityMenuPatches.cs, the field Ability menu (all but the esper patches, which
 // are in ability_espers.cpp): AbilityCommandController_SelectContent_Patch,
 // AbilityContentListController_SelectContent_Patch, SpecialAbilityContentListController_SelectContent
@@ -36,6 +37,7 @@
 // Folded body: AbilityUseContentListController.SelectContent shares its RVA (FF6 0x8289A0) with the
 // same class's SetCursor (identical signature), as it did under Harmony; the detour class-checks
 // self.
+#include "../../core/ui/preferences.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -371,33 +373,8 @@ void announce_use_target(void* self, void* cursor)
     void* character = content ? ref::rd<void*>(content, fTargetCurrentData) : nullptr;
     if (!character) return;
 
-    const std::wstring name = battle::character_name(character);
-    if (name.empty()) return;
-    std::wstring announcement = name;
-
-    // HP / MP and status conditions; on a failed read the name alone (the C# catch).
-    if (void* param = battle::character_parameter(character)) {
-        int max_hp = 0, max_mp = 0;
-        if (battle::param_confirmed(param, battle::Stat::MaxHp, max_hp) &&
-            battle::param_confirmed(param, battle::Stat::MaxMp, max_mp)) {
-            announcement += TF(L", HP {0}/{1}, MP {2}/{3}",
-                               {text::num(battle::param_current_hp(param)), text::num(max_hp),
-                                text::num(battle::param_current_mp(param)), text::num(max_mp)});
-
-            std::wstring statuses;
-            for (void* condition : battle::confirmed_conditions(param)) {
-                if (!condition) continue;
-                const std::wstring mes_id = battle::condition_mes_id(condition);
-                // No message id: an internal / hidden status.
-                if (mes_id.empty() || mes_id == L"None") continue;
-                const std::wstring localized = message(mes_id);
-                if (localized.empty()) continue;
-                if (!statuses.empty()) statuses += L", ";
-                statuses += localized;
-            }
-            if (!statuses.empty()) announcement += L", " + statuses;
-        }
-    }
+    std::wstring announcement = displayed::target(content);
+    if (announcement.empty()) return;
 
     // The I key keeps reading the chosen ability's description (FF4), from this list now.
     g_focus.controller = self;
@@ -662,7 +639,7 @@ core::Install s_install{"FF6.AbilityMenu", &install, 520, game::kFF6};
 
 } // namespace
 
-bool auto_detail() { return settings::get_bool("AutoDetail", true); }
+bool auto_detail() { return ui::prefs::auto_detail_enabled(); }
 
 void set_ability_focus(void* controller, const std::wstring& description, const std::wstring& blitz_mes_id)
 {

@@ -7,6 +7,7 @@
 // Not FF6: the same controller also shows FF6's Tools list (isMachineState), where this reader
 // would speak the item list, and its "Items is command index 2" gate drops every read in FF6.
 // FF6's own reader (src/games/ff6/battle_items.cpp) keeps this one's behaviour for items.
+#include "../ui/preferences.h"
 #include <cstdint>
 #include <string>
 #include "battle_internal.h"
@@ -66,7 +67,7 @@ std::wstring format_item(void* data)
 
     std::wstring description = item_description(data);
     g_last_focused_description = description;
-    if (settings::get_bool("AutoDetail", true) && !blank(description)) announcement += L": " + description;
+    if (ui::prefs::auto_detail_enabled() && !blank(description)) announcement += L": " + description;
     return announcement;
 }
 

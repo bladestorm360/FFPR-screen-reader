@@ -1261,17 +1261,17 @@
     "pt": "Balsa (com ícone)"
   },
   "協会": {
-    "en": "Association",
-    "fr": "Association",
-    "it": "Associazione",
-    "de": "Verband",
-    "es": "Asociación",
-    "ko": "협회",
-    "zht": "協會",
-    "zhc": "协会",
-    "ru": "Ассоциация",
-    "th": "สมาคม",
-    "pt": "Associação"
+      "en": "Church",
+      "fr": "Église",
+      "it": "Chiesa",
+      "de": "Kirche",
+      "es": "Iglesia",
+      "ko": "교회",
+      "zht": "教堂",
+      "zhc": "教堂",
+      "ru": "Церковь",
+      "th": "โบสถ์",
+      "pt": "Igreja"
   },
   "通路をふさぐ岩(ヨーゼフ加入前)": {
     "en": "Rock blocking the passage (before Josef joins)",

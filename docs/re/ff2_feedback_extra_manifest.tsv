@@ -1,0 +1,8 @@
+18063d5c0	BattleBasicFunction.CreateDamageView
+180834710	ConditionDamage.GiveDamageToPartyCharacter
+180834240	ConditionDamage.CheckCondition
+1804b3500	StopAndDamage.GenerateCaptureDamage
+180521100	EquipmentStatus.SetDifferenceData
+180520fb0	EquipmentStatus.SetData
+1803d8390	ResultCharacterList.PerformanceCallback
+1803d80d0	ResultCharacterList.IsEndPerformance

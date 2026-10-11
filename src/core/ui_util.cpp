@@ -1,3 +1,4 @@
+#include "ui/preferences.h"
 #include "ui_util.h"
 #include "modtext.h"
 #include "settings.h"
@@ -17,7 +18,7 @@ constexpr int32_t kStateTag = 0x10;
 
 std::wstring menu_position(const std::wstring& text, int index, int count)
 {
-    if (!settings::get_bool("MenuPositionAnnouncements", true)) return text;
+    if (!ui::prefs::menu_position_announcements_enabled()) return text;
     if (text.empty() || count <= 1 || index < 0 || index >= count) return text;
     return text + L", (" + TF(L"{0} of {1}", {text::num(index + 1), text::num(count)}) + L")";
 }

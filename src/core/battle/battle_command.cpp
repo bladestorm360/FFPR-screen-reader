@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include "battle_internal.h"
+#include "battle.h"
 #include "battle_util.h"
 #include "../core.h"
 #include "../dedup.h"
@@ -88,19 +89,6 @@ constexpr int kTargetReadMaxFrames = 10;
 
 void* content_list(void* controller) { return controller ? ref::rd<void*>(controller, fContentList) : nullptr; }
 
-/// ", Poison, Sleep" from a battle unit's CurrentConditionList (BuildStatusSuffix).
-std::wstring status_suffix(void* param)
-{
-    if (!param) return std::wstring();
-    std::vector<std::wstring> names;
-    for (void* c : current_conditions(param)) {
-        std::wstring n = condition_name(c);
-        if (!blank(n)) names.push_back(n);
-    }
-    if (names.empty()) return std::wstring();
-    return L", " + text::join(names, L", ");
-}
-
 /// Announces the command at contentList[index] (name + "(X of Y)" over the active slots), deduped
 /// by command id.
 void announce_command_at(void* list, int index)
@@ -170,34 +158,8 @@ void announce_player_target(void* list, int index)
     void* player = unity::list_at(list, index);
     if (!player) return;
 
-    std::wstring name = T(L"Unknown");
-    int current_hp = 0, max_hp = 0, current_mp = 0, max_mp = 0;
-    const bool has_mp = game::flags().has_mp;
-    if (void* owned = player_owned_character(player)) {
-        std::wstring n = character_name(owned);
-        if (!n.empty()) name = n;
-        if (void* char_param = character_parameter(owned)) {
-            int v = 0;
-            if (param_confirmed(char_param, Stat::MaxHp, v)) max_hp = v;
-            if (has_mp && param_confirmed(char_param, Stat::MaxMp, v)) max_mp = v;
-        }
-    }
-    void* battle_param = unit_parameter(player);
-    if (battle_param) {
-        current_hp = param_current_hp(battle_param);
-        if (max_hp == 0) max_hp = param_confirmed_or_base(battle_param, Stat::MaxHp);
-        if (has_mp) {
-            current_mp = param_current_mp(battle_param);
-            if (max_mp == 0) max_mp = param_confirmed_or_base(battle_param, Stat::MaxMp);
-        }
-    }
-
-    // MP joins HP in the games that have it (FF2, FF4, FF5), as their old mods read it.
-    std::wstring announcement = has_mp
-        ? TF(L"{0}: HP {1}/{2}, MP {3}/{4}", {name, text::num(current_hp), text::num(max_hp),
-                                              text::num(current_mp), text::num(max_mp)})
-        : TF(L"{0}: HP {1}/{2}", {name, text::num(current_hp), text::num(max_hp)});
-    announcement += status_suffix(battle_param);
+    std::wstring announcement = displayed_player(player);
+    if (announcement.empty()) return;
     announcement = ui::menu_position(announcement, index, count);
 
     // Entering targeting = left the command menu: arm the back-out re-announce. Safe on commit:
@@ -217,15 +179,8 @@ bool announce_enemy_target(void* list, int index)
     if (!enemy) return false;
 
     std::wstring name = T(L"Unknown");
-    int current_hp = 0, max_hp = 0;
     std::wstring localized = enemy_name(enemy);
     if (!localized.empty()) name = localized;
-
-    void* battle_param = unit_parameter(enemy);
-    if (battle_param) {
-        current_hp = param_current_hp(battle_param);
-        max_hp = param_confirmed_or_base(battle_param, Stat::MaxHp);
-    }
 
     // Several enemies with the same name: append A, B, C... by position in the group.
     std::wstring announcement = name;
@@ -245,20 +200,9 @@ bool announce_enemy_target(void* list, int index)
         announcement.push_back(static_cast<wchar_t>(L'A' + position_in_group));
     }
 
-    switch (settings::get_int("EnemyHPDisplay", 0)) {
-    case 0:   // Numbers (default)
-        announcement += TF(L": HP {0}/{1}", {text::num(current_hp), text::num(max_hp)});
-        break;
-    case 1: { // Percentage
-        int pct = max_hp > 0 ? (current_hp * 100 / max_hp) : 0;
-        announcement += L": " + text::num(pct) + L"%";
-        break;
-    }
-    default:  // 2 = Hidden: no HP appended
-        break;
-    }
-
-    announcement += status_suffix(battle_param);
+    // The optional HP modes are a scoped user-approved disclosure. Parameter conditions
+    // remain excluded; displayed Libra/Scan text follows the native message reader.
+    announcement += optional_enemy_hp(enemy);
     announcement = ui::menu_position(announcement, index, count);
 
     g_command_reannounce_pending = true;
@@ -533,7 +477,8 @@ void command_reset_state()
     dedup::reset(kCommandCtx);
     g_command_reannounce_pending = false;
     ++g_target_read_gen;   // drop any pending initial-target read
-    set_current_actor(nullptr);
+    // Selection reset also runs when entering child menus. The battle lifecycle owns
+    // clearing the actor; H must retain its owner while Magic/Items has focus.
 }
 
 void clear_cached_target_controller() { g_cached_target_controller = nullptr; }

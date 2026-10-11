@@ -45,7 +45,6 @@ struct Flags {
     bool has_vehicle_pads = false;      // merged vehicle trigger pads (FF2, FF4, FF5)
     bool has_hidden_passages = false;   // hidden_passage route layer (FF3, FF4, FF5)
     bool has_airship = false;           // FieldAirShip exists (FF1, FF2, FF4)
-    bool multi_hit_setting = true;      // "Multi-hit Damage" setting (FF1-FF3; removed in FF4/FF5)
     bool atb = false;                   // active-time battle (FF4, FF5)
     bool has_jobs = false;              // job system (FF3, FF5)
     bool has_skill_levels = false;      // FF2 weapon/magic skill levels

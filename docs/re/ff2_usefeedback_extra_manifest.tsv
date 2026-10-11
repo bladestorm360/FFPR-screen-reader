@@ -1,0 +1,6 @@
+1809f37f0	Internal.Main.ComparisonOperation
+1809f44a0	Internal.Main.OperationCommon
+180c08cf0	DataStorage.Get.Category
+180c08bc0	DataStorage.GetFlag
+1803dc460	SkillLevelContentController.SetWeaponIcon
+1807d8840	ItemUseController.PlayUseAnimation.MoveNext

@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF3 Patches/MagicMenuPatches.cs (MagicMenuState, MagicMenuPatches) and
 // Menus/AbilityCommandReader.cs, on FF3's own classes (Serial.FF3.UI.KeyInput).
 //
@@ -27,6 +28,7 @@
 // AbilityUseContentListController.SetCursor, AbilityCommandController.SetCommandSelectCursor:
 // unique RVAs. AbilityWindowController.SetNextState (0x2A0B70) is shared by 9 methods:
 // class-checked.
+#include "../../core/ui/preferences.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -110,7 +112,7 @@ void* g_character = nullptr;        // MagicMenuState.CurrentCharacter (party da
 std::wstring g_last_description;    // MagicMenuState.LastFocusedDescription
 int g_command_gen = 0;
 
-bool auto_detail() { return settings::get_bool("AutoDetail", true); }
+bool auto_detail() { return ui::prefs::auto_detail_enabled(); }
 std::wstring strip(const std::wstring& s) { return text::trim(text::strip_markup(s)); }
 bool spell_list_active() { return menu_state::is_active(menu_state::MAGIC_MENU); }
 
@@ -151,22 +153,11 @@ void announce_empty(int index, int count)
     ffpr::say(ui::menu_position(T(L"Empty"), index, count), true);
 }
 
-void announce_spell(void* ability, int index, int count)
+void announce_spell(void* ability, void* content, int index, int count)
 {
-    const std::wstring name = ffpr::menus::spell_name(ability);
-    if (name.empty()) return;
-    const int level = ffpr::menus::spell_level(ability);
+    std::wstring line = displayed::spell_row(content);
+    if (line.empty()) return;
     const std::wstring description = ffpr::menus::spell_description(ability);
-
-    std::wstring line = name;
-    if (level > 0) {
-        line += L" " + TF(L"LV{0}", {text::num(level)});
-        if (g_character) {
-            int current = 0, max = 0;
-            ffpr::menus::charges_for_level(g_character, level, current, max);
-            if (max > 0) line += L": " + TF(L"MP: {0}/{1}", {text::num(current), text::num(max)});
-        }
-    }
     if (auto_detail() && !text::is_blank(description)) line += L": " + description;
     line = ui::menu_position(line, index, count);
     if (!dedup::text(kCtxSpell, line)) return;
@@ -183,7 +174,7 @@ bool try_content_list(void* list_ctrl, int index)
     void* content = unity::list_at(list, index);
     void* ability = content ? ref::rd<void*>(content, fAbilityContentData) : nullptr;
     if (!ability) announce_empty(index, count);
-    else announce_spell(ability, index, count);
+    else announce_spell(ability, content, index, count);
     return true;
 }
 
@@ -256,22 +247,8 @@ void on_use_set_cursor(void* self, void* cursor)
     void* content = unity::list_at(list, index);
     void* character = content ? ref::rd<void*>(content, fTargetContentData) : nullptr;
     if (!character) return;
-    const std::wstring name = ffpr::status::character_name(character);
-    if (text::is_blank(name)) return;
-
-    std::wstring line = name;
-    if (void* param = ffpr::status::character_parameter(character)) {
-        line += L": " + TF(L"HP: {0} / {1}", {text::num(ffpr::status::param_current_hp(param)),
-                                             text::num(ffpr::status::param_max_hp(param))});
-        std::vector<std::wstring> conditions;
-        void* list_c = ref::call<void*>(mGetConditionList, param);
-        const int n = unity::list_count(list_c);
-        for (int i = 0; i < n; ++i) {
-            const std::wstring c = ffpr::menus::condition_name(unity::list_at(list_c, i));
-            if (!text::is_blank(c)) conditions.push_back(c);
-        }
-        if (!conditions.empty()) line += L" " + text::join(conditions, L", ");
-    }
+    std::wstring line = displayed::target(content);
+    if (line.empty()) return;
     ffpr::say(ui::menu_position(line, index, count), true);
 }
 

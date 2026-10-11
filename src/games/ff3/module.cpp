@@ -23,7 +23,6 @@ const wchar_t* vehicle_message_id(int transportation_id)
 void configure(game::Flags& f)
 {
     f.has_hidden_passages = true;
-    f.multi_hit_setting = true;
     f.has_jobs = true;
     f.vehicle_message_id = &vehicle_message_id;
 

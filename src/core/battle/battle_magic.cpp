@@ -6,6 +6,7 @@
 // name has a different SetCursor layout and FF2/FF4/FF5 have no such class; their battle ability
 // lists are not ported here (they were each mod's own patches).
 // SetCursor(Cursor, bool, WithinRangeType) is the FF1 override, unique RVA.
+#include "../ui/preferences.h"
 #include <string>
 #include <utility>
 #include "battle_internal.h"
@@ -137,7 +138,7 @@ std::wstring format_ability(void* ability)
 
     std::wstring description = ability_description(ability);
     g_last_focused_description = description;
-    if (settings::get_bool("AutoDetail", true) && !blank(description)) announcement += L". " + description;
+    if (ui::prefs::auto_detail_enabled() && !blank(description)) announcement += L". " + description;
     return announcement;
 }
 

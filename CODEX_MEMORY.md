@@ -1,0 +1,19 @@
+# Native FFPR durable memory
+
+- 2026-10-11: this native C++ `hid.dll` repository is the active shared FF1–FF6 mod. Workspace/catalog instructions naming only the old managed mods are historical. Branch `master`; named remote `FFPR-screen-reader` is https://github.com/bladestorm360/FFPR-screen-reader, user-owned and verified public. Existing Claude map/navigation work is preserved.
+- Ownership: FF1–FF5 bladestorm360; FF6 ZKline/BlindGuyNW, inclusion permission 2026-10-07. Maintain attribution.
+- Read [project instructions](AGENTS.md) and [model policy](../../../codex/MODEL_POLICY.md). Sol performs the work; delegation preserves runtime/publication boundaries.
+- Current user goal: finish the full audit and all added requests before user gameplay tests. [Task and evidence index](docs/AUDIT_2026_10.md) is authoritative. Do not stop after individual features.
+- Additional user request 2026-10-11: audit the Events category in all six games; infer spoiler-free labels (FFX precedent: party chat / who talks to whom) instead of developer identifiers that expose future outcomes. Use conservative neutral labels where evidence is insufficient.
+- Finalization explicitly authorized by user 2026-10-11: deploy to all six games after completion; commit/push all shared-mod work to public user-owned `FFPR-screen-reader` (create if missing); make FF1–FF5 user-owned remote repositories private. No game launch authorization.
+- Audit also includes native threading, stability, unnecessary lag and added load time (user 2026-10-11). Verify thread ownership/lifetimes and costs offline; do not claim measured gameplay performance without runtime evidence.
+- User also requires displayed item/spell/ability use feedback (healing amounts, cured status etc). Trace native presentation; no invented or hidden parameter deltas.
+- User requires T to announce the active turn through the shared core in every game, using actual native turn context.
+- FF2 Dreadnought captains remain solid after battle; route around them. Audit all six games for the same permanent-NPC obstruction. Native Stamp is stationary, and the old six-cell detour exception was removed; all six bakes regenerated and a real Dreadnought regression passed.
+- Backslash arrival guidance applies to every interactible object/NPC: speak the facing direction at arrival, including adjacent zero-movement routes; withhold it while movement remains.
+- Audit periodic/status damage (poison, venom and other conditions) in all six games; vocalize any visually displayed damage, without inventing numeric feedback for hidden calculations.
+- Build: `build.bat` → `smoketest.bat` → separate `deploy.bat [ffN]`. Build writes only locally. Never launch/control games or run runtime probes without authorization.
+- Sources: `../ff1/dump.cs` … `../ff6/dump.cs`; extracted maps/scripts/master tables in `../tools/mapdump`; native analysis/scripts in `../tools/ghidra`. Use matching existing analysis first.
+- Visible-only game speech, native results phases, central helpers, no new deduplication, controller/context gates, manual review and Autodetail requirements apply throughout.
+- Scoped user authorization, 2026-10-11: preserve legacy optional enemy HP Numbers/Percentage/Hidden modes, defaults and saved preferences in all six games. HP may be spoken without native rendering under this exception; hidden enemy status parameters remain excluded. See [approval and implementation](docs/AUDIT_2026_10.md).
+- Map routing now projects off-floor groups from read-only flag snapshots and navigation-only initializer programs, with live current-group overrides, collected-chest flags and future-floor blockers. Unknown control flow stays conservative; no native script execution or save writes. [Audit evidence and limits](docs/AUDIT_2026_10.md) replaces the earlier cross-floor gaps in [port status](docs/PORT_STATUS.md).

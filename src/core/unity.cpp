@@ -1,9 +1,26 @@
 #include <windows.h>
 #include "unity.h"
 #include "log.h"
+#include <cstring>
 
 namespace unity {
 namespace {
+constexpr int kMaxEnumerated = 4096;
+bool class_is(il2cpp::Class* k, const char* ns, const char* name) {
+    return k && std::strcmp(il2cpp::class_name(k), name) == 0 && std::strcmp(il2cpp::class_namespace(k), ns) == 0;
+}
+bool ends_with(const char* s, const char* suffix)
+{
+    size_t a = std::strlen(s), b = std::strlen(suffix);
+    return a >= b && std::strcmp(s + a - b, suffix) == 0;
+}
+
+ref::Class  kIEnumerable{"System.Collections", "IEnumerable"};
+ref::Method mGetEnumerator{kIEnumerable, "GetEnumerator", 0};
+ref::Class  kIEnumerator{"System.Collections", "IEnumerator"};
+ref::Method mMoveNext{kIEnumerator, "MoveNext", 0};
+ref::Method mGetCurrent{kIEnumerator, "get_Current", 0};
+
 
 ref::Class kObject{"UnityEngine", "Object"};
 ref::Class kGameObject{"UnityEngine", "GameObject"};
@@ -352,6 +369,53 @@ void dict_for_each(void* dict, void (*fn)(uint64_t, uint64_t, void*), void* stat
         else value = static_cast<uint32_t>(il2cpp::read_field<int32_t>(arr, base + value_off));
         fn(key, value, state);
     }
+}
+
+bool enumerate(void* e, std::vector<void*>& out)
+{
+    out.clear();
+    if (!e) return false;
+    il2cpp::Class* k = il2cpp::object_class(e);
+    if (!k) return false;
+
+    if (class_is(k, "System.Collections.Generic", "List`1")) {
+        int n = list_count(e);
+        if (n > kMaxEnumerated) n = kMaxEnumerated;
+        out.reserve(static_cast<size_t>(n));
+        for (int i = 0; i < n; ++i) out.push_back(list_at(e, i));
+        return true;
+    }
+    if (ends_with(il2cpp::class_name(k), "[]")) {
+        int n = array_length(e);
+        if (n > kMaxEnumerated) n = kMaxEnumerated;
+        out.reserve(static_cast<size_t>(n));
+        for (int i = 0; i < n; ++i) out.push_back(array_at(e, i));
+        return true;
+    }
+
+    // Any other IEnumerable (a LINQ iterator): enumerate it the way the List constructor did.
+    il2cpp::Method* get_enum = mGetEnumerator.get();
+    if (!get_enum) return false;
+    void* it = il2cpp::invoke_ptr(il2cpp::virtual_method(e, get_enum), e, nullptr, 0);
+    if (!it) return false;
+    il2cpp::Class* ik = il2cpp::object_class(it);
+    il2cpp::Class* parent = ik ? il2cpp::class_parent(ik) : nullptr;
+    if (parent && class_is(parent, "System", "ValueType")) {
+        static bool logged = false;
+        if (!logged) {
+            logged = true;
+            LOGF("unity: cannot walk a boxed %s enumerator", il2cpp::class_name(ik));
+        }
+        return false;
+    }
+    il2cpp::Method* move_next = mMoveNext.get();
+    il2cpp::Method* current = mGetCurrent.get();
+    if (!move_next || !current) return false;
+    move_next = il2cpp::virtual_method(it, move_next);
+    current = il2cpp::virtual_method(it, current);
+    for (int i = 0; i < kMaxEnumerated && il2cpp::invoke_bool(move_next, it, nullptr, 0); ++i)
+        out.push_back(il2cpp::invoke_ptr(current, it, nullptr, 0));
+    return true;
 }
 
 } // namespace unity

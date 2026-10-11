@@ -1,0 +1,3 @@
+===== ff2
+  TARGET 0xC0B750  public class EncountEffectController : IEncountEffect :: public void ShowDisplay() { }
+      (no direct callers — virtual / inlined / unused)

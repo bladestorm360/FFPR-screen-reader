@@ -100,12 +100,12 @@ std::vector<std::wstring> route_legs(const std::vector<Vec3>& path)
         if (vec_distance(dir, current) < 0.1f) {
             steps++;
         } else {
-            if (steps > 0) segments.push_back(cardinal_direction_name(current) + L" " + text::num(steps));
+            if (steps > 0) segments.push_back(text::num(steps) + L" " + cardinal_direction_name(current));
             current = dir;
             steps = 1;
         }
     }
-    if (steps > 0) segments.push_back(cardinal_direction_name(current) + L" " + text::num(steps));
+    if (steps > 0) segments.push_back(text::num(steps) + L" " + cardinal_direction_name(current));
     return segments;
 }
 
@@ -148,10 +148,10 @@ std::wstring describe_chained_route(const std::vector<Vec3>& path)
 /// The target cell on each destination layer (2, 1, 0), then each of its eight neighbours
 /// (FF3 SearchTargetAndNeighbours = FF1 FindPathTo's search loop).
 void* search_target_and_neighbours(void* map_handle, Vec3 start_cell, Vec3 dest_cell, Vec3 target_world,
-                                   int map_width, int map_height, bool collision)
+                                   int map_width, int map_height, bool collision, bool interact = false)
 {
     void* path = nullptr;
-    for (int z = 2; z >= 0; --z) {
+    for (int z = 2; !interact && z >= 0; --z) {
         dest_cell.z = static_cast<float>(z);
         path = route_search(map_handle, start_cell, dest_cell, collision);
         if (has_points(path)) return path;
@@ -161,10 +161,6 @@ void* search_target_and_neighbours(void* map_handle, Vec3 start_cell, Vec3 dest_
         {16, 0, 0},     // east
         {0, -16, 0},    // south
         {-16, 0, 0},    // west
-        {16, 16, 0},    // northeast
-        {16, -16, 0},   // southeast
-        {-16, -16, 0},  // southwest
-        {-16, 16, 0},   // northwest
     };
     for (const Vec3& off : kAdjacent) {
         Vec3 adjacent{target_world.x + off.x, target_world.y + off.y, target_world.z + off.z};
@@ -381,6 +377,9 @@ std::vector<void*> all_field_entities()
         void* entity_list = ref::rd<void*>(fc, r::fEntityList);
         int n = unity::list_count(entity_list);
         for (int i = 0; i < n; ++i) add(unity::list_at(entity_list, i));
+        // Collision-only gates have their own native list and are absent from entityList.
+        void* colliders = ref::rd<void*>(fc, r::fColliderEntityList);
+        for (int i = 0; i < unity::list_count(colliders); ++i) add(unity::list_at(colliders, i));
 
         // Transportation entities (NeedInteractiveList) and Transportation.ModelList
         if (void* transportation = ref::rd<void*>(fc, r::fTransportation)) {
@@ -489,7 +488,8 @@ WallDistances nearby_walls(void* player_obj)
 namespace {
 
 /// FindPathTo(..., mode). `allow_chain` = PathSearchMode.Full (FF5).
-PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj, bool allow_chain)
+PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj, bool allow_chain, TargetKind kind,
+                   bool with_vehicles)
 {
     PathInfo info;
     if (!map) {
@@ -500,7 +500,7 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
     // The baked maps first (user decision, 2026-10-10): the whole sub-map, layers, hidden
     // passages, counters, vehicles; no 31-tile window. The game's searcher below stays the
     // fallback for a map the baked data does not know.
-    if (baked_nav::find(from, to, map, player_obj, allow_chain, info)) {
+    if (baked_nav::find(from, to, map, player_obj, allow_chain, kind, with_vehicles, info)) {
         if (!info.success && info.error.empty()) info.error = L"No path found";
         return info;
     }
@@ -523,13 +523,13 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
         void* path = nullptr;
         if (player_obj) {
             bool collision = ref::rd<bool>(player_obj, r::fIsOnCollision);
-            path = search_target_and_neighbours(map, start, dest, to, width, height, collision);
+            path = search_target_and_neighbours(map, start, dest, to, width, height, collision, kind == TargetKind::Interact);
 
             // Secret passages are closed on the game's route grid but open to the player:
             // retry once with them open (FF3-FF5; no-op on maps without hidden passages).
             if (!has_points(path) && collision && game::flags().has_hidden_passages) {
                 path = search_with_passages_open(map, [&] {
-                    return search_target_and_neighbours(map, start, dest, to, width, height, collision);
+                    return search_target_and_neighbours(map, start, dest, to, width, height, collision, kind == TargetKind::Interact);
                 });
             }
         } else {
@@ -555,7 +555,8 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
         info.world_path.reserve(static_cast<size_t>(n));
         for (int i = 0; i < n; ++i) info.world_path.push_back(unity::list_value<Vec3>(path, i));
         info.step_count = n > 0 ? n - 1 : 0;
-        info.description = describe_path(info.world_path);
+        info.description = kind == TargetKind::Interact && info.world_path.size() <= 1
+            ? TF(L"face {0}", {direction_name(from, to)}) : describe_path(info.world_path);
         return true;
     });
 
@@ -566,14 +567,14 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
 
 } // namespace
 
-PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj)
+PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj, TargetKind kind)
 {
-    return find_path(from, to, map, player_obj, true);
+    return find_path(from, to, map, player_obj, true, kind, false);
 }
 
-PathInfo find_path_to_quick(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj)
+PathInfo find_path_to_quick(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj, TargetKind kind, bool with_vehicles)
 {
-    return find_path(from, to, map, player_obj, false);
+    return find_path(from, to, map, player_obj, false, kind, with_vehicles);
 }
 
 std::wstring direction(unity::Vec3 from, unity::Vec3 to) { return direction_name(from, to); }

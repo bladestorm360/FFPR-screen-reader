@@ -19,6 +19,7 @@ namespace {
 
 // BattleStateHelper.IsInBattle: set on battle start, cleared on battle end.
 bool g_in_battle = false;
+int g_main_state = -1;
 // BattleCommandState.LastSelectedCommandIndex (0 Attack, 1 Magic, 2 Items, 3 Defend/Run).
 int g_last_selected_command_index = -1;
 // BattleCommandState.CurrentActor (OwnedCharacterData). Cleared with the BATTLE_COMMAND state.
@@ -126,7 +127,6 @@ int install()
     // BattleCommandState's reset handler (MenuStateBase.OnReset override).
     menu_state::register_reset(menu_state::BATTLE_COMMAND, [] {
         g_last_selected_command_index = -1;
-        g_current_actor = nullptr;
     });
 
     queries::define("BattleStateHelper.IsInBattle", [] { return g_in_battle; });
@@ -195,7 +195,10 @@ void clear_other_menu_states(const char* except_key)
 
 void on_battle_start()
 {
+    if (g_in_battle) return;
     g_in_battle = true;
+    g_current_actor = nullptr;
+    result_reset_state();
     removal_reset_state();
     events::fire(events::Kind::BattleStart);
 }
@@ -210,9 +213,11 @@ void clear_all_battle_menu_flags()
 
 void try_clear_on_battle_end()
 {
+    if (g_main_state == 13) return; // Fade callbacks/results teardown precede native return.
     // Not in battle: skip (prevents loops during game initialization).
     if (!g_in_battle) return;
     g_in_battle = false;
+    g_current_actor = nullptr;
     clear_all_battle_menu_flags();
     result_reset_state();   // BattleStartPatches.ResetState
     events::fire(events::Kind::BattleEnd);
@@ -222,5 +227,14 @@ bool is_in_battle() { return g_in_battle; }
 
 void* current_actor() { return g_current_actor; }
 bool in_battle() { return g_in_battle; }
+
+void main_game_transition(int state)
+{
+    g_main_state = state;
+    // This enum is identical in all six matching dumps. Battle covers the transition,
+    // combat and results; return to a native field/title state ends the context.
+    if (state == 13) on_battle_start();
+    else if ((state >= 0 && state <= 4) || state == 14) try_clear_on_battle_end();
+}
 
 } // namespace ffpr::battle

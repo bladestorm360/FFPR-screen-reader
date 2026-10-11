@@ -1,0 +1,1822 @@
+[
+  {
+    "namespace": "Serial.FF2.UI.KeyInput",
+    "name": "ResultCharacterListController",
+    "fields": [
+      "private ResultCharacterListView view; // 0x18",
+      "private List<ResultCharacterListContentController> contentList; // 0x20",
+      "private List<IEnumerator> performanceList; // 0x28",
+      "private int perormanceEndCount; // 0x30"
+    ],
+    "methods": [
+      {
+        "signature": "public void Initialize() { }",
+        "rva": "0x3D7FD0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetData(BattleResultData data) { }",
+        "rva": "0x3D8260",
+        "folded": 1
+      },
+      {
+        "signature": "public void PlayPerformance() { }",
+        "rva": "0x3D8120",
+        "folded": 1
+      },
+      {
+        "signature": "public void ForcedEndPerformance() { }",
+        "rva": "0x3D7DD0",
+        "folded": 1
+      },
+      {
+        "signature": "public bool IsEndPerformance() { }",
+        "rva": "0x3D80D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x3D83A0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <PlayPerformance>b__6_0() { }",
+        "rva": "0x3D8390",
+        "folded": 2
+      }
+    ]
+  },
+  {
+    "namespace": "Serial.FF2.UI.KeyInput",
+    "name": "ResultPointController",
+    "fields": [
+      "private ResultPointView view; // 0x18",
+      "private KeyIconController keyIconController; // 0x20",
+      "private ResultGetPointControllerBase getPointController; // 0x28",
+      "private ResultCharacterListController characterListConteroller; // 0x30",
+      "private ResultStatusUpController statusUpController; // 0x38",
+      "private ResultSkillLevelContentListController skillLevelController; // 0x40",
+      "private GUIClickController clickController; // 0x48",
+      "private InvisibleRaycastTarget filter; // 0x50",
+      "private Action onComplite; // 0x58",
+      "private StateMachine<ResultPointController.State> stateMachine; // 0x60",
+      "private ResultPointController.State nextState; // 0x68",
+      "private float inputWait; // 0x6C",
+      "private BattleResultData targetData; // 0x70",
+      "private List<BattleResultData.BattleResultCharacterData> statusupList; // 0x78",
+      "private int statusupIndex; // 0x80"
+    ],
+    "methods": [
+      {
+        "signature": "public override void Initialize() { }",
+        "rva": "0x3D9240",
+        "folded": 1
+      },
+      {
+        "signature": "public override void UpdateController() { }",
+        "rva": "0x3DA900",
+        "folded": 1
+      },
+      {
+        "signature": "public override void ShowPointList(BattleResultData data, bool isNext, Action onComplite) { }",
+        "rva": "0x3D9C80",
+        "folded": 1
+      },
+      {
+        "signature": "public override void ShowSkillLevels(BattleResultData data, bool isNext, Action onComplite) { }",
+        "rva": "0x3D9E50",
+        "folded": 1
+      },
+      {
+        "signature": "public override void ShowBeforStatus(BattleResultData data, bool isNext, Action onComplite) { }",
+        "rva": "0x3D9AB0",
+        "folded": 1
+      },
+      {
+        "signature": "private void CreateState() { }",
+        "rva": "0x3D8F90",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetNextState(ResultPointController.State state) { }",
+        "rva": "0x38E930",
+        "folded": 15
+      },
+      {
+        "signature": "private void SetClickField() { }",
+        "rva": "0x3D9840",
+        "folded": 1
+      },
+      {
+        "signature": "private void NonInit() { }",
+        "rva": "0x3D9320",
+        "folded": 1
+      },
+      {
+        "signature": "private void PointsInit() { }",
+        "rva": "0x3D9370",
+        "folded": 1
+      },
+      {
+        "signature": "private void PointsUpdate() { }",
+        "rva": "0x3D9690",
+        "folded": 1
+      },
+      {
+        "signature": "private void PointsExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void SkilllLevelsInit() { }",
+        "rva": "0x3DA130",
+        "folded": 1
+      },
+      {
+        "signature": "private void SkillLevelsUpdate() { }",
+        "rva": "0x3DA020",
+        "folded": 1
+      },
+      {
+        "signature": "private void SkillLevelsExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void StatusUpInit() { }",
+        "rva": "0x3DA240",
+        "folded": 1
+      },
+      {
+        "signature": "private void StatusUpUpdate() { }",
+        "rva": "0x3DA490",
+        "folded": 1
+      },
+      {
+        "signature": "private void StatusUpExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x3DA9B0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <PointsInit>b__25_0(int index) { }",
+        "rva": "0x3DA620",
+        "folded": 1
+      },
+      {
+        "signature": "private void <SkilllLevelsInit>b__28_0(int index) { }",
+        "rva": "0x3DA740",
+        "folded": 1
+      },
+      {
+        "signature": "private void <StatusUpInit>b__31_1(int index) { }",
+        "rva": "0x3DA800",
+        "folded": 1
+      }
+    ]
+  },
+  {
+    "namespace": "Serial.FF2.UI.KeyInput",
+    "name": "ResultStatusUpController",
+    "fields": [
+      "private ResultStatusUpView view; // 0x18",
+      "private List<ResultStatusContentController> contentList; // 0x20"
+    ],
+    "methods": [
+      {
+        "signature": "public void Initialize() { }",
+        "rva": "0x3DB7A0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetData(BattleResultData.BattleResultCharacterData targetData) { }",
+        "rva": "0x3DB950",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x3DBBB0",
+        "folded": 1
+      }
+    ]
+  },
+  {
+    "namespace": "Last.InGame.Effects",
+    "name": "EncountEffectController",
+    "fields": [
+      "private bool isCompleted; // 0x10",
+      "private EncountAnimation animation; // 0x18",
+      "private StateMachine<EncountEffectController.AnimState> state; // 0x20",
+      "private IBattleEncountAccessor battleAccessor; // 0x28",
+      "private IEncountEffectCallback callbackAccessor; // 0x30",
+      "public EncountAnimation Animation { get; }"
+    ],
+    "methods": [
+      {
+        "signature": "public EncountAnimation get_Animation() { }",
+        "rva": "0x268150",
+        "folded": 1540
+      },
+      {
+        "signature": "public void SetCallbackAccessor(IEncountEffectCallback accessor) { }",
+        "rva": "0x272370",
+        "folded": 89
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0xC0BCF0",
+        "folded": 1
+      },
+      {
+        "signature": "public void Destroy() { }",
+        "rva": "0xC0B520",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateController() { }",
+        "rva": "0xC0BCA0",
+        "folded": 1
+      },
+      {
+        "signature": "public bool RedyToDisplay() { }",
+        "rva": "0xC0B700",
+        "folded": 1
+      },
+      {
+        "signature": "public void ShowDisplay() { }",
+        "rva": "0xC0B750",
+        "folded": 1
+      },
+      {
+        "signature": "public void StartAnimation() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "public void SetBattleAccessor(IBattleEncountAccessor accessor) { }",
+        "rva": "0x26D4D0",
+        "folded": 112
+      },
+      {
+        "signature": "private void StateInitInit() { }",
+        "rva": "0xC0B450",
+        "folded": 2
+      },
+      {
+        "signature": "private void StateUpdateInit() { }",
+        "rva": "0xC0BB00",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateUpdateReady() { }",
+        "rva": "0xC0BB70",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateInitAnimation() { }",
+        "rva": "0xC0B920",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateUpdateAniamtion() { }",
+        "rva": "0xC0B990",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateInitInBattle() { }",
+        "rva": "0xC0B940",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateUpdateInBattle() { }",
+        "rva": "0xC0BA90",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateInitFinish() { }",
+        "rva": "0x4E6050",
+        "folded": 7
+      },
+      {
+        "signature": "private void StateUpdateFinish() { }",
+        "rva": "0xC0BA40",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateExitFinish() { }",
+        "rva": "0xC0B7C0",
+        "folded": 1
+      },
+      {
+        "signature": "private void BeginProcess() { }",
+        "rva": "0xC0B450",
+        "folded": 2
+      },
+      {
+        "signature": "private void ToBattleProcess() { }",
+        "rva": "0xC0BBD0",
+        "folded": 1
+      },
+      {
+        "signature": "private void OnCalledBattleAwake() { }",
+        "rva": "0xC0B6B0",
+        "folded": 1
+      },
+      {
+        "signature": "private void Last.InGame.Effects.IEncountEffect.SetAnimation(EncountAnimation animation) { }",
+        "rva": "0xC0B5A0",
+        "folded": 1
+      },
+      {
+        "signature": "private bool Last.InGame.Effects.IEncountEffect.IsAnimationCompleted() { }",
+        "rva": "0x364BC0",
+        "folded": 35
+      }
+    ]
+  },
+  {
+    "namespace": "Last.Management",
+    "name": "SubSceneManagerMainGame",
+    "fields": [
+      "private const string AssetGroupName = \"scene_maingame\";",
+      "private const string BaseUnitySceneName = \"MainGame\";",
+      "public const string SceneFieldMap = \"FieldMap\";",
+      "private const string SceneCampMenu = \"CampMenu\";",
+      "private const string SceneGameUi = \"GameUi\";",
+      "private const string SceneBattle = \"Battle\";",
+      "private const string SceneBattleMenu = \"BattleMenu\";",
+      "private const string SceneShopMenu = \"ShopMenu\";",
+      "private const string SceneMessageWindow = \"MessageWindow\";",
+      "private const string SceneSecondMenu = \"SecondMenu\";",
+      "private const string SceneMenuLibraryUi = \"MenuLibraryUi\";",
+      "private const string SceneMenuLibraryInfo = \"MenuLibraryInfo\";",
+      "private static readonly List<string> DefineSceneList; // 0x0",
+      "private static readonly List<string> FirstLoadSceneList; // 0x8",
+      "private static readonly List<string>[] SceneSetTable; // 0x10",
+      "private static readonly List<string> SubSceneNameList; // 0x18",
+      "public static readonly int[] StateEntityAttribute; // 0x20",
+      "private static readonly Dictionary<SubSceneManagerMainGame.State, List<string>> SceneTable; // 0x28",
+      "private StateMachine<SubSceneManagerMainGame.State> state; // 0x58",
+      "private Dictionary<SubSceneManagerMainGame.State, List<ISceneStateProcess<SubSceneManagerMainGame.State>>> stateProcessList; // 0x60"
+    ],
+    "methods": [
+      {
+        "signature": "public static void RequestPreloadScenes() { }",
+        "rva": "0x798E50",
+        "folded": 1
+      },
+      {
+        "signature": "public static void DestroyPreLoadScene() { }",
+        "rva": "0x797FF0",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x79A960",
+        "folded": 1
+      },
+      {
+        "signature": "public SubSceneManagerMainGame.State GetCurrentState() { }",
+        "rva": "0x798820",
+        "folded": 1
+      },
+      {
+        "signature": "public SubSceneManagerMainGame.State GetPreviousState() { }",
+        "rva": "0x7988D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void ChangeState(SubSceneManagerMainGame.State state) { }",
+        "rva": "0x797910",
+        "folded": 1
+      },
+      {
+        "signature": "private void ChangeSubScenes() { }",
+        "rva": "0x797A10",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetupSubSceneList(ref List<SubSceneBase> subSceneList) { }",
+        "rva": "0x799410",
+        "folded": 1
+      },
+      {
+        "signature": "public override void Destroy() { }",
+        "rva": "0x798750",
+        "folded": 1
+      },
+      {
+        "signature": "public override string GetLoadAssetGroupName() { }",
+        "rva": "0x798870",
+        "folded": 1
+      },
+      {
+        "signature": "public override string GetLoadUnitySceneName() { }",
+        "rva": "0x7988A0",
+        "folded": 1
+      },
+      {
+        "signature": "protected override List<string> GetSceneTable(int tableId) { }",
+        "rva": "0x798A10",
+        "folded": 1
+      },
+      {
+        "signature": "public void RegisterStateProcess() { }",
+        "rva": "0x798AD0",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateInit() { }",
+        "rva": "0x7995A0",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateUpdate() { }",
+        "rva": "0x7996A0",
+        "folded": 1
+      },
+      {
+        "signature": "private void StateExit() { }",
+        "rva": "0x7994A0",
+        "folded": 1
+      },
+      {
+        "signature": "private void CheckStateProcess(Action<ISceneStateProcess<SubSceneManagerMainGame.State>, SubSceneManagerMainGame.State> call) { }",
+        "rva": "0x797E70",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateController() { }",
+        "rva": "0x7997A0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetSceneFlag(ref int code, string targetSceneName, bool flag) { }",
+        "rva": "0x799070",
+        "folded": 1
+      },
+      {
+        "signature": "public int GetSceneFlag(int code, string targetSceneName) { }",
+        "rva": "0x798920",
+        "folded": 1
+      },
+      {
+        "signature": "public bool CheckSceneFlagAllTrue(int code) { }",
+        "rva": "0x797CF0",
+        "folded": 1
+      },
+      {
+        "signature": "public bool CheckFirstLoadSceneCompleted(int flags) { }",
+        "rva": "0x797AE0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetSubSceneActivation() { }",
+        "rva": "0x799170",
+        "folded": 1
+      },
+      {
+        "signature": "public void DestroySubScenesUnnecessaryForEventScene() { }",
+        "rva": "0x798270",
+        "folded": 1
+      },
+      {
+        "signature": "private static void .cctor() { }",
+        "rva": "0x7997F0",
+        "folded": 1
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "BattleCommandSelectController",
+    "fields": [
+      "private BattlePlayerData <SelectedTarget>k__BackingField; // 0x18",
+      "private Command <SelectedCommand>k__BackingField; // 0x20",
+      "private BattleCommandSelectView view; // 0x28",
+      "private PagerController pagerController; // 0x30",
+      "private KeyIconController iconController; // 0x38",
+      "private List<BattleCommandSelectContentController> contentList; // 0x40",
+      "private StateMachine<BattleCommandSelectController.State> stateMachine; // 0x48",
+      "private OwnedCharacterData targetData; // 0x50",
+      "private IEnumerable<OwnedCharacterData> memberData; // 0x58",
+      "private IEnumerable<OwnedItemData> items; // 0x60",
+      "private Cursor selectCursor; // 0x68",
+      "private TimeFunction inputAction; // 0x70",
+      "private Action commandSelectCallback; // 0x78",
+      "private IEnumerable<Command> normalList; // 0x80",
+      "private IEnumerable<Command> extraList; // 0x88",
+      "private IEnumerable<Command> manipulateList; // 0x90",
+      "private float inputWait; // 0x98",
+      "private Action onAction; // 0xA0",
+      "public BattlePlayerData SelectedTarget { get; set; }",
+      "public Command SelectedCommand { get; set; }"
+    ],
+    "methods": [
+      {
+        "signature": "public BattlePlayerData get_SelectedTarget() { }",
+        "rva": "0x268150",
+        "folded": 1540
+      },
+      {
+        "signature": "public void set_SelectedTarget(BattlePlayerData value) { }",
+        "rva": "0x270B90",
+        "folded": 199
+      },
+      {
+        "signature": "public Command get_SelectedCommand() { }",
+        "rva": "0x268170",
+        "folded": 432
+      },
+      {
+        "signature": "private void set_SelectedCommand(Command value) { }",
+        "rva": "0x268230",
+        "folded": 150
+      },
+      {
+        "signature": "public void Initalize() { }",
+        "rva": "0x433BB0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetOnCommandSelect(Action callcback) { }",
+        "rva": "0x2FC9C0",
+        "folded": 27
+      },
+      {
+        "signature": "public void CreateContents(int count) { }",
+        "rva": "0x4314B0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetCommandData(OwnedCharacterData data, IEnumerable<OwnedCharacterData> targets, IEnumerable<OwnedItemData> items) { }",
+        "rva": "0x4371D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetEnableCommandContent(bool isEnable) { }",
+        "rva": "0x438240",
+        "folded": 1
+      },
+      {
+        "signature": "public void CommandEnableUpdate() { }",
+        "rva": "0x4312F0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateController() { }",
+        "rva": "0x439780",
+        "folded": 1
+      },
+      {
+        "signature": "public void FocusClear() { }",
+        "rva": "0x433750",
+        "folded": 1
+      },
+      {
+        "signature": "public void CursorClear() { }",
+        "rva": "0x431910",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetFocus(Command targetCommand, bool isFocus) { }",
+        "rva": "0x438410",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetEnableClick(bool isEnable) { }",
+        "rva": "0x438130",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetContentIndex() { }",
+        "rva": "0x437EC0",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetExtraContentIndex() { }",
+        "rva": "0x438360",
+        "folded": 1
+      },
+      {
+        "signature": "private void SettingClick() { }",
+        "rva": "0x438650",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetFocus(int index, bool isFocus) { }",
+        "rva": "0x4385C0",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetCursor(int index) { }",
+        "rva": "0x437FE0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetKeyIconActive(bool isActive) { }",
+        "rva": "0x2D2BC0",
+        "folded": 18
+      },
+      {
+        "signature": "private void CreateState() { }",
+        "rva": "0x431680",
+        "folded": 1
+      },
+      {
+        "signature": "private void UpdateFocus() { }",
+        "rva": "0x4397D0",
+        "folded": 1
+      },
+      {
+        "signature": "private void NormalInit() { }",
+        "rva": "0x435900",
+        "folded": 1
+      },
+      {
+        "signature": "private void NormalUpdate() { }",
+        "rva": "0x435C70",
+        "folded": 1
+      },
+      {
+        "signature": "private void NormalExit() { }",
+        "rva": "0x435810",
+        "folded": 1
+      },
+      {
+        "signature": "private void ExtraInit() { }",
+        "rva": "0x431A40",
+        "folded": 1
+      },
+      {
+        "signature": "private void ExtraUpdate() { }",
+        "rva": "0x431D50",
+        "folded": 1
+      },
+      {
+        "signature": "private void ExtraExit() { }",
+        "rva": "0x431950",
+        "folded": 1
+      },
+      {
+        "signature": "private void ManipulateInit() { }",
+        "rva": "0x433F10",
+        "folded": 1
+      },
+      {
+        "signature": "private void ManipulateUpdate() { }",
+        "rva": "0x434220",
+        "folded": 1
+      },
+      {
+        "signature": "private void ManipulateExit() { }",
+        "rva": "0x433E20",
+        "folded": 1
+      },
+      {
+        "signature": "private BattleCommandSelectContentController CreateContent() { }",
+        "rva": "0x431350",
+        "folded": 1
+      },
+      {
+        "signature": "private List<Command> GetManipulateCommand(int monsterId) { }",
+        "rva": "0x433870",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x439910",
+        "folded": 1
+      },
+      {
+        "signature": "private void <SettingClick>b__38_0(int index) { }",
+        "rva": "0x439580",
+        "folded": 1
+      },
+      {
+        "signature": "private void <NormalInit>b__44_0() { }",
+        "rva": "0x438FE0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <NormalUpdate>b__45_0() { }",
+        "rva": "0x439190",
+        "folded": 1
+      },
+      {
+        "signature": "private void <NormalUpdate>b__45_1(int count) { }",
+        "rva": "0x438BD0",
+        "folded": 6
+      },
+      {
+        "signature": "private void <NormalUpdate>b__45_3(int count) { }",
+        "rva": "0x438BD0",
+        "folded": 6
+      },
+      {
+        "signature": "private void <ExtraUpdate>b__48_0() { }",
+        "rva": "0x4387D0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <ExtraUpdate>b__48_1(int count) { }",
+        "rva": "0x438BD0",
+        "folded": 6
+      },
+      {
+        "signature": "private void <ExtraUpdate>b__48_3(int count) { }",
+        "rva": "0x438BD0",
+        "folded": 6
+      },
+      {
+        "signature": "private void <ManipulateUpdate>b__51_0() { }",
+        "rva": "0x438BE0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <ManipulateUpdate>b__51_1(int count) { }",
+        "rva": "0x438BD0",
+        "folded": 6
+      },
+      {
+        "signature": "private void <ManipulateUpdate>b__51_3(int count) { }",
+        "rva": "0x438BD0",
+        "folded": 6
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "BattlePlayerInfomationController",
+    "fields": [
+      "private BattlePlayerInfomationView view; // 0x18",
+      "private List<BattlePlayerInfomationContentController> contentList; // 0x20",
+      "private List<BattlePlayerInfomationTargetSelectContentController> targetSelectContentList; // 0x28",
+      "private IEnumerable<BattlePlayerData> <PlayerList>k__BackingField; // 0x30",
+      "public IEnumerable<BattlePlayerData> PlayerList { get; set; }"
+    ],
+    "methods": [
+      {
+        "signature": "public IEnumerable<BattlePlayerData> get_PlayerList() { }",
+        "rva": "0x26FB50",
+        "folded": 275
+      },
+      {
+        "signature": "private void set_PlayerList(IEnumerable<BattlePlayerData> value) { }",
+        "rva": "0x272370",
+        "folded": 89
+      },
+      {
+        "signature": "public void Initalize() { }",
+        "rva": "0x634760",
+        "folded": 1
+      },
+      {
+        "signature": "public void Reset() { }",
+        "rva": "0x6347D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void CreateContents(int count) { }",
+        "rva": "0x634150",
+        "folded": 1
+      },
+      {
+        "signature": "public void UsePlayerInfoContent(bool isActive) { }",
+        "rva": "0x6362E0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UseTargetSelectContent(bool isActive) { }",
+        "rva": "0x636310",
+        "folded": 1
+      },
+      {
+        "signature": "public void UseATB() { }",
+        "rva": "0x635F20",
+        "folded": 1
+      },
+      {
+        "signature": "public void UseCondition() { }",
+        "rva": "0x636080",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateView(IEnumerable<BattlePlayerData> players, bool isTarget) { }",
+        "rva": "0x635B20",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateATB(BattlePlayerData player, float value) { }",
+        "rva": "0x6357F0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateTrance(BattlePlayerData player, float value, bool isEnable) { }",
+        "rva": "0x6359A0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetFocus(BattlePlayerData player, bool isFocus) { }",
+        "rva": "0x6349D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetTargetFocus(BattlePlayerData player, bool isFocus) { }",
+        "rva": "0x6354C0",
+        "folded": 1
+      },
+      {
+        "signature": "public void AllFocus(bool isFocus) { }",
+        "rva": "0x633BF0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetSelect(List<BattlePlayerData> targetList, bool isSelect) { }",
+        "rva": "0x634C40",
+        "folded": 1
+      },
+      {
+        "signature": "public void AllSelect(bool isSelect) { }",
+        "rva": "0x633DF0",
+        "folded": 1
+      },
+      {
+        "signature": "private BattlePlayerInfomationContentController CreateContent(string prefabName) { }",
+        "rva": "0x634000",
+        "folded": 1
+      },
+      {
+        "signature": "private BattlePlayerInfomationTargetSelectContentController CreateTargetSelectContent(string prefabName) { }",
+        "rva": "0x634610",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x636340",
+        "folded": 1
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "EquipmentStatusContentController",
+    "fields": [
+      "private EquipmentStatusContentView view; // 0x18",
+      "private ParameterType parameterType; // 0x20",
+      "public float ParamNameWidth { get; set; }",
+      "public ParameterType ParameterType { get; }"
+    ],
+    "methods": [
+      {
+        "signature": "public float get_ParamNameWidth() { }",
+        "rva": "0x5204B0",
+        "folded": 2
+      },
+      {
+        "signature": "public void set_ParamNameWidth(float value) { }",
+        "rva": "0x5204F0",
+        "folded": 2
+      },
+      {
+        "signature": "public ParameterType get_ParameterType() { }",
+        "rva": "0x298C00",
+        "folded": 85
+      },
+      {
+        "signature": "public void Initalize() { }",
+        "rva": "0x51F7D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetTextWidth(float value) { }",
+        "rva": "0x520140",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetAfterValue(int value) { }",
+        "rva": "0x51F980",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetBeforValue(int value) { }",
+        "rva": "0x51FA00",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetAfterValueTextColor(Color32 color) { }",
+        "rva": "0x51F940",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetArrowImageActive(bool iaActive) { }",
+        "rva": "0x439BD0",
+        "folded": 4
+      },
+      {
+        "signature": "public void SetArrowImageColor(Color32 color) { }",
+        "rva": "0x51F9C0",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetDefaultArrow() { }",
+        "rva": "0x51FA40",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetUpperArrow(bool isAbilityDisturbedRate) { }",
+        "rva": "0x520180",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetDownArrow(bool isAbilityDisturbedRate) { }",
+        "rva": "0x51FC50",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetInfoView() { }",
+        "rva": "0x51FF80",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetSelectView() { }",
+        "rva": "0x5200C0",
+        "folded": 2
+      },
+      {
+        "signature": "private void SetParamName() { }",
+        "rva": "0x520020",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x298B70",
+        "folded": 729
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "EquipmentStatusContentView",
+    "fields": [
+      "private LayoutElement layoutElement; // 0x18",
+      "private Text paramNameText; // 0x20",
+      "private Image arrowImage; // 0x28",
+      "private Text afterValueText; // 0x30",
+      "private Text beforValueText; // 0x38",
+      "private Text beforValuePercentText; // 0x40",
+      "private Text afterValuePercentText; // 0x48",
+      "public float ParamNameWidth { get; set; }"
+    ],
+    "methods": [
+      {
+        "signature": "public float get_ParamNameWidth() { }",
+        "rva": "0x520AA0",
+        "folded": 2
+      },
+      {
+        "signature": "public void set_ParamNameWidth(float value) { }",
+        "rva": "0x520AD0",
+        "folded": 2
+      },
+      {
+        "signature": "public void Initalize() { }",
+        "rva": "0x5207B0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetTextWidth(float width) { }",
+        "rva": "0x5209D0",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetParamName(string name) { }",
+        "rva": "0x2EF530",
+        "folded": 45
+      },
+      {
+        "signature": "public void SetAfterValue(string value) { }",
+        "rva": "0x2C9D10",
+        "folded": 34
+      },
+      {
+        "signature": "public void SetAfterValueTextColor(Color32 color) { }",
+        "rva": "0x5208C0",
+        "folded": 9
+      },
+      {
+        "signature": "public void SetBeforValueText(string value) { }",
+        "rva": "0x2CED00",
+        "folded": 23
+      },
+      {
+        "signature": "public void SetBeforValueTextActive(bool isActive) { }",
+        "rva": "0x2D2BC0",
+        "folded": 18
+      },
+      {
+        "signature": "public void SetValueTextActive(bool isActive) { }",
+        "rva": "0x3CE100",
+        "folded": 27
+      },
+      {
+        "signature": "public void SetArrowImageColor(Color32 color) { }",
+        "rva": "0x520900",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetArrowImageActive(bool isActive) { }",
+        "rva": "0x3B3260",
+        "folded": 24
+      },
+      {
+        "signature": "public void SetBeforValuePercentText(bool isActive) { }",
+        "rva": "0x411D10",
+        "folded": 11
+      },
+      {
+        "signature": "public void SetAfterValuePercentText(bool isActive) { }",
+        "rva": "0x3B6790",
+        "folded": 8
+      },
+      {
+        "signature": "public void SetBeforePercentTextColor(Color32 color) { }",
+        "rva": "0x520990",
+        "folded": 3
+      },
+      {
+        "signature": "public void SetAfterPercentTextColor(Color32 color) { }",
+        "rva": "0x520880",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetArrowRotation(Quaternion quaternion) { }",
+        "rva": "0x520940",
+        "folded": 2
+      },
+      {
+        "signature": "private void CommonInitalize() { }",
+        "rva": "0x520550",
+        "folded": 1
+      },
+      {
+        "signature": "private void UseParamNameText() { }",
+        "rva": "0x2EF540",
+        "folded": 49
+      },
+      {
+        "signature": "private void UseAfterValueText() { }",
+        "rva": "0x2CEED0",
+        "folded": 30
+      },
+      {
+        "signature": "private void UseBeforValueText() { }",
+        "rva": "0x40D5C0",
+        "folded": 16
+      },
+      {
+        "signature": "private void UseArrowImage() { }",
+        "rva": "0x3CD9A0",
+        "folded": 31
+      },
+      {
+        "signature": "private void UseBeforValuePercentText() { }",
+        "rva": "0x520A50",
+        "folded": 1
+      },
+      {
+        "signature": "private void UseAfterValuePercentText() { }",
+        "rva": "0x520A00",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x298B70",
+        "folded": 729
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "ItemTargetSelectContentController",
+    "fields": [
+      "private GUIClickController clickController; // 0x18",
+      "private ItemTargetSelectContentView view; // 0x20",
+      "private ConditionIconController conditionIconController; // 0x28",
+      "private MenuCharacterController menuCharacterController; // 0x30",
+      "private UseEffect recoveryEffect; // 0x38",
+      "private UseEffect resuscitationEffect; // 0x40",
+      "private OwnedCharacterData <CurrentData>k__BackingField; // 0x48",
+      "public GameObject CursorParent { get; }",
+      "public GUIClickController ClickController { get; }",
+      "public OwnedCharacterData CurrentData { get; set; }"
+    ],
+    "methods": [
+      {
+        "signature": "public GameObject get_CursorParent() { }",
+        "rva": "0x2D4020",
+        "folded": 10
+      },
+      {
+        "signature": "public GUIClickController get_ClickController() { }",
+        "rva": "0x268150",
+        "folded": 1540
+      },
+      {
+        "signature": "public OwnedCharacterData get_CurrentData() { }",
+        "rva": "0x29AB00",
+        "folded": 159
+      },
+      {
+        "signature": "private void set_CurrentData(OwnedCharacterData value) { }",
+        "rva": "0x29AB30",
+        "folded": 50
+      },
+      {
+        "signature": "public void Initalize() { }",
+        "rva": "0x7C64A0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateView(OwnedCharacterData data) { }",
+        "rva": "0x7C6910",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetDefaultAnime() { }",
+        "rva": "0x7C6580",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetUseItemAnime() { }",
+        "rva": "0x7C65A0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateCharacterImage(bool isRoop = True) { }",
+        "rva": "0x7C68F0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateConditionGraphic(OwnedCharacterData data) { }",
+        "rva": "0x7C19D0",
+        "folded": 2
+      },
+      {
+        "signature": "private void SettingCondition(OwnedCharacterData data) { }",
+        "rva": "0x7C65C0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SettingUseItem(int itemType) { }",
+        "rva": "0x7C6840",
+        "folded": 1
+      },
+      {
+        "signature": "public IEnumerator PlayUseAnimation(bool isResuscitation) { }",
+        "rva": "0x7C6500",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x298B70",
+        "folded": 729
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "ItemTargetSelectContentView",
+    "fields": [
+      "private GameObject cursorParent; // 0x18",
+      "private Text nameText; // 0x20",
+      "private Text fixedHpText; // 0x28",
+      "private Text currentHpText; // 0x30",
+      "private Text maxHpText; // 0x38",
+      "private Text separationHpText; // 0x40",
+      "private Text fixedMpText; // 0x48",
+      "private Text currentMpText; // 0x50",
+      "private Text maxMpText; // 0x58",
+      "private Text separationMpText; // 0x60",
+      "private List<Text> currentLvMpTextList; // 0x68",
+      "private List<Text> separationLvMpTextList; // 0x70",
+      "private List<Image> icons; // 0x78",
+      "public GameObject CursorParent { get; }",
+      "public Text NameText { get; }",
+      "public Text CurrentLevelText { get; }",
+      "public Text JobNameText { get; }",
+      "public Text NextExpText { get; }",
+      "public Text CurrentHpText { get; }",
+      "public Text CurrentMpText { get; }",
+      "public List<Text> CurrentLvMpTextList { get; }",
+      "public Text MaxHpText { get; }",
+      "public Text MaxMpText { get; }",
+      "public Text SeparationHPText { get; }",
+      "public Text SeparationMPText { get; }",
+      "public List<Text> SeparationLvMpTextList { get; }",
+      "public Text FixedMpText { get; }"
+    ],
+    "methods": [
+      {
+        "signature": "public GameObject get_CursorParent() { }",
+        "rva": "0x268150",
+        "folded": 1540
+      },
+      {
+        "signature": "public Text get_NameText() { }",
+        "rva": "0x268170",
+        "folded": 432
+      },
+      {
+        "signature": "public Text get_CurrentLevelText() { }",
+        "rva": "0x354ED0",
+        "folded": 223
+      },
+      {
+        "signature": "public Text get_JobNameText() { }",
+        "rva": "0x354ED0",
+        "folded": 223
+      },
+      {
+        "signature": "public Text get_NextExpText() { }",
+        "rva": "0x354ED0",
+        "folded": 223
+      },
+      {
+        "signature": "public Text get_CurrentHpText() { }",
+        "rva": "0x26FB50",
+        "folded": 275
+      },
+      {
+        "signature": "public Text get_CurrentMpText() { }",
+        "rva": "0x29AB20",
+        "folded": 126
+      },
+      {
+        "signature": "public List<Text> get_CurrentLvMpTextList() { }",
+        "rva": "0x2D3BF0",
+        "folded": 59
+      },
+      {
+        "signature": "public Text get_MaxHpText() { }",
+        "rva": "0x272310",
+        "folded": 200
+      },
+      {
+        "signature": "public Text get_MaxMpText() { }",
+        "rva": "0x29AB10",
+        "folded": 98
+      },
+      {
+        "signature": "public Text get_SeparationHPText() { }",
+        "rva": "0x272300",
+        "folded": 157
+      },
+      {
+        "signature": "public Text get_SeparationMPText() { }",
+        "rva": "0x272320",
+        "folded": 87
+      },
+      {
+        "signature": "public List<Text> get_SeparationLvMpTextList() { }",
+        "rva": "0x2D3BD0",
+        "folded": 59
+      },
+      {
+        "signature": "public Text get_FixedMpText() { }",
+        "rva": "0x29AB00",
+        "folded": 159
+      },
+      {
+        "signature": "public void Initalize() { }",
+        "rva": "0x7C7140",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetHp(int current, int max) { }",
+        "rva": "0x7C76A0",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetMp(int current, int max) { }",
+        "rva": "0x7C7AE0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetLvMp(List<int> mpList) { }",
+        "rva": "0x7C7700",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetCurrentHpTextColor(Color32 value) { }",
+        "rva": "0x4E0AA0",
+        "folded": 3
+      },
+      {
+        "signature": "public void SetMaxHpTextColor(Color32 value) { }",
+        "rva": "0x7C77D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetCurrentMpTextColor(Color32 value) { }",
+        "rva": "0x7B02D0",
+        "folded": 2
+      },
+      {
+        "signature": "public void SetMaxMpTextColor(Color32 value) { }",
+        "rva": "0x7C7850",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetMpListTextColor(Color32 value) { }",
+        "rva": "0x7C78D0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetName(string name) { }",
+        "rva": "0x2EF530",
+        "folded": 45
+      },
+      {
+        "signature": "public void CommonInitalize() { }",
+        "rva": "0x7C6C00",
+        "folded": 1
+      },
+      {
+        "signature": "private void LvMpTextInitialize() { }",
+        "rva": "0x7C73B0",
+        "folded": 1
+      },
+      {
+        "signature": "private void UseCursorParent() { }",
+        "rva": "0x29AD80",
+        "folded": 39
+      },
+      {
+        "signature": "private void UseName() { }",
+        "rva": "0x2EF540",
+        "folded": 49
+      },
+      {
+        "signature": "private void UseHp() { }",
+        "rva": "0x7C7B40",
+        "folded": 1
+      },
+      {
+        "signature": "private void UseMp() { }",
+        "rva": "0x7C7EF0",
+        "folded": 1
+      },
+      {
+        "signature": "private void UseLvMps() { }",
+        "rva": "0x7C7C70",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x298B70",
+        "folded": 729
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "ResultMenuController",
+    "fields": [
+      "private ResultMenuView view; // 0x18",
+      "private ResultPointControllerBase pointController; // 0x20",
+      "private int postionY; // 0x28",
+      "private ResultItemController itemControlle; // 0x30",
+      "private ResultSkillController skillController; // 0x38",
+      "private StateMachine<ResultMenuController.State> stateMachine; // 0x40",
+      "private ResultMenuController.State nextState; // 0x48",
+      "private float inputWait; // 0x4C",
+      "private TimeFunction inputAction; // 0x50",
+      "private BattleResultData targetData; // 0x58",
+      "private RectTransform baseRectTransform; // 0x60"
+    ],
+    "methods": [
+      {
+        "signature": "public void Initialize() { }",
+        "rva": "0x5B8390",
+        "folded": 1
+      },
+      {
+        "signature": "public void Show(BattleResultData data, bool isReverse) { }",
+        "rva": "0x5B9800",
+        "folded": 1
+      },
+      {
+        "signature": "public void Close() { }",
+        "rva": "0x5B7F00",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateView() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "public void UpdateController() { }",
+        "rva": "0x5B9B90",
+        "folded": 1
+      },
+      {
+        "signature": "public bool IsFinish() { }",
+        "rva": "0x5B8450",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetPostion(bool isReverse) { }",
+        "rva": "0x5B8C90",
+        "folded": 1
+      },
+      {
+        "signature": "private void CreateState() { }",
+        "rva": "0x5B7F50",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetNextState(ResultMenuController.State state) { }",
+        "rva": "0x39D010",
+        "folded": 22
+      },
+      {
+        "signature": "private bool IsToItemList() { }",
+        "rva": "0x5B88B0",
+        "folded": 1
+      },
+      {
+        "signature": "private bool IsToAbilityLevelUp() { }",
+        "rva": "0x5B84A0",
+        "folded": 1
+      },
+      {
+        "signature": "private bool IsToSkillLevel() { }",
+        "rva": "0x5B8A10",
+        "folded": 1
+      },
+      {
+        "signature": "private bool IsToAbilityList() { }",
+        "rva": "0x5B86B0",
+        "folded": 1
+      },
+      {
+        "signature": "private bool IsToStatusUp() { }",
+        "rva": "0x5B8A30",
+        "folded": 1
+      },
+      {
+        "signature": "private bool IsWeaponSkillLevelUp() { }",
+        "rva": "0x5B8B40",
+        "folded": 1
+      },
+      {
+        "signature": "private bool IsToJobProficiencyLevelUp() { }",
+        "rva": "0x5B8900",
+        "folded": 1
+      },
+      {
+        "signature": "private void NonInit() { }",
+        "rva": "0x5B8C50",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowPointsInit() { }",
+        "rva": "0x5B92A0",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowPointsUpdate() { }",
+        "rva": "0x5B8FE0",
+        "folded": 3
+      },
+      {
+        "signature": "private void ShowPointsExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void ShowLevelUpAbilitysInit() { }",
+        "rva": "0x5B9020",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowLevelUpAbilityUpdate() { }",
+        "rva": "0x5B8FE0",
+        "folded": 3
+      },
+      {
+        "signature": "private void ShowLevelUpAbilityExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void ShowStatusUpInit() { }",
+        "rva": "0x5B96F0",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowStatusUpUpdate() { }",
+        "rva": "0x5B8FE0",
+        "folded": 3
+      },
+      {
+        "signature": "private void ShowStatusUpExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void ShowGetItemsInit() { }",
+        "rva": "0x5B8E20",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowGetItemsUpdate() { }",
+        "rva": "0x5B8EF0",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowGetItemsExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void ShowGetAbilitysInit() { }",
+        "rva": "0x5B8D00",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowGetAbilitysUpdate() { }",
+        "rva": "0x5B8E00",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowGetAbilitysExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void EndWaitInit() { }",
+        "rva": "0x3B0A20",
+        "folded": 2
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x5B9C80",
+        "folded": 1
+      },
+      {
+        "signature": "private void <ShowPointsInit>b__29_0() { }",
+        "rva": "0x5B9AB0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <ShowLevelUpAbilitysInit>b__32_0() { }",
+        "rva": "0x5B98C0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <ShowStatusUpInit>b__35_0() { }",
+        "rva": "0x5B9B30",
+        "folded": 1
+      },
+      {
+        "signature": "private void <ShowGetItemsInit>b__38_0() { }",
+        "rva": "0x5B98B0",
+        "folded": 2
+      },
+      {
+        "signature": "private void <ShowGetAbilitysInit>b__41_0() { }",
+        "rva": "0x5B98B0",
+        "folded": 2
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "ResultSkillController",
+    "fields": [
+      "private static readonly string UpTriggerName; // 0x0",
+      "private ResultSkillView view; // 0x18",
+      "private List<ResultSkillContentController> contentList; // 0x20",
+      "private List<ResultLevelUpContentController> levelUpContentList; // 0x28",
+      "private Action onComplite; // 0x30",
+      "private StateMachine<ResultSkillController.State> stateMachine; // 0x38",
+      "private ResultSkillController.State nextState; // 0x40",
+      "private float inputWait; // 0x44",
+      "private TimeFunction inputAction; // 0x48",
+      "private static readonly int PageContentMax; // 0x8",
+      "public bool IsContentPageUpdate { get; }"
+    ],
+    "methods": [
+      {
+        "signature": "public bool get_IsContentPageUpdate() { }",
+        "rva": "0x5BD010",
+        "folded": 1
+      },
+      {
+        "signature": "public void Initialize() { }",
+        "rva": "0x5BAFB0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateContentPage() { }",
+        "rva": "0x5BCCB0",
+        "folded": 1
+      },
+      {
+        "signature": "public void UpdateController() { }",
+        "rva": "0x5BCE00",
+        "folded": 1
+      },
+      {
+        "signature": "public void OnDisable() { }",
+        "rva": "0x5BB310",
+        "folded": 2
+      },
+      {
+        "signature": "public void Close() { }",
+        "rva": "0x5BA540",
+        "folded": 1
+      },
+      {
+        "signature": "public void Show(BattleResultData data, bool isNext, Action onComplite) { }",
+        "rva": "0x5BC730",
+        "folded": 1
+      },
+      {
+        "signature": "public void ShowLevelUp(BattleResultData data, bool isNext, Action onComplite) { }",
+        "rva": "0x5BC240",
+        "folded": 1
+      },
+      {
+        "signature": "public void ShowJobProficiencyLevelUp(BattleResultData data, Action onComplite) { }",
+        "rva": "0x5BC1A0",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetLearningList(List<BattleResultData.BattleResultCharacterData> list) { }",
+        "rva": "0x5BB500",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetLevelUpList(List<BattleResultData.BattleResultCharacterData> list) { }",
+        "rva": "0x5BBC00",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetJobProficiencyLevelUpList(List<BattleResultData.BattleResultCharacterData> list) { }",
+        "rva": "0x5BB350",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetLevelUpData(BattleResultData.BattleResultCharacterData target, List<OwnedAbility> list) { }",
+        "rva": "0x5BB970",
+        "folded": 1
+      },
+      {
+        "signature": "private void CreateLevelUpList(int count) { }",
+        "rva": "0x5BAA30",
+        "folded": 1
+      },
+      {
+        "signature": "private List<ResultSkillContentController> CreateSkillContents(int count) { }",
+        "rva": "0x5BAAD0",
+        "folded": 1
+      },
+      {
+        "signature": "private void InitializeSkillContents() { }",
+        "rva": "0x5BAE60",
+        "folded": 1
+      },
+      {
+        "signature": "private void InitializeLevelUpContents() { }",
+        "rva": "0x5BAD10",
+        "folded": 1
+      },
+      {
+        "signature": "private void UpdateArrow() { }",
+        "rva": "0x5BC940",
+        "folded": 1
+      },
+      {
+        "signature": "private void CreateState() { }",
+        "rva": "0x5BAB90",
+        "folded": 1
+      },
+      {
+        "signature": "private void SetNextState(ResultSkillController.State state) { }",
+        "rva": "0x319620",
+        "folded": 22
+      },
+      {
+        "signature": "private void NonInit() { }",
+        "rva": "0x5BB310",
+        "folded": 2
+      },
+      {
+        "signature": "private void ShowListInit() { }",
+        "rva": "0x5BC2E0",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowListUpdate() { }",
+        "rva": "0x5BC2F0",
+        "folded": 1
+      },
+      {
+        "signature": "private void ShowListExit() { }",
+        "rva": "0x2698F0",
+        "folded": 2458
+      },
+      {
+        "signature": "private void SetScrollValue(float value) { }",
+        "rva": "0x5BC0C0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetEnableSkillView(bool isEnable) { }",
+        "rva": "0x5BB330",
+        "folded": 1
+      },
+      {
+        "signature": "public ResultSkillContentController CreateContents(GameObject parent) { }",
+        "rva": "0x5BA560",
+        "folded": 1
+      },
+      {
+        "signature": "public ResultLevelUpContentController CreateLevelUpContents(GameObject parent) { }",
+        "rva": "0x5BA7F0",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x5BCF50",
+        "folded": 1
+      },
+      {
+        "signature": "private static void .cctor() { }",
+        "rva": "0x5BCEF0",
+        "folded": 1
+      },
+      {
+        "signature": "private void <ShowListUpdate>b__34_0() { }",
+        "rva": "0x5BC7D0",
+        "folded": 1
+      }
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "name": "ResultStatusContentController",
+    "fields": [
+      "private ParameterType type; // 0x18",
+      "private ParameterType subType; // 0x1C",
+      "private ResultStatusContentView view; // 0x20",
+      "public ParameterType Type { get; }",
+      "public ParameterType SubType { get; }"
+    ],
+    "methods": [
+      {
+        "signature": "public ParameterType get_Type() { }",
+        "rva": "0x29C1A0",
+        "folded": 115
+      },
+      {
+        "signature": "public ParameterType get_SubType() { }",
+        "rva": "0x31E230",
+        "folded": 52
+      },
+      {
+        "signature": "public void Initialize() { }",
+        "rva": "0x8E32F0",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetData(int beforValue, int afterValue, int beforePercentValue = 0, int afterPercentValue = 0) { }",
+        "rva": "0x8E3340",
+        "folded": 1
+      },
+      {
+        "signature": "public void SetCategoryName(string value) { }",
+        "rva": "0x71D570",
+        "folded": 3
+      },
+      {
+        "signature": "public void SwitchJobParameterOrJobMasterText(bool isDisplayParameter = True, bool isJobMasterNow = False) { }",
+        "rva": "0x8E38B0",
+        "folded": 1
+      },
+      {
+        "signature": "public void .ctor() { }",
+        "rva": "0x298B70",
+        "folded": 729
+      }
+    ]
+  }
+]

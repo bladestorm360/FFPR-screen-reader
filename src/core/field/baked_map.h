@@ -22,7 +22,9 @@ enum class ObjType : uint8_t {
     IgnoreRoute = 22, NonEncountArea = 23, RandomEvent = 28, SwitchEvent = 30,
     /// Baked only: an event whose script changes map (ChangeMap in its Main segment): a warp
     /// pad, a trapdoor. a = destination map id, b = destination PointIn point id, d = 1 when
-    /// stepping on it fires (an Event), 0 when it is examined (an Entity).
+    /// stepping on it fires (an Event), 0 when it is examined (an Entity). A cutscene whose
+    /// destination script changes map straight back (FF1's bridge credits) is not one
+    /// (bake_maps.py round_trip, 2026-10-11).
     Warp = 100,
 };
 
@@ -38,6 +40,8 @@ struct Object {
 
     int entity_id() const { return c; }
     bool contains(int x, int y) const { return x >= tx && y >= ty && x < tx + tw && y < ty + th; }
+    /// TreasureBox: its content id (bake_maps.py packs it above the flag bits of d), 0 = none.
+    int chest_content_id() const { return type == ObjType::TreasureBox ? (d >> 8) : 0; }
 };
 
 struct TransportRow { int id, group, landing_group, type; uint32_t message; };

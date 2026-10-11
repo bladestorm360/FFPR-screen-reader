@@ -12,7 +12,6 @@ namespace {
 void configure(game::Flags& f)
 {
     f.has_airship = true;
-    f.multi_hit_setting = true;
 }
 
 } // namespace

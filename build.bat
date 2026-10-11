@@ -22,7 +22,7 @@ if errorlevel 1 (
 echo Building...
 set "CLEAN_BUILD="
 if /I "%~1"=="--clean" set "CLEAN_BUILD=--clean-first"
-"%CMAKE%" --build build --config Release %CLEAN_BUILD% -- /m /v:minimal >> build_log.txt 2>&1
+"%CMAKE%" --build build --config Release %CLEAN_BUILD% -- /m:4 /nr:false /v:minimal >> build_log.txt 2>&1
 if errorlevel 1 (
     echo Build FAILED - see build_log.txt
     exit /b 1
@@ -43,14 +43,24 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Checking the baked-map router against FF2 routes known from the dumps...
-"out\checks\route_check.exe" "data\ff2\maps.bin" > build_check\route_report.txt 2>&1
+echo Checking the baked-map router against FF2 and FF1 routes known from the dumps...
+"out\checks\route_check.exe" "data\ff2\maps.bin" "data\ff1\maps.bin" > build_check\route_report.txt 2>&1
 if errorlevel 1 (
     echo Route check FAILED - see build_check\route_report.txt
     exit /b 1
 )
 
 echo Checking every game-code name against each game's dump.cs...
+"out\checks\mapstate_check.exe" > build_check\mapstate_report.txt 2>&1
+if errorlevel 1 (
+    echo Map-state check FAILED - see build_check\mapstate_report.txt
+    exit /b 1
+)
+"out\checks\frame_check.exe" > build_check\frame_report.txt 2>&1
+if errorlevel 1 (
+    echo Scheduler check FAILED - see build_check\frame_report.txt
+    exit /b 1
+)
 python tools\name_check.py
 if errorlevel 1 (
     echo Name check FAILED - see build_check\name_report.txt

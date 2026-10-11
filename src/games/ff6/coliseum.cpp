@@ -37,6 +37,7 @@
 // as in every core menu; the C# had no such gate.
 //
 // Every hooked body has one RVA in FF6's dump.cs.
+#include "../../core/ui/preferences.h"
 #include <cstdint>
 #include <string>
 #include "../../core/core.h"
@@ -169,7 +170,7 @@ bool announce_row(void* controller, int index)
     if (c > 1) base += L", " + text::num(c);
 
     std::wstring announcement = base;
-    if (settings::get_bool("AutoDetail", true)) {
+    if (ui::prefs::auto_detail_enabled()) {
         std::wstring description = strip_icon(ref::rd_str(item, fDataDescription));
         if (!text::is_blank(description)) announcement = base + L": " + description;
     }

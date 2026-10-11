@@ -386,7 +386,9 @@ All from 0 to 100 percent, default 50.
 
 ### Battle Settings
 
-- Enemy HP Display, Numbers: Numbers, Percentage or Hidden.
+- Enemy HP Display, Numbers: Numbers, Percentage or Hidden. This optional setting reveals
+  enemy HP that the native targeting panel does not show. Numbers reads current/maximum;
+  Percentage reads remaining HP as a percentage; Hidden omits it. F5 cycles the modes in battle.
 - Enemy Letters, off: adds a letter such as A or B to enemies that share a name. FINAL FANTASY V only. It has no effect yet; see Known issues.
 - Multi-hit Damage, With hit count: "With hit count" reads "14x1552 damage", "Total only" reads the total. FINAL FANTASY, II and III only.
 
@@ -450,10 +452,15 @@ Closes the mod menu.
 
 ### Pathfinding
 
-- Step by step directions to a destination or a waypoint.
-- Long routes: when the game cannot find a far route, the mod joins several shorter ones. A long route reads up to 6 legs, then "and" the number of legs left.
-- The pathfinding filter and the beacon only check short routes. With the filter on, a far destination may be left out of the list.
+- Step by step directions to a destination or a waypoint, over the mod's own map of every floor: no distance limit. A long route reads up to 6 legs, then "and" the number of legs left; walk them and ask again, the rest of the same route follows from where you stand.
+- A route ends exactly where the thing is used: on an exit's own tile, on the tile in front of a shop counter, or beside a chest or person, followed by "face north" when you are not already facing it.
+- A destination cut off on the current floor is routed through another part of the map: the route ends with "take the exit to" a place. Go through, and after the floor's name the mod speaks the next leg from where you arrived, with the destination still selected; the beacon continues too. Selecting another entry forgets it.
+- When there is no route, the mod says why when it can: "Story gated" for a sealed door or a passage the story has not opened, "Blocked by an NPC" for someone standing in the only way, and on the world map "Requires Ship", "Requires Canoe" or "Requires Airship" for a vehicle you own. "Requires vehicle" means a vehicle you do not own yet would reach it.
+- On the world map, a ship or airship you own and have parked is used in the directions: "board the Ship", then the way across, "land", and the rest.
+- The pathfinding filter has three settings: "Current floor" lists only what you can walk to on this floor; "Current map with vehicles" also lists what a vehicle you have here reaches; "Current map" lists everything, and adds what is on the other floors of this town or dungeon: chests, people, save points and the way out, each with its floor's name ("Potion (Kashuan Keep 2F)"). Whether a chest there is already opened is not known from here. A route to one of them comes leg by leg: the first leg ends at the exit to take, the next is spoken after you go through.
+- The beacon leads along the route, corner by corner, and falls silent when you arrive.
 - FINAL FANTASY III, IV and V: the pathfinder knows secret passages, and leads through one when there is no other way. Wall tones may still sound at the start of a passage, as if it were a wall. Follow the spoken directions into it.
+- Puzzle guides (Shift+G) give the steps of switch and warp puzzles with directions to each.
 
 ### Audio cues
 
@@ -475,7 +482,8 @@ Closes the mod menu.
 
 - This is the first version of the combined mod. If something the old screen reader read is now silent, or is read twice, please report it and send the log.
 - Running alongside MelonLoader or BepInEx is new and has not been tested in the games yet. If a game crashes with one of them installed, send the log; it says which loaders it found. Until that is fixed, delete hid.dll or move the other loader out.
-- In shops, the shopkeeper stands behind a counter. Talk to the counter to open the shop. It is usually straight north from the door.
+- Pathfinding on the mod's own maps is new. Known gaps: "Current map with vehicles" counts everything a parked vehicle's terrain reaches, without checking that you can reach the vehicle or land there; "Story gated" and "Blocked by an NPC" are judged on the current floor only, so a route through another floor can still run into a closed door there; a person who wanders is walked straight through, so wait a moment for them to move; the beacon on a map the mod has no data for falls back to pointing straight at the destination. Rooms the game leaves untitled carry labels the mod inferred from who and what is in them ("Josef's House", "Church", "Pub"); tell us about any that sound wrong.
+- The old screen readers' route searcher is still used only on a map the mod has no data for; the list of such maps is in the log.
 
 ### FINAL FANTASY and FINAL FANTASY II
 

@@ -23,6 +23,7 @@ struct Pending {
     Task task;
     Step step;              // set for every_frame
     int frames_left;
+    bool cancelled = false;
 };
 
 struct Sub { void (*fn)(); const char* label; };
@@ -37,7 +38,6 @@ bool g_live = false;
 uint64_t g_frame = 0;
 int g_next_id = 1;
 DWORD g_main_tid = 0;
-double g_qpf = 0;
 
 void add(Pending&& p)
 {
@@ -64,13 +64,15 @@ void run_tick()
     const double t_now = now();
     for (size_t i = 0; i < g_tasks.size();) {
         Pending& p = g_tasks[i];
-        bool done = false;
-        if (p.step) {
-            bool again = hooks::guarded_r(p.label.c_str(), false, [&] { return p.step(); });
-            done = !again || --p.frames_left <= 0;
+        bool done = p.cancelled;
+        if (!done && p.step) {
+            // A callback can cancel itself. Keep its closure alive until it returns.
+            Step step = p.step;
+            bool again = hooks::guarded_r(p.label.c_str(), false, [&] { return step(); });
+            done = p.cancelled || !again || --p.frames_left <= 0;
             if (again && p.frames_left <= 0)
                 LOGF("frame: stopped %s after its frame budget", p.label.c_str());
-        } else if ((p.due_frame && g_frame >= p.due_frame) || (p.due_time > 0 && t_now >= p.due_time)) {
+        } else if (!done && ((p.due_frame && g_frame >= p.due_frame) || (p.due_time > 0 && t_now >= p.due_time))) {
             Task t = std::move(p.task);
             done = true;
             g_tasks.erase(g_tasks.begin() + static_cast<std::ptrdiff_t>(i));
@@ -104,9 +106,7 @@ void d_Update(void* self, const void* mi)
 
 bool install()
 {
-    LARGE_INTEGER f{};
-    QueryPerformanceFrequency(&f);
-    g_qpf = static_cast<double>(f.QuadPart);
+    (void)now(); // Resolve the immutable clock frequency before enabling the tick.
     return hooks::attach(mUpdate, &d_Update, &o_Update);
 }
 
@@ -115,14 +115,13 @@ uint64_t count() { return g_frame; }
 
 double now()
 {
-    if (g_qpf <= 0) {
-        LARGE_INTEGER f{};
-        QueryPerformanceFrequency(&f);
-        g_qpf = static_cast<double>(f.QuadPart);
-    }
+    static const double frequency = [] {
+        LARGE_INTEGER f{}; QueryPerformanceFrequency(&f);
+        return static_cast<double>(f.QuadPart);
+    }();
     LARGE_INTEGER c{};
     QueryPerformanceCounter(&c);
-    return static_cast<double>(c.QuadPart) / g_qpf;
+    return static_cast<double>(c.QuadPart) / frequency;
 }
 
 bool on_main_thread() { return g_main_tid && GetCurrentThreadId() == g_main_tid; }
@@ -157,10 +156,8 @@ void cancel(int id)
         for (size_t i = 0; i < v->size(); ++i)
             if ((*v)[i].id == id) {
                 if (g_in_tick && v == &g_tasks) {
-                    // Erasing under the running loop would skip an element; neutralise it.
-                    (*v)[i].step = [] { return false; };
-                    (*v)[i].task = {};
-                    (*v)[i].due_frame = 1;
+                    // Do not destroy an executing callback's closure or shift the running loop.
+                    (*v)[i].cancelled = true;
                 } else {
                     v->erase(v->begin() + static_cast<std::ptrdiff_t>(i));
                 }
@@ -175,10 +172,7 @@ void cancel_label(const char* prefix)
         for (size_t i = 0; i < v->size();) {
             if ((*v)[i].label.compare(0, n, prefix) == 0) {
                 if (g_in_tick && v == &g_tasks) {
-                    (*v)[i].step = [] { return false; };
-                    (*v)[i].task = {};
-                    (*v)[i].due_frame = 1;
-                    (*v)[i].label = "(cancelled)";
+                    (*v)[i].cancelled = true;
                     ++i;
                 } else {
                     v->erase(v->begin() + static_cast<std::ptrdiff_t>(i));

@@ -1,5 +1,5 @@
 // Ports FF1 Patches/BattleMessagePatches.cs: actor and action ("Gordan: Fire"), damage and
-// healing (with the multi-hit "14x1552" form, setting "MultiHitDamage"), misses, status added
+// healing, separately rendered hit counters (setting "MultiHitDamage"), misses, status added
 // ("X: Poison"), status removed ("X: Poison removed"), and the game's battle system messages
 // ("The party was defeated", "Preemptive strike!").
 //
@@ -34,8 +34,10 @@
 #include <utility>
 #include <vector>
 #include "battle_internal.h"
+#include "battle.h"
 #include "battle_util.h"
 #include "../core.h"
+#include "../displayed_ui.h"
 #include "../dedup.h"
 #include "../frame.h"
 #include "../game.h"
@@ -45,6 +47,7 @@
 #include "../settings.h"
 #include "../text.h"
 #include "../unity.h"
+#include "../ui/preferences.h"
 
 namespace ffpr::battle {
 namespace {
@@ -60,6 +63,7 @@ constexpr uint8_t kFF16 = game::kFF1 | game::kFF6;
 
 ref::Class kActExec{"Last.Battle", "BattleActExection"};
 ref::Method mInitActionState{kActExec, "InitActionState", 0};
+ref::Method mEndFinishingState{kActExec, "EndFinishingState", 0};
 ref::Field fInStagingActData{kActExec, "inStagingBattleActData"};
 ref::Class kActData{"Last.Battle", "BattleActData"};
 ref::Field fAttackUnitData{kActData, "<AttackUnitData>k__BackingField"};
@@ -73,6 +77,15 @@ ref::Method mCreateDamageViewFF5{kBasicFnFF5, "CreateDamageView", 5};
 
 ref::Class kDamageViewUI{"Last.UI", "DamageViewUIManager"};
 ref::Method mCreateHitCount{kDamageViewUI, "CreateHitCount", 3};
+ref::Class kViewDamage{"Last.Battle", "ViewDamageEntity"};
+ref::Field fRenderedDamage{kViewDamage, "damageValue_"};
+ref::Class kViewDamage12345{"Last.Battle", "ViewDamageEntity", kFF12345};
+ref::Method mCreateDamageValue{kViewDamage12345, "CreateDamageValue", 4};
+ref::Class kViewDamage6{"Last.Battle", "ViewDamageEntity", game::kFF6};
+ref::Method mCreateDamageValue6{kViewDamage6, "CreateDamageValue", 5};
+ref::Class kBattleUtility{"Last.Battle", "BattleUtility", kFF1346 | game::kFF5};
+ref::Method mUtilityDamage{kBattleUtility, "CreateDamageView", 4};
+ref::Class kBattleUtility2{"Last.Battle", "BattleUtility", game::kFF2};
 
 ref::Class kCmdMsgKey{"Last.UI.KeyInput", "BattleCommandMessageController", kFF12345};
 ref::Method mSetMessage{kCmdMsgKey, "SetMessage", 1};
@@ -109,11 +122,14 @@ constexpr int kHitRecovery = 4;     // HP recovery
 constexpr int kHitMpHit = 5;        // MP damage
 constexpr int kHitMpRecovery = 6;   // MP recovery
 
-// Multi-hit multiplier from DamageViewUIManager.CreateHitCount, which fires just before the
-// matching CreateDamageView. Consumed (reset to 1) by the damage view; honoured only when captured
-// on this frame or the previous one, so an evaded hit's count never leaks into a later attack.
-int g_pending_hit_count = 1;
-int64_t g_pending_hit_count_frame = -1;
+// Context is carried through the native call stack, never through a global frame-wide
+// multiplier or HP-difference inference. The innermost renderer owns the spoken event.
+struct DamageContext { void* unit = nullptr; int type = -1; };
+thread_local DamageContext g_damage_context;
+struct DamageScope {
+    DamageContext previous = g_damage_context;
+    ~DamageScope() { g_damage_context = previous; }
+};
 
 // --- status removal state ---------------------------------------------------------------------
 // True during the battle-end cleanup. FF1 and FF6: only while BattleEndRecoveryCondition runs.
@@ -228,42 +244,35 @@ void d_InitActionState(void* self, const void* mi)
         if (!self) return;
         void* act = ref::rd<void*>(self, fInStagingActData);
         if (!act) return;
-        std::wstring actor = unit_name(ref::rd<void*>(act, fAttackUnitData));
+        void* unit = ref::rd<void*>(act, fAttackUnitData);
+        action_actor_started(unit);
+        std::wstring actor = unit_name(unit);
         action_started(actor, action_name(act));
     });
 }
+Void_t o_EndFinishingState;
+void d_EndFinishingState(void* self, const void* mi)
+{
+    // Finish before native completion callbacks can initialize the next command/action.
+    hooks::guarded("Battle.ActionFinished", [] { action_actor_finished(); });
+    o_EndFinishingState(self, mi);
+}
 
 // --- CreateDamageView (postfix): damage, healing, misses -----------------------------------------
-void damage_view(void* data, int value, int hit_type, bool is_recovery)
+void damage_view(const std::wstring& target, int value, int hit_type, bool is_recovery)
 {
-    if (!data) return;
-    std::wstring target = unit_name(data);
-
-    int64_t frame_now = static_cast<int64_t>(frame::count());
-    int hit_count = (frame_now - g_pending_hit_count_frame <= 1) ? g_pending_hit_count : 1;
-    g_pending_hit_count = 1;
-
+    const auto prefix = target.empty() ? std::wstring() : target + L": ";
     std::wstring msg;
     if (hit_type == kHitMiss) {
-        msg = TF(L"{0}: Miss", {target});
-    } else if (value == 0) {
-        // Value-0 views (FF1 docs/debug.md, 2026-09-23): buff/debuff and cure functions emit 0 with
-        // Hit (announced by the Add / removal hooks instead); HitType Zero is a genuine 0 result.
-        if (hit_type != kHitZero) return;
-        msg = TF(L"{0}: {1} damage", {target, text::num(0)});
+        msg = prefix + T(L"Miss");
     } else if (hit_type == kHitMpRecovery) {
-        msg = TF(L"{0}: Recovered {1} MP", {target, text::num(value)});
+        msg = prefix + TF(L"Recovered {0} MP", {text::num(value)});
     } else if (hit_type == kHitMpHit) {
-        msg = TF(L"{0}: {1} MP damage", {target, text::num(value)});
+        msg = prefix + TF(L"{0} MP damage", {text::num(value)});
     } else if (hit_type == kHitRecovery || is_recovery) {
-        msg = TF(L"{0}: Recovered {1} HP", {target, text::num(value)});
+        msg = prefix + TF(L"Recovered {0} HP", {text::num(value)});
     } else {
-        // HP damage, optionally with the multi-hit "{N}x" multiplier. FF4/FF5 have no such
-        // setting (their calc results never carry a hit count): always the total there.
-        bool with_count = game::flags().multi_hit_setting && settings::get_int("MultiHitDamage", 1) == 1;
-        msg = (with_count && hit_count > 1)
-                  ? TF(L"{0}: {1}x{2} damage", {target, text::num(hit_count), text::num(value)})
-                  : TF(L"{0}: {1} damage", {target, text::num(value)});
+        msg = prefix + TF(L"{0} damage", {text::num(value)});
     }
     // Damage/healing doesn't interrupt: it queues after the action announcement.
     ffpr::say(msg, false);
@@ -273,34 +282,103 @@ using DamageView_t = void (*)(void* self, void* data, int32_t value, int32_t hit
 DamageView_t o_CreateDamageView;
 void d_CreateDamageView(void* self, void* data, int32_t value, int32_t hit_type, bool is_recovery, const void* mi)
 {
+    DamageScope scope;
+    g_damage_context = {data, hit_type};
     o_CreateDamageView(self, data, value, hit_type, is_recovery, mi);
-    hooks::guarded("BattleBasicFunction.CreateDamageView", [&] { damage_view(data, value, hit_type, is_recovery); });
 }
 
 using DamageViewFF2_t = void (*)(void* self, void* data, int32_t value, int32_t hit_type, bool is_recovery, bool is_play_se, const void* mi);
 DamageViewFF2_t o_CreateDamageViewFF2;
 void d_CreateDamageViewFF2(void* self, void* data, int32_t value, int32_t hit_type, bool is_recovery, bool is_play_se, const void* mi)
 {
+    DamageScope scope;
+    g_damage_context = {data, hit_type};
     o_CreateDamageViewFF2(self, data, value, hit_type, is_recovery, is_play_se, mi);
-    hooks::guarded("BattleBasicFunction.CreateDamageView", [&] { damage_view(data, value, hit_type, is_recovery); });
 }
 
 using DamageViewFF5_t = void (*)(void* self, void* data, int32_t value, int32_t hit_type, bool is_recovery, int32_t miss_type, const void* mi);
 DamageViewFF5_t o_CreateDamageViewFF5;
 void d_CreateDamageViewFF5(void* self, void* data, int32_t value, int32_t hit_type, bool is_recovery, int32_t miss_type, const void* mi)
 {
+    DamageScope scope;
+    g_damage_context = {data, hit_type};
     o_CreateDamageViewFF5(self, data, value, hit_type, is_recovery, miss_type, mi);
-    hooks::guarded("BattleBasicFunction.CreateDamageView", [&] { damage_view(data, value, hit_type, is_recovery); });
 }
 
-// --- CreateHitCount (postfix): capture the multiplier --------------------------------------------
+using UtilityDamage = void* (*)(void*, int32_t, bool, bool, const void*);
+UtilityDamage o_utility_damage;
+void* d_utility_damage(void* unit, int32_t value, bool recovery, bool miss, const void* mi)
+{
+    DamageScope scope;
+    g_damage_context.unit = unit;
+    return o_utility_damage(unit, value, recovery, miss, mi);
+}
+using UtilityDamage2 = void* (*)(void*, int32_t, bool, bool, bool, const void*);
+UtilityDamage2 o_utility_damage2;
+void* d_utility_damage2(void* unit, int32_t value, bool recovery, bool miss, bool se, const void* mi)
+{
+    DamageScope scope;
+    g_damage_context.unit = unit;
+    return o_utility_damage2(unit, value, recovery, miss, se, mi);
+}
+using RenderDamage = void (*)(void*, void*, int32_t, bool, bool, const void*);
+RenderDamage o_render_damage;
+void rendered_damage(void* self, bool recovery, bool miss)
+{
+    hooks::guarded("Battle.DisplayedDamage", [=] {
+        const auto name = unit_name(g_damage_context.unit);
+        const int type = miss ? kHitMiss : g_damage_context.type;
+        // Native CreateDamageValue stores the absolute digits it actually draws.
+        // Snapshot text/context now; keep only the short-lived Unity renderer for reveal.
+        const int digits = ref::rd<int32_t>(self, fRenderedDamage);
+        frame::every_frame([self, name, digits, type, recovery] {
+            if (!unity::alive(self)) return false;
+            void* prefab = displayed::field(self, "prefab");
+            bool shown = false;
+            for (void* image : unity::components_in_children(prefab, unity::image_class(), false))
+                shown = shown || displayed::image_visible(image);
+            if (!shown) return true;
+            damage_view(name, digits, type < 0 ? kHitZero : type, recovery);
+            return false;
+        }, "Battle.DamageDisplay", 60);
+    });
+}
+void d_render_damage(void* self, void* target, int32_t value, bool recovery, bool miss, const void* mi)
+{
+    o_render_damage(self, target, value, recovery, miss, mi);
+    rendered_damage(self, recovery, miss);
+}
+using RenderDamage6 = void (*)(void*, void*, int32_t, unity::Vec2, bool, bool, const void*);
+RenderDamage6 o_render_damage6;
+void d_render_damage6(void* self, void* target, int32_t value, unity::Vec2 offset, bool recovery, bool miss, const void* mi)
+{
+    o_render_damage6(self, target, value, offset, recovery, miss, mi);
+    rendered_damage(self, recovery, miss);
+}
+
+// --- CreateHitCount (postfix): read the visible digit counter --------------------------------------------
 using CreateHitCount_t = void* (*)(void* self, int32_t hit_count_value, void* attack, void* target, const void* mi);
 CreateHitCount_t o_CreateHitCount;
 void* d_CreateHitCount(void* self, int32_t hit_count_value, void* attack, void* target, const void* mi)
 {
     void* result = o_CreateHitCount(self, hit_count_value, attack, target, mi);
-    g_pending_hit_count = hit_count_value;
-    g_pending_hit_count_frame = static_cast<int64_t>(frame::count());
+    hooks::guarded("Battle.RenderedHitCount", [result, hit_count_value] {
+        if (!result || hit_count_value < 2 || ui::prefs::damage_display() != 1) return;
+        // Native SetNumSprite renders this exact integer as digit sprites. Read this
+        // independent visual event; a one-frame global damage multiplier lost counts
+        // across animation delays and could attach one target's count to another.
+        frame::every_frame([result, hit_count_value] {
+            if (!in_battle() || !unity::alive(result)) return false;
+            if (!displayed::image_visible(displayed::field(result, "hitText"))) return true;
+            void* images = displayed::field(result, "numRenderers");
+            bool shown = false;
+            for (int i = 0; i < unity::array_length(images); ++i)
+                shown = shown || displayed::image_visible(unity::array_at(images, i));
+            if (!shown) return true;
+            ffpr::say(TF(L"{0} hits", {text::num(hit_count_value)}), false);
+            return false;
+        }, "Battle.HitCount", 30);
+    });
     return result;
 }
 
@@ -684,12 +762,23 @@ void d_UpdateTempParamter(void* self, void* unit, const void* mi)
 
 int install()
 {
+    events::on(events::Kind::BattleEnd, [] {
+        frame::cancel_label("Battle.HitCount");
+        frame::cancel_label("Battle.DamageDisplay");
+    });
     int n = 0;
     n += hooks::attach(mInitActionState, &d_InitActionState, &o_InitActionState) ? 1 : 0;
+    n += hooks::attach(mEndFinishingState, &d_EndFinishingState, &o_EndFinishingState) ? 1 : 0;
     if (game::in(kFF1346)) n += hooks::attach(mCreateDamageView, &d_CreateDamageView, &o_CreateDamageView) ? 1 : 0;
     if (game::in(game::kFF2)) n += hooks::attach(mCreateDamageViewFF2, &d_CreateDamageViewFF2, &o_CreateDamageViewFF2) ? 1 : 0;
     if (game::in(game::kFF5)) n += hooks::attach(mCreateDamageViewFF5, &d_CreateDamageViewFF5, &o_CreateDamageViewFF5) ? 1 : 0;
     n += hooks::attach(mCreateHitCount, &d_CreateHitCount, &o_CreateHitCount) ? 1 : 0;
+    n += hooks::attach(mCreateDamageValue, &d_render_damage, &o_render_damage) ? 1 : 0;
+    n += hooks::attach(mCreateDamageValue6, &d_render_damage6, &o_render_damage6) ? 1 : 0;
+    if (game::is(game::Id::FF2)) {
+        auto* method = find_method_param_type(kBattleUtility2.get(), "CreateDamageView", 5, 0, "BattleUnitData");
+        n += hooks::attach_addr(il2cpp::method_pointer(method), "BattleUtility.CreateDamageView.unit", reinterpret_cast<void*>(&d_utility_damage2), reinterpret_cast<void**>(&o_utility_damage2)) ? 1 : 0;
+    } else n += hooks::attach(mUtilityDamage, &d_utility_damage, &o_utility_damage) ? 1 : 0;
     if (game::in(kFF12345)) {
         n += hooks::attach(mSetMessage, &d_SetMessage, &o_SetMessage) ? 1 : 0;
         n += hooks::attach(mSetSystemMessage, &d_SetSystemMessage, &o_SetSystemMessage) ? 1 : 0;
@@ -718,6 +807,8 @@ core::Install s_install{"Battle.Message", &install, 110};
 
 void removal_reset_state()
 {
+    frame::cancel_label("Battle.HitCount");
+    frame::cancel_label("Battle.DamageDisplay");
     // Battle start: a missed postfix can never silence the next battle.
     g_battle_end_cleanup = false;
     g_spoken_this_frame.clear();

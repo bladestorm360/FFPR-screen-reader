@@ -1,0 +1,9 @@
+1803b7760	AbilityUseContentListController.public void UpdateView() { }
+1803b64a0	AbilityUseContentListController.private IEnumerator PlayUseAnimation(ItemTargetSelectContentController content, bool isResuscitation, int id) { }
+1803b6c00	AbilityUseContentListController.private void SingleUpdate() { }
+1807c6910	ItemTargetSelectContentController.public void UpdateView(OwnedCharacterData data) { }
+1807c65a0	ItemTargetSelectContentController.public void SetUseItemAnime() { }
+1807c6500	ItemTargetSelectContentController.public IEnumerator PlayUseAnimation(bool isResuscitation) { }
+1807cc6e0	ItemUseController.public void UpdateView() { }
+1807cc820	ItemUseController.private void UseConsumptionFunction() { }
+1807c9ee0	ItemUseController.private IEnumerator PlayUseAnimation(ItemTargetSelectContentController content, bool isResuscitation, Action endCall) { }

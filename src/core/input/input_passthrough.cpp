@@ -150,6 +150,9 @@ bool postfix(bool result, F&& sdl)
 bool d_GetKeyDown(void* self, int32_t type, const void* mi)
 {
     const bool r = o_GetKeyDown(self, type, mi);
+    if (queries::is("ReviewBuffer.IsResults") && type >= kActionUp && type <= kActionRight &&
+        (key_held(Key::UpArrow) || key_held(Key::DownArrow) || key_held(Key::LeftArrow) || key_held(Key::RightArrow) ||
+         key_held(Key::W) || key_held(Key::S) || key_held(Key::A) || key_held(Key::D))) return false;
     return hooks::guarded_r("InputPassthrough.GetKeyDown", r, [&] { return postfix(r, [&] { return sdl_key_down(type); }); });
 }
 
@@ -168,6 +171,11 @@ bool d_GetKeyUp(void* self, int32_t type, const void* mi)
 bool d_GetAnyKey(void* self, const void* mi)
 {
     const bool r = o_GetAnyKey(self, mi);
+    // Reviewing results must not also dismiss the native phase via its AnyKey branch.
+    if (queries::is("ReviewBuffer.IsResults") &&
+        (key_pressed(Key::I) || key_pressed(Key::L) || key_pressed(Key::UpArrow) || key_pressed(Key::DownArrow) ||
+         key_pressed(Key::LeftArrow) || key_pressed(Key::RightArrow) || key_pressed(Key::W) || key_pressed(Key::S) ||
+         key_pressed(Key::A) || key_pressed(Key::D))) return false;
     return hooks::guarded_r("InputPassthrough.GetAnyKey", r, [&] {
         return postfix(r, [] {
             // Any button held that the router did not consume.

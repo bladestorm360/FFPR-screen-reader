@@ -6,6 +6,20 @@ directly: every key and button runs a named action (`actions::run`), and every c
 reads a named query (`queries::is` / `queries::text`). An area that implements a feature defines
 the exact name below. An undefined action logs "not available"; an undefined query reads false.
 
+## Shared audit additions, October 11
+
+Battle: T reads the active turn, H the active member's rendered statistics, and 1–9 the
+visible party rows. Enemy HP's optional Numbers/Percentage/Hidden modes remain on F5.
+Controller mod mode: North (Y/Triangle) reads the turn; shoulders review party members.
+
+Results: Up/Down review current lines; Left/Right first/last; I or L reads current details.
+Controller mod mode: West (X/Square) reads details; shoulders review lines. Status retains
+its grouped arrow/Shift/Ctrl review and native page controls. No keyboard mod mode exists.
+
+F8 settings opens on the field: select a category and then a setting. Escape/B returns to
+categories and closes from the root; F8 closes directly. F1/F3 read actual native changes
+after game input, including loaded encounter state and the world-map speed restriction.
+
 ## How a key is dispatched (each frame)
 
 1. Gamepad and keyboard are polled. The keyboard is read only while the game window has the
@@ -64,7 +78,7 @@ Checked in this order:
 | `]` | `Mod.CycleNext` | Field |
 | Shift+`]` | `Mod.CycleNextCategory` | Field |
 | `\` | `NavigationTargetTracker.MarkEntity`, then `Mod.RestartEntityBeacon` (AudioBeacons on) or `Mod.AnnounceCurrentEntity` | Field |
-| Shift+`\` | `Mod.TogglePathfindingFilter` | Field |
+| Shift+`\` | `Mod.TogglePathfindingFilter` (cycles Current floor / Current map with vehicles / Current map) | Field |
 | Ctrl+`\` | `Mod.ToggleToLayerFilter` | Field |
 | `` ` `` | `Mod.ForceEntityRescan` | Field |
 | J | `Mod.CyclePrevious` | Field |
@@ -150,7 +164,7 @@ Labels follow the pad family (A/B/X/Y, Cross/Circle/Square/Triangle, Nintendo).
 | Right stick up / down / left / right | `Mod.CyclePrevious` / `Mod.CycleNext` / `Mod.CyclePreviousCategory` / `Mod.CycleNextCategory` | up: `GlobalHotkeyHandler.HandleItemDetailsKey`; down: `KeyHelpReader.AnnounceKeyHelp`; left: `UsableByAnnouncer.AnnounceForCurrentContext` |
 | Left trigger | `WaypointHandler.PathfindToCurrentWaypoint` if `NavigationTargetTracker.IsWaypoint`; `Mod.RestartEntityBeacon` / `Mod.AnnounceCurrentEntity` if `NavigationTargetTracker.IsEntity`; else "No target selected" | game (Page Up) |
 | L3 (released alone) | Stick Click Normalization off: `Mod.ToggleAudioBeacons`; on: a one-frame L3 press to the game | game |
-| R3 (released alone) | off: `Mod.TogglePathfindingFilter`; on: one-frame R3 press to the game | game |
+| R3 (released alone) | off: `Mod.TogglePathfindingFilter` (cycles the three filter modes); on: one-frame R3 press to the game | game |
 | L3 + R3 | `Mod.ToggleStickClickNormalization` | game |
 | LB / RB / RT | game | game |
 | Puzzle (`PuzzleGameState.IsActive`) | right stick up: `PuzzlePatches.AnnouncePosition`; nothing else | same |

@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 #include "menus_internal.h"
+#include "../displayed_ui.h"
 #include "../core.h"
 #include "../hooks.h"
 #include "../frame.h"
@@ -147,17 +148,8 @@ bool announce_item_use_target(void* content, int index, int count)
     void* character = ref::rd<void*>(content, fItemTargetCurrentData);
     if (!character) return false;
 
-    std::wstring name = detail::character_name(character);
-    if (detail::blank(name)) return false;
-
-    std::wstring announcement = name;
-    detail::Vitals v = detail::character_vitals(character);
-    if (v.has_parameter) {
-        announcement += L", " + TF(L"HP {0}/{1}", {text::num(v.hp), text::num(v.max_hp)});
-        if (game::flags().has_mp)
-            announcement += L", " + TF(L"MP {0}/{1}", {text::num(v.mp), text::num(v.max_mp)});
-        if (!v.conditions.empty()) announcement += L", " + detail::join_all(v.conditions, L", ");
-    }
+    std::wstring announcement = displayed::target(content);
+    if (announcement.empty()) return false;
 
     detail::clear_other_menu_states("Item");
     set_item_menu_active(true);

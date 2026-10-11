@@ -9,6 +9,7 @@
 #include "../modtext.h"
 #include "../text.h"
 #include "../unity.h"
+#include "../displayed_ui.h"
 #include "../system/cursor_event.h"
 
 namespace ffpr::menus {
@@ -73,7 +74,7 @@ std::wstring read_character_information(void* slot)
     std::wstring character_name, job_name, level, current_hp, max_hp, current_mp, max_mp;
 
     for_each_text_in_children(slot, [&](void* t) {
-        std::wstring content = text::trim(unity::ui_text(t));
+        std::wstring content = displayed::text(t);
         if (content.empty()) return;
         std::wstring n = text::lower(unity::name(t));
         auto has = [&](const wchar_t* part) { return n.find(part) != std::wstring::npos; };

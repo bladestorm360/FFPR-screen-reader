@@ -23,8 +23,6 @@ void d_StartPreeMptiveMes(void* self, const void* mi)
     hooks::guarded("BattleController.StartPreeMptiveMes", [&] {
         // Mark that we're in battle (enables state clearing on battle end); fires BattleStart.
         on_battle_start();
-        // Reset the battle-result state for this new battle.
-        result_reset_state();
     });
 }
 

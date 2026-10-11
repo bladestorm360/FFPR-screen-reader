@@ -4,6 +4,7 @@
 // MenuFocusAnnouncer is not a poll and not a timer: a request starts from a state-entry hook,
 // runs at most MaxSettleFrames (6) frames and stops the frame the read succeeds (a bounded read
 // that starts from an event, as the shared rules allow).
+#include "../../core/ui/preferences.h"
 #include "ff5_internal.h"
 
 #include <cstdint>
@@ -97,7 +98,7 @@ std::wstring message_from(void* il2cpp_string_id)
     return message(ref::str(il2cpp_string_id));
 }
 
-bool auto_detail() { return settings::get_bool("AutoDetail", true); }
+bool auto_detail() { return ui::prefs::auto_detail_enabled(); }
 
 bool blank(const std::wstring& s) { return text::is_blank(s); }
 

@@ -1,0 +1,9 @@
+{
+  "_comment": "Titles the game's map master gets wrong or lacks, by map id; resolved by src/core/field/map_names.cpp override_title and taking precedence over the master's title and floor: a string is a game message key; {\"text\": mod text key}; {\"owner\": baked NPC name} = N's House; {\"room\": baked NPC name} = N's Room; {\"entity\": baked object name}; {\"item\": item message} = I Room; a list joins its parts. FF1's churches have no map_title and floor 2, so the mod said 'Cornelia 2F' (user, 2026-10-11): each holds the priest (神父) whose dialogue is MSG_MAP0A01_06 'It will cost (KINGAKU) gil to resurrect (SITAI). Proceed?'. Melmond's church was destroyed by the vampire and has no priest. Evidence per entry: docs/MAP_LABELS.md.",
+  "9": {"text": "Church"},
+  "18": {"text": "Church"},
+  "27": {"text": "Church"},
+  "46": {"text": "Church"},
+  "55": {"text": "Church"},
+  "65": {"text": "Church"}
+}

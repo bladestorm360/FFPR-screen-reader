@@ -15,6 +15,7 @@
 #include "shop.h"
 #include "shop_internal.h"
 #include "../core.h"
+#include "../displayed_ui.h"
 #include "../hooks.h"
 #include "../log.h"
 #include "../modtext.h"
@@ -45,24 +46,10 @@ ref::Field  fDownImage{kCharaView, "stateDownImage"};
 ref::Field  fEquippedImage{kCharaView, "stateEquippedImage"};
 ref::Field  fEquippedText{kCharaView, "stateEquippedText"};
 ref::Field  fImpossibleText{kCharaView, "stateImpossibleText"};
-ref::Class  kBehaviour{"UnityEngine", "Behaviour"};
-ref::Method mGetEnabled{kBehaviour, "get_enabled", 0};
 
 constexpr int kSlots = 9;
 
 /// A UI component is drawn: alive, its object active in the hierarchy, the component enabled.
-bool drawn(void* component)
-{
-    return unity::alive(component) && unity::active_in_hierarchy(component) && ref::call<bool>(mGetEnabled, component);
-}
-
-/// The rendered text of a Text component, "" when it is not drawn or blank.
-std::wstring drawn_text(void* text_component)
-{
-    if (!drawn(text_component)) return {};
-    return text::trim(strip_icon_markup(unity::ui_text(text_component)));
-}
-
 /// A bare symbol ("E", "-") is read as the game's text only when it has a letter or digit.
 bool has_letter_or_digit(const std::wstring& s)
 {
@@ -100,14 +87,14 @@ void announce_slot(int slot)
         if (!view) return;
 
         std::vector<std::wstring> parts;
-        std::wstring name = drawn_text(ref::rd<void*>(view, fNameText));
+        std::wstring name = displayed::text(ref::rd<void*>(view, fNameText));
         if (!name.empty()) parts.push_back(name);
 
-        const std::wstring impossible = drawn_text(ref::rd<void*>(view, fImpossibleText));
-        const bool up = drawn(ref::rd<void*>(view, fUpImage));
-        const bool down = drawn(ref::rd<void*>(view, fDownImage));
-        const std::wstring equipped_text = drawn_text(ref::rd<void*>(view, fEquippedText));
-        const bool equipped = !equipped_text.empty() || drawn(ref::rd<void*>(view, fEquippedImage));
+        const std::wstring impossible = displayed::text(ref::rd<void*>(view, fImpossibleText));
+        const bool up = displayed::image_visible(ref::rd<void*>(view, fUpImage));
+        const bool down = displayed::image_visible(ref::rd<void*>(view, fDownImage));
+        const std::wstring equipped_text = displayed::text(ref::rd<void*>(view, fEquippedText));
+        const bool equipped = !equipped_text.empty() || displayed::image_visible(ref::rd<void*>(view, fEquippedImage));
 
         if (!impossible.empty()) parts.push_back(has_letter_or_digit(impossible) ? impossible : T(L"Cannot equip"));
         else if (up) parts.push_back(T(L"Stronger"));

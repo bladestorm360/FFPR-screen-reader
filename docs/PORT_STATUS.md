@@ -1,5 +1,9 @@
 # Port status
 
+Current shared audit: [AUDIT_2026_10.md](AUDIT_2026_10.md). Its renderer-backed readers,
+native results phases, map-state projection, thread fixes and controls supersede historical
+parity findings below. Implemented/offline-verified behavior still requires user gameplay testing.
+
 Areas marked FINISHED are complete in the repo. Every core area is finished.
 FF2–FF5 game modules: see the end of this file.
 
@@ -561,3 +565,170 @@ Built, smoke-tested and deployed; not tested in game. Re-test: `TESTING.md`, "Th
     FF2 has none (no switch or ordering puzzles in its dumps). 22 new mod-text keys, the
     port's translations.
 23. **Waypoints** route through the same `find_path_to`, so they are on the baked router too.
+
+## Fourth batch (2026-10-11): routes kept, pinpoint goals, facing, the beacon on the route, map labels
+
+Built, smoke-tested, deployed to FF1 and FF3-FF6 (FF2 was running: `deploy.bat ff2` is still
+due). From the user's first baked-map session in FF2.
+
+24. **A route is planned once and followed** (user: "the route should be built once and then
+    followed to completion"; a re-plan four steps in said "East 4, North 1, East 2", straight
+    back). `baked_nav` keeps the active route per (map, target cell); asking again from any
+    cell on it speaks the rest from there; a new target, another map or a cell off the route
+    plans afresh. Cause of the flip: a villager standing in the street at planning time was a
+    live blocker and sent the route thirty steps round the block. Now a chest is a wall but an
+    NPC is walked round only when that costs at most six extra steps (`kMaxNpcDetour`);
+    otherwise the route goes straight and the player waits a moment. Log lines "[BakedNav]
+    route planned / route kept / no route" give start, target, map, steps and blockers.
+25. **"No path" in Josef's house (Salamand).** The sub-map names its only collision layer
+    "GroundObject"; `bake_maps.py` accepted only "...Collision" and baked the house with no
+    open cell. FF3 had 13 such maps. `collision_rows` now takes any layer of the collision
+    asset by its Bottom/Ground/Upper prefix; all six games re-baked; `route_check.cpp` routes
+    the door to Nelly (14 steps). The adventurer the user doubted is baked there.
+26. **Turn penalty** (BDFFHD's `navgrid.cpp` model, the user's choice): the A* state is the
+    cell plus the direction it was entered by; a step costs 10, a turn 15. An open room is
+    crossed in two legs, never "West 1, South 1, West 1, South 1"; the Salamand-Semitt Falls
+    canoe route fell to ten legs. `tools/route_check.cpp` asserts the two-leg crossing.
+27. **Where a route ends** (`baked_router.h` `GoalKind`, `field_api.h` `TargetKind`; user:
+    pinpoint, never "within 1 step"). Interact (NPC, chest, switch): the open 4-neighbours the
+    NPC accepts (`accept_action_direction`: bit 1 north side, 2 east, 4 south, 8 west - FF2
+    `IsAcceptActionDirection` 0x180C4AC90 decompiled read-only, and the dumps place the
+    excluded side against a wall), the counter relay first; the route ends with "face North"
+    unless the last leg already points that way, and a zero-step route says only "face North"
+    instead of "No movement needed". Transition (exit, town tile, warp pad): the exit's own
+    cells and its sibling tiles (same destination and point within two cells: a town's arc of
+    three), and on a world map only those whose terrain attribute the current transport crosses
+    (`transportation_group.txt`): Salamand's side tiles (123,34) and (125,34) and Altair's
+    (90,117), (92,117) stand on wall attribute 19 and were sending the player to a corner
+    ("North 1" into a wall); the entrance tiles (124,33) and (91,116) are plain ground. Spot
+    (waypoint, vehicle, save point): the cell itself. Infer (events) by what is baked there.
+    Callers pass the kind (`entity_nav.cpp` by entity kind, the beacon by category, waypoints
+    Spot). The eight-neighbour goal set is gone. New mod text "face {0}" (12 languages).
+28. **The beacon follows the route** (the FFXII mod's `audio_beacon.cpp` model, user request).
+    `baked_nav::follow` gives the next corner of the active route from the player's cell,
+    planning silently when there is none or the player left it (a failed plan retried after
+    two seconds); `audio_loops.cpp` pans and paces the ping toward that corner, moves on at
+    the corner and goes quiet on the last cell. The spoken route and the beacon share one plan.
+    A map the baked data does not know keeps the old crow-flies ping with the Quick path test.
+29. **Map labels by inference** (user rules, 2026-10-11; `docs/MAP_LABELS.md` has every
+    entry's evidence). `data/<game>/map_titles.json` values are now a message key, `{"text"}`,
+    `{"owner"}` ("N's House"), `{"room"}`, `{"entity"}`, `{"item"}` ("I Room") or a list
+    (`map_names.cpp` `override_title`); an authored entry now wins over the master's title
+    too, for maps the master titles wrongly. What the NPCs say decides a building's function
+    before any name (user), the whole town's talk included: FF2 Poft's Cid room is the pub
+    ("He's probably over in the pub"), FF3 Amur's four-old-men room the tavern, FF4 Troia's
+    sickroom and the Dwarven Castle's Cid room infirmaries (nurse, doctor, "sleeping in the
+    infirmary"), FF6 Figaro's hall where Edgar speaks as King the throne room; FF1's six
+    churches were "2F" (the priest's "It will cost N gil to resurrect" line names them). FF1
+    6 labels, FF2 27 (churches, Fynn's pub and Scott's room, Castle Fynn's throne room,
+    Josef's and the Masked Figure's houses, the Dreadnought's prison and engine room, the Pass
+    room, Altair's revival chamber ...), FF3 24, FF4 5, FF5 18, FF6 43. 13 mod-text keys added
+    with the assistant's translations. FF2's
+    `translation.json` 協会 (the devs' homophone of 教会) reads "Church", was "Association".
+31. **Every tile object was baked one row too far south** (user, 2026-10-11: "Item Shop Clerk
+    2 ... No path"; the log showed the live clerks at row 6 and the bake at row 7, FF1's Chaos
+    Shrine and Caravan exits the same). Tiled anchors a tile object (one with a gid: NPCs,
+    chests, exits, arrival points, relays, switches) at its BOTTOM-left corner and a rectangle
+    object at its top-left; `dump_map_objects.py` stored `y / 16` for both. `bake_maps.py`
+    `tile_row` now takes `(y - h) / 16` for tile objects (the dumps are unchanged, `route.py`
+    applies the same correction), all six games are re-baked, and every puzzle step cell moved
+    up one row (they were authored from the same dumps). Consequences: a shopkeeper's live
+    position now matches its baked tile, so the counter relay is found again; a town's exit
+    arc sits one row higher than item 27 said (Salamand (123,33) (124,32) (125,33), all on the
+    arc attribute 20, so all three are goals and the wall tiles below them never are);
+    `route_check.cpp` derives its cells from the baked objects instead of hardcoding rows.
+32. **Through another floor** (user, 2026-10-11: Kashuan Keep's "Exit to 2F" said "No path"
+    from the entrance; the way is the sealed door into the other 1F part, across it and back
+    in at the upper door). When the direct route on a sub-map fails, `find` runs the
+    cross-map search (`find_across`, Dijkstra over exits and warps) with the same goal cells
+    and speaks the first leg ending at the exit to take ("North 20, take the exit to Kashuan
+    Keep 1F"); the player asks again on the other side. Offline, `route.py` confirms the
+    chain: entrance to door 20 steps, part B 34 steps, upper arrival to the 2F stairs 41.
+33. **Why a route is blocked** (user). Live obstacles are sorted by what they are
+    (`live_blockers`): chests are walls; a collision entity or collision object active now
+    is a story gate (FF1's bridge before it is built, the keep's door seal, "no entry until
+    after the event"), read through `PropertyEntity.EntityId` against the baked object and
+    its footprint; an NPC that stands still (bake flag 16 off: no move steps) is a wall while
+    it stands there; a wandering NPC is walked round within six steps as before. With no
+    route, `PathInfo.reason` says "Story gated" when the gates alone cut the target off (the
+    cross-map search without them succeeds too), "Blocked by an NPC" when the standing NPCs
+    do, or on a world map "Requires Ship" / "Requires Airship" / "Requires Canoe" naming the
+    cheapest vehicle whose terrain group reaches the target (the game's vehicle name), owned
+    or not. The announce key and waypoints speak the reason instead of "No path".
+34. **Three-way pathfinding filter** (user; `PathfindingFilterMode`, menu enumeration, Shift+\
+    and R3 cycle it, the old on/off value seeds the mode): "Current floor" lists what walking
+    reaches on this sub-map; "Current map with vehicles" also what a vehicle the party has on
+    this map reaches (`find_path_to_quick(..., with_vehicles)`: the parked vehicles' groups
+    join walking as the canoe does); "Current map" lists everything, and item 32 routes the
+    cut-off ones. Six mod-text keys added with the assistant's translations.
+35. **FF1 Cornelia to Pravoka** was never the failure: the log's "no route" was the Caravan
+    at the far north-west; Pravoka routes offline on the walking layer and the terrain
+    attributes alike. The bridge is a live collision entity until it is built: item 33 says
+    "Story gated" for every target beyond it until then.
+36. **Only owned vehicles are named** (user): "Requires Ship" when the party has the ship (an
+    auto-vehicle it owns, or a vehicle parked on this map); "Requires vehicle" otherwise, and
+    the readme says that means a vehicle not owned yet. The filter's reachability test now
+    counts a goal reached when a cell beside it is (the router enters a closed goal cell from
+    its neighbour, and the cached flood was built for another target's goals): the likely
+    reason FF1's Pravoka was filtered out while Cornelia and the Chaos Shrine were not.
+    **Known issues after this session:** the "with vehicles" mode trusts a parked vehicle's
+    whole terrain group; gates and standing NPCs are known on the current floor only, so the
+    cross-map leg can still lead to a closed door on another floor; a wandering NPC is walked
+    through; a map the data lacks keeps the crow-flies beacon; the inferred room labels are
+    the assistant's reading of the dumps (`docs/MAP_LABELS.md`), untested in game; FF1
+    Pravoka's filtering needs a re-test with this build.
+37. **FF1 Matoya's Cave and Pravoka "Requires vehicle" from Cornelia** (user, 2026-10-11,
+    every vehicle owned). The log: `no route: (145,156) L1 -> (161,110) ... 30 gates ...
+    Requires vehicle`. Not the gates (the reason check removes them) and not the walking
+    layer (Transportation01 reaches both: an offline flood from Cornelia reaches (161,111)
+    and (203,143)). The bridge cell (145,145), the only walking cell between Cornelia and the
+    north, carries the opening-credits Event (sc_e_0006: `Branch ScenarioFlag ... ChangeMap
+    [124, 1] sc_e_0006_1`), and the bake made every Event with a ChangeMap in Main a step-on
+    `Warp`, a hazard the router never crosses. `bake_maps.py round_trip`: when the ChangeMap's
+    continuation script, on the destination map, itself runs ChangeMap back to a map id of
+    the origin sub-map, the event is a cutscene and stays a plain Event. All six games are
+    re-baked; the rule keeps 3 FF1 (the bridge, the Ryukahn airship scene, the Mirage Tower
+    window), 3 FF2, 1 FF3, 11 FF4 (the prologue, Mt. Ordeals' entrance, the first camp, Cid),
+    54 FF5 (the pirate-ship swap, the ship sinking, the barrier, tents) and 22 FF6 (Figaro
+    surfacing, levers, "OK lines") events as events; trapdoors, warp pads and "to the world
+    map" script exits stay warps (FF1: 47 step-on). `tools/route_check.cpp` now also takes
+    `data/ff1/maps.bin` (build.bat): the bridge is open and no hazard, the unbuilt bridge's
+    CollisionEntity remains on it (the live story gate), and Cornelia reaches Matoya's Cave
+    in 74 steps and Pravoka in 92. `route.py` `world_types` no longer crashes on FF1's
+    attribute_group.txt (blank rows). Also: the counter-relay rule applies to NPCs only (a
+    chest's link_object_id is its own object id and names no relay).
+38. **The other floors' destinations are listed** (user, 2026-10-11: "current map should
+    include all dungeon floors, town floors etc"). Under the "Current map" filter the list
+    appends, after the live entities, the talk targets, chests, save points and outward exits
+    of every sub-map connected to this one through exits and warps without crossing a world
+    map (`baked_nav::connected_objects`, breadth-first from here; `entity_scanner.cpp`
+    `build_remote`, once per map). Named as the live list names them: chests by their baked
+    content id (`bake_maps.py` packs it above the flag bits of `d`) through the game's item
+    names, NPCs through the translator and numbered within their floor, exits "Exit to X"
+    only when X lies outside the group; spoken "{name} ({floor}) - {type}" without steps or
+    direction. Their live state is unknown from here: an opened chest or a story-hidden NPC is
+    still listed, and the game's conditional object groups ("ev_*" variants) fold into one
+    entry per name and cell. The directions key routes to one through
+    `baked_nav::route_to_goal` (the cross-map Dijkstra; the first leg ends ", take the exit
+    to X"); the beacon follows that leg (`follow_goal`). Nothing is added on a world map.
+39. **A route continues after the transition** (user: "the player is told which transition
+    to take, but then loses the destination"). A route that goes on past this floor (another
+    floor's entry, or a target cut off on this floor) is remembered
+    (`baked_nav::remember_destination`; `PathInfo::next_map_id` says a route goes on). 0.8 s
+    after "Entering X", `continue_pending` speaks "<name>: <the next leg from where the player
+    arrived>" (`entity_nav.cpp` subscribes to MapChanged), and the scanner re-selects the
+    destination on the new floor (`select_pending_destination`: a live entity now, or still
+    another floor's entry) so the directions key and the beacon keep leading to it. Cleared
+    when a leg ends at the destination, when nothing reaches it ("<name>: Story gated" or
+    "No path"), or when another entity is selected (cycling, a category change). A puzzle
+    guide step and this may both speak after a map change; both queue after the map name.
+    **Known issues after this session:** the other floors' entries ignore story state
+    (opened chests listed, variants folded); their NPC "scenery" test is the bake's
+    script-or-action flag, not the game's CanAction; a big town or dungeon gives a long list
+    (the categories narrow it); a one-way story warp that has already fired is still a hazard
+    (the live Event's state is not consulted); FF2's copy of this build waits for the game to
+    close (`deploy.bat ff2`).
+30. **The game's searcher** is still called only when the baked data does not know a map
+    (`navigation.cpp` `find_path`, with `search_target_and_neighbours`,
+    `search_with_passages_open` and `breadcrumb_chain.cpp`). The user will retire it once the
+    beacon is confirmed in game; nothing else depends on `MapRouteSearcher`.

@@ -1,3 +1,4 @@
+#include "../../core/displayed_ui.h"
 // Ports FF6 Patches/StatusDetailsPatches.cs (StatusWindowController_SelectContent_Patch: the
 // Status menu's character list, read through Menus/CharacterSelectionReader.cs).
 //
@@ -57,22 +58,13 @@ void on_select_content(void* contents, int index)
     ffpr::system::clear_other_menu_states("Status");
     menu_state::set_active(menu_state::STATUS_MENU, true);
 
-    std::wstring name = status::character_name(data);
-    if (text::is_blank(name)) return;
-    std::wstring announcement = name;
-
-    std::wstring job = status::current_job_name(data);
+    void* view = displayed::field(content, "view");
+    std::wstring announcement = displayed::target(content);
+    if (announcement.empty()) return;
+    auto job = displayed::text_field(view, "jobNameText");
+    auto level = displayed::pair(view, "levelLabelText", "levelValueText");
     if (!job.empty()) announcement += L", " + job;
-
-    if (void* param = status::character_parameter(data)) {
-        int level = status::param_level_or_base(param);
-        if (level > 0) announcement += L", " + TF(L"Level {0}", {text::num(level)});
-        announcement += L", " + TF(L"HP {0}/{1}", {text::num(status::param_current_hp(param)),
-                                                   text::num(status::param_max_hp(param))});
-        if (game::flags().has_mp)
-            announcement += L", " + TF(L"MP {0}/{1}", {text::num(ref::rd<int32_t>(param, fParamCurrentMp)),
-                                                       text::num(ref::call<int32_t>(mConfirmedMaxMp, param))});
-    }
+    if (!level.empty()) announcement += L", " + level;
 
     // FF6: the row of the slot (CharacterSelectionReader, corpsList[slotIndex]).
     announcement += row_suffix(index);

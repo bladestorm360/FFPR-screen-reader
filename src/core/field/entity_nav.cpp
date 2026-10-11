@@ -13,12 +13,14 @@
 // Mod.CyclePreviousCategory, Mod.ResetToAllCategory, Mod.AnnounceCurrentMap,
 // Settings.Changed.PathfindingFilter, Settings.Changed.MapExitFilter,
 // Settings.Changed.ToLayerFilter.
+#include "baked_nav.h"
 #include "field_api.h"
 #include "field_internal.h"
 #include "map_names.h"
 #include "object_cache.h"
 #include "scene_events.h"
 #include "../core.h"
+#include "../frame.h"
 #include "../hooks.h"
 #include "../log.h"
 #include "../modtext.h"
@@ -106,6 +108,20 @@ std::wstring format_current_entity()
     return s;
 }
 
+/// Where a route to this entity ends (field_api.h TargetKind): beside and facing an NPC or
+/// chest, on an exit, on a vehicle or save point; an event by what is baked at its cell.
+TargetKind target_kind_of(const Entity& e)
+{
+    switch (e.kind) {
+    case Kind::NPC:
+    case Kind::TreasureChest: return TargetKind::Interact;
+    case Kind::MapExit: return TargetKind::Transition;
+    case Kind::SavePoint:
+    case Kind::Vehicle: return TargetKind::Spot;
+    default: return TargetKind::Infer;
+    }
+}
+
 /// AnnounceCurrentEntity: the path to the selected entity.
 void announce_current_entity()
 {
@@ -124,8 +140,31 @@ void announce_current_entity()
         speak(T(L"Cannot determine directions"));
         return;
     }
-    PathInfo p = find_path_to(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player);
-    speak(p.success && !p.description.empty() ? p.description : T(L"No path"));
+    const TargetKind kind = target_kind_of(*e);
+    PathInfo p;
+    if (e->remote()) {
+        // Another floor (user, 2026-10-11): the first leg, and the destination is remembered so
+        // that the next leg follows the transition (baked_nav::continue_pending).
+        baked_nav::MapGoal goal;
+        goal.map_id = e->remote_map_id;
+        goal.cell = baked_route::Cell{e->cell_layer, e->cell_x, e->cell_y};
+        baked_nav::route_to_goal(ctx.map_handle, ctx.field_player, goal, kind, e->display_name() + L" (" + e->floor_name + L")", p);
+    } else {
+        p = find_path_to(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player, kind);
+        // Cut off on this floor and routed through another one: remembered the same way.
+        baked_route::Cell c;
+        if (p.success && p.next_map_id > 0 && baked_nav::cell_at(ctx.map_handle, e->position(), c)) {
+            baked_nav::MapGoal goal;
+            goal.map_id = current_map_id();
+            goal.cell = c;
+            baked_nav::remember_destination(goal, kind, e->display_name());
+        } else {
+            baked_nav::clear_pending();
+        }
+    }
+    // No route: the reason when the router knows it ("Story gated", "Blocked by an NPC",
+    // "Requires Ship"; user, 2026-10-11), else "No path".
+    speak(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")));
 }
 
 void announce_entity_only()
@@ -150,6 +189,7 @@ void cycle(bool next)
     refresh_entities_if_needed();
     if (next) scanner::next_entity();
     else scanner::previous_entity();
+    baked_nav::clear_pending();   // a new target: a route that was going on to another floor is dropped
 
     if (scanner::no_reachable_entities()) {
         speak(T(L"No reachable entities"));
@@ -167,6 +207,7 @@ Category g_current_category = Category::All;
 void announce_category_change()
 {
     std::wstring category_text = TF(L"Category: {0}", {category_name(g_current_category)});
+    baked_nav::clear_pending();   // the selection moves to the category's first entity
 
     // Refresh so the new category's nearest entity is the current selection.
     refresh_entities_if_needed();
@@ -281,6 +322,17 @@ int install()
     actions::define("Settings.Changed.MapExitFilter", [] { scanner::reapply_filter(); });
     actions::define("Settings.Changed.ToLayerFilter", [] { scanner::set_filter_to_layer(true); });
 
+    // A route that goes on past a transition (user, 2026-10-11): 0.8 s after "Entering X", the
+    // next leg to the remembered destination from where the player arrived.
+    events::on(events::Kind::MapChanged, [] {
+        frame::after_seconds(0.8, [] { hooks::guarded("BakedNav.ContinuePending", [] { baked_nav::continue_pending(); }); },
+                             "BakedNav.ContinuePending");
+    });
+    events::on(events::Kind::BattleStart, [] {
+        frame::cancel_label("BakedNav.ContinuePending");
+        baked_nav::invalidate();
+    });
+
     int n = hooks::attach(mInternalSceneLoaded, &d_SceneLoaded, &o_SceneLoaded) ? 1 : 0;
     if (!n) LOGF("[Field] SceneManager.Internal_SceneLoaded not hooked: no scene-loaded event");
     return n;
@@ -307,6 +359,10 @@ Target selected()
         t.name = e->name;
         t.identity = e->game ? e->game : static_cast<const void*>(e.get());
         t.category = static_cast<int>(e->category());
+        t.remote_map_id = e->remote_map_id;
+        t.cell_layer = e->cell_layer;
+        t.cell_x = e->cell_x;
+        t.cell_y = e->cell_y;
     });
     return t;
 }

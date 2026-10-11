@@ -17,9 +17,14 @@ namespace field {
 struct PathInfo {
     bool success = false;
     std::wstring error;
+    std::wstring reason;          // spoken when there is no route and the router knows why:
+                                  // "Requires Ship", "Story gated", "Blocked by an NPC"
     int step_count = 0;
     std::wstring description;
     std::vector<unity::Vec3> world_path;
+    int next_map_id = 0;          // the route continues on this map after its last leg ("take
+                                  // the exit to ..."): the target is cut off on this floor or
+                                  // lies on another one (baked_nav); 0 = the route ends at the target
 };
 
 /// FieldNavigationHelper.WallDistances (tiles to the nearest wall; -1 = none in range)
@@ -34,6 +39,10 @@ struct Target {
     std::wstring name;            // as announced
     const void* identity = nullptr;   // the game object, as an identity only
     int category = 0;             // the scanner's category index
+    int remote_map_id = 0;        // on another floor of this map (the baked data; user,
+                                  // 2026-10-11): that floor's map id, 0 = on this map. The
+                                  // position is then meaningless; route by the cell below.
+    int cell_layer = 1, cell_x = 0, cell_y = 0;
 };
 
 // --- player and map ---------------------------------------------------------------------
@@ -48,7 +57,13 @@ int current_map_id();
 std::vector<unity::Vec3> map_exit_positions();
 
 // --- FieldNavigationHelper ---------------------------------------------------------------
-PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map_handle, void* player = nullptr);
+/// What a route's target is, for where the route ends (baked_router.h GoalKind): an
+/// interaction (NPC, chest, switch) is reached from a neighbouring cell and then faced; a
+/// transition (exit, town tile, warp pad) is stepped on; a spot (waypoint, vehicle, save point)
+/// is stood on. Infer decides by what is baked at the target cell.
+enum class TargetKind { Infer = 0, Interact, Transition, Spot };
+PathInfo find_path_to(unity::Vec3 from, unity::Vec3 to, void* map_handle, void* player = nullptr,
+                      TargetKind kind = TargetKind::Infer);
 bool is_direction_near_map_exit(unity::Vec3 player_pos, unity::Vec3 direction,
                                 const std::vector<unity::Vec3>& exits);
 std::wstring walkable_directions(void* player, void* map_handle);

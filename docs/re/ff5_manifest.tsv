@@ -1,0 +1,19 @@
+1804aede0	Serial.FF5.UI.KeyInput.ResultCharacterListController public void SetData(BattleResultData data) { }
+1804b0e60	Serial.FF5.UI.KeyInput.ResultStatusUpController public void SetData(BattleResultData.BattleResultCharacterData targetData) { }
+180ebce10	Last.InGame.Effects.EncountEffectController public void ShowDisplay() { }
+1804ee630	Last.Management.SubSceneManagerMainGame public void ChangeState(SubSceneManagerMainGame.State state) { }
+18042bfa0	Last.UI.KeyInput.BattleCommandSelectController public void SetCommandData(OwnedCharacterData data, IEnumerable<OwnedCharacterData> targets, IEnumerable<OwnedItemData> items) { }
+180444e20	Last.UI.KeyInput.BattlePlayerInfomationController public void UpdateView(IEnumerable<BattlePlayerData> players, bool isTarget) { }
+180a1bf60	Last.UI.KeyInput.ItemTargetSelectContentController public void UpdateView(OwnedCharacterData data) { }
+180a1d170	Last.UI.KeyInput.ItemTargetSelectContentView private void UseHp() { }
+180a1d520	Last.UI.KeyInput.ItemTargetSelectContentView private void UseMp() { }
+1807d6240	Last.UI.KeyInput.ResultMenuController public void Show(BattleResultData data, bool isReverse) { }
+1802715a0	Last.UI.KeyInput.ResultMenuController public void UpdateView() { }
+1807d5ce0	Last.UI.KeyInput.ResultMenuController private void ShowPointsInit() { }
+1807d5a60	Last.UI.KeyInput.ResultMenuController private void ShowLevelUpAbilitysInit() { }
+1807d6130	Last.UI.KeyInput.ResultMenuController private void ShowStatusUpInit() { }
+1807d5860	Last.UI.KeyInput.ResultMenuController private void ShowGetItemsInit() { }
+1807d5740	Last.UI.KeyInput.ResultMenuController private void ShowGetAbilitysInit() { }
+1807d9150	Last.UI.KeyInput.ResultSkillController public void Show(BattleResultData data, bool isNext, Action onComplite) { }
+1807d8620	Last.UI.KeyInput.ResultSkillController private void SetLevelUpList(List<BattleResultData.BattleResultCharacterData> list) { }
+1807d9c40	Last.UI.KeyInput.ResultStatusContentController public void SetData(int beforValue, int afterValue) { }

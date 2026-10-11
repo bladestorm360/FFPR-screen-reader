@@ -13746,5 +13746,344 @@
     "ru": "Пройдите через скрытую дверь",
     "th": "ผ่านประตูลับ",
     "pt": "Passe pela porta escondida"
+  },
+  "face {0}": {
+    "en": "face {0}",
+    "ja": "{0}を向く",
+    "fr": "tournez-vous vers le {0}",
+    "it": "girati verso {0}",
+    "de": "nach {0} blicken",
+    "es": "mira al {0}",
+    "ko": "{0}쪽을 향하세요",
+    "zht": "面向{0}",
+    "zhc": "面向{0}",
+    "ru": "повернитесь на {0}",
+    "th": "หันหน้าไปทาง{0}",
+    "pt": "vire-se para o {0}"
+  },
+  "{0}'s House": {
+    "en": "{0}'s House",
+    "ja": "{0}の家",
+    "fr": "Maison de {0}",
+    "it": "Casa di {0}",
+    "de": "Haus von {0}",
+    "es": "Casa de {0}",
+    "ko": "{0}의 집",
+    "zht": "{0}的家",
+    "zhc": "{0}的家",
+    "ru": "Дом {0}",
+    "th": "บ้านของ {0}",
+    "pt": "Casa de {0}"
+  },
+  "{0}'s Room": {
+    "en": "{0}'s Room",
+    "ja": "{0}の部屋",
+    "fr": "Chambre de {0}",
+    "it": "Stanza di {0}",
+    "de": "Zimmer von {0}",
+    "es": "Habitación de {0}",
+    "ko": "{0}의 방",
+    "zht": "{0}的房間",
+    "zhc": "{0}的房间",
+    "ru": "Комната {0}",
+    "th": "ห้องของ {0}",
+    "pt": "Quarto de {0}"
+  },
+  "{0} Room": {
+    "en": "{0} Room",
+    "ja": "{0}の部屋",
+    "fr": "Salle : {0}",
+    "it": "Sala: {0}",
+    "de": "Raum: {0}",
+    "es": "Sala: {0}",
+    "ko": "{0} 방",
+    "zht": "{0}房間",
+    "zhc": "{0}房间",
+    "ru": "Комната: {0}",
+    "th": "ห้อง {0}",
+    "pt": "Sala: {0}"
+  },
+  "Church": {
+    "en": "Church",
+    "ja": "教会",
+    "fr": "Église",
+    "it": "Chiesa",
+    "de": "Kirche",
+    "es": "Iglesia",
+    "ko": "교회",
+    "zht": "教堂",
+    "zhc": "教堂",
+    "ru": "Церковь",
+    "th": "โบสถ์",
+    "pt": "Igreja"
+  },
+  "Pub": {
+    "en": "Pub",
+    "ja": "酒場",
+    "fr": "Taverne",
+    "it": "Taverna",
+    "de": "Kneipe",
+    "es": "Taberna",
+    "ko": "술집",
+    "zht": "酒館",
+    "zhc": "酒馆",
+    "ru": "Таверна",
+    "th": "ผับ",
+    "pt": "Taverna"
+  },
+  "Throne Room": {
+    "en": "Throne Room",
+    "ja": "玉座の間",
+    "fr": "Salle du trône",
+    "it": "Sala del trono",
+    "de": "Thronsaal",
+    "es": "Sala del trono",
+    "ko": "왕좌의 방",
+    "zht": "王座廳",
+    "zhc": "王座厅",
+    "ru": "Тронный зал",
+    "th": "ห้องบัลลังก์",
+    "pt": "Sala do trono"
+  },
+  "House": {
+    "en": "House",
+    "ja": "民家",
+    "fr": "Maison",
+    "it": "Casa",
+    "de": "Haus",
+    "es": "Casa",
+    "ko": "민가",
+    "zht": "民宅",
+    "zhc": "民宅",
+    "ru": "Дом",
+    "th": "บ้าน",
+    "pt": "Casa"
+  },
+  "Prison": {
+    "en": "Prison",
+    "ja": "牢屋",
+    "fr": "Prison",
+    "it": "Prigione",
+    "de": "Gefängnis",
+    "es": "Prisión",
+    "ko": "감옥",
+    "zht": "牢房",
+    "zhc": "牢房",
+    "ru": "Тюрьма",
+    "th": "คุก",
+    "pt": "Prisão"
+  },
+  "Engine Room": {
+    "en": "Engine Room",
+    "ja": "機関室",
+    "fr": "Salle des machines",
+    "it": "Sala macchine",
+    "de": "Maschinenraum",
+    "es": "Sala de máquinas",
+    "ko": "기관실",
+    "zht": "機房",
+    "zhc": "机房",
+    "ru": "Машинное отделение",
+    "th": "ห้องเครื่อง",
+    "pt": "Casa das máquinas"
+  },
+  "Revival Chamber": {
+    "en": "Revival Chamber",
+    "ja": "生き返りの間",
+    "fr": "Salle de résurrection",
+    "it": "Sala della resurrezione",
+    "de": "Kammer der Wiederbelebung",
+    "es": "Sala de resurrección",
+    "ko": "소생의 방",
+    "zht": "復活之間",
+    "zhc": "复活之间",
+    "ru": "Зал воскрешения",
+    "th": "ห้องชุบชีวิต",
+    "pt": "Câmara da ressurreição"
+  },
+  "Back Room": {
+    "en": "Back Room",
+    "ja": "奥の部屋",
+    "fr": "Arrière-salle",
+    "it": "Retrobottega",
+    "de": "Hinterzimmer",
+    "es": "Trastienda",
+    "ko": "안쪽 방",
+    "zht": "後室",
+    "zhc": "后室",
+    "ru": "Задняя комната",
+    "th": "ห้องด้านหลัง",
+    "pt": "Sala dos fundos"
+  },
+  "Bedroom": {
+    "en": "Bedroom",
+    "ja": "寝室",
+    "fr": "Chambre",
+    "it": "Camera da letto",
+    "de": "Schlafzimmer",
+    "es": "Dormitorio",
+    "ko": "침실",
+    "zht": "臥室",
+    "zhc": "卧室",
+    "ru": "Спальня",
+    "th": "ห้องนอน",
+    "pt": "Quarto"
+  },
+  "Infirmary": {
+    "en": "Infirmary",
+    "ja": "医務室",
+    "fr": "Infirmerie",
+    "it": "Infermeria",
+    "de": "Krankenzimmer",
+    "es": "Enfermería",
+    "ko": "의무실",
+    "zht": "醫務室",
+    "zhc": "医务室",
+    "ru": "Лазарет",
+    "th": "ห้องพยาบาล",
+    "pt": "Enfermaria"
+  },
+  "Current floor": {
+    "en": "Current floor",
+    "ja": "現在の階",
+    "fr": "Étage actuel",
+    "it": "Piano attuale",
+    "de": "Aktuelle Etage",
+    "es": "Piso actual",
+    "ko": "현재 층",
+    "zht": "目前樓層",
+    "zhc": "当前楼层",
+    "ru": "Текущий этаж",
+    "th": "ชั้นปัจจุบัน",
+    "pt": "Andar atual"
+  },
+  "Current map with vehicles": {
+    "en": "Current map with vehicles",
+    "ja": "現在のマップと乗り物",
+    "fr": "Carte actuelle avec véhicules",
+    "it": "Mappa attuale con veicoli",
+    "de": "Aktuelle Karte mit Fahrzeugen",
+    "es": "Mapa actual con vehículos",
+    "ko": "현재 맵과 탈것",
+    "zht": "目前地圖與載具",
+    "zhc": "当前地图与载具",
+    "ru": "Текущая карта с транспортом",
+    "th": "แผนที่ปัจจุบันพร้อมยานพาหนะ",
+    "pt": "Mapa atual com veículos"
+  },
+  "Current map": {
+    "en": "Current map",
+    "ja": "現在のマップ",
+    "fr": "Carte actuelle",
+    "it": "Mappa attuale",
+    "de": "Aktuelle Karte",
+    "es": "Mapa actual",
+    "ko": "현재 맵",
+    "zht": "目前地圖",
+    "zhc": "当前地图",
+    "ru": "Текущая карта",
+    "th": "แผนที่ปัจจุบัน",
+    "pt": "Mapa atual"
+  },
+  "Requires {0}": {
+    "en": "Requires {0}",
+    "ja": "{0}が必要",
+    "fr": "Nécessite : {0}",
+    "it": "Richiede: {0}",
+    "de": "Benötigt: {0}",
+    "es": "Requiere: {0}",
+    "ko": "{0} 필요",
+    "zht": "需要{0}",
+    "zhc": "需要{0}",
+    "ru": "Требуется: {0}",
+    "th": "ต้องใช้ {0}",
+    "pt": "Requer: {0}"
+  },
+  "Story gated": {
+    "en": "Story gated",
+    "ja": "ストーリーの進行が必要",
+    "fr": "Bloqué par l'histoire",
+    "it": "Bloccato dalla storia",
+    "de": "Durch die Handlung gesperrt",
+    "es": "Bloqueado por la historia",
+    "ko": "스토리 진행 필요",
+    "zht": "需要劇情進展",
+    "zhc": "需要剧情进展",
+    "ru": "Заблокировано сюжетом",
+    "th": "ต้องดำเนินเนื้อเรื่องก่อน",
+    "pt": "Bloqueado pela história"
+  },
+  "Blocked by an NPC": {
+    "en": "Blocked by an NPC",
+    "ja": "NPCにふさがれています",
+    "fr": "Bloqué par un PNJ",
+    "it": "Bloccato da un PNG",
+    "de": "Von einem NPC blockiert",
+    "es": "Bloqueado por un PNJ",
+    "ko": "NPC가 막고 있음",
+    "zht": "被NPC擋住",
+    "zhc": "被NPC挡住",
+    "ru": "Путь перекрыт персонажем",
+    "th": "ถูก NPC ขวางทาง",
+    "pt": "Bloqueado por um NPC"
+  },
+  "vehicle": {
+    "en": "vehicle",
+    "ja": "乗り物",
+    "fr": "un véhicule",
+    "it": "un veicolo",
+    "de": "ein Fahrzeug",
+    "es": "un vehículo",
+    "ko": "탈것",
+    "zht": "載具",
+    "zhc": "载具",
+    "ru": "транспорт",
+    "th": "ยานพาหนะ",
+    "pt": "um veículo"
+  },
+  "Speech": {
+    "en": "Speech"
+  },
+  "Navigation": {
+    "en": "Navigation"
+  },
+  "Battle": {
+    "en": "Battle"
+  },
+  "Status damage": {
+    "en": "Status damage"
+  },
+  "Event trigger on the route": {
+    "en": "Event trigger on the route"
+  },
+  "Cannot change speed on the world map": {
+    "en": "Cannot change speed on the world map"
+  },
+  "Enemy statistics are read only when displayed.": {
+    "en": "Enemy statistics are read only when displayed."
+  },
+  "Learned abilities": {
+    "en": "Learned abilities"
+  },
+  "Ability and job level gains": {
+    "en": "Ability and job level gains"
+  },
+  "Skill gains": {
+    "en": "Skill gains"
+  },
+  "up arrow": {
+    "en": "up arrow"
+  },
+  "down arrow": {
+    "en": "down arrow"
+  },
+  "{0} removed": {
+    "en": "{0} removed"
+  },
+  "Event trigger": {
+    "en": "Event trigger"
+  },
+  "Interactive object": {
+    "en": "Interactive object"
   }
 }

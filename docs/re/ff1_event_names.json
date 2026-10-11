@@ -1,0 +1,2085 @@
+[
+  {
+    "raw": "コーネリア城",
+    "translated": {
+      "en": "Castle Cornelia",
+      "fr": "Château de Cornélia",
+      "it": "Castello di Cornelia",
+      "de": "Schloss Cornelia",
+      "es": "Castillo de Cornelia",
+      "ko": "코넬리아성",
+      "zht": "科內利亞城",
+      "zhc": "科内利亚城",
+      "ru": "Замок Корнелия",
+      "th": "ปราสาทคอร์เนเลีย",
+      "pt": "Castelo Cornélia"
+    },
+    "count": 4
+  },
+  {
+    "raw": "カオス神殿",
+    "translated": {
+      "en": "Chaos Shrine",
+      "fr": "Temple du chaos",
+      "it": "Tempio del Caos",
+      "de": "Chaos-Tempel",
+      "es": "Templo del Caos",
+      "ko": "카오스 신전",
+      "zht": "混沌神殿",
+      "zhc": "混沌神殿",
+      "ru": "Святилище Хаоса",
+      "th": "วิหารคาออส",
+      "pt": "Templo do Caos"
+    },
+    "count": 4
+  },
+  {
+    "raw": "エルフの城",
+    "translated": {
+      "en": "Elven Castle",
+      "fr": "Château Elfia",
+      "it": "Castello degli elfi",
+      "de": "Elfen-Schloss",
+      "es": "Castillo Elfo",
+      "ko": "엘프의 성",
+      "zht": "精靈城",
+      "zhc": "精灵城",
+      "ru": "Эльфийский замок",
+      "th": "ปราสาทเอลฟ์",
+      "pt": "Castelo dos Elfos"
+    },
+    "count": 4
+  },
+  {
+    "raw": "試練の城",
+    "translated": {
+      "en": "Citadel of Trials",
+      "fr": "Citadelle de l'épreuve",
+      "it": "Tempio dei Cimenti",
+      "de": "Palais der Probe",
+      "es": "Ciudad del Reto",
+      "ko": "시련의 성",
+      "zht": "試煉城",
+      "zhc": "试炼城",
+      "ru": "Цитадель Испытаний",
+      "th": "ป้อมแห่งการทดสอบ",
+      "pt": "Cidadela das Provas"
+    },
+    "count": 4
+  },
+  {
+    "raw": "ミラージュの塔",
+    "translated": {
+      "en": "Mirage Tower",
+      "fr": "Tour mirage",
+      "it": "Torre Miraggio",
+      "de": "Turm Mirage",
+      "es": "Torre Irreal",
+      "ko": "신기루 탑",
+      "zht": "幻象塔",
+      "zhc": "幻象塔",
+      "ru": "Башня Миража",
+      "th": "หอคอยลวงตา",
+      "pt": "Torre da Miragem"
+    },
+    "count": 4
+  },
+  {
+    "raw": "西の城",
+    "translated": {
+      "en": "Western Keep",
+      "fr": "Fort ouest",
+      "it": "Rocca di ponente",
+      "de": "Westschloss",
+      "es": "Fortaleza Oeste",
+      "ko": "서쪽 성",
+      "zht": "西城",
+      "zhc": "西城",
+      "ru": "Западная цитадель",
+      "th": "ปราสาทตะวันตก",
+      "pt": "Fortaleza Ocidental"
+    },
+    "count": 4
+  },
+  {
+    "raw": "",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "TelepoPoint",
+    "translated": {},
+    "count": 236
+  },
+  {
+    "raw": "チャイム未所持",
+    "translated": {
+      "en": "Chime Required",
+      "fr": "Carillon requis",
+      "it": "Sonaglio richiesto",
+      "de": "Glocke benötigt",
+      "es": "Campana necesaria",
+      "ko": "차임 필요",
+      "zht": "需要鐘琴",
+      "zhc": "需要钟琴",
+      "ru": "Нужен Колокольчик",
+      "th": "ต้องมีระฆัง",
+      "pt": "Sino necessário"
+    },
+    "count": 6
+  },
+  {
+    "raw": "Event",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "跳ね橋オブジェクト",
+    "translated": {
+      "en": "Drawbridge",
+      "fr": "Pont-levis",
+      "it": "Ponte levatoio",
+      "de": "Zugbrücke",
+      "es": "Puente levadizo",
+      "ko": "도개교",
+      "zht": "吊橋",
+      "zhc": "吊桥",
+      "ru": "Подъёмный мост",
+      "th": "สะพานชัก",
+      "pt": "Ponte Levadiça"
+    },
+    "count": 7
+  },
+  {
+    "raw": "運河開通イベントの水しぶき",
+    "translated": {
+      "en": "Canal Opening Splash",
+      "fr": "Éclaboussure de l'ouverture du canal",
+      "it": "Schizzo d'acqua dell'apertura del canale",
+      "de": "Wasserspritzer der Kanalöffnung",
+      "es": "Salpicadura de la apertura del canal",
+      "ko": "운하 개통 물보라",
+      "zht": "運河開通的水花",
+      "zhc": "运河开通的水花",
+      "ru": "Брызги открытия канала",
+      "th": "น้ำกระเซ็นจากการเปิดคลอง",
+      "pt": "Respingo da Abertura do Canal"
+    },
+    "count": 1
+  },
+  {
+    "raw": "飛空先入手",
+    "translated": {
+      "en": "Airship Acquisition",
+      "fr": "Acquisition de l'aéronef",
+      "it": "Acquisizione dell'aeronave",
+      "de": "Luftschiff-Erhalt",
+      "es": "Adquisición de la aeronave",
+      "ko": "비공정 입수",
+      "zht": "取得飛空艇",
+      "zhc": "取得飞空艇",
+      "ru": "Получение воздушного корабля",
+      "th": "ได้รับเรือบิน",
+      "pt": "Aquisição da Aeronave"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ToUpper",
+    "translated": {},
+    "count": 152
+  },
+  {
+    "raw": "ToBottom",
+    "translated": {},
+    "count": 151
+  },
+  {
+    "raw": "カギのかかった扉",
+    "translated": {
+      "en": "Locked Door",
+      "fr": "Porte verrouillée",
+      "it": "Porta chiusa a chiave",
+      "de": "Verschlossene Tür",
+      "es": "Puerta cerrada",
+      "ko": "잠긴 문",
+      "zht": "上鎖的門",
+      "zhc": "上锁的门",
+      "ru": "Запертая дверь",
+      "th": "ประตูที่ล็อกอยู่",
+      "pt": "Porta Trancada"
+    },
+    "count": 19
+  },
+  {
+    "raw": "ev_e_0005",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "クリスタルのかけら青",
+    "translated": {
+      "en": "Blue Crystal Shard",
+      "fr": "Éclat de cristal bleu",
+      "it": "Frammento di cristallo blu",
+      "de": "Blauer Kristallsplitter",
+      "es": "Fragmento de cristal azul",
+      "ko": "파란 크리스탈 파편",
+      "zht": "藍色水晶碎片",
+      "zhc": "蓝色水晶碎片",
+      "ru": "Синий осколок кристалла",
+      "th": "เศษคริสตัลสีน้ำเงิน",
+      "pt": "Fragmento de Cristal Azul"
+    },
+    "count": 4
+  },
+  {
+    "raw": "クリスタルのかけら緑",
+    "translated": {
+      "en": "Green Crystal Shard",
+      "fr": "Éclat de cristal vert",
+      "it": "Frammento di cristallo verde",
+      "de": "Grüner Kristallsplitter",
+      "es": "Fragmento de cristal verde",
+      "ko": "초록 크리스탈 파편",
+      "zht": "綠色水晶碎片",
+      "zhc": "绿色水晶碎片",
+      "ru": "Зелёный осколок кристалла",
+      "th": "เศษคริสตัลสีเขียว",
+      "pt": "Fragmento de Cristal Verde"
+    },
+    "count": 2
+  },
+  {
+    "raw": "クリスタルのかけら赤",
+    "translated": {
+      "en": "Red Crystal Shard",
+      "fr": "Éclat de cristal rouge",
+      "it": "Frammento di cristallo rosso",
+      "de": "Roter Kristallsplitter",
+      "es": "Fragmento de cristal rojo",
+      "ko": "빨간 크리스탈 파편",
+      "zht": "紅色水晶碎片",
+      "zhc": "红色水晶碎片",
+      "ru": "Красный осколок кристалла",
+      "th": "เศษคริสตัลสีแดง",
+      "pt": "Fragmento de Cristal Vermelho"
+    },
+    "count": 3
+  },
+  {
+    "raw": "クリスタルのかけら黄",
+    "translated": {
+      "en": "Yellow Crystal Shard",
+      "fr": "Éclat de cristal jaune",
+      "it": "Frammento di cristallo giallo",
+      "de": "Gelber Kristallsplitter",
+      "es": "Fragmento de cristal amarillo",
+      "ko": "노란 크리스탈 파편",
+      "zht": "黃色水晶碎片",
+      "zhc": "黄色水晶碎片",
+      "ru": "Жёлтый осколок кристалла",
+      "th": "เศษคริสตัลสีเหลือง",
+      "pt": "Fragmento de Cristal Amarelo"
+    },
+    "count": 3
+  },
+  {
+    "raw": "e_v_0004",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "ビックリマーク2",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "ビックリマーク3",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "ビックリマーク4",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "ビックリマーク1",
+    "translated": {},
+    "count": 7
+  },
+  {
+    "raw": "井戸",
+    "translated": {
+      "en": "Well",
+      "fr": "Puits",
+      "it": "Pozzo",
+      "de": "Brunnen",
+      "es": "Pozo",
+      "ko": "우물",
+      "zht": "水井",
+      "zhc": "水井",
+      "ru": "Колодец",
+      "th": "บ่อน้ำ",
+      "pt": "Poço"
+    },
+    "count": 3
+  },
+  {
+    "raw": "噴水",
+    "translated": {
+      "en": "Fountain",
+      "fr": "Fontaine",
+      "it": "Fontana",
+      "de": "Brunnen",
+      "es": "Fuente",
+      "ko": "분수",
+      "zht": "噴泉",
+      "zhc": "喷泉",
+      "ru": "Фонтан",
+      "th": "น้ำพุ",
+      "pt": "Fonte"
+    },
+    "count": 3
+  },
+  {
+    "raw": "Sunstream",
+    "translated": {},
+    "count": 24
+  },
+  {
+    "raw": "ev_e_0007",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "スミスの作品",
+    "translated": {
+      "en": "Smyth's Work",
+      "fr": "Œuvre du forgeron",
+      "it": "Opera di Smyth",
+      "de": "Smyths Werk",
+      "es": "Obra de Ferreiro",
+      "ko": "스미스의 작품",
+      "zht": "史密斯的作品",
+      "zhc": "史密斯的作品",
+      "ru": "Работа Смита",
+      "th": "ผลงานของสมิท",
+      "pt": "Obra de Ferradura"
+    },
+    "count": 3
+  },
+  {
+    "raw": "ビックリマーク5",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "ビックリマーク6",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "GeneralEventObject",
+    "translated": {},
+    "count": 38
+  },
+  {
+    "raw": "ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark",
+      "fr": "Point d'exclamation",
+      "it": "Punto esclamativo",
+      "de": "Ausrufezeichen",
+      "es": "Signo de exclamación",
+      "ko": "느낌표",
+      "zht": "驚嘆號",
+      "zhc": "惊叹号",
+      "ru": "Восклицательный знак",
+      "th": "เครื่องหมายอัศเจรีย์",
+      "pt": "Ponto de Exclamação"
+    },
+    "count": 4
+  },
+  {
+    "raw": "強制エンカウント",
+    "translated": {
+      "en": "Forced Encounter",
+      "fr": "Rencontre forcée",
+      "it": "Incontro forzato",
+      "de": "Erzwungene Begegnung",
+      "es": "Encuentro forzado",
+      "ko": "강제 인카운터",
+      "zht": "強制遭遇",
+      "zhc": "强制遭遇",
+      "ru": "Принудительная встреча",
+      "th": "การเผชิญหน้าบังคับ",
+      "pt": "Encontro Forçado"
+    },
+    "count": 3
+  },
+  {
+    "raw": "吹き出し「！」",
+    "translated": {
+      "en": "Speech Bubble (Exclamation)",
+      "fr": "Bulle de dialogue (exclamation)",
+      "it": "Fumetto (esclamazione)",
+      "de": "Sprechblase (Ausruf)",
+      "es": "Bocadillo (exclamación)",
+      "ko": "말풍선 (느낌표)",
+      "zht": "對話框（驚嘆號）",
+      "zhc": "对话框（惊叹号）",
+      "ru": "Облачко реплики (восклицание)",
+      "th": "กรอบคำพูด (อัศเจรีย์)",
+      "pt": "Balão de Fala (Exclamação)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "吹き出し「…」",
+    "translated": {
+      "en": "Speech Bubble (Ellipsis)",
+      "fr": "Bulle de dialogue (points de suspension)",
+      "it": "Fumetto (puntini di sospensione)",
+      "de": "Sprechblase (Auslassungspunkte)",
+      "es": "Bocadillo (puntos suspensivos)",
+      "ko": "말풍선 (말줄임표)",
+      "zht": "對話框（刪節號）",
+      "zhc": "对话框（省略号）",
+      "ru": "Облачко реплики (многоточие)",
+      "th": "กรอบคำพูด (จุดไข่ปลา)",
+      "pt": "Balão de Fala (Reticências)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "2.ToLayer",
+    "translated": {},
+    "count": 8
+  },
+  {
+    "raw": "1.ToLayer",
+    "translated": {},
+    "count": 9
+  },
+  {
+    "raw": "墓石",
+    "translated": {
+      "en": "Gravestone",
+      "fr": "Pierre tombale",
+      "it": "Pietra tombale",
+      "de": "Grabstein",
+      "es": "Lápida",
+      "ko": "묘석",
+      "zht": "墓石",
+      "zhc": "墓石",
+      "ru": "Надгробная плита",
+      "th": "หินหลุมศพ",
+      "pt": "Lápide"
+    },
+    "count": 6
+  },
+  {
+    "raw": "1.ToUpper",
+    "translated": {},
+    "count": 12
+  },
+  {
+    "raw": "2.ToUpper",
+    "translated": {},
+    "count": 8
+  },
+  {
+    "raw": "3.ToUpper",
+    "translated": {},
+    "count": 5
+  },
+  {
+    "raw": "4.ToUpper",
+    "translated": {},
+    "count": 3
+  },
+  {
+    "raw": "5.ToUpper",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "6.ToUpper",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "7.ToUpper",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "1.ToBottom",
+    "translated": {},
+    "count": 12
+  },
+  {
+    "raw": "2.ToBottom",
+    "translated": {},
+    "count": 8
+  },
+  {
+    "raw": "3.ToBottom",
+    "translated": {},
+    "count": 5
+  },
+  {
+    "raw": "4.ToBottom",
+    "translated": {},
+    "count": 3
+  },
+  {
+    "raw": "5.ToBottom",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "6.ToBottom",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "7.ToBottom",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "クラスチェンジ用",
+    "translated": {
+      "en": "Class Change",
+      "fr": "Changement de classe",
+      "it": "Cambio di classe",
+      "de": "Klassenwechsel",
+      "es": "Cambio de clase",
+      "ko": "클래스 체인지",
+      "zht": "轉職",
+      "zhc": "转职",
+      "ru": "Смена класса",
+      "th": "เปลี่ยนอาชีพ",
+      "pt": "Mudança de Classe"
+    },
+    "count": 3
+  },
+  {
+    "raw": "墓標",
+    "translated": {
+      "en": "Grave Marker",
+      "fr": "Stèle funéraire",
+      "it": "Lapide",
+      "de": "Grabstein",
+      "es": "Lápida",
+      "ko": "묘비",
+      "zht": "墓碑",
+      "zhc": "墓碑",
+      "ru": "Надгробие",
+      "th": "ป้ายหลุมศพ",
+      "pt": "Lápide"
+    },
+    "count": 8
+  },
+  {
+    "raw": "樽の潜水艦",
+    "translated": {
+      "en": "Barrel Submarine",
+      "fr": "Sous-marin tonneau",
+      "it": "Sottomarino a botte",
+      "de": "Fass-U-Boot",
+      "es": "Submarino barril",
+      "ko": "통 잠수함",
+      "zht": "木桶潛水艇",
+      "zhc": "木桶潜水艇",
+      "ru": "Бочка-подлодка",
+      "th": "เรือดำน้ำถัง",
+      "pt": "Submarino Barril"
+    },
+    "count": 1
+  },
+  {
+    "raw": "！マーク",
+    "translated": {
+      "en": "Exclamation Mark",
+      "fr": "Point d'exclamation",
+      "it": "Punto esclamativo",
+      "de": "Ausrufezeichen",
+      "es": "Signo de exclamación",
+      "ko": "느낌표",
+      "zht": "驚嘆號",
+      "zhc": "惊叹号",
+      "ru": "Восклицательный знак",
+      "th": "เครื่องหมายอัศเจรีย์",
+      "pt": "Ponto de Exclamação"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ev_e_0028",
+    "translated": {},
+    "count": 6
+  },
+  {
+    "raw": "妖精解放エフェクト",
+    "translated": {
+      "en": "Faerie Release Effect",
+      "fr": "Effet de libération de la fée",
+      "it": "Effetto liberazione della fata",
+      "de": "Feenbefreiungseffekt",
+      "es": "Efecto de liberación del hada",
+      "ko": "요정 해방 이펙트",
+      "zht": "妖精解放效果",
+      "zhc": "妖精解放效果",
+      "ru": "Эффект освобождения феи",
+      "th": "เอฟเฟกต์ปลดปล่อยนางฟ้า",
+      "pt": "Efeito de Libertação da Fada"
+    },
+    "count": 1
+  },
+  {
+    "raw": "妖精が変身する光の玉",
+    "translated": {
+      "en": "Ball of Light (Faerie)",
+      "fr": "Boule de lumière (fée)",
+      "it": "Sfera di luce (fata)",
+      "de": "Lichtkugel (Fee)",
+      "es": "Bola de luz (hada)",
+      "ko": "빛의 구슬 (요정)",
+      "zht": "光球（妖精）",
+      "zhc": "光球（妖精）",
+      "ru": "Шар света (фея)",
+      "th": "ลูกแสง (นางฟ้า)",
+      "pt": "Bola de Luz (Fada)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "水しぶき",
+    "translated": {
+      "en": "Splash",
+      "fr": "Éclaboussure",
+      "it": "Schizzo d'acqua",
+      "de": "Wasserspritzer",
+      "es": "Salpicadura",
+      "ko": "물보라",
+      "zht": "水花",
+      "zhc": "水花",
+      "ru": "Брызги",
+      "th": "น้ำกระเซ็น",
+      "pt": "Respingo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "AnimationObject",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "過去のカオス神殿にワープ",
+    "translated": {
+      "en": "Warp to Past Chaos Shrine",
+      "fr": "Téléportation vers le Temple du chaos du passé",
+      "it": "Teletrasporto al Tempio del Caos del passato",
+      "de": "Warp zum Chaos-Tempel der Vergangenheit",
+      "es": "Teletransporte al Templo del Caos del pasado",
+      "ko": "과거 카오스 신전으로 워프",
+      "zht": "傳送至過去的混沌神殿",
+      "zhc": "传送至过去的混沌神殿",
+      "ru": "Телепорт в Святилище Хаоса прошлого",
+      "th": "วาร์ปไปวิหารคาออสในอดีต",
+      "pt": "Teletransporte para o Templo do Caos do Passado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ToLayer",
+    "translated": {},
+    "count": 11
+  },
+  {
+    "raw": "カギのかかった扉(確認用)",
+    "translated": {
+      "en": "Locked Door (Confirmation)",
+      "fr": "Porte verrouillée (confirmation)",
+      "it": "Porta chiusa a chiave (conferma)",
+      "de": "Verschlossene Tür (Bestätigung)",
+      "es": "Puerta cerrada (confirmación)",
+      "ko": "잠긴 문 (확인용)",
+      "zht": "上鎖的門（確認用）",
+      "zhc": "上锁的门（确认用）",
+      "ru": "Запертая дверь (подтверждение)",
+      "th": "ประตูที่ล็อกอยู่ (ยืนยัน)",
+      "pt": "Porta Trancada (Confirmação)"
+    },
+    "count": 5
+  },
+  {
+    "raw": "黒色の玉",
+    "translated": {
+      "en": "Black Orb",
+      "fr": "Orbe noir",
+      "it": "Sfera nera",
+      "de": "Schwarze Kugel",
+      "es": "Orbe negro",
+      "ko": "검은 구슬",
+      "zht": "黑色寶珠",
+      "zhc": "黑色宝珠",
+      "ru": "Чёрная сфера",
+      "th": "ลูกแก้วสีดำ",
+      "pt": "Orbe Negro"
+    },
+    "count": 4
+  },
+  {
+    "raw": "イベント用「！」マーク",
+    "translated": {
+      "en": "Event Exclamation Mark",
+      "fr": "Point d'exclamation d'événement",
+      "it": "Punto esclamativo evento",
+      "de": "Ereignis-Ausrufezeichen",
+      "es": "Signo de exclamación de evento",
+      "ko": "이벤트 느낌표",
+      "zht": "事件驚嘆號",
+      "zhc": "事件惊叹号",
+      "ru": "Восклицательный знак события",
+      "th": "เครื่องหมายอัศเจรีย์เหตุการณ์",
+      "pt": "Ponto de Exclamação de Evento"
+    },
+    "count": 2
+  },
+  {
+    "raw": "会話用の黒色の玉",
+    "translated": {
+      "en": "Black Orb (Dialogue)",
+      "fr": "Orbe noir (dialogue)",
+      "it": "Sfera nera (dialogo)",
+      "de": "Schwarze Kugel (Dialog)",
+      "es": "Orbe negro (diálogo)",
+      "ko": "검은 구슬 (대화용)",
+      "zht": "黑色寶珠（對話用）",
+      "zhc": "黑色宝珠（对话用）",
+      "ru": "Чёрная сфера (диалог)",
+      "th": "ลูกแก้วสีดำ (บทสนทนา)",
+      "pt": "Orbe Negro (Diálogo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ヴァンパイア変身エフェクト",
+    "translated": {
+      "en": "Vampire Transformation Effect",
+      "fr": "Effet de transformation du vampire",
+      "it": "Effetto trasformazione del vampiro",
+      "de": "Vampir-Verwandlungseffekt",
+      "es": "Efecto de transformación del vampiro",
+      "ko": "뱀파이어 변신 이펙트",
+      "zht": "吸血鬼變身效果",
+      "zhc": "吸血鬼变身效果",
+      "ru": "Эффект превращения вампира",
+      "th": "เอฟเฟกต์การแปลงร่างแวมไพร์",
+      "pt": "Efeito de Transformação do Vampiro"
+    },
+    "count": 1
+  },
+  {
+    "raw": "石板",
+    "translated": {
+      "en": "Stone Tablet",
+      "fr": "Tablette de pierre",
+      "it": "Tavola di pietra",
+      "de": "Steintafel",
+      "es": "Tablilla de piedra",
+      "ko": "석판",
+      "zht": "石板",
+      "zhc": "石板",
+      "ru": "Каменная скрижаль",
+      "th": "แผ่นหิน",
+      "pt": "Tábua de Pedra"
+    },
+    "count": 2
+  },
+  {
+    "raw": "土の杖で消える石板",
+    "translated": {
+      "en": "Stone Tablet (Earth Rod)",
+      "fr": "Tablette de pierre (Bâton tellurique)",
+      "it": "Tavola di pietra (Ferula terrena)",
+      "de": "Steintafel (Terra-Stab)",
+      "es": "Tablilla de piedra (Vara terrestre)",
+      "ko": "석판 (땅의 지팡이)",
+      "zht": "石板（土之杖）",
+      "zhc": "石板（土之杖）",
+      "ru": "Каменная скрижаль (Посох земли)",
+      "th": "แผ่นหิน (คทาแห่งดิน)",
+      "pt": "Tábua de Pedra (Cajado da Terra)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "祭壇",
+    "translated": {
+      "en": "Altar",
+      "fr": "Autel",
+      "it": "Altare",
+      "de": "Altar",
+      "es": "Altar",
+      "ko": "제단",
+      "zht": "祭壇",
+      "zhc": "祭坛",
+      "ru": "Алтарь",
+      "th": "แท่นบูชา",
+      "pt": "Altar"
+    },
+    "count": 4
+  },
+  {
+    "raw": "ワープ",
+    "translated": {
+      "en": "Warp",
+      "fr": "Téléporteur",
+      "it": "Teletrasporto",
+      "de": "Warp",
+      "es": "Teletransporte",
+      "ko": "워프",
+      "zht": "傳送點",
+      "zhc": "传送点",
+      "ru": "Телепорт",
+      "th": "วาร์ป",
+      "pt": "Teletransporte"
+    },
+    "count": 4
+  },
+  {
+    "raw": "土色の玉（リッチ会話前）",
+    "translated": {
+      "en": "Earth Orb (Before Lich)",
+      "fr": "Orbe de terre (avant Liche)",
+      "it": "Sfera della terra (prima di Lich)",
+      "de": "Erdkugel (vor Lich)",
+      "es": "Orbe de tierra (antes de Lich)",
+      "ko": "흙의 구슬 (리치 대화 전)",
+      "zht": "土色寶珠（巫妖對話前）",
+      "zhc": "土色宝珠（巫妖对话前）",
+      "ru": "Сфера земли (до Лича)",
+      "th": "ลูกแก้วดิน (ก่อนลิชท์)",
+      "pt": "Orbe da Terra (Antes de Lich)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "土のクリスタル暗",
+    "translated": {
+      "en": "Earth Crystal (Dark)",
+      "fr": "Cristal de terre (sombre)",
+      "it": "Cristallo della terra (oscuro)",
+      "de": "Erdkristall (dunkel)",
+      "es": "Cristal de tierra (oscuro)",
+      "ko": "흙의 크리스탈 (어둠)",
+      "zht": "土之水晶（暗）",
+      "zhc": "土之水晶（暗）",
+      "ru": "Кристалл земли (тёмный)",
+      "th": "คริสตัลดิน (มืด)",
+      "pt": "Cristal da Terra (Escuro)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（黄）暗",
+    "translated": {
+      "en": "Crystal Cave Warp (Yellow) Dark",
+      "fr": "Téléporteur de la grotte de cristal (jaune) sombre",
+      "it": "Teletrasporto della grotta di cristallo (giallo) oscuro",
+      "de": "Kristallhöhlen-Warp (Gelb) Dunkel",
+      "es": "Teletransporte de la cueva de cristal (amarillo) oscuro",
+      "ko": "크리스탈 동굴 워프 (노랑) 어둠",
+      "zht": "水晶洞窟傳送點（黃）暗",
+      "zhc": "水晶洞窟传送点（黄）暗",
+      "ru": "Телепорт кристальной пещеры (жёлтый) тёмный",
+      "th": "วาร์ปถ้ำคริสตัล (เหลือง) มืด",
+      "pt": "Teletransporte da Caverna de Cristal (Amarelo) Escuro"
+    },
+    "count": 1
+  },
+  {
+    "raw": "PC1.ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 1)",
+      "fr": "Point d'exclamation (membre 1 du groupe)",
+      "it": "Punto esclamativo (membro 1 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 1)",
+      "es": "Signo de exclamación (miembro 1 del grupo)",
+      "ko": "느낌표 (파티원 1)",
+      "zht": "驚嘆號（隊員1）",
+      "zhc": "惊叹号（队员1）",
+      "ru": "Восклицательный знак (участник отряда 1)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 1)",
+      "pt": "Ponto de Exclamação (Membro 1 do Grupo)"
+    },
+    "count": 4
+  },
+  {
+    "raw": "PC3.ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 3)",
+      "fr": "Point d'exclamation (membre 3 du groupe)",
+      "it": "Punto esclamativo (membro 3 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 3)",
+      "es": "Signo de exclamación (miembro 3 del grupo)",
+      "ko": "느낌표 (파티원 3)",
+      "zht": "驚嘆號（隊員3）",
+      "zhc": "惊叹号（队员3）",
+      "ru": "Восклицательный знак (участник отряда 3)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 3)",
+      "pt": "Ponto de Exclamação (Membro 3 do Grupo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "PC4.ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 4)",
+      "fr": "Point d'exclamation (membre 4 du groupe)",
+      "it": "Punto esclamativo (membro 4 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 4)",
+      "es": "Signo de exclamación (miembro 4 del grupo)",
+      "ko": "느낌표 (파티원 4)",
+      "zht": "驚嘆號（隊員4）",
+      "zhc": "惊叹号（队员4）",
+      "ru": "Восклицательный знак (участник отряда 4)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 4)",
+      "pt": "Ponto de Exclamação (Membro 4 do Grupo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "PC2.ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 2)",
+      "fr": "Point d'exclamation (membre 2 du groupe)",
+      "it": "Punto esclamativo (membro 2 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 2)",
+      "es": "Signo de exclamación (miembro 2 del grupo)",
+      "ko": "느낌표 (파티원 2)",
+      "zht": "驚嘆號（隊員2）",
+      "zhc": "惊叹号（队员2）",
+      "ru": "Восклицательный знак (участник отряда 2)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 2)",
+      "pt": "Ponto de Exclamação (Membro 2 do Grupo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "土のクリスタル明",
+    "translated": {
+      "en": "Earth Crystal (Lit)",
+      "fr": "Cristal de terre (illuminé)",
+      "it": "Cristallo della terra (illuminato)",
+      "de": "Erdkristall (leuchtend)",
+      "es": "Cristal de tierra (iluminado)",
+      "ko": "흙의 크리스탈 (빛)",
+      "zht": "土之水晶（明）",
+      "zhc": "土之水晶（明）",
+      "ru": "Кристалл земли (светлый)",
+      "th": "คริสตัลดิน (สว่าง)",
+      "pt": "Cristal da Terra (Iluminado)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（黄）明",
+    "translated": {
+      "en": "Crystal Cave Warp (Yellow) Lit",
+      "fr": "Téléporteur de la grotte de cristal (jaune) illuminé",
+      "it": "Teletrasporto della grotta di cristallo (giallo) illuminato",
+      "de": "Kristallhöhlen-Warp (Gelb) Leuchtend",
+      "es": "Teletransporte de la cueva de cristal (amarillo) iluminado",
+      "ko": "크리스탈 동굴 워프 (노랑) 빛",
+      "zht": "水晶洞窟傳送點（黃）明",
+      "zhc": "水晶洞窟传送点（黄）明",
+      "ru": "Телепорт кристальной пещеры (жёлтый) светлый",
+      "th": "วาร์ปถ้ำคริสตัล (เหลือง) สว่าง",
+      "pt": "Teletransporte da Caverna de Cristal (Amarelo) Iluminado"
+    },
+    "count": 2
+  },
+  {
+    "raw": "スタールビー",
+    "translated": {
+      "en": "Star Ruby",
+      "fr": "Rubis étoilé",
+      "it": "Rubino stellare",
+      "de": "Sternrubin",
+      "es": "Rubí estrella",
+      "ko": "스타 루비",
+      "zht": "星形紅寶石",
+      "zhc": "星形红宝石",
+      "ru": "Звездный рубин",
+      "th": "สตาร์รูบี้",
+      "pt": "Rubi Estelar"
+    },
+    "count": 1
+  },
+  {
+    "raw": "3.ToLayer",
+    "translated": {},
+    "count": 6
+  },
+  {
+    "raw": "4.ToLayer",
+    "translated": {},
+    "count": 6
+  },
+  {
+    "raw": "5.ToLayer",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "6.ToLayer",
+    "translated": {},
+    "count": 4
+  },
+  {
+    "raw": "7.ToLayer",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "8.ToLayer",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（赤）暗",
+    "translated": {
+      "en": "Crystal Cave Warp (Red) Dark",
+      "fr": "Téléporteur de la grotte de cristal (rouge) sombre",
+      "it": "Teletrasporto della grotta di cristallo (rosso) oscuro",
+      "de": "Kristallhöhlen-Warp (Rot) Dunkel",
+      "es": "Teletransporte de la cueva de cristal (rojo) oscuro",
+      "ko": "크리스탈 동굴 워프 (빨강) 어둠",
+      "zht": "水晶洞窟傳送點（紅）暗",
+      "zhc": "水晶洞窟传送点（红）暗",
+      "ru": "Телепорт кристальной пещеры (красный) тёмный",
+      "th": "วาร์ปถ้ำคริสตัล (แดง) มืด",
+      "pt": "Teletransporte da Caverna de Cristal (Vermelho) Escuro"
+    },
+    "count": 1
+  },
+  {
+    "raw": "赤色の玉(マリリス会話前)",
+    "translated": {
+      "en": "Fire Orb (Before Marilith)",
+      "fr": "Orbe de feu (avant Malyris)",
+      "it": "Sfera del fuoco (prima di Marilith)",
+      "de": "Feuerkugel (vor Kali)",
+      "es": "Orbe de fuego (antes de Malilith)",
+      "ko": "불의 구슬 (마릴리스 대화 전)",
+      "zht": "火色寶珠（馬莉莉絲對話前）",
+      "zhc": "火色宝珠（马莉莉丝对话前）",
+      "ru": "Сфера огня (до Марилит)",
+      "th": "ลูกแก้วไฟ (ก่อนมาริลิธ)",
+      "pt": "Orbe de Fogo (Antes de Marilith)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "火のクリスタル暗",
+    "translated": {
+      "en": "Fire Crystal (Dark)",
+      "fr": "Cristal de feu (sombre)",
+      "it": "Cristallo del fuoco (oscuro)",
+      "de": "Feuerkristall (dunkel)",
+      "es": "Cristal de fuego (oscuro)",
+      "ko": "불의 크리스탈 (어둠)",
+      "zht": "火之水晶（暗）",
+      "zhc": "火之水晶（暗）",
+      "ru": "Кристалл огня (тёмный)",
+      "th": "คริสตัลไฟ (มืด)",
+      "pt": "Cristal de Fogo (Escuro)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "火のクリスタル明",
+    "translated": {
+      "en": "Fire Crystal (Lit)",
+      "fr": "Cristal de feu (illuminé)",
+      "it": "Cristallo del fuoco (illuminato)",
+      "de": "Feuerkristall (leuchtend)",
+      "es": "Cristal de fuego (iluminado)",
+      "ko": "불의 크리스탈 (빛)",
+      "zht": "火之水晶（明）",
+      "zhc": "火之水晶（明）",
+      "ru": "Кристалл огня (светлый)",
+      "th": "คริสตัลไฟ (สว่าง)",
+      "pt": "Cristal de Fogo (Iluminado)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（赤）明",
+    "translated": {
+      "en": "Crystal Cave Warp (Red) Lit",
+      "fr": "Téléporteur de la grotte de cristal (rouge) illuminé",
+      "it": "Teletrasporto della grotta di cristallo (rosso) illuminato",
+      "de": "Kristallhöhlen-Warp (Rot) Leuchtend",
+      "es": "Teletransporte de la cueva de cristal (rojo) iluminado",
+      "ko": "크리스탈 동굴 워프 (빨강) 빛",
+      "zht": "水晶洞窟傳送點（紅）明",
+      "zhc": "水晶洞窟传送点（红）明",
+      "ru": "Телепорт кристальной пещеры (красный) светлый",
+      "th": "วาร์ปถ้ำคริสตัล (แดง) สว่าง",
+      "pt": "Teletransporte da Caverna de Cristal (Vermelho) Iluminado"
+    },
+    "count": 2
+  },
+  {
+    "raw": "落とし穴②",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴1",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴2",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴3",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴4",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴5",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴6",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴7",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴8",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴9",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴10",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴11",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴12",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴13",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴14",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴15",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴16",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴17",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴18",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴19",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "浮遊石",
+    "translated": {
+      "en": "Levistone",
+      "fr": "Aérolithe",
+      "it": "Levipietra",
+      "de": "Levitanith",
+      "es": "Levicita",
+      "ko": "부유석",
+      "zht": "浮游石",
+      "zhc": "浮游石",
+      "ru": "Левикамень",
+      "th": "เลวี่สโตน",
+      "pt": "Pedraleve"
+    },
+    "count": 1
+  },
+  {
+    "raw": "2F①へワープ",
+    "translated": {
+      "en": "Warp to 2F Tile 1",
+      "fr": "Téléportation vers la dalle 1 du 2e étage",
+      "it": "Teletrasporto alla piastrella 1 del 2° piano",
+      "de": "Warp zu Feld 1 im 2. OG",
+      "es": "Teletransporte a la casilla 1 del piso 2",
+      "ko": "2층 1번 타일로 워프",
+      "zht": "傳送至2樓1號地磚",
+      "zhc": "传送至2楼1号地砖",
+      "ru": "Телепорт на плитку 1, 2 этаж",
+      "th": "วาร์ปไปช่อง 1 ชั้น 2",
+      "pt": "Teletransporte para o ponto 1 do 2F"
+    },
+    "count": 1
+  },
+  {
+    "raw": "おじいさんのテレポート",
+    "translated": {
+      "en": "Old Man's Teleport",
+      "fr": "Téléportation du vieil homme",
+      "it": "Teletrasporto dell'anziano",
+      "de": "Teleport des alten Mannes",
+      "es": "Teletransporte del anciano",
+      "ko": "할아버지의 텔레포트",
+      "zht": "老人的傳送",
+      "zhc": "老人的传送",
+      "ru": "Телепорт старика",
+      "th": "การเทเลพอร์ตของชายชรา",
+      "pt": "Teletransporte do Senhor Idoso"
+    },
+    "count": 1
+  },
+  {
+    "raw": "③へワープ",
+    "translated": {
+      "en": "Warp to Tile 3",
+      "fr": "Téléportation vers la dalle 3",
+      "it": "Teletrasporto alla piastrella 3",
+      "de": "Warp zu Feld 3",
+      "es": "Teletransporte a la casilla 3",
+      "ko": "3번 타일로 워프",
+      "zht": "傳送至3號地磚",
+      "zhc": "传送至3号地砖",
+      "ru": "Телепорт на плитку 3",
+      "th": "วาร์ปไปช่อง 3",
+      "pt": "Teletransporte para o ponto 3"
+    },
+    "count": 3
+  },
+  {
+    "raw": "④へワープ",
+    "translated": {
+      "en": "Warp to Tile 4",
+      "fr": "Téléportation vers la dalle 4",
+      "it": "Teletrasporto alla piastrella 4",
+      "de": "Warp zu Feld 4",
+      "es": "Teletransporte a la casilla 4",
+      "ko": "4번 타일로 워프",
+      "zht": "傳送至4號地磚",
+      "zhc": "传送至4号地砖",
+      "ru": "Телепорт на плитку 4",
+      "th": "วาร์ปไปช่อง 4",
+      "pt": "Teletransporte para o ponto 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "⑤へワープ",
+    "translated": {
+      "en": "Warp to Tile 5",
+      "fr": "Téléportation vers la dalle 5",
+      "it": "Teletrasporto alla piastrella 5",
+      "de": "Warp zu Feld 5",
+      "es": "Teletransporte a la casilla 5",
+      "ko": "5번 타일로 워프",
+      "zht": "傳送至5號地磚",
+      "zhc": "传送至5号地砖",
+      "ru": "Телепорт на плитку 5",
+      "th": "วาร์ปไปช่อง 5",
+      "pt": "Teletransporte para o ponto 5"
+    },
+    "count": 2
+  },
+  {
+    "raw": "⑥へワープ",
+    "translated": {
+      "en": "Warp to Tile 6",
+      "fr": "Téléportation vers la dalle 6",
+      "it": "Teletrasporto alla piastrella 6",
+      "de": "Warp zu Feld 6",
+      "es": "Teletransporte a la casilla 6",
+      "ko": "6번 타일로 워프",
+      "zht": "傳送至6號地磚",
+      "zhc": "传送至6号地砖",
+      "ru": "Телепорт на плитку 6",
+      "th": "วาร์ปไปช่อง 6",
+      "pt": "Teletransporte para o ponto 6"
+    },
+    "count": 1
+  },
+  {
+    "raw": "⑦へワープ",
+    "translated": {
+      "en": "Warp to Tile 7",
+      "fr": "Téléportation vers la dalle 7",
+      "it": "Teletrasporto alla piastrella 7",
+      "de": "Warp zu Feld 7",
+      "es": "Teletransporte a la casilla 7",
+      "ko": "7번 타일로 워프",
+      "zht": "傳送至7號地磚",
+      "zhc": "传送至7号地砖",
+      "ru": "Телепорт на плитку 7",
+      "th": "วาร์ปไปช่อง 7",
+      "pt": "Teletransporte para o ponto 7"
+    },
+    "count": 2
+  },
+  {
+    "raw": "⑧へワープ",
+    "translated": {
+      "en": "Warp to Tile 8",
+      "fr": "Téléportation vers la dalle 8",
+      "it": "Teletrasporto alla piastrella 8",
+      "de": "Warp zu Feld 8",
+      "es": "Teletransporte a la casilla 8",
+      "ko": "8번 타일로 워프",
+      "zht": "傳送至8號地磚",
+      "zhc": "传送至8号地砖",
+      "ru": "Телепорт на плитку 8",
+      "th": "วาร์ปไปช่อง 8",
+      "pt": "Teletransporte para o ponto 8"
+    },
+    "count": 1
+  },
+  {
+    "raw": "⑩へワープ",
+    "translated": {
+      "en": "Warp to Tile 10",
+      "fr": "Téléportation vers la dalle 10",
+      "it": "Teletrasporto alla piastrella 10",
+      "de": "Warp zu Feld 10",
+      "es": "Teletransporte a la casilla 10",
+      "ko": "10번 타일로 워프",
+      "zht": "傳送至10號地磚",
+      "zhc": "传送至10号地砖",
+      "ru": "Телепорт на плитку 10",
+      "th": "วาร์ปไปช่อง 10",
+      "pt": "Teletransporte para o ponto 10"
+    },
+    "count": 1
+  },
+  {
+    "raw": "⑪へワープ",
+    "translated": {
+      "en": "Warp to Tile 11",
+      "fr": "Téléportation vers la dalle 11",
+      "it": "Teletrasporto alla piastrella 11",
+      "de": "Warp zu Feld 11",
+      "es": "Teletransporte a la casilla 11",
+      "ko": "11번 타일로 워프",
+      "zht": "傳送至11號地磚",
+      "zhc": "传送至11号地砖",
+      "ru": "Телепорт на плитку 11",
+      "th": "วาร์ปไปช่อง 11",
+      "pt": "Teletransporte para o ponto 11"
+    },
+    "count": 1
+  },
+  {
+    "raw": "⑫へワープ",
+    "translated": {
+      "en": "Warp to Tile 12",
+      "fr": "Téléportation vers la dalle 12",
+      "it": "Teletrasporto alla piastrella 12",
+      "de": "Warp zu Feld 12",
+      "es": "Teletransporte a la casilla 12",
+      "ko": "12번 타일로 워프",
+      "zht": "傳送至12號地磚",
+      "zhc": "传送至12号地砖",
+      "ru": "Телепорт на плитку 12",
+      "th": "วาร์ปไปช่อง 12",
+      "pt": "Teletransporte para o ponto 12"
+    },
+    "count": 1
+  },
+  {
+    "raw": "⑬へワープ",
+    "translated": {
+      "en": "Warp to Tile 13",
+      "fr": "Téléportation vers la dalle 13",
+      "it": "Teletrasporto alla piastrella 13",
+      "de": "Warp zu Feld 13",
+      "es": "Teletransporte a la casilla 13",
+      "ko": "13번 타일로 워프",
+      "zht": "傳送至13號地磚",
+      "zhc": "传送至13号地砖",
+      "ru": "Телепорт на плитку 13",
+      "th": "วาร์ปไปช่อง 13",
+      "pt": "Teletransporte para o ponto 13"
+    },
+    "count": 1
+  },
+  {
+    "raw": "強制エンカウント②",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "1F②へワープ",
+    "translated": {
+      "en": "Warp to 1F Tile 2",
+      "fr": "Téléportation vers la dalle 2 du 1er étage",
+      "it": "Teletrasporto alla piastrella 2 del 1° piano",
+      "de": "Warp zu Feld 2 im 1. OG",
+      "es": "Teletransporte a la casilla 2 del piso 1",
+      "ko": "1층 2번 타일로 워프",
+      "zht": "傳送至1樓2號地磚",
+      "zhc": "传送至1楼2号地砖",
+      "ru": "Телепорт на плитку 2, 1 этаж",
+      "th": "วาร์ปไปช่อง 2 ชั้น 1",
+      "pt": "Teletransporte para o ponto 2 do 1F"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（青）暗",
+    "translated": {
+      "en": "Crystal Cave Warp (Blue) Dark",
+      "fr": "Téléporteur de la grotte de cristal (bleu) sombre",
+      "it": "Teletrasporto della grotta di cristallo (blu) oscuro",
+      "de": "Kristallhöhlen-Warp (Blau) Dunkel",
+      "es": "Teletransporte de la cueva de cristal (azul) oscuro",
+      "ko": "크리스탈 동굴 워프 (파랑) 어둠",
+      "zht": "水晶洞窟傳送點（藍）暗",
+      "zhc": "水晶洞窟传送点（蓝）暗",
+      "ru": "Телепорт кристальной пещеры (синий) тёмный",
+      "th": "วาร์ปถ้ำคริสตัล (น้ำเงิน) มืด",
+      "pt": "Teletransporte da Caverna de Cristal (Azul) Escuro"
+    },
+    "count": 4
+  },
+  {
+    "raw": "水色の玉(クラーケン会話前)",
+    "translated": {
+      "en": "Water Orb (Before Kraken)",
+      "fr": "Orbe d'eau (avant Kraken)",
+      "it": "Sfera dell'acqua (prima di Kraken)",
+      "de": "Wasserkugel (vor Aquadon)",
+      "es": "Orbe de agua (antes de Kraken)",
+      "ko": "물의 구슬 (크라켄 대화 전)",
+      "zht": "水色寶珠（克拉肯對話前）",
+      "zhc": "水色宝珠（克拉肯对话前）",
+      "ru": "Сфера воды (до Кракена)",
+      "th": "ลูกแก้วน้ำ (ก่อนคราเคน)",
+      "pt": "Orbe de Água (Antes de Kraken)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（青）明",
+    "translated": {
+      "en": "Crystal Cave Warp (Blue) Lit",
+      "fr": "Téléporteur de la grotte de cristal (bleu) illuminé",
+      "it": "Teletrasporto della grotta di cristallo (blu) illuminato",
+      "de": "Kristallhöhlen-Warp (Blau) Leuchtend",
+      "es": "Teletransporte de la cueva de cristal (azul) iluminado",
+      "ko": "크리스탈 동굴 워프 (파랑) 빛",
+      "zht": "水晶洞窟傳送點（藍）明",
+      "zhc": "水晶洞窟传送点（蓝）明",
+      "ru": "Телепорт кристальной пещеры (синий) светлый",
+      "th": "วาร์ปถ้ำคริสตัล (น้ำเงิน) สว่าง",
+      "pt": "Teletransporte da Caverna de Cristal (Azul) Iluminado"
+    },
+    "count": 3
+  },
+  {
+    "raw": "水のクリスタル明",
+    "translated": {
+      "en": "Water Crystal (Lit)",
+      "fr": "Cristal d'eau (illuminé)",
+      "it": "Cristallo dell'acqua (illuminato)",
+      "de": "Wasserkristall (leuchtend)",
+      "es": "Cristal de agua (iluminado)",
+      "ko": "물의 크리스탈 (빛)",
+      "zht": "水之水晶（明）",
+      "zhc": "水之水晶（明）",
+      "ru": "Кристалл воды (светлый)",
+      "th": "คริสตัลน้ำ (สว่าง)",
+      "pt": "Cristal de Água (Iluminado)"
+    },
+    "count": 4
+  },
+  {
+    "raw": "水のクリスタル暗",
+    "translated": {
+      "en": "Water Crystal (Dark)",
+      "fr": "Cristal d'eau (sombre)",
+      "it": "Cristallo dell'acqua (oscuro)",
+      "de": "Wasserkristall (dunkel)",
+      "es": "Cristal de agua (oscuro)",
+      "ko": "물의 크리스탈 (어둠)",
+      "zht": "水之水晶（暗）",
+      "zhc": "水之水晶（暗）",
+      "ru": "Кристалл воды (тёмный)",
+      "th": "คริสตัลน้ำ (มืด)",
+      "pt": "Cristal de Água (Escuro)"
+    },
+    "count": 4
+  },
+  {
+    "raw": "クラーケン出現時エフェクト",
+    "translated": {
+      "en": "Kraken Appearance Effect",
+      "fr": "Effet d'apparition du Kraken",
+      "it": "Effetto apparizione del Kraken",
+      "de": "Aquadon-Erscheinungseffekt",
+      "es": "Efecto de aparición del Kraken",
+      "ko": "크라켄 출현 이펙트",
+      "zht": "克拉肯出現效果",
+      "zhc": "克拉肯出现效果",
+      "ru": "Эффект появления Кракена",
+      "th": "เอฟเฟกต์การปรากฏตัวของคราเคน",
+      "pt": "Efeito de Aparição do Kraken"
+    },
+    "count": 1
+  },
+  {
+    "raw": "タル潜水艦",
+    "translated": {
+      "en": "Barrel Submarine",
+      "fr": "Sous-marin tonneau",
+      "it": "Sottomarino a botte",
+      "de": "Fass-U-Boot",
+      "es": "Submarino barril",
+      "ko": "통 잠수함",
+      "zht": "木桶潛水艇",
+      "zhc": "木桶潜水艇",
+      "ru": "Бочка-подлодка",
+      "th": "เรือดำน้ำถัง",
+      "pt": "Submarino Barril"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ロボット電気",
+    "translated": {
+      "en": "Electric Robot",
+      "fr": "Robot électrique",
+      "it": "Robot elettrico",
+      "de": "Elektrischer Roboter",
+      "es": "Robot eléctrico",
+      "ko": "전기 로봇",
+      "zht": "電氣機器人",
+      "zhc": "电气机器人",
+      "ru": "Электрический робот",
+      "th": "หุ่นยนต์ไฟฟ้า",
+      "pt": "Robô Elétrico"
+    },
+    "count": 1
+  },
+  {
+    "raw": "浮遊城へワープ",
+    "translated": {
+      "en": "Warp to Flying Fortress",
+      "fr": "Téléportation vers la Forteresse volante",
+      "it": "Teletrasporto alla Fortezza volante",
+      "de": "Warp zum Luftschloss",
+      "es": "Teletransporte a la Fortaleza voladora",
+      "ko": "부유성으로 워프",
+      "zht": "傳送至浮游城",
+      "zhc": "传送至浮游城",
+      "ru": "Телепорт в Летучую крепость",
+      "th": "วาร์ปไปปราการลอยฟ้า",
+      "pt": "Teletransporte para a Fortaleza Voadora"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ミラージュの塔へワープ",
+    "translated": {
+      "en": "Warp to Mirage Tower",
+      "fr": "Téléportation vers la Tour mirage",
+      "it": "Teletrasporto alla Torre Miraggio",
+      "de": "Warp zum Turm Mirage",
+      "es": "Teletransporte a la Torre Irreal",
+      "ko": "신기루 탑으로 워프",
+      "zht": "傳送至幻象塔",
+      "zhc": "传送至幻象塔",
+      "ru": "Телепорт в Башню Миража",
+      "th": "วาร์ปไปหอคอยลวงตา",
+      "pt": "Teletransporte para a Torre da Miragem"
+    },
+    "count": 1
+  },
+  {
+    "raw": "2Fへワープ",
+    "translated": {
+      "en": "Warp to 2F",
+      "fr": "Téléportation vers le 2e étage",
+      "it": "Teletrasporto al 2° piano",
+      "de": "Warp zum 2. OG",
+      "es": "Teletransporte al piso 2",
+      "ko": "2층으로 워프",
+      "zht": "傳送至2樓",
+      "zhc": "传送至2楼",
+      "ru": "Телепорт на 2 этаж",
+      "th": "วาร์ปไปชั้น 2",
+      "pt": "Teletransporte para o 2F"
+    },
+    "count": 2
+  },
+  {
+    "raw": "テレポートマス",
+    "translated": {
+      "en": "Teleport Tile",
+      "fr": "Dalle de téléportation",
+      "it": "Piastrella di teletrasporto",
+      "de": "Teleportationsfeld",
+      "es": "Casilla de teletransporte",
+      "ko": "텔레포트 타일",
+      "zht": "傳送地磚",
+      "zhc": "传送地砖",
+      "ru": "Телепортационная плитка",
+      "th": "ช่องเทเลพอร์ต",
+      "pt": "Piso de Teletransporte"
+    },
+    "count": 8
+  },
+  {
+    "raw": "1Fへワープ",
+    "translated": {
+      "en": "Warp to 1F",
+      "fr": "Téléportation vers le 1er étage",
+      "it": "Teletrasporto al 1° piano",
+      "de": "Warp zum 1. OG",
+      "es": "Teletransporte al piso 1",
+      "ko": "1층으로 워프",
+      "zht": "傳送至1樓",
+      "zhc": "传送至1楼",
+      "ru": "Телепорт на 1 этаж",
+      "th": "วาร์ปไปชั้น 1",
+      "pt": "Teletransporte para o 1F"
+    },
+    "count": 1
+  },
+  {
+    "raw": "3Fへワープ",
+    "translated": {
+      "en": "Warp to 3F",
+      "fr": "Téléportation vers le 3e étage",
+      "it": "Teletrasporto al 3° piano",
+      "de": "Warp zum 3. OG",
+      "es": "Teletransporte al piso 3",
+      "ko": "3층으로 워프",
+      "zht": "傳送至3樓",
+      "zhc": "传送至3楼",
+      "ru": "Телепорт на 3 этаж",
+      "th": "วาร์ปไปชั้น 3",
+      "pt": "Teletransporte para o 3F"
+    },
+    "count": 2
+  },
+  {
+    "raw": "アダマンタイト（有）",
+    "translated": {
+      "en": "Adamantite (Present)",
+      "fr": "Adamantine (présente)",
+      "it": "Adamantio (presente)",
+      "de": "Adamantite (vorhanden)",
+      "es": "Adamantita (presente)",
+      "ko": "아다만타이트 (있음)",
+      "zht": "堅鋼石（有）",
+      "zhc": "精金（有）",
+      "ru": "Адамантит (на месте)",
+      "th": "อะดาแมนไทท์ (มีอยู่)",
+      "pt": "Adamantita (Presente)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "4Fへワープ",
+    "translated": {
+      "en": "Warp to 4F",
+      "fr": "Téléportation vers le 4e étage",
+      "it": "Teletrasporto al 4° piano",
+      "de": "Warp zum 4. OG",
+      "es": "Teletransporte al piso 4",
+      "ko": "4층으로 워프",
+      "zht": "傳送至4樓",
+      "zhc": "传送至4楼",
+      "ru": "Телепорт на 4 этаж",
+      "th": "วาร์ปไปชั้น 4",
+      "pt": "Teletransporte para o 4F"
+    },
+    "count": 2
+  },
+  {
+    "raw": "展望窓を覗く",
+    "translated": {
+      "en": "Look Through Window",
+      "fr": "Regarder par la fenêtre",
+      "it": "Guardare dalla finestra",
+      "de": "Durch das Fenster schauen",
+      "es": "Mirar por la ventana",
+      "ko": "전망창을 들여다보다",
+      "zht": "從觀景窗向外看",
+      "zhc": "从观景窗向外看",
+      "ru": "Посмотреть в окно",
+      "th": "มองผ่านหน้าต่าง",
+      "pt": "Olhar Pela Janela"
+    },
+    "count": 1
+  },
+  {
+    "raw": "5Fへワープ",
+    "translated": {
+      "en": "Warp to 5F",
+      "fr": "Téléportation vers le 5e étage",
+      "it": "Teletrasporto al 5° piano",
+      "de": "Warp zum 5. OG",
+      "es": "Teletransporte al piso 5",
+      "ko": "5층으로 워프",
+      "zht": "傳送至5樓",
+      "zhc": "传送至5楼",
+      "ru": "Телепорт на 5 этаж",
+      "th": "วาร์ปไปชั้น 5",
+      "pt": "Teletransporte para o 5F"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ティアマットのオーブ（会話前）",
+    "translated": {
+      "en": "Tiamat Orb (Before Dialogue)",
+      "fr": "Orbe de Tiamat (avant le dialogue)",
+      "it": "Sfera di Tiamath (prima del dialogo)",
+      "de": "Tiamat-Kugel (vor dem Dialog)",
+      "es": "Orbe de Tiamant (antes del diálogo)",
+      "ko": "티아마트 오브 (대화 전)",
+      "zht": "提亞馬特寶珠（對話前）",
+      "zhc": "提亚马特宝珠（对话前）",
+      "ru": "Сфера Тиамат (до диалога)",
+      "th": "ลูกแก้วเทียมัต (ก่อนบทสนทนา)",
+      "pt": "Orbe de Tiamat (Antes do Diálogo)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "緑色のクリスタルのかけら",
+    "translated": {
+      "en": "Green Crystal Shard",
+      "fr": "Éclat de cristal vert",
+      "it": "Frammento di cristallo verde",
+      "de": "Grüner Kristallsplitter",
+      "es": "Fragmento de cristal verde",
+      "ko": "초록 크리스탈 파편",
+      "zht": "綠色水晶碎片",
+      "zhc": "绿色水晶碎片",
+      "ru": "Зелёный осколок кристалла",
+      "th": "เศษคริสตัลสีเขียว",
+      "pt": "Fragmento de Cristal Verde"
+    },
+    "count": 1
+  },
+  {
+    "raw": "PC3ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 3)",
+      "fr": "Point d'exclamation (membre 3 du groupe)",
+      "it": "Punto esclamativo (membro 3 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 3)",
+      "es": "Signo de exclamación (miembro 3 del grupo)",
+      "ko": "느낌표 (파티원 3)",
+      "zht": "驚嘆號（隊員3）",
+      "zhc": "惊叹号（队员3）",
+      "ru": "Восклицательный знак (участник отряда 3)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 3)",
+      "pt": "Ponto de Exclamação (Membro 3 do Grupo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "PC2ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 2)",
+      "fr": "Point d'exclamation (membre 2 du groupe)",
+      "it": "Punto esclamativo (membro 2 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 2)",
+      "es": "Signo de exclamación (miembro 2 del grupo)",
+      "ko": "느낌표 (파티원 2)",
+      "zht": "驚嘆號（隊員2）",
+      "zhc": "惊叹号（队员2）",
+      "ru": "Восклицательный знак (участник отряда 2)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 2)",
+      "pt": "Ponto de Exclamação (Membro 2 do Grupo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "PC1ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 1)",
+      "fr": "Point d'exclamation (membre 1 du groupe)",
+      "it": "Punto esclamativo (membro 1 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 1)",
+      "es": "Signo de exclamación (miembro 1 del grupo)",
+      "ko": "느낌표 (파티원 1)",
+      "zht": "驚嘆號（隊員1）",
+      "zhc": "惊叹号（队员1）",
+      "ru": "Восклицательный знак (участник отряда 1)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 1)",
+      "pt": "Ponto de Exclamação (Membro 1 do Grupo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "PC4ビックリマーク",
+    "translated": {
+      "en": "Exclamation Mark (Party Member 4)",
+      "fr": "Point d'exclamation (membre 4 du groupe)",
+      "it": "Punto esclamativo (membro 4 del gruppo)",
+      "de": "Ausrufezeichen (Gruppenmitglied 4)",
+      "es": "Signo de exclamación (miembro 4 del grupo)",
+      "ko": "느낌표 (파티원 4)",
+      "zht": "驚嘆號（隊員4）",
+      "zhc": "惊叹号（队员4）",
+      "ru": "Восклицательный знак (участник отряда 4)",
+      "th": "เครื่องหมายอัศเจรีย์ (สมาชิกปาร์ตี้ 4)",
+      "pt": "Ponto de Exclamação (Membro 4 do Grupo)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "風のクリスタル（明）",
+    "translated": {
+      "en": "Wind Crystal (Lit)",
+      "fr": "Cristal de vent (illuminé)",
+      "it": "Cristallo del vento (illuminato)",
+      "de": "Windkristall (leuchtend)",
+      "es": "Cristal de viento (iluminado)",
+      "ko": "바람의 크리스탈 (빛)",
+      "zht": "風之水晶（明）",
+      "zhc": "风之水晶（明）",
+      "ru": "Кристалл ветра (светлый)",
+      "th": "คริสตัลลม (สว่าง)",
+      "pt": "Cristal de Vento (Iluminado)"
+    },
+    "count": 2
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（緑）明\n",
+    "translated": {
+      "en": "Crystal Cave Warp (Green) Lit",
+      "fr": "Téléporteur de la grotte de cristal (vert) illuminé",
+      "it": "Teletrasporto della grotta di cristallo (verde) illuminato",
+      "de": "Kristallhöhlen-Warp (Grün) Leuchtend",
+      "es": "Teletransporte de la cueva de cristal (verde) iluminado",
+      "ko": "크리스탈 동굴 워프 (초록) 빛",
+      "zht": "水晶洞窟傳送點（綠）明",
+      "zhc": "水晶洞窟传送点（绿）明",
+      "ru": "Телепорт кристальной пещеры (зелёный) светлый",
+      "th": "วาร์ปถ้ำคริสตัล (เขียว) สว่าง",
+      "pt": "Teletransporte da Caverna de Cristal (Verde) Iluminado"
+    },
+    "count": 2
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（緑）暗\n",
+    "translated": {
+      "en": "Crystal Cave Warp (Green) Dark",
+      "fr": "Téléporteur de la grotte de cristal (vert) sombre",
+      "it": "Teletrasporto della grotta di cristallo (verde) oscuro",
+      "de": "Kristallhöhlen-Warp (Grün) Dunkel",
+      "es": "Teletransporte de la cueva de cristal (verde) oscuro",
+      "ko": "크리스탈 동굴 워프 (초록) 어둠",
+      "zht": "水晶洞窟傳送點（綠）暗",
+      "zhc": "水晶洞窟传送点（绿）暗",
+      "ru": "Телепорт кристальной пещеры (зелёный) тёмный",
+      "th": "วาร์ปถ้ำคริสตัล (เขียว) มืด",
+      "pt": "Teletransporte da Caverna de Cristal (Verde) Escuro"
+    },
+    "count": 1
+  },
+  {
+    "raw": "風のクリスタル（暗）",
+    "translated": {
+      "en": "Wind Crystal (Dark)",
+      "fr": "Cristal de vent (sombre)",
+      "it": "Cristallo del vento (oscuro)",
+      "de": "Windkristall (dunkel)",
+      "es": "Cristal de viento (oscuro)",
+      "ko": "바람의 크리스탈 (어둠)",
+      "zht": "風之水晶（暗）",
+      "zhc": "风之水晶（暗）",
+      "ru": "Кристалл ветра (тёмный)",
+      "th": "คริสตัลลม (มืด)",
+      "pt": "Cristal de Vento (Escuro)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "クリスタルの洞窟のワープ（赤）明\n(仮置き）",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "カオス神殿へワープ",
+    "translated": {
+      "en": "Warp to Chaos Shrine",
+      "fr": "Téléportation vers le Temple du chaos",
+      "it": "Teletrasporto al Tempio del Caos",
+      "de": "Warp zum Chaos-Tempel",
+      "es": "Teletransporte al Templo del Caos",
+      "ko": "카오스 신전으로 워프",
+      "zht": "傳送至混沌神殿",
+      "zhc": "传送至混沌神殿",
+      "ru": "Телепорт в Святилище Хаоса",
+      "th": "วาร์ปไปวิหารคาออส",
+      "pt": "Teletransporte para o Templo do Caos"
+    },
+    "count": 1
+  },
+  {
+    "raw": "リュートで石板をどかす",
+    "translated": {
+      "en": "Move Tablet with Lute",
+      "fr": "Déplacer la tablette avec le luth",
+      "it": "Spostare la tavola con il liuto",
+      "de": "Tafel mit der Laute bewegen",
+      "es": "Mover la tablilla con el laúd",
+      "ko": "류트로 석판을 치우다",
+      "zht": "用豎琴移動石板",
+      "zhc": "用竖琴移动石板",
+      "ru": "Сдвинуть скрижаль лютней",
+      "th": "เลื่อนแผ่นหินด้วยลูต",
+      "pt": "Mover Tábua com Alaúde"
+    },
+    "count": 1
+  },
+  {
+    "raw": "石板（有）",
+    "translated": {
+      "en": "Stone Tablet (Present)",
+      "fr": "Tablette de pierre (présente)",
+      "it": "Tavola di pietra (presente)",
+      "de": "Steintafel (vorhanden)",
+      "es": "Tablilla de piedra (presente)",
+      "ko": "석판 (있음)",
+      "zht": "石板（有）",
+      "zhc": "石板（有）",
+      "ru": "Каменная скрижаль (на месте)",
+      "th": "แผ่นหิน (มีอยู่)",
+      "pt": "Tábua de Pedra (Presente)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "強制エンカウント：リッチ",
+    "translated": {
+      "en": "Forced Encounter: Lich",
+      "fr": "Rencontre forcée : Liche",
+      "it": "Incontro forzato: Lich",
+      "de": "Erzwungene Begegnung: Lich",
+      "es": "Encuentro forzado: Lich",
+      "ko": "강제 인카운터: 리치",
+      "zht": "強制遭遇：巫妖",
+      "zhc": "强制遭遇：巫妖",
+      "ru": "Принудительная встреча: Лич",
+      "th": "การเผชิญหน้าบังคับ: ลิชท์",
+      "pt": "Encontro Forçado: Lich"
+    },
+    "count": 1
+  },
+  {
+    "raw": "強制エンカウント：マリリス",
+    "translated": {
+      "en": "Forced Encounter: Marilith",
+      "fr": "Rencontre forcée : Malyris",
+      "it": "Incontro forzato: Marilith",
+      "de": "Erzwungene Begegnung: Kali",
+      "es": "Encuentro forzado: Malilith",
+      "ko": "강제 인카운터: 마릴리스",
+      "zht": "強制遭遇：馬莉莉絲",
+      "zhc": "强制遭遇：马莉莉丝",
+      "ru": "Принудительная встреча: Марилит",
+      "th": "การเผชิญหน้าบังคับ: มาริลิธ",
+      "pt": "Encontro Forçado: Marilith"
+    },
+    "count": 1
+  },
+  {
+    "raw": "強制エンカウント：クラーケン",
+    "translated": {
+      "en": "Forced Encounter: Kraken",
+      "fr": "Rencontre forcée : Kraken",
+      "it": "Incontro forzato: Kraken",
+      "de": "Erzwungene Begegnung: Aquadon",
+      "es": "Encuentro forzado: Kraken",
+      "ko": "강제 인카운터: 크라켄",
+      "zht": "強制遭遇：克拉肯",
+      "zhc": "强制遭遇：克拉肯",
+      "ru": "Принудительная встреча: Кракен",
+      "th": "การเผชิญหน้าบังคับ: คราเคน",
+      "pt": "Encontro Forçado: Kraken"
+    },
+    "count": 1
+  },
+  {
+    "raw": "強制エンカウント：ティアマット",
+    "translated": {
+      "en": "Forced Encounter: Tiamat",
+      "fr": "Rencontre forcée : Tiamat",
+      "it": "Incontro forzato: Tiamath",
+      "de": "Erzwungene Begegnung: Tiamat",
+      "es": "Encuentro forzado: Tiamant",
+      "ko": "강제 인카운터: 티아마트",
+      "zht": "強制遭遇：提亞馬特",
+      "zhc": "强制遭遇：提亚马特",
+      "ru": "Принудительная встреча: Тиамат",
+      "th": "การเผชิญหน้าบังคับ: เทียมัต",
+      "pt": "Encontro Forçado: Tiamat"
+    },
+    "count": 1
+  }
+]

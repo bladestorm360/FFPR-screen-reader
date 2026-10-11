@@ -1,24 +1,10 @@
-// Ports FF1 Patches/BattleResultPatches.cs: the victory screen (gil, EXP per character, item drops,
-// level-ups with stat gains) and the EXP counter tick (sound::play_exp_counter / top_up / stop,
-// setting "ExpCounter").
-//
-// Last.UI.KeyInput.ResultMenuController and its phase-init methods exist in all six games (FF6's
-// class is FF1's, member for member).
-// Folded body: EndWaitInit shares its RVA with another class's Close() override in every game (x2),
-// so its detour class-checks self. The other phase inits are unique.
-// The EXP monitor follows ResultMenuController.pointController -> characterListConteroller ->
-// contentList / perormanceEndCount. Those two classes are per game (Serial.FFn.UI.KeyInput, FF4's
-// is Serial.FF0.UI.KeyInput), so their fields are looked up by name on the live objects' classes.
-// A game module may add lines to the points announcement (battle.h ResultExtras; FF6 Magic AP and
-// spells learned, src/games/ff6/battle_result.cpp).
-#include <set>
-#include <string>
-#include <vector>
+// Native result phases and displayed rows, shared by FF1-FF6. See docs/AUDIT_2026_10.md.
 #include "battle.h"
 #include "battle_internal.h"
 #include "battle_util.h"
 #include "../audio/sound.h"
 #include "../core.h"
+#include "../displayed_ui.h"
 #include "../frame.h"
 #include "../hooks.h"
 #include "../log.h"
@@ -27,85 +13,27 @@
 #include "../settings.h"
 #include "../text.h"
 #include "../unity.h"
+#include "../ui/review_buffer.h"
+#include "../ui/preferences.h"
 
 namespace ffpr::battle {
 namespace {
-
-ref::Class kResultMenu{"Last.UI.KeyInput", "ResultMenuController"};
-ref::Method mShowPointsInit{kResultMenu, "ShowPointsInit", 0};
-ref::Method mShowGetItemsInit{kResultMenu, "ShowGetItemsInit", 0};
-ref::Method mShowStatusUpInit{kResultMenu, "ShowStatusUpInit", 0};
-ref::Method mShowGetAbilitysInit{kResultMenu, "ShowGetAbilitysInit", 0};
-ref::Method mShowLevelUpAbilitysInit{kResultMenu, "ShowLevelUpAbilitysInit", 0};
-ref::Method mEndWaitInit{kResultMenu, "EndWaitInit", 0};
-ref::Field fTargetData{kResultMenu, "targetData"};
-ref::Field fPointController{kResultMenu, "pointController"};
-
-ref::Class kResultData{"Last.Data", "BattleResultData"};
-ref::Field fGetGil{kResultData, "<GetGil>k__BackingField"};
-ref::Field fItemList{kResultData, "<ItemList>k__BackingField"};
-ref::Field fCharacterList{kResultData, "<CharacterList>k__BackingField"};
-
-ref::Class kResultChar{"Last.Data", "BattleResultData.BattleResultCharacterData"};
-ref::Field fBeforData{kResultChar, "<BeforData>k__BackingField"};
-ref::Field fAfterData{kResultChar, "<AfterData>k__BackingField"};
-ref::Field fIsLevelUp{kResultChar, "<IsLevelUp>k__BackingField"};
-ref::Method mGetExp{kResultChar, "get_GetExp", 0};
-
-ref::Class kDropItem{"Last.Data", "DropItemData"};
-ref::Field fContentId{kDropItem, "<ContentId>k__BackingField"};
-ref::Field fDropValue{kDropItem, "<DropValue>k__BackingField"};
-
-// The game's own drop-list rows (what the result window renders), all six games.
-ref::Class kListItemFormatter{"Last.Management", "ListItemFormatter"};
-ref::Method mGetContentDataList{kListItemFormatter, "GetContentDataList", 2};   // name check only: see format_drop_list
-ref::Class kItemListContentData{"Last.UI", "ItemListContentData"};
-ref::Field fContentName{kItemListContentData, "<Name>k__BackingField"};
-ref::Field fContentCount{kItemListContentData, "<Count>k__BackingField"};
-ref::Class kMessageManager{"Last.Management", "MessageManager"};
-
-/// ListItemFormatter.GetContentDataList(List<DropItemData>, MessageManager): the rows the result
-/// window shows, names included. The method has three two-argument overloads, so it is picked by
-/// its first parameter's class, which is the drop list's own class (one enumeration of the
-/// formatter's six methods, on the first result screen). Null when unresolved.
-void* format_drop_list(void* drops)
-{
-    static il2cpp::Method* method = nullptr;
-    static bool tried = false;
-    if (!tried) {
-        tried = true;
-        il2cpp::Class* k = kListItemFormatter.get();
-        il2cpp::Class* list_class = il2cpp::object_class(static_cast<il2cpp::Object*>(drops));
-        if (k && list_class) method = il2cpp::find_method_overload(k, "GetContentDataList", 2, list_class);
-        if (!method)
-            LOGF("[Battle Result] ListItemFormatter.GetContentDataList(List<DropItemData>, MessageManager) "
-                 "not found: drops are named by content id");
-    }
-    void* mm = ref::instance(kMessageManager);
-    if (!method || !mm) return nullptr;
-    void* args[2] = {drops, mm};
-    return il2cpp::invoke_ptr(method, nullptr, args, 2);
-}
-
-bool g_announced_points = false;
-bool g_announced_items = false;
-// Level-ups already announced this result screen, by "<name>_levelup" (the C# HashSet).
-std::set<std::wstring> g_announced_level_ups;
-
-// A game module's additions to the points announcement (none in FF1-FF5).
-ResultExtras g_extras;
-
-/// Speak a game module's extra lines, queued; a fault in one never stops the core's own lines.
-template <typename F, typename... A>
-void speak_extras(F fn, A... args)
-{
-    if (!fn) return;
-    hooks::guarded("ResultMenuController.ShowPointsInit extras", [&] {
-        for (const std::wstring& line : fn(args...))
-            if (!line.empty()) ffpr::say(line, false);
-    });
-}
-
+ref::Class kMenu{"Last.UI.KeyInput", "ResultMenuController"};
+ref::Method mPoints{kMenu, "ShowPointsInit", 0}, mStatus{kMenu, "ShowStatusUpInit", 0},
+            mItems{kMenu, "ShowGetItemsInit", 0}, mLearning{kMenu, "ShowGetAbilitysInit", 0},
+            mAbilityLevels{kMenu, "ShowLevelUpAbilitysInit", 0}, mEnd{kMenu, "EndWaitInit", 0};
+ref::Class kSkills{"Last.UI.KeyInput", "ResultSkillController", game::kFF2 | game::kFF4 | game::kFF5 | game::kFF6};
+ref::Method mSkillPage{kSkills, "UpdateContentPage", 0};
+bool g_announced_points = false, g_announced_items = false;
+unsigned g_generation = 0;
+using Phase = void (*)(void*, const void*);
+Phase o_points, o_status, o_items, o_learning, o_ability, o_end, o_skill_page;
+std::wstring g_skill_headline;
+void* g_menu = nullptr;
+void* g_point_owner = nullptr;
+enum class ResultPhase { None, Points, Status, Items, Learning, Ability, Weapon };
+ResultPhase g_phase = ResultPhase::None;
+bool g_point_animation_pending = false;
 // True only while the EXP counter tone is actually playing.
 bool g_exp_counter_playing = false;
 bool g_monitor_logged_once = false;
@@ -129,7 +57,7 @@ void monitor_tick(void* char_list_ctrl, int32_t end_count_off, int content_count
     sound::top_up_exp_counter();
 
     // The controller went away: bail out; the phase-init safety nets stop the tone.
-    if (!unity::alive(char_list_ctrl)) return;
+    if (!displayed::visible(char_list_ctrl) || !in_battle()) { stop_exp_counter_if_playing(); return; }
     int end_count = il2cpp::read_field<int32_t>(char_list_ctrl, end_count_off);
 
     if (!g_monitor_logged_once) {
@@ -152,35 +80,42 @@ void monitor_tick(void* char_list_ctrl, int32_t end_count_off, int content_count
 void start_exp_monitor(void* instance)
 {
     frame::cancel_label(kMonitorLabel);
+    auto stop_on_failure = [] { stop_exp_counter_if_playing(); };
     if (!instance) {
         LOGF("[Battle Result] MonitorExp: instance is null");
+        stop_on_failure();
         return;
     }
-    void* point_controller = ref::rd<void*>(instance, fPointController);
+    void* point_controller = instance;
     if (!point_controller) {
         LOGF("[Battle Result] MonitorExp: pointController is null");
+        stop_on_failure();
         return;
     }
     int32_t list_ctrl_off = il2cpp::field_offset(il2cpp::object_class(point_controller), "characterListConteroller");
     void* char_list_ctrl = il2cpp::read_field<void*>(point_controller, list_ctrl_off);
     if (!char_list_ctrl) {
         LOGF("[Battle Result] MonitorExp: characterListController is null");
+        stop_on_failure();
         return;
     }
     il2cpp::Class* list_ctrl_class = il2cpp::object_class(char_list_ctrl);
-    void* content_list = il2cpp::read_field<void*>(char_list_ctrl, il2cpp::field_offset(list_ctrl_class, "contentList"));
+    void* content_list = il2cpp::read_field<void*>(char_list_ctrl, il2cpp::field_offset(list_ctrl_class, "performanceList"));
     if (!content_list) {
         LOGF("[Battle Result] MonitorExp: contentList is null");
+        stop_on_failure();
         return;
     }
     int content_count = unity::list_count(content_list);
     if (content_count <= 0) {
         LOGF("[Battle Result] MonitorExp: contentCount=%d, aborting (safety nets will stop the tone)", content_count);
+        stop_on_failure();
         return;
     }
     int32_t end_count_off = il2cpp::field_offset(list_ctrl_class, "perormanceEndCount");
     if (end_count_off < 0) {
         LOGF("[Battle Result] MonitorExp: perormanceEndCount not found");
+        stop_on_failure();
         return;
     }
     LOGF("[Battle Result] MonitorExp: chain OK. contentCount=%d", content_count);
@@ -189,222 +124,240 @@ void start_exp_monitor(void* instance)
     }, kMonitorLabel);
 }
 
-/// CalculateStatGains: "HP +12, Strength +1, ..." (Confirmed*, falling back to Base*).
-std::wstring stat_gains(void* before, void* after)
+
+std::vector<std::wstring> row_lines(void* controller, const char* list_field, bool compare = false)
 {
-    struct Row { Stat stat; const wchar_t* key; };
-    static const Row rows[] = {
-        {Stat::MaxHp, L"HP +{0}"},
-        {Stat::Power, L"Strength +{0}"},
-        {Stat::Agility, L"Agility +{0}"},
-        {Stat::Vitality, L"Stamina +{0}"},        // shown in game as "Stamina"
-        {Stat::Intelligence, L"Intellect +{0}"},
-        {Stat::Luck, L"Luck +{0}"},
-        {Stat::AccuracyRate, L"Accuracy +{0}"},   // ConfirmedAccuracyRate(false)
-        {Stat::EvasionRate, L"Evasion +{0}"},     // ConfirmedEvasionRate(false)
-    };
-    std::vector<std::wstring> gains;
-    for (const Row& r : rows) {
-        int b = param_confirmed_or_base(before, r.stat);
-        int a = param_confirmed_or_base(after, r.stat);
-        if (a > b) gains.push_back(TF(r.key, {text::num(a - b)}));
+    std::vector<std::wstring> lines;
+    void* list = displayed::field(controller, list_field);
+    for (int i = 0; i < unity::list_count(list); ++i) {
+        void* content = unity::list_at(list, i);
+        if (!displayed::visible(content)) continue;
+        auto line = compare ? displayed::comparison(displayed::field(content, "view")) : displayed::skill_row(content);
+        if (!line.empty()) lines.push_back(std::move(line));
     }
-    return gains.empty() ? std::wstring() : text::join(gains, L", ");
+    return lines;
 }
-
-using Phase_t = void (*)(void* self, const void* mi);
-
-// ShowPointsInit: gil and EXP; clears the battle flags; starts the EXP counter tone.
-Phase_t o_ShowPointsInit;
-void d_ShowPointsInit(void* self, const void* mi)
+void later(void* owner, const std::wstring& title, std::function<std::vector<std::wstring>()> read,
+           std::function<std::wstring()> headline = {}, bool headline_has_details = false)
 {
-    o_ShowPointsInit(self, mi);
-    hooks::guarded("ResultMenuController.ShowPointsInit", [&] {
-        if (g_announced_points) return;
-        g_announced_points = true;
-
-        result_clear_all_battle_states();
-
-        void* data = ref::rd<void*>(self, fTargetData);
-        if (!data) {
-            LOGF("[Battle Result] Could not get result data");
-            return;
+    const unsigned generation = ++g_generation;
+    ui::review::clear();
+    frame::cancel_label("BattleResult.Read");
+    frame::every_frame([owner, title, read, headline, headline_has_details, generation] {
+        if (generation != g_generation || !in_battle() || !unity::alive(owner)) return false;
+        if (!displayed::visible(owner)) return true;
+        auto lines = read();
+        if (lines.empty() && displayed::texts(owner).empty()) return true;
+        ui::review::Options options;
+        options.headline_has_details = headline_has_details;
+        options.defer_details = owner == g_point_owner && g_point_animation_pending;
+        if (headline_has_details && headline) options.entry_headline = headline();
+        ui::review::show(owner, !headline_has_details && headline ? headline() : title, std::move(lines), std::move(options));
+        return false;
+    }, "BattleResult.Read", 30);
+}
+std::wstring points_headline(void* self)
+{
+        std::vector<std::wstring> lines{T(L"Battle results")};
+        void* view = displayed::field(displayed::field(self, "getPointController"), "view");
+        for (auto [label, value] : {std::pair{"getGilFixText", "getGilValueText"},
+                                  std::pair{"getExpFixText", "getExpValueText"},
+                                  std::pair{"getABPFixText", "getABPValueText"},
+                                  std::pair{"getMpFixText", "getMpValueText"}}) {
+            auto line = displayed::pair(view, label, value);
+            if (!line.empty()) lines.push_back(std::move(line));
         }
-
-        int gil = ref::rd<int32_t>(data, fGetGil);
-        ffpr::say(TF(L"Gained {0} gil", {n0(gil)}), true);
-        speak_extras(g_extras.after_gil, data);
-
-        // Per-character EXP; the party total decides whether the counter tone starts.
-        int total_exp = 0;
-        for (void* char_result : list_items(ref::rd<void*>(data, fCharacterList))) {
-            if (!char_result) continue;
-            void* after = ref::rd<void*>(char_result, fAfterData);
-            if (!after) continue;
-            std::wstring name = character_name(after);
-            if (name.empty()) continue;
-            int exp = ref::call<int32_t>(mGetExp, char_result);
-            if (exp > 0) {
-                total_exp += exp;
-                ffpr::say(TF(L"{0} gained {1} XP", {name, n0(exp)}), false);
-            }
-            speak_extras(g_extras.after_character, char_result);
-        }
-
-        if (settings::get_bool("ExpCounter", true) && total_exp > 0) {
-            sound::play_exp_counter();
-            g_exp_counter_playing = true;
-            g_monitor_logged_once = false;
+        // Some games combine learned abilities/job proficiency with the points page.
+        // Only include the simultaneously displayed side panel, never future learning data.
+        void* skill = displayed::field(g_menu, "skillController");
+        auto learned = row_lines(skill, "contentList");
+        auto levels = row_lines(skill, "levelUpContentList");
+        lines.insert(lines.end(), learned.begin(), learned.end());
+        lines.insert(lines.end(), levels.begin(), levels.end());
+        return text::join(lines, L". ");
+}
+void point_rows(void* self)
+{
+    // Called by the inner PointsInit, after the native controller fills its visible views.
+    if (g_announced_points) return;
+    g_announced_points = true;
+    g_point_owner = self;
+    g_phase = ResultPhase::Points;
+    g_point_animation_pending = !game::is(game::Id::FF2);
+    later(self, T(L"Battle results"), [self] {
+        return row_lines(displayed::field(self, "characterListConteroller"), "contentList");
+    }, [self] { return points_headline(self); });
+    // Counter audio follows native animation completion, never changes the game values.
+    if (!game::is(game::Id::FF2) && settings::get_bool("ExpCounter", true)) {
+        void* data = displayed::field(self, "targetData");
+        if (data) {
+            sound::play_exp_counter(); g_exp_counter_playing = true; g_monitor_logged_once = false;
             start_exp_monitor(self);
         }
+    }
+}
+void status_rows(void* self)
+{
+    g_phase = ResultPhase::Status;
+    stop_exp_counter_if_playing();
+    later(self, text::join(displayed::texts(displayed::field(self, "view")), L" "), [self] {
+        return row_lines(self, "contentList", true);
     });
 }
-
-// ShowGetItemsInit: item drops.
-Phase_t o_ShowGetItemsInit;
-void d_ShowGetItemsInit(void* self, const void* mi)
+void skills(void* self)
 {
-    o_ShowGetItemsInit(self, mi);
-    hooks::guarded("ResultMenuController.ShowGetItemsInit", [&] {
-        // Safety net: the EXP tally is finished by the time this phase begins.
+    auto read = [self] {
+        auto lines = row_lines(self, "contentList");
+        auto levels = row_lines(self, "levelUpContentList");
+        lines.insert(lines.end(), levels.begin(), levels.end());
+        return lines;
+    };
+    later(self, g_skill_headline, read, [read] { return g_skill_headline + L". " + text::join(read(), L". "); }, true);
+}
+void points_finished(void* list)
+{
+    if (!g_point_animation_pending || !displayed::visible(g_point_owner) ||
+        displayed::field(g_point_owner, "characterListConteroller") != list) return;
+    g_point_animation_pending = false;
+    stop_exp_counter_if_playing();
+    const unsigned generation = g_generation;
+    frame::next_frame([generation] {
+        if (generation != g_generation || !ui::review::owns(g_point_owner) || !displayed::visible(g_point_owner)) return;
+        auto lines = row_lines(displayed::field(g_point_owner, "characterListConteroller"), "contentList");
+        const auto announcement = text::join(lines, L". ");
+        ui::review::Options options;
+        options.announce = false;
+        options.restore_index = ui::review::index();
+        // Keep native totals in the review headline; replace only the now-final member rows.
+        ui::review::replace_lines(std::move(lines), options.restore_index);
+        if (ui::prefs::auto_detail_enabled() && !announcement.empty()) ffpr::say(announcement, false);
+    }, "BattleResult.FinalPoints");
+}
+void d_points(void* self, const void* mi) {
+    g_phase = ResultPhase::Points; g_menu = self;
+    o_points(self, mi);
+    g_menu = self;
+    hooks::guarded("Results.Points", [] { result_clear_all_battle_states(); ui::review::clear(); });
+}
+void d_status(void* self, const void* mi) {
+    g_phase = ResultPhase::Status;
+    o_status(self, mi);
+    hooks::guarded("Results.StatusPhase", [] { stop_exp_counter_if_playing(); ui::review::clear(); });
+}
+void d_items(void* self, const void* mi) {
+    g_phase = ResultPhase::Items;
+    o_items(self, mi);
+    hooks::guarded("Results.Items", [self] {
         stop_exp_counter_if_playing();
-
         if (g_announced_items) return;
         g_announced_items = true;
-
-        void* data = ref::rd<void*>(self, fTargetData);
-        if (!data) return;
-        void* items = ref::rd<void*>(data, fItemList);
-        if (!items || unity::list_count(items) == 0) return;
-
-        auto speak_drop = [](const std::wstring& raw_name, int drop_count) {
-            std::wstring name = strip_icon(raw_name);
-            if (name.empty()) return;
-            std::wstring announcement = drop_count > 1 ? TF(L"Found {0} x{1}", {name, text::num(drop_count)})
-                                                       : TF(L"Found {0}", {name});
-            ffpr::say(announcement, false);
-        };
-
-        // The game's own rows first (the FF2 C# did this): a gil drop has no item behind its
-        // content id, and FF2 lists one per monster ("4 Gil", "18 Gil"); resolving the id as an
-        // item named every one of them after item 1, "Potion x4" (FF2 test, 2026-10-10).
-        if (void* rows = format_drop_list(items)) {
-            for (void* row : list_items(rows)) {
-                if (row) speak_drop(ref::rd_str(row, fContentName), ref::rd<int32_t>(row, fContentCount));
-            }
-            return;
-        }
-
-        // FF1's own lookup, kept as the fallback.
-        for (void* drop : list_items(items)) {
-            if (!drop) continue;
-            speak_drop(item_name_by_content(ref::rd<int32_t>(drop, fContentId)), ref::rd<int32_t>(drop, fDropValue));
+        void* controller = displayed::field(self, "itemControlle");
+        later(controller, T(L"Items obtained"), [controller] { return row_lines(controller, "itemContentList"); });
+    });
+}
+void d_learning(void* self, const void* mi) {
+    g_phase = ResultPhase::Learning;
+    o_learning(self, mi);
+    hooks::guarded("Results.Learned", [self] {
+        stop_exp_counter_if_playing(); g_skill_headline = T(L"Learned abilities");
+        skills(displayed::field(self, "skillController"));
+    });
+}
+void d_ability(void* self, const void* mi) {
+    g_phase = ResultPhase::Ability;
+    o_ability(self, mi);
+    hooks::guarded("Results.AbilityLevels", [self] {
+        stop_exp_counter_if_playing(); g_skill_headline = T(L"Ability and job level gains");
+        skills(displayed::field(self, "skillController"));
+    });
+}
+void d_skill_page(void* self, const void* mi) {
+    o_skill_page(self, mi);
+    hooks::guarded("Results.AbilityPage", [self] {
+        if (!in_battle()) return;
+        if (g_phase == ResultPhase::Learning || g_phase == ResultPhase::Ability) skills(self);
+        // A combined points/learning panel must keep the native points page's buffer.
+        // Initialization is covered by point_rows; this branch handles later page changes.
+        else if (g_phase == ResultPhase::Points && ui::review::owns(g_point_owner)) {
+            const unsigned generation = g_generation;
+            frame::next_frame([self, generation] {
+                if (generation != g_generation || g_phase != ResultPhase::Points || !displayed::visible(self)) return;
+                auto lines = row_lines(self, "contentList");
+                auto levels = row_lines(self, "levelUpContentList");
+                lines.insert(lines.end(), levels.begin(), levels.end());
+                ui::review::Options options;
+                options.announce = false;
+                options.defer_details = g_point_animation_pending;
+                options.restore_index = ui::review::index();
+                ui::review::show(g_point_owner, points_headline(g_point_owner),
+                    row_lines(displayed::field(g_point_owner, "characterListConteroller"), "contentList"), options);
+                if (!lines.empty()) ffpr::say(text::join(lines, L". "), false);
+            }, "BattleResult.LearningPage");
         }
     });
 }
+void d_end(void* self, const void* mi) {
+    o_end(self, mi);
+    if (kMenu.is(self)) { g_phase = ResultPhase::None; stop_exp_counter_if_playing(); ++g_generation; ui::review::clear(); }
+}
 
-// ShowStatusUpInit: level-ups with stat gains.
-Phase_t o_ShowStatusUpInit;
-void d_ShowStatusUpInit(void* self, const void* mi)
-{
-    o_ShowStatusUpInit(self, mi);
-    hooks::guarded("ResultMenuController.ShowStatusUpInit", [&] {
+// Per-game inner phase and per-member page hooks. These bodies are unique in every dump.
+#define RESULT_TYPES(N, NS, MASK) \
+ref::Class kPoint##N{NS, "ResultPointController", MASK}, kStatus##N{NS, "ResultStatusUpController", MASK}; \
+ref::Class kCharacterList##N{NS, "ResultCharacterListController", MASK}; \
+ref::Method mFinished##N{kCharacterList##N, "IsEndPerformance", 0}; \
+using Finished##N = bool (*)(void*, const void*); Finished##N oFinished##N; \
+bool dFinished##N(void* s, const void* m) { bool done = oFinished##N(s, m); hooks::guarded("Results.AnimationFinished", [s, done] { if (done) points_finished(s); }); return done; } \
+ref::Method mPoint##N{kPoint##N, "PointsInit", 0}, mStatus##N{kStatus##N, "SetData", 1}; \
+Phase oPoint##N; using Status##N = void (*)(void*, void*, const void*); Status##N oStatus##N; \
+void dPoint##N(void* s, const void* m) { oPoint##N(s, m); hooks::guarded("Results.PointRows", [s] { point_rows(s); }); } \
+void dStatus##N(void* s, void* d, const void* m) { oStatus##N(s, d, m); hooks::guarded("Results.StatusRows", [s] { status_rows(s); }); }
+RESULT_TYPES(1, "Serial.FF1.UI.KeyInput", game::kFF1)
+RESULT_TYPES(2, "Serial.FF2.UI.KeyInput", game::kFF2)
+RESULT_TYPES(3, "Serial.FF3.UI.KeyInput", game::kFF3)
+RESULT_TYPES(4, "Serial.FF0.UI.KeyInput", game::kFF4)
+RESULT_TYPES(5, "Serial.FF5.UI.KeyInput", game::kFF5)
+RESULT_TYPES(6, "Serial.FF6.UI.KeyInput", game::kFF6)
+#undef RESULT_TYPES
+ref::Class kFF2Point{"Serial.FF2.UI.KeyInput", "ResultPointController", game::kFF2};
+ref::Method mSkillLevels{kFF2Point, "SkilllLevelsInit", 0}; Phase o_skill_levels;
+void d_skill_levels(void* self, const void* mi) {
+    o_skill_levels(self, mi);
+    hooks::guarded("Results.WeaponSkills", [self] {
+        g_phase = ResultPhase::Weapon;
         stop_exp_counter_if_playing();
-
-        void* data = ref::rd<void*>(self, fTargetData);
-        if (!data) return;
-        for (void* char_result : list_items(ref::rd<void*>(data, fCharacterList))) {
-            if (!char_result) continue;
-            if (!ref::rd<bool>(char_result, fIsLevelUp)) continue;
-            void* after = ref::rd<void*>(char_result, fAfterData);
-            if (!after) continue;
-            std::wstring name = character_name(after);
-            if (name.empty()) continue;
-
-            // Prevent duplicate announcements.
-            std::wstring key = name + L"_levelup";
-            if (g_announced_level_ups.count(key)) continue;
-            g_announced_level_ups.insert(key);
-
-            int new_level = 0;
-            void* after_param = character_parameter(after);
-            if (after_param) new_level = param_confirmed_or_base(after_param, Stat::Level);
-
-            std::vector<std::wstring> parts;
-            parts.push_back(TF(L"{0} leveled up to {1}", {name, text::num(new_level)}));
-
-            void* before = ref::rd<void*>(char_result, fBeforData);   // "Befor": the game's spelling
-            void* before_param = before ? character_parameter(before) : nullptr;
-            if (before_param && after_param) {
-                std::wstring gains = stat_gains(before_param, after_param);
-                if (!gains.empty()) parts.push_back(gains);
-            }
-            ffpr::say(text::join(parts, L", "), false);
-        }
+        void* controller = displayed::field(self, "skillLevelController");
+        later(controller, T(L"Skill gains"), [controller] { return row_lines(controller, "contentList"); });
     });
 }
-
-// Post-points phases: safety nets that stop the EXP counter tone.
-Phase_t o_ShowGetAbilitysInit;
-void d_ShowGetAbilitysInit(void* self, const void* mi)
-{
-    o_ShowGetAbilitysInit(self, mi);
-    hooks::guarded("ResultMenuController.ShowGetAbilitysInit", [] { stop_exp_counter_if_playing(); });
-}
-
-Phase_t o_ShowLevelUpAbilitysInit;
-void d_ShowLevelUpAbilitysInit(void* self, const void* mi)
-{
-    o_ShowLevelUpAbilitysInit(self, mi);
-    hooks::guarded("ResultMenuController.ShowLevelUpAbilitysInit", [] { stop_exp_counter_if_playing(); });
-}
-
-// EndWaitInit: the terminal phase (folded body: class-checked).
-Phase_t o_EndWaitInit;
-void d_EndWaitInit(void* self, const void* mi)
-{
-    o_EndWaitInit(self, mi);
-    hooks::guarded("ResultMenuController.EndWaitInit", [&] {
-        if (!kResultMenu.is(self)) return;
-        stop_exp_counter_if_playing();
-    });
-}
-
-int install()
-{
-    actions::define("BattleResultPatches.ClearAllBattleMenuFlags", [] { result_clear_all_battle_states(); });
+int install() {
     int n = 0;
-    n += hooks::attach(mShowPointsInit, &d_ShowPointsInit, &o_ShowPointsInit) ? 1 : 0;
-    n += hooks::attach(mShowGetItemsInit, &d_ShowGetItemsInit, &o_ShowGetItemsInit) ? 1 : 0;
-    n += hooks::attach(mShowStatusUpInit, &d_ShowStatusUpInit, &o_ShowStatusUpInit) ? 1 : 0;
-    n += hooks::attach(mShowGetAbilitysInit, &d_ShowGetAbilitysInit, &o_ShowGetAbilitysInit) ? 1 : 0;
-    n += hooks::attach(mShowLevelUpAbilitysInit, &d_ShowLevelUpAbilitysInit, &o_ShowLevelUpAbilitysInit) ? 1 : 0;
-    n += hooks::attach(mEndWaitInit, &d_EndWaitInit, &o_EndWaitInit) ? 1 : 0;
+#define ATTACH(M, D, O) n += hooks::attach(M, &D, &O) ? 1 : 0
+    ATTACH(mPoints, d_points, o_points); ATTACH(mStatus, d_status, o_status);
+    ATTACH(mItems, d_items, o_items); ATTACH(mLearning, d_learning, o_learning);
+    ATTACH(mAbilityLevels, d_ability, o_ability); ATTACH(mEnd, d_end, o_end);
+    ATTACH(mSkillPage, d_skill_page, o_skill_page); ATTACH(mSkillLevels, d_skill_levels, o_skill_levels);
+#define ATTACH_GAME(N) ATTACH(mPoint##N, dPoint##N, oPoint##N); ATTACH(mStatus##N, dStatus##N, oStatus##N); ATTACH(mFinished##N, dFinished##N, oFinished##N)
+    ATTACH_GAME(1); ATTACH_GAME(2); ATTACH_GAME(3); ATTACH_GAME(4); ATTACH_GAME(5); ATTACH_GAME(6);
+#undef ATTACH_GAME
+#undef ATTACH
+    actions::define("BattleResultPatches.ClearAllBattleMenuFlags", [] { result_clear_all_battle_states(); });
+    actions::define("BattleResultNavigator.Open", [] { ui::review::details(); }); // FF5's established L key.
+    queries::define("BattleResultDataStore.HasData", [] { return ui::review::active(); });
     return n;
 }
 core::Install s_install{"Battle.Result", &install, 110};
-
-} // namespace
-
-void set_result_extras(const ResultExtras& extras) { g_extras = extras; }
-
-void result_clear_all_battle_states()
-{
-    state_set(menu_state::BATTLE_COMMAND, false);
-    state_set(menu_state::BATTLE_TARGET, false);
-    state_set(menu_state::BATTLE_ITEM, false);
-    state_set(menu_state::BATTLE_MAGIC, false);
-    command_reset_state();
-    magic_reset_state();
 }
-
-void result_reset_state()
-{
-    g_announced_points = false;
-    g_announced_items = false;
-    g_announced_level_ups.clear();
-    // Hard stop any tone left over from an abnormally-ended result screen.
-    stop_exp_counter_if_playing();
+void result_clear_all_battle_states() {
+    state_set(menu_state::BATTLE_COMMAND, false); state_set(menu_state::BATTLE_TARGET, false);
+    state_set(menu_state::BATTLE_ITEM, false); state_set(menu_state::BATTLE_MAGIC, false);
+    command_reset_state(); magic_reset_state();
 }
-
-} // namespace ffpr::battle
+void result_reset_state() {
+    g_phase = ResultPhase::None; g_menu = nullptr; g_skill_headline.clear();
+    g_announced_points = g_announced_items = false; ++g_generation;
+    g_point_animation_pending = false; g_point_owner = nullptr;
+    stop_exp_counter_if_playing(); frame::cancel_label(kMonitorLabel); frame::cancel_label("BattleResult.");
+    ui::review::clear();
+}
+}

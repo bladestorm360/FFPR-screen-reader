@@ -1,8 +1,6 @@
 // Ports FF1 Menus/BestiaryReader.cs: bestiary (Picture Book) data formatted for speech. Only
-// what the game visibly shows - never raw master data, except the dropped and stolen items, which
-// the UI shows as icons without text. All six games; stealable items only where the game's
-// bestiary lists them (game::flags().bestiary_steal: FF4, FF5, FF6), as FF2-FF6's old mods read
-// them.
+// what the game renders, including the native reveal-gated item rows. Shared master
+// slots must never bypass the bestiary's secret placeholders or displayed item volume.
 #include "bestiary.h"
 #include "../game.h"
 #include "../log.h"
@@ -11,6 +9,7 @@
 #include "../text.h"
 #include "../unity.h"
 #include "../status/status.h"
+#include "../displayed_ui.h"
 
 namespace ffpr::bestiary {
 namespace {
@@ -29,6 +28,7 @@ ref::Field  fMonsterDataTable{kInfoContent, "monsterDataTable"};
 ref::Field  fStatusTable{kInfoContent, "statusTable"};
 ref::Field  fOptionTable{kInfoContent, "optionTable"};
 ref::Field  fHierarchyTable{kInfoContent, "hierarchyTable"};
+ref::Field  fDropTable{kInfoContent, "dropTable"};
 
 ref::Class  kParamValue{"Last.UI.Common.Library", "LibraryInfoParamValue"};
 ref::Field  fParamText{kParamValue, "paramText"};
@@ -59,30 +59,11 @@ ref::Method mParty9{kMonsterParty, "get_Monster9", 0};
 
 ref::Class  kMonster{"Last.Data.Master", "Monster"};
 ref::Method mMonsterMesIdName{kMonster, "get_MesIdName", 0};
-ref::Method mDrop1{kMonster, "get_DropContentId1", 0};
-ref::Method mDrop2{kMonster, "get_DropContentId2", 0};
-ref::Method mDrop3{kMonster, "get_DropContentId3", 0};
-ref::Method mDrop4{kMonster, "get_DropContentId4", 0};
-ref::Method mDrop5{kMonster, "get_DropContentId5", 0};
-ref::Method mDrop6{kMonster, "get_DropContentId6", 0};
-ref::Method mDrop7{kMonster, "get_DropContentId7", 0};
-ref::Method mDrop8{kMonster, "get_DropContentId8", 0};
-// Steal slots: read only where game::flags().bestiary_steal, so masked to those games.
-constexpr uint8_t kStealGames = game::kFF4 | game::kFF5 | game::kFF6;
-ref::Class  kMonsterSteal{"Last.Data.Master", "Monster", kStealGames};
-ref::Method mSteal1{kMonsterSteal, "get_StealContentId1", 0};
-ref::Method mSteal2{kMonsterSteal, "get_StealContentId2", 0};
-ref::Method mSteal3{kMonsterSteal, "get_StealContentId3", 0};
-ref::Method mSteal4{kMonsterSteal, "get_StealContentId4", 0};
-
-ref::Class  kContent{"Last.Data.Master", "Content"};
-ref::Method mContentMesIdName{kContent, "get_MesIdName", 0};
-
 // C# Text.text?.Trim() of a Text field, empty when missing.
 std::wstring trimmed_text(void* owner, ref::Field& f)
 {
     void* t = owner ? ref::rd<void*>(owner, f) : nullptr;
-    return t ? text::trim(unity::ui_text(t)) : std::wstring();
+    return displayed::text(t);
 }
 
 // GetParamValueLabel: paramText.text, trimmed.
@@ -90,7 +71,7 @@ std::wstring param_value_label(void* param)
 {
     void* t = ref::rd<void*>(param, fParamText);
     if (!t) return {};
-    std::wstring s = unity::ui_text(t);
+    std::wstring s = displayed::text(t);
     return s.empty() ? std::wstring() : text::trim(s);
 }
 
@@ -102,7 +83,7 @@ std::wstring param_value_text(void* param)
     for (ref::Field* f : fields) {
         void* t = ref::rd<void*>(param, *f);
         if (!t) continue;
-        std::wstring s = unity::ui_text(t);
+        std::wstring s = displayed::text(t);
         if (!s.empty()) return text::trim(s);
     }
     return {};
@@ -146,7 +127,7 @@ void read_param_list_view_array(void* table, StatGroup group, std::vector<StatEn
             if (k) value += L", ";
             value += details[k];
         }
-        entries.push_back({title, details.empty() ? T(L"None") : value, group});
+        entries.push_back({title, value, group});
     }
 }
 
@@ -168,49 +149,6 @@ std::wstring resolve_monster_name(int monster_id)
     if (mes_id.empty()) return monster_fallback(monster_id);
     std::wstring name = game_message(mes_id);
     return name.empty() ? monster_fallback(monster_id) : name;
-}
-
-// ResolveContentName: an item (Content) name, icon markup stripped.
-std::wstring resolve_content_name(int content_id)
-{
-    void* content = ffpr::status::master_entry(kContent, content_id);
-    if (!content) return {};
-    std::wstring mes_id = ref::call_str(mContentMesIdName, content);
-    if (mes_id.empty()) return {};
-    return text::trim(text::strip_markup(game_message(mes_id)));
-}
-
-// The item names in a list of Monster master slots, ", "-joined.
-template <size_t N>
-std::wstring item_names(void* master, ref::Method* (&slots)[N])
-{
-    std::wstring names;
-    for (ref::Method* m : slots) {
-        int id = ref::call<int32_t>(*m, master);
-        if (id <= 0) continue;
-        std::wstring name = resolve_content_name(id);
-        if (name.empty()) continue;
-        if (!names.empty()) names += L", ";
-        names += name;
-    }
-    return names;
-}
-
-// ReadItemsFromMasterData: the 4 steal slots (games whose bestiary lists them), then the 8 drop
-// slots of the Monster master.
-void read_items_from_master_data(void* monster_data, std::vector<StatEntry>& entries)
-{
-    if (!monster_data) return;
-    void* master = ref::call<void*>(mMonsterMaster, monster_data);
-    if (!master) return;
-    if (game::flags().bestiary_steal) {
-        ref::Method* steals[] = {&mSteal1, &mSteal2, &mSteal3, &mSteal4};
-        std::wstring names = item_names(master, steals);
-        entries.push_back({T(L"Stealable Items"), names.empty() ? T(L"None") : names, StatGroup::Items});
-    }
-    ref::Method* drops[] = {&mDrop1, &mDrop2, &mDrop3, &mDrop4, &mDrop5, &mDrop6, &mDrop7, &mDrop8};
-    std::wstring names = item_names(master, drops);
-    entries.push_back({T(L"Dropped Items"), names.empty() ? T(L"None") : names, StatGroup::Items});
 }
 
 } // namespace
@@ -250,8 +188,9 @@ std::vector<StatEntry> build_stat_buffer(void* content, void* monster_data)
         read_param_value_array(ref::rd<void*>(content, fStatusTable), StatGroup::Status, entries);
         // Group 3: Options (Gil, EXP)
         read_param_value_array(ref::rd<void*>(content, fOptionTable), StatGroup::Options, entries);
-        // Group 4: Items, from master data (the UI shows icons without text)
-        read_items_from_master_data(monster_data, entries);
+        // Native item rows own their reveal gate (including secret placeholder text).
+        // Do not reconstruct all master slots or bypass the game's selected volume.
+        read_param_list_view_array(ref::rd<void*>(content, fDropTable), StatGroup::Items, entries);
         // Group 5: Hierarchy (Type, Weakness, Resistance, Absorbs, Cancels, Habitat)
         read_param_list_view_array(ref::rd<void*>(content, fHierarchyTable), StatGroup::Properties, entries);
     } catch (...) {

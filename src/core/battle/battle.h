@@ -21,17 +21,14 @@ void* current_actor();
 
 /// FF1 BattleStateHelper.IsInBattle.
 bool in_battle();
-
-/// Victory-screen lines a game module adds to the core's ResultMenuController.ShowPointsInit
-/// announcement (FF6: espers' Magic AP and the spells learned). Called on the main thread inside
-/// that hook, once per result screen; each returned line is spoken queued. after_gil gets the
-/// BattleResultData and runs right after "Gained N gil"; after_character gets one
-/// BattleResultData.BattleResultCharacterData and runs after that character's EXP line (also
-/// when the character gained no EXP). Null members add nothing (FF1-FF5 register none).
-struct ResultExtras {
-    std::vector<std::wstring> (*after_gil)(void* result_data) = nullptr;
-    std::vector<std::wstring> (*after_character)(void* character_result) = nullptr;
-};
-void set_result_extras(const ResultExtras& extras);
+/// Shared renderer-backed H/T/number-row readers, including targeting panels.
+void announce_active_status();
+void announce_active_turn();
+std::wstring displayed_player(void* player);
+/// Native action lifecycle; stores an already identified actor name and party identity.
+void action_actor_started(void* unit);
+void action_actor_finished();
+/// Called at the native main-game transition, before its field/battle dispatch.
+void main_game_transition(int state);
 
 } // namespace ffpr::battle

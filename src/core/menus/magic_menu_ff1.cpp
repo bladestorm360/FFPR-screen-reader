@@ -1,3 +1,4 @@
+#include "../displayed_ui.h"
 // Ports FF1 Patches/MagicMenuPatches.cs, Patches/MagicTargetPatches.cs and
 // MagicMenuState.ShouldSuppress (Patches/MagicMenuState.cs).
 //
@@ -93,25 +94,13 @@ bool should_suppress()
 }
 
 /// MagicMenuPatches.AnnounceSpell: name, level, charges, AutoDetail description, "(X of Y)".
-bool announce_spell(void* ability, int index, int count)
+bool announce_spell(void* ability, void* content, int index, int count)
 {
-    int spell_lv = spell_level(ability);
-
     // Cache for the I key.
     detail::magic_set_last_announced_ability(ability);
 
-    std::wstring name = spell_name(ability);
-    if (name.empty()) return false;
-
-    std::wstring base = name;
-    if (spell_lv > 0) {
-        base += L" " + TF(L"LV{0}", {text::num(spell_lv)});
-        if (void* character = detail::magic_current_character()) {
-            int current = 0, max = 0;
-            charges_for_level(character, spell_lv, current, max);
-            if (max > 0) base += L": " + TF(L"MP: {0}/{1}", {text::num(current), text::num(max)});
-        }
-    }
+    std::wstring base = displayed::spell_row(content);
+    if (base.empty()) return false;
 
     // AutoDetail: append the description on focus.
     std::wstring announcement = base;
@@ -153,7 +142,7 @@ void announce_spell_at_index(void* controller, int index)
         announce_empty(index, count);
         return;
     }
-    announce_spell(ability, index, count);
+    announce_spell(ability, content, index, count);
 }
 
 /// MagicMenuPatches.TryAnnounceInitialSpell: speaks the focused spell if the list is genuinely
@@ -179,7 +168,7 @@ bool try_announce_initial_spell(void* controller)
     // Force the (re)entry line even if it equals the last one (a cursor-settle SetCursor may
     // have fired first on a popup back-out): this read is the authoritative re-entry source.
     dedup::reset(kCtxSpell);
-    return announce_spell(ability, index, count);
+    return announce_spell(ability, content, index, count);
 }
 
 /// MagicMenuPatches.BeginSpellListEntry / SpellListEntryRoutine. Starting the frame after the
@@ -280,17 +269,10 @@ void d_WindowSetActive(void* self, bool is_active, const void* mi)
 // --- MagicTargetPatches: AbilityUseContentListController -----------------------------------
 
 /// MagicTargetPatches.AnnounceTargetCharacter: "Name: HP: a / b status, status (X of Y)".
-void announce_target_character(void* character, int index, int count)
+void announce_target_character(void* content, int index, int count)
 {
-    std::wstring name = detail::character_name(character);
-    if (detail::blank(name)) return;
-
-    std::wstring announcement = name;
-    detail::Vitals v = detail::character_vitals(character);
-    if (v.has_parameter) {
-        announcement += L": " + TF(L"HP: {0} / {1}", {text::num(v.hp), text::num(v.max_hp)});
-        if (!v.conditions.empty()) announcement += L" " + detail::join_all(v.conditions, L", ");
-    }
+    auto announcement = displayed::target(content);
+    if (announcement.empty()) return;
     ffpr::say(ui::menu_position(announcement, index, count), true);
 }
 
@@ -316,7 +298,7 @@ void d_UseSetCursor(void* self, void* cursor, const void* mi)
         if (!content) return;
         void* character = ref::rd<void*>(content, fFF1MagicTargetCurrentData);
         if (!character) return;
-        announce_target_character(character, index, count);
+        announce_target_character(content, index, count);
     });
 }
 

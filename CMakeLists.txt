@@ -12,7 +12,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")   # static CRT: no redistributab
 set(FFPR_DEFS WIN32_LEAN_AND_MEAN NOMINMAX UNICODE _UNICODE)
 # /EHa: catch (...) in hooks::guarded and ref::call also takes access violations, and
 # destructors run while unwinding them. /GR-: no RTTI. /utf-8: sources and literals are UTF-8.
-set(FFPR_OPTS /W4 /permissive- /GR- /EHa /utf-8 /MP /Gy /wd4100 /wd4505)
+set(FFPR_OPTS /W4 /permissive- /GR- /EHa /utf-8 /MP4 /Gy /wd4100 /wd4505)
 
 set(FFPR_INCLUDES
     "${CMAKE_SOURCE_DIR}/third_party/sdl3/include"
@@ -73,6 +73,8 @@ foreach(n 1 2 3 4 5 6)
     ffpr_embed(PUZZLES_FF${n} data/ff${n}/puzzles.json)
     # Map titles the game's map master lacks, by map id (src/core/field/map_names.cpp).
     ffpr_embed(MAPTITLES_FF${n} data/ff${n}/map_titles.json)
+    ffpr_embed(EVENTLABELS_FF${n} data/ff${n}/eventlabels.json)
+    ffpr_embed(MAPSTATE_FF${n} data/ff${n}/mapstate.json)
 endforeach()
 file(GLOB FFPR_SOUNDS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/data/sounds/*.wav")
 foreach(s ${FFPR_SOUNDS})

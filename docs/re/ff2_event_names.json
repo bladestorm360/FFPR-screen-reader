@@ -1,0 +1,1829 @@
+[
+  {
+    "raw": "カシュオーン城",
+    "translated": {
+      "en": "Kashuan Keep",
+      "fr": "Fort Kashuan",
+      "it": "Rocca di Kashuan",
+      "de": "Schloss Kashyuon",
+      "es": "Fortaleza de Kasuán",
+      "ko": "카슈온성",
+      "zht": "卡修安城",
+      "zhc": "卡修安城",
+      "ru": "Крепость Кашуан",
+      "th": "ปราสาทคาชวน",
+      "pt": "Forte de Kashuan"
+    },
+    "count": 9
+  },
+  {
+    "raw": "ディストの城",
+    "translated": {
+      "en": "Castle Deist",
+      "fr": "Citadelle de Deist",
+      "it": "Castello di Deist",
+      "de": "Schloss Dhyst",
+      "es": "Castillo de Deist",
+      "ko": "디스트성",
+      "zht": "迪斯特城",
+      "zhc": "迪斯特城",
+      "ru": "Замок Дейст",
+      "th": "ปราสาทดีสต์",
+      "pt": "Castelo de Deist"
+    },
+    "count": 9
+  },
+  {
+    "raw": "闘技場",
+    "translated": {
+      "en": "Coliseum",
+      "fr": "Colisée",
+      "it": "Arena",
+      "de": "Kolosseum",
+      "es": "Coliseo",
+      "ko": "투기장",
+      "zht": "鬥技場",
+      "zhc": "斗技场",
+      "ru": "Колизей",
+      "th": "สนามกีฬา",
+      "pt": "Coliseu"
+    },
+    "count": 9
+  },
+  {
+    "raw": "ミシディアの塔",
+    "translated": {
+      "en": "Mysidian Tower",
+      "fr": "Tour de Mysidia",
+      "it": "Torre di Mysidia",
+      "de": "Turm von Mysidia",
+      "es": "Torre de Mysidia",
+      "ko": "미시디아 탑",
+      "zht": "密西迪亞塔",
+      "zhc": "密西迪亚塔",
+      "ru": "Мисидийская башня",
+      "th": "หอคอยมิซิเดีย",
+      "pt": "Torre de Mysidia"
+    },
+    "count": 9
+  },
+  {
+    "raw": "パラメキア城",
+    "translated": {
+      "en": "Castle Palamecia",
+      "fr": "Château Palmécia",
+      "it": "Castello di Palamesia",
+      "de": "Schloss Palmekia",
+      "es": "Castillo de Palamecia",
+      "ko": "팔라메키아성",
+      "zht": "帕拉美奇亞城",
+      "zhc": "帕拉美奇亚城",
+      "ru": "Замок Паламеция",
+      "th": "ปราสาทพาลามีเซีย",
+      "pt": "Castelo de Palamecia"
+    },
+    "count": 8
+  },
+  {
+    "raw": "フィン城",
+    "translated": {
+      "en": "Castle Fynn",
+      "fr": "Castel Fynn",
+      "it": "Castello di Fynn",
+      "de": "Schloss Finn",
+      "es": "Castillo de Fynn",
+      "ko": "핀성",
+      "zht": "菲因城",
+      "zhc": "菲因城",
+      "ru": "Замок Финн",
+      "th": "ปราสาทฟินน์",
+      "pt": "Castelo de Fynn"
+    },
+    "count": 9
+  },
+  {
+    "raw": "ミシディアA",
+    "translated": {
+      "en": "Mysidia A",
+      "fr": "Mysidia A",
+      "it": "Mysidia A",
+      "de": "Mysidia A",
+      "es": "Mysidia A",
+      "ko": "미시디아 A",
+      "zht": "密西迪亞A",
+      "zhc": "密西迪亚A",
+      "ru": "Мисидия A",
+      "th": "มิซิเดีย A",
+      "pt": "Mysidia A"
+    },
+    "count": 17
+  },
+  {
+    "raw": "ミシディアB",
+    "translated": {
+      "en": "Mysidia B",
+      "fr": "Mysidia B",
+      "it": "Mysidia B",
+      "de": "Mysidia B",
+      "es": "Mysidia B",
+      "ko": "미시디아 B",
+      "zht": "密西迪亞B",
+      "zhc": "密西迪亚B",
+      "ru": "Мисидия B",
+      "th": "มิซิเดีย B",
+      "pt": "Mysidia B"
+    },
+    "count": 9
+  },
+  {
+    "raw": "ガデアの村",
+    "translated": {
+      "en": "Gatrea",
+      "fr": "Gatréa",
+      "it": "Gatrea",
+      "de": "Dorf Gadea",
+      "es": "Gatrea",
+      "ko": "가트레아 마을",
+      "zht": "加提亞村",
+      "zhc": "加提亚村",
+      "ru": "Гатрея",
+      "th": "กาเทรีย",
+      "pt": "Gatrea"
+    },
+    "count": 5
+  },
+  {
+    "raw": "パンデモニウム",
+    "translated": {
+      "en": "Pandaemonium",
+      "fr": "Pandémonium",
+      "it": "Pandæmonium",
+      "de": "Pandämonium",
+      "es": "Pandemónium",
+      "ko": "판데모니움",
+      "zht": "萬魔殿",
+      "zhc": "万魔殿",
+      "ru": "Пандемониум",
+      "th": "แพนเดโมเนียม",
+      "pt": "Pandemônio"
+    },
+    "count": 2
+  },
+  {
+    "raw": "キャンプ",
+    "translated": {
+      "en": "Rebel Camp",
+      "fr": "Campement des rebelles",
+      "it": "Accampamento",
+      "de": "Lager",
+      "es": "Campamento",
+      "ko": "캠프",
+      "zht": "宿營地",
+      "zhc": "宿营地",
+      "ru": "Лагерь повстанцев",
+      "th": "ค่ายกบฏ",
+      "pt": "Acampamento dos Rebeldes"
+    },
+    "count": 4
+  },
+  {
+    "raw": "TelepoPoint",
+    "translated": {},
+    "count": 501
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン1",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン2",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン3",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン4",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン5",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン6",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン7",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所コリジョン8",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "定期船(アイコンあり)",
+    "translated": {
+      "en": "Ferry (with icon)",
+      "fr": "Ferry (avec icône)",
+      "it": "Traghetto (con icona)",
+      "de": "Fähre (mit Symbol)",
+      "es": "Ferry (con icono)",
+      "ko": "정기선 (아이콘 있음)",
+      "zht": "定期船（有圖示）",
+      "zhc": "定期船（有图标）",
+      "ru": "Паром (со значком)",
+      "th": "เรือประจำทาง (มีไอคอน)",
+      "pt": "Balsa (com ícone)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "定期船(アイコンなし)",
+    "translated": {
+      "en": "Ferry (without icon)",
+      "fr": "Ferry (sans icône)",
+      "it": "Traghetto (senza icona)",
+      "de": "Fähre (ohne Symbol)",
+      "es": "Ferry (sin icono)",
+      "ko": "정기선 (아이콘 없음)",
+      "zht": "定期船（無圖示）",
+      "zhc": "定期船（无图标）",
+      "ru": "Паром (без значка)",
+      "th": "เรือประจำทาง (ไม่มีไอคอน)",
+      "pt": "Balsa (sem ícone)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ミシディアC",
+    "translated": {
+      "en": "Mysidia C",
+      "fr": "Mysidia C",
+      "it": "Mysidia C",
+      "de": "Mysidia C",
+      "es": "Mysidia C",
+      "ko": "미시디아 C",
+      "zht": "密西迪亞C",
+      "zhc": "密西迪亚C",
+      "ru": "Мисидия C",
+      "th": "มิซิเดีย C",
+      "pt": "Mysidia C"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ミシディアの塔上部コリジョン",
+    "translated": {
+      "en": "Mysidian Tower Upper Collision",
+      "fr": "Collision supérieure de la tour de Mysidia",
+      "it": "Collisione superiore della Torre di Mysidia",
+      "de": "Obere Kollision des Turms von Mysidia",
+      "es": "Colisión superior de la Torre de Mysidia",
+      "ko": "미시디아 탑 상부 콜리전",
+      "zht": "密西迪亞塔上部碰撞",
+      "zhc": "密西迪亚塔上部碰撞",
+      "ru": "Верхняя коллизия Мисидийской башни",
+      "th": "การชนส่วนบนของหอคอยมิซิเดีย",
+      "pt": "Colisão superior da Torre de Mysidia"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大戦艦完成",
+    "translated": {
+      "en": "Dreadnought Completed",
+      "fr": "Cuirassé achevé",
+      "it": "Corazzata completata",
+      "de": "Zerstörer fertiggestellt",
+      "es": "Acorazado completado",
+      "ko": "거대 전함 완성",
+      "zht": "大戰艦完成",
+      "zhc": "大战舰完成",
+      "ru": "«Дредноут» достроен",
+      "th": "เรือรบเดรดนอตสร้างเสร็จ",
+      "pt": "Encouraçado Concluído"
+    },
+    "count": 1
+  },
+  {
+    "raw": "飛空艇",
+    "translated": {
+      "en": "Airship",
+      "fr": "Vaisseau",
+      "it": "Aeronave",
+      "de": "Luftschiff",
+      "es": "Barco volador",
+      "ko": "비공정",
+      "zht": "飛空艇",
+      "zhc": "飞空艇",
+      "ru": "Воздушный корабль",
+      "th": "เรือเหาะ",
+      "pt": "Aeronave"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大戦艦",
+    "translated": {
+      "en": "Dreadnought",
+      "fr": "Cuirassé",
+      "it": "Corazzata",
+      "de": "Zerstörer",
+      "es": "Acorazado",
+      "ko": "거대 전함",
+      "zht": "大戰艦",
+      "zhc": "大战舰",
+      "ru": "«Дредноут»",
+      "th": "เรือรบเดรดนอต",
+      "pt": "Encouraçado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大戦艦停泊所のコリジョン",
+    "translated": {
+      "en": "Dreadnought Dock Collision",
+      "fr": "Collision du quai du Cuirassé",
+      "it": "Collisione dell'attracco della Corazzata",
+      "de": "Kollision des Zerstörer-Ankerplatzes",
+      "es": "Colisión del muelle del Acorazado",
+      "ko": "거대 전함 정박소 콜리전",
+      "zht": "大戰艦停泊處碰撞",
+      "zhc": "大战舰停泊处碰撞",
+      "ru": "Коллизия стоянки «Дредноута»",
+      "th": "การชนของท่าจอดเรือรบเดรดนอต",
+      "pt": "Colisão do Ancoradouro do Encouraçado"
+    },
+    "count": 8
+  },
+  {
+    "raw": "大戦艦爆発",
+    "translated": {
+      "en": "Dreadnought Explosion",
+      "fr": "Explosion du Cuirassé",
+      "it": "Esplosione della Corazzata",
+      "de": "Explosion des Zerstörers",
+      "es": "Explosión del Acorazado",
+      "ko": "거대 전함 폭발",
+      "zht": "大戰艦爆炸",
+      "zhc": "大战舰爆炸",
+      "ru": "Взрыв «Дредноута»",
+      "th": "เรือรบเดรดนอตระเบิด",
+      "pt": "Explosão do Encouraçado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0044:海賊船",
+    "translated": {
+      "en": "Pirate Ship",
+      "fr": "Navire pirate",
+      "it": "Nave pirata",
+      "de": "Piratenschiff",
+      "es": "Barco pirata",
+      "ko": "해적선",
+      "zht": "海賊船",
+      "zhc": "海贼船",
+      "ru": "Пиратский корабль",
+      "th": "เรือโจรสลัด",
+      "pt": "Navio Pirata"
+    },
+    "count": 1
+  },
+  {
+    "raw": "リバイアサン",
+    "translated": {
+      "en": "Leviathan",
+      "fr": "Léviathan",
+      "it": "Leviatano",
+      "de": "Leviathan",
+      "es": "Leviatán",
+      "ko": "리바이어던",
+      "zht": "利維坦",
+      "zhc": "利维亚桑",
+      "ru": "Левиафан",
+      "th": "เลวีอาธาน",
+      "pt": "Leviatã"
+    },
+    "count": 1
+  },
+  {
+    "raw": "船を奪還",
+    "translated": {
+      "en": "Ship Recaptured",
+      "fr": "Reprise du bateau",
+      "it": "Riconquista della nave",
+      "de": "Rückeroberung des Schiffes",
+      "es": "Recuperación del barco",
+      "ko": "배 탈환",
+      "zht": "奪回船隻",
+      "zhc": "夺回船只",
+      "ru": "Возвращение корабля",
+      "th": "ยึดเรือคืน",
+      "pt": "Navio Recuperado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "Event",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "竜巻突入トリガー",
+    "translated": {
+      "en": "Cyclone Entry Trigger",
+      "fr": "Déclencheur d'entrée dans le Cyclone",
+      "it": "Attivatore d'ingresso nel Ciclone",
+      "de": "Auslöser für den Eintritt in den Wirbelsturm",
+      "es": "Activador de entrada al Huracán",
+      "ko": "회오리 돌입 트리거",
+      "zht": "突入龍捲觸發器",
+      "zhc": "突入龙卷触发器",
+      "ru": "Триггер входа в Смерч",
+      "th": "ทริกเกอร์เข้าสู่พายุหมุน",
+      "pt": "Gatilho de Entrada no Ciclone"
+    },
+    "count": 1
+  },
+  {
+    "raw": "パラメキア城潜入",
+    "translated": {
+      "en": "Castle Palamecia Infiltration",
+      "fr": "Infiltration du Château Palmécia",
+      "it": "Infiltrazione nel Castello di Palamesia",
+      "de": "Infiltration von Schloss Palmekia",
+      "es": "Infiltración en el Castillo de Palamecia",
+      "ko": "팔라메키아성 잠입",
+      "zht": "潛入帕拉美奇亞城",
+      "zhc": "潜入帕拉美奇亚城",
+      "ru": "Проникновение в замок Паламеция",
+      "th": "แทรกซึมปราสาทพาลามีเซีย",
+      "pt": "Infiltração no Castelo de Palamecia"
+    },
+    "count": 9
+  },
+  {
+    "raw": "ジェイドへの入口①",
+    "translated": {
+      "en": "Jade Passage Entrance 1",
+      "fr": "Entrée du Sentier de jade 1",
+      "it": "Ingresso del Varco di giada 1",
+      "de": "Eingang zur Jade-Passage 1",
+      "es": "Entrada al Pasaje de jade 1",
+      "ko": "제이드 입구 1",
+      "zht": "翡翠通道入口1",
+      "zhc": "翡翠通道入口1",
+      "ru": "Вход в Нефритовый проход 1",
+      "th": "ทางเข้าเส้นทางหยก 1",
+      "pt": "Entrada do Caminho de Jade 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ジェイドへの入口②",
+    "translated": {
+      "en": "Jade Passage Entrance 2",
+      "fr": "Entrée du Sentier de jade 2",
+      "it": "Ingresso del Varco di giada 2",
+      "de": "Eingang zur Jade-Passage 2",
+      "es": "Entrada al Pasaje de jade 2",
+      "ko": "제이드 입구 2",
+      "zht": "翡翠通道入口2",
+      "zhc": "翡翠通道入口2",
+      "ru": "Вход в Нефритовый проход 2",
+      "th": "ทางเข้าเส้นทางหยก 2",
+      "pt": "Entrada do Caminho de Jade 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ジェイドへの入口③",
+    "translated": {
+      "en": "Jade Passage Entrance 3",
+      "fr": "Entrée du Sentier de jade 3",
+      "it": "Ingresso del Varco di giada 3",
+      "de": "Eingang zur Jade-Passage 3",
+      "es": "Entrada al Pasaje de jade 3",
+      "ko": "제이드 입구 3",
+      "zht": "翡翠通道入口3",
+      "zhc": "翡翠通道入口3",
+      "ru": "Вход в Нефритовый проход 3",
+      "th": "ทางเข้าเส้นทางหยก 3",
+      "pt": "Entrada do Caminho de Jade 3"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ジェイドへの入口④",
+    "translated": {
+      "en": "Jade Passage Entrance 4",
+      "fr": "Entrée du Sentier de jade 4",
+      "it": "Ingresso del Varco di giada 4",
+      "de": "Eingang zur Jade-Passage 4",
+      "es": "Entrada al Pasaje de jade 4",
+      "ko": "제이드 입구 4",
+      "zht": "翡翠通道入口4",
+      "zhc": "翡翠通道入口4",
+      "ru": "Вход в Нефритовый проход 4",
+      "th": "ทางเข้าเส้นทางหยก 4",
+      "pt": "Entrada do Caminho de Jade 4"
+    },
+    "count": 1
+  },
+  {
+    "raw": "教会",
+    "translated": {
+      "en": "Church",
+      "fr": "Église",
+      "it": "Chiesa",
+      "de": "Kirche",
+      "es": "Iglesia",
+      "ko": "교회",
+      "zht": "教堂",
+      "zhc": "教堂",
+      "ru": "Церковь",
+      "th": "โบสถ์",
+      "pt": "Igreja"
+    },
+    "count": 4
+  },
+  {
+    "raw": "リングの光",
+    "translated": {
+      "en": "Ring's Glow",
+      "fr": "Lueur de la bague",
+      "it": "Luce dell'anello",
+      "de": "Leuchten des Rings",
+      "es": "Brillo del anillo",
+      "ko": "반지의 빛",
+      "zht": "指環之光",
+      "zhc": "指环之光",
+      "ru": "Сияние кольца",
+      "th": "แสงของแหวน",
+      "pt": "Brilho do Anel"
+    },
+    "count": 2
+  },
+  {
+    "raw": "魔法陣",
+    "translated": {
+      "en": "Magic Circle",
+      "fr": "Cercle magique",
+      "it": "Cerchio magico",
+      "de": "Zauberkreis",
+      "es": "Círculo mágico",
+      "ko": "마법진",
+      "zht": "魔法陣",
+      "zhc": "魔法阵",
+      "ru": "Магический круг",
+      "th": "วงเวทมนตร์",
+      "pt": "Círculo mágico"
+    },
+    "count": 2
+  },
+  {
+    "raw": "生き返りの間",
+    "translated": {
+      "en": "Revival Room",
+      "fr": "Salle de la Résurrection",
+      "it": "Sala della Resurrezione",
+      "de": "Raum der Wiederbelebung",
+      "es": "Sala de la Resurrección",
+      "ko": "부활의 방",
+      "zht": "復活之間",
+      "zhc": "复活之间",
+      "ru": "Комната воскрешения",
+      "th": "ห้องชุบชีวิต",
+      "pt": "Sala da Ressurreição"
+    },
+    "count": 2
+  },
+  {
+    "raw": "ワールドマップへ",
+    "translated": {
+      "en": "To the World Map",
+      "fr": "Vers la mappemonde",
+      "it": "Verso il mappamondo",
+      "de": "Zur Oberwelt",
+      "es": "Al mapamundi",
+      "ko": "월드맵으로",
+      "zht": "前往世界地圖",
+      "zhc": "前往世界地图",
+      "ru": "К карте мира",
+      "th": "ไปยังแผนที่โลก",
+      "pt": "Para o mapa-múndi"
+    },
+    "count": 61
+  },
+  {
+    "raw": "sc_e_0004trigger",
+    "translated": {},
+    "count": 3
+  },
+  {
+    "raw": "隠し通路",
+    "translated": {
+      "en": "Hidden Passage",
+      "fr": "Passage secret",
+      "it": "Passaggio segreto",
+      "de": "Geheimgang",
+      "es": "Pasadizo secreto",
+      "ko": "숨겨진 통로",
+      "zht": "隱藏通道",
+      "zhc": "隐藏通道",
+      "ru": "Тайный ход",
+      "th": "ทางลับ",
+      "pt": "Passagem Secreta"
+    },
+    "count": 2
+  },
+  {
+    "raw": "境界",
+    "translated": {
+      "en": "Boundary",
+      "fr": "Limite",
+      "it": "Confine",
+      "de": "Grenze",
+      "es": "Límite",
+      "ko": "경계",
+      "zht": "邊界",
+      "zhc": "边界",
+      "ru": "Граница",
+      "th": "ขอบเขต",
+      "pt": "Limite"
+    },
+    "count": 1
+  },
+  {
+    "raw": "柵１",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "柵２",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "柵３",
+    "translated": {},
+    "count": 2
+  },
+  {
+    "raw": "柵４",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "柵５",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "ワールドマップ",
+    "translated": {
+      "en": "World Map",
+      "fr": "Mappemonde",
+      "it": "Mappamondo",
+      "de": "Oberwelt",
+      "es": "Mapamundi",
+      "ko": "월드 맵",
+      "zht": "世界地圖",
+      "zhc": "世界地图",
+      "ru": "Карта мира",
+      "th": "แผนที่โลก",
+      "pt": "Mapa"
+    },
+    "count": 18
+  },
+  {
+    "raw": "ワープゾーン　色変え1",
+    "translated": {},
+    "count": 19
+  },
+  {
+    "raw": "ワープ",
+    "translated": {
+      "en": "Warp",
+      "fr": "Téléportation",
+      "it": "Teletrasporto",
+      "de": "Teleport",
+      "es": "Teletransporte",
+      "ko": "워프",
+      "zht": "傳送",
+      "zhc": "传送",
+      "ru": "Телепорт",
+      "th": "วาร์ป",
+      "pt": "Teletransporte"
+    },
+    "count": 5
+  },
+  {
+    "raw": "鏡",
+    "translated": {
+      "en": "Mirror",
+      "fr": "Miroir",
+      "it": "Specchio",
+      "de": "Spiegel",
+      "es": "Espejo",
+      "ko": "거울",
+      "zht": "鏡子",
+      "zhc": "镜子",
+      "ru": "Зеркало",
+      "th": "กระจก",
+      "pt": "Espelho"
+    },
+    "count": 3
+  },
+  {
+    "raw": "光",
+    "translated": {
+      "en": "Light",
+      "fr": "Lumière",
+      "it": "Luce",
+      "de": "Licht",
+      "es": "Luz",
+      "ko": "빛",
+      "zht": "光",
+      "zhc": "光",
+      "ru": "Свет",
+      "th": "แสง",
+      "pt": "Luz"
+    },
+    "count": 3
+  },
+  {
+    "raw": "飛竜の卵",
+    "translated": {
+      "en": "Wyvern Egg",
+      "fr": "Œuf de Draken",
+      "it": "Uovo di viverna",
+      "de": "Drachenei",
+      "es": "Huevo de draco",
+      "ko": "비룡의 알",
+      "zht": "飛龍之卵",
+      "zhc": "飞龙之卵",
+      "ru": "Яйцо виверны",
+      "th": "ไข่ไวเวิร์น",
+      "pt": "Ovo de Serpe"
+    },
+    "count": 3
+  },
+  {
+    "raw": "通路",
+    "translated": {
+      "en": "Passage",
+      "fr": "Passage",
+      "it": "Passaggio",
+      "de": "Durchgang",
+      "es": "Pasaje",
+      "ko": "통로",
+      "zht": "通道",
+      "zhc": "通道",
+      "ru": "Проход",
+      "th": "ทางเดิน",
+      "pt": "Passagem"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ToLayer",
+    "translated": {},
+    "count": 12
+  },
+  {
+    "raw": "協会",
+    "translated": {
+      "en": "Church",
+      "fr": "Église",
+      "it": "Chiesa",
+      "de": "Kirche",
+      "es": "Iglesia",
+      "ko": "교회",
+      "zht": "教堂",
+      "zhc": "教堂",
+      "ru": "Церковь",
+      "th": "โบสถ์",
+      "pt": "Igreja"
+    },
+    "count": 3
+  },
+  {
+    "raw": "本棚",
+    "translated": {
+      "en": "Bookshelf",
+      "fr": "Bibliothèque",
+      "it": "Libreria",
+      "de": "Bücherregal",
+      "es": "Estantería",
+      "ko": "책장",
+      "zht": "書架",
+      "zhc": "书架",
+      "ru": "Книжный шкаф",
+      "th": "ชั้นหนังสือ",
+      "pt": "Estante"
+    },
+    "count": 2
+  },
+  {
+    "raw": "女神像",
+    "translated": {
+      "en": "Goddess Statue",
+      "fr": "Statue de la déesse",
+      "it": "Statua della dea",
+      "de": "Göttinnenstatue",
+      "es": "Estatua de la diosa",
+      "ko": "여신상",
+      "zht": "女神像",
+      "zhc": "女神像",
+      "ru": "Статуя богини",
+      "th": "รูปปั้นเทพธิดา",
+      "pt": "Estátua da Deusa"
+    },
+    "count": 2
+  },
+  {
+    "raw": "王の死",
+    "translated": {
+      "en": "King's Death",
+      "fr": "Mort du roi",
+      "it": "Morte del re",
+      "de": "Tod des Königs",
+      "es": "Muerte del rey",
+      "ko": "왕의 죽음",
+      "zht": "國王之死",
+      "zhc": "国王之死",
+      "ru": "Смерть короля",
+      "th": "การสิ้นพระชนม์ของกษัตริย์",
+      "pt": "Morte do Rei"
+    },
+    "count": 1
+  },
+  {
+    "raw": "通路をふさぐ岩(ヨーゼフ加入前)",
+    "translated": {
+      "en": "Rock blocking the passage (before Josef joins)",
+      "fr": "Rocher bloquant le passage (avant l'arrivée de Joseph)",
+      "it": "Roccia che blocca il passaggio (prima dell'arrivo di Josef)",
+      "de": "Fels, der den Durchgang blockiert (vor Josefs Beitritt)",
+      "es": "Roca que bloquea el paso (antes de que se una Josef)",
+      "ko": "통로를 막는 바위 (요제프 합류 전)",
+      "zht": "阻擋通道的岩石（約瑟夫加入前）",
+      "zhc": "阻挡通道的岩石（约瑟夫加入前）",
+      "ru": "Камень, преграждающий путь (до присоединения Джозефа)",
+      "th": "หินขวางทางเดิน (ก่อนโจเซฟเข้าร่วม)",
+      "pt": "Rocha bloqueando a passagem (antes de Josef entrar)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0025:隠し通路の蓋",
+    "translated": {
+      "en": "Hidden Passage Lid",
+      "fr": "Couvercle de passage secret",
+      "it": "Coperchio del passaggio segreto",
+      "de": "Geheimgangdeckel",
+      "es": "Tapa de pasadizo secreto",
+      "ko": "숨겨진 통로 뚜껑",
+      "zht": "隱藏通道蓋",
+      "zhc": "隐藏通道盖",
+      "ru": "Крышка тайного хода",
+      "th": "ฝาทางลับ",
+      "pt": "Tampa da Passagem Secreta"
+    },
+    "count": 1
+  },
+  {
+    "raw": "吹き出し”！”",
+    "translated": {
+      "en": "Exclamation Bubble",
+      "fr": "Bulle d'exclamation",
+      "it": "Fumetto esclamativo",
+      "de": "Ausrufe-Sprechblase",
+      "es": "Bocadillo de exclamación",
+      "ko": "느낌표 말풍선",
+      "zht": "驚嘆號對話框",
+      "zhc": "惊叹号对话框",
+      "ru": "Облачко с восклицанием",
+      "th": "บอลลูนคำพูดเครื่องหมายตกใจ",
+      "pt": "Balão de Exclamação"
+    },
+    "count": 11
+  },
+  {
+    "raw": "大岩",
+    "translated": {
+      "en": "Boulder",
+      "fr": "Rocher",
+      "it": "Masso",
+      "de": "Felsbrocken",
+      "es": "Roca enorme",
+      "ko": "큰 바위",
+      "zht": "大岩石",
+      "zhc": "大岩石",
+      "ru": "Валун",
+      "th": "หินก้อนใหญ่",
+      "pt": "Pedregulho"
+    },
+    "count": 1
+  },
+  {
+    "raw": "通路になる仕掛け",
+    "translated": {
+      "en": "Passage-Opening Mechanism",
+      "fr": "Mécanisme ouvrant un passage",
+      "it": "Meccanismo che apre un passaggio",
+      "de": "Mechanismus für einen Durchgang",
+      "es": "Mecanismo que abre un pasaje",
+      "ko": "통로가 되는 장치",
+      "zht": "變成通道的機關",
+      "zhc": "变成通道的机关",
+      "ru": "Механизм, открывающий проход",
+      "th": "กลไกที่เปิดทางเดิน",
+      "pt": "Mecanismo que Abre Passagem"
+    },
+    "count": 1
+  },
+  {
+    "raw": "女神のベルトリガー用",
+    "translated": {
+      "en": "Goddess's Bell Trigger",
+      "fr": "Déclencheur de la Cloche divine",
+      "it": "Attivatore della Campana sacra",
+      "de": "Auslöser für Freias Glocke",
+      "es": "Activador de la Campana divina",
+      "ko": "여신의 종 트리거",
+      "zht": "女神之鈴觸發器",
+      "zhc": "女神之铃触发器",
+      "ru": "Триггер Колокола богини",
+      "th": "ทริกเกอร์ระฆังของเทพธิดา",
+      "pt": "Gatilho do Sino da Deusa"
+    },
+    "count": 1
+  },
+  {
+    "raw": "女神のベル",
+    "translated": {
+      "en": "Goddess's Bell",
+      "fr": "Cloche divine",
+      "it": "Campana sacra",
+      "de": "Freias Glocke",
+      "es": "Campana divina",
+      "ko": "여신의 종",
+      "zht": "女神之鈴",
+      "zhc": "女神之铃",
+      "ru": "Колокол богини",
+      "th": "ระฆังของเทพธิดา",
+      "pt": "Sino da Deusa"
+    },
+    "count": 1
+  },
+  {
+    "raw": "SE用カラオブジェクト",
+    "translated": {
+      "en": "Empty Object (Sound Effect)",
+      "fr": "Objet vide (effet sonore)",
+      "it": "Oggetto vuoto (effetto sonoro)",
+      "de": "Leeres Objekt (Soundeffekt)",
+      "es": "Objeto vacío (efecto de sonido)",
+      "ko": "빈 오브젝트 (효과음)",
+      "zht": "空物件（音效）",
+      "zhc": "空物体（音效）",
+      "ru": "Пустой объект (звуковой эффект)",
+      "th": "วัตถุว่าง (เสียงประกอบ)",
+      "pt": "Objeto Vazio (Efeito Sonoro)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "扉の封印",
+    "translated": {
+      "en": "Door Seal",
+      "fr": "Sceau de la porte",
+      "it": "Sigillo della porta",
+      "de": "Türsiegel",
+      "es": "Sello de la puerta",
+      "ko": "문의 봉인",
+      "zht": "門的封印",
+      "zhc": "门的封印",
+      "ru": "Печать на двери",
+      "th": "ผนึกประตู",
+      "pt": "Selo da Porta"
+    },
+    "count": 2
+  },
+  {
+    "raw": "太陽の炎トリガー用",
+    "translated": {
+      "en": "Sunfire Trigger",
+      "fr": "Déclencheur du Feu solaire",
+      "it": "Attivatore del Fuoco solare",
+      "de": "Sonnenfeuer-Auslöser",
+      "es": "Activador del Piroluz",
+      "ko": "태양의 불꽃 트리거",
+      "zht": "太陽之炎觸發器",
+      "zhc": "太阳之炎触发器",
+      "ru": "Триггер Солнечного огня",
+      "th": "ทริกเกอร์ไฟสุริยัน",
+      "pt": "Gatilho do Fogo Solar"
+    },
+    "count": 2
+  },
+  {
+    "raw": "大戦艦に捕われる飛空艇①",
+    "translated": {
+      "en": "Airship Captured by the Dreadnought 1",
+      "fr": "Vaisseau capturé par le Cuirassé 1",
+      "it": "Aeronave catturata dalla Corazzata 1",
+      "de": "Vom Zerstörer gefangenes Luftschiff 1",
+      "es": "Barco volador capturado por el Acorazado 1",
+      "ko": "거대 전함에 붙잡힌 비공정 1",
+      "zht": "被大戰艦捕獲的飛空艇1",
+      "zhc": "被大战舰捕获的飞空艇1",
+      "ru": "Воздушный корабль, захваченный «Дредноутом» 1",
+      "th": "เรือเหาะที่ถูกเรือรบเดรดนอตจับ 1",
+      "pt": "Aeronave Capturada pelo Encouraçado 1"
+    },
+    "count": 2
+  },
+  {
+    "raw": "大戦艦に捕われる飛空艇②",
+    "translated": {
+      "en": "Airship Captured by the Dreadnought 2",
+      "fr": "Vaisseau capturé par le Cuirassé 2",
+      "it": "Aeronave catturata dalla Corazzata 2",
+      "de": "Vom Zerstörer gefangenes Luftschiff 2",
+      "es": "Barco volador capturado por el Acorazado 2",
+      "ko": "거대 전함에 붙잡힌 비공정 2",
+      "zht": "被大戰艦捕獲的飛空艇2",
+      "zhc": "被大战舰捕获的飞空艇2",
+      "ru": "Воздушный корабль, захваченный «Дредноутом» 2",
+      "th": "เรือเหาะที่ถูกเรือรบเดรดนอตจับ 2",
+      "pt": "Aeronave Capturada pelo Encouraçado 2"
+    },
+    "count": 2
+  },
+  {
+    "raw": "大戦艦に捕われる飛空艇④",
+    "translated": {
+      "en": "Airship Captured by the Dreadnought 4",
+      "fr": "Vaisseau capturé par le Cuirassé 4",
+      "it": "Aeronave catturata dalla Corazzata 4",
+      "de": "Vom Zerstörer gefangenes Luftschiff 4",
+      "es": "Barco volador capturado por el Acorazado 4",
+      "ko": "거대 전함에 붙잡힌 비공정 4",
+      "zht": "被大戰艦捕獲的飛空艇4",
+      "zhc": "被大战舰捕获的飞空艇4",
+      "ru": "Воздушный корабль, захваченный «Дредноутом» 4",
+      "th": "เรือเหาะที่ถูกเรือรบเดรดนอตจับ 4",
+      "pt": "Aeronave Capturada pelo Encouraçado 4"
+    },
+    "count": 2
+  },
+  {
+    "raw": "大戦艦に捕われる飛空艇③",
+    "translated": {
+      "en": "Airship Captured by the Dreadnought 3",
+      "fr": "Vaisseau capturé par le Cuirassé 3",
+      "it": "Aeronave catturata dalla Corazzata 3",
+      "de": "Vom Zerstörer gefangenes Luftschiff 3",
+      "es": "Barco volador capturado por el Acorazado 3",
+      "ko": "거대 전함에 붙잡힌 비공정 3",
+      "zht": "被大戰艦捕獲的飛空艇3",
+      "zhc": "被大战舰捕获的飞空艇3",
+      "ru": "Воздушный корабль, захваченный «Дредноутом» 3",
+      "th": "เรือเหาะที่ถูกเรือรบเดรดนอตจับ 3",
+      "pt": "Aeronave Capturada pelo Encouraçado 3"
+    },
+    "count": 2
+  },
+  {
+    "raw": "大戦艦に捕われる飛空艇⑤",
+    "translated": {
+      "en": "Airship Captured by the Dreadnought 5",
+      "fr": "Vaisseau capturé par le Cuirassé 5",
+      "it": "Aeronave catturata dalla Corazzata 5",
+      "de": "Vom Zerstörer gefangenes Luftschiff 5",
+      "es": "Barco volador capturado por el Acorazado 5",
+      "ko": "거대 전함에 붙잡힌 비공정 5",
+      "zht": "被大戰艦捕獲的飛空艇5",
+      "zhc": "被大战舰捕获的飞空艇5",
+      "ru": "Воздушный корабль, захваченный «Дредноутом» 5",
+      "th": "เรือเหาะที่ถูกเรือรบเดรดนอตจับ 5",
+      "pt": "Aeronave Capturada pelo Encouraçado 5"
+    },
+    "count": 2
+  },
+  {
+    "raw": "炎",
+    "translated": {
+      "en": "Fire",
+      "fr": "Feu",
+      "it": "Fuoco",
+      "de": "Feuer",
+      "es": "Fuego",
+      "ko": "화염",
+      "zht": "火焰",
+      "zhc": "火焰",
+      "ru": "Огонь",
+      "th": "ไฟ",
+      "pt": "Fogo"
+    },
+    "count": 5
+  },
+  {
+    "raw": "開かない鉄格子(メッセージ用)",
+    "translated": {
+      "en": "Locked Iron Bars (Message)",
+      "fr": "Grille fermée (message)",
+      "it": "Grata chiusa (messaggio)",
+      "de": "Verschlossenes Gitter (Nachricht)",
+      "es": "Reja cerrada (mensaje)",
+      "ko": "열리지 않는 쇠창살 (메시지)",
+      "zht": "打不開的鐵柵欄（訊息）",
+      "zhc": "打不开的铁栅栏（消息）",
+      "ru": "Запертая решётка (сообщение)",
+      "th": "ลูกกรงเหล็กที่เปิดไม่ได้ (ข้อความ)",
+      "pt": "Grade de Ferro Trancada (Mensagem)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "鉄格子①",
+    "translated": {
+      "en": "Iron Bars 1",
+      "fr": "Grille 1",
+      "it": "Grata 1",
+      "de": "Gitter 1",
+      "es": "Reja 1",
+      "ko": "쇠창살 1",
+      "zht": "鐵柵欄1",
+      "zhc": "铁栅栏1",
+      "ru": "Решётка 1",
+      "th": "ลูกกรงเหล็ก 1",
+      "pt": "Grade de Ferro 1"
+    },
+    "count": 1
+  },
+  {
+    "raw": "開く鉄格子(トリガー要)",
+    "translated": {
+      "en": "Opening Iron Bars (Trigger Required)",
+      "fr": "Grille qui s'ouvre (déclencheur requis)",
+      "it": "Grata che si apre (richiede attivatore)",
+      "de": "Öffnendes Gitter (Auslöser nötig)",
+      "es": "Reja que se abre (requiere activador)",
+      "ko": "열리는 쇠창살 (트리거 필요)",
+      "zht": "可開啟的鐵柵欄（需觸發）",
+      "zhc": "可开启的铁栅栏（需触发）",
+      "ru": "Открывающаяся решётка (нужен триггер)",
+      "th": "ลูกกรงเหล็กที่เปิดได้ (ต้องใช้ทริกเกอร์)",
+      "pt": "Grade de Ferro que Abre (Requer Gatilho)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "鉄格子②",
+    "translated": {
+      "en": "Iron Bars 2",
+      "fr": "Grille 2",
+      "it": "Grata 2",
+      "de": "Gitter 2",
+      "es": "Reja 2",
+      "ko": "쇠창살 2",
+      "zht": "鐵柵欄2",
+      "zhc": "铁栅栏2",
+      "ru": "Решётка 2",
+      "th": "ลูกกรงเหล็ก 2",
+      "pt": "Grade de Ferro 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大戦艦のエンジン",
+    "translated": {
+      "en": "Dreadnought Engine",
+      "fr": "Moteur du Cuirassé",
+      "it": "Motore della Corazzata",
+      "de": "Triebwerk des Zerstörers",
+      "es": "Motor del Acorazado",
+      "ko": "거대 전함의 엔진",
+      "zht": "大戰艦的引擎",
+      "zhc": "大战舰的引擎",
+      "ru": "Двигатель «Дредноута»",
+      "th": "เครื่องยนต์ของเรือรบเดรดนอต",
+      "pt": "Motor do Encouraçado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ヒルダ救出前エンジン",
+    "translated": {
+      "en": "Engine (Before Hilda's Rescue)",
+      "fr": "Moteur (avant le sauvetage de Hilda)",
+      "it": "Motore (prima del salvataggio di Hilda)",
+      "de": "Triebwerk (vor Hildas Rettung)",
+      "es": "Motor (antes del rescate de Hilda)",
+      "ko": "엔진 (힐다 구출 전)",
+      "zht": "引擎（救出希爾妲前）",
+      "zhc": "引擎（救出希尔妲前）",
+      "ru": "Двигатель (до спасения Хильды)",
+      "th": "เครื่องยนต์ (ก่อนช่วยฮิลดา)",
+      "pt": "Motor (Antes do Resgate de Hilda)"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大戦艦爆破トリガー",
+    "translated": {
+      "en": "Dreadnought Demolition Trigger",
+      "fr": "Déclencheur de destruction du Cuirassé",
+      "it": "Attivatore della distruzione della Corazzata",
+      "de": "Auslöser für die Sprengung des Zerstörers",
+      "es": "Activador de la voladura del Acorazado",
+      "ko": "거대 전함 폭파 트리거",
+      "zht": "大戰艦爆破觸發器",
+      "zhc": "大战舰爆破触发器",
+      "ru": "Триггер подрыва «Дредноута»",
+      "th": "ทริกเกอร์ระเบิดเรือรบเดรดนอต",
+      "pt": "Gatilho de Destruição do Encouraçado"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ペンダント",
+    "translated": {
+      "en": "Pendant",
+      "fr": "Pendentif",
+      "it": "Ciondolo",
+      "de": "Drachenzahn",
+      "es": "Colgante",
+      "ko": "펜던트",
+      "zht": "墜飾",
+      "zhc": "坠饰",
+      "ru": "Кулон",
+      "th": "สร้อยคอ",
+      "pt": "Pingente"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ペンダントの光",
+    "translated": {
+      "en": "Pendant's Glow",
+      "fr": "Lueur du pendentif",
+      "it": "Luce del ciondolo",
+      "de": "Leuchten des Drachenzahns",
+      "es": "Brillo del colgante",
+      "ko": "펜던트의 빛",
+      "zht": "墜飾之光",
+      "zhc": "坠饰之光",
+      "ru": "Сияние кулона",
+      "th": "แสงของสร้อยคอ",
+      "pt": "Brilho do Pingente"
+    },
+    "count": 1
+  },
+  {
+    "raw": "落とし穴1",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "落とし穴の煙",
+    "translated": {
+      "en": "Pitfall Smoke",
+      "fr": "Fumée de la trappe",
+      "it": "Fumo della botola",
+      "de": "Rauch der Falltür",
+      "es": "Humo de la trampilla",
+      "ko": "함정의 연기",
+      "zht": "陷坑的煙",
+      "zhc": "陷坑的烟",
+      "ru": "Дым ямы-ловушки",
+      "th": "ควันของหลุมพราง",
+      "pt": "Fumaça do Alçapão"
+    },
+    "count": 1
+  },
+  {
+    "raw": "命の泉",
+    "translated": {
+      "en": "Spring of Life",
+      "fr": "Source de vie",
+      "it": "Fonte della vita",
+      "de": "Quelle des Lebens",
+      "es": "Manantial de la vida",
+      "ko": "생명의 샘",
+      "zht": "生命之泉",
+      "zhc": "生命之泉",
+      "ru": "Источник жизни",
+      "th": "น้ำพุแห่งชีวิต",
+      "pt": "Fonte da Vida"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0054:ベヒーモス",
+    "translated": {
+      "en": "Behemoth",
+      "fr": "Béhémoth",
+      "it": "Behemoth",
+      "de": "Behemoth",
+      "es": "Bégimo",
+      "ko": "베히모스",
+      "zht": "凶惡巨獸",
+      "zhc": "贝希摩斯",
+      "ru": "Бегемот",
+      "th": "เบเฮโมธ",
+      "pt": "Behemoth"
+    },
+    "count": 1
+  },
+  {
+    "raw": "大きな鉄格子",
+    "translated": {
+      "en": "Large Iron Bars",
+      "fr": "Grande grille",
+      "it": "Grande grata",
+      "de": "Großes Gitter",
+      "es": "Reja grande",
+      "ko": "큰 쇠창살",
+      "zht": "大鐵柵欄",
+      "zhc": "大铁栅栏",
+      "ru": "Большая решётка",
+      "th": "ลูกกรงเหล็กขนาดใหญ่",
+      "pt": "Grande Grade de Ferro"
+    },
+    "count": 1
+  },
+  {
+    "raw": "上がる鉄格子A",
+    "translated": {
+      "en": "Rising Iron Bars A",
+      "fr": "Grille qui se lève A",
+      "it": "Grata che si alza A",
+      "de": "Hochfahrendes Gitter A",
+      "es": "Reja que se levanta A",
+      "ko": "올라가는 쇠창살 A",
+      "zht": "升起的鐵柵欄A",
+      "zhc": "升起的铁栅栏A",
+      "ru": "Поднимающаяся решётка A",
+      "th": "ลูกกรงเหล็กที่ยกขึ้น A",
+      "pt": "Grade de Ferro que Sobe A"
+    },
+    "count": 1
+  },
+  {
+    "raw": "上がる鉄格子B",
+    "translated": {
+      "en": "Rising Iron Bars B",
+      "fr": "Grille qui se lève B",
+      "it": "Grata che si alza B",
+      "de": "Hochfahrendes Gitter B",
+      "es": "Reja que se levanta B",
+      "ko": "올라가는 쇠창살 B",
+      "zht": "升起的鐵柵欄B",
+      "zhc": "升起的铁栅栏B",
+      "ru": "Поднимающаяся решётка B",
+      "th": "ลูกกรงเหล็กที่ยกขึ้น B",
+      "pt": "Grade de Ferro que Sobe B"
+    },
+    "count": 1
+  },
+  {
+    "raw": "柵",
+    "translated": {
+      "en": "Fence",
+      "fr": "Clôture",
+      "it": "Recinto",
+      "de": "Zaun",
+      "es": "Valla",
+      "ko": "울타리",
+      "zht": "柵欄",
+      "zhc": "栅栏",
+      "ru": "Забор",
+      "th": "รั้ว",
+      "pt": "Cerca"
+    },
+    "count": 4
+  },
+  {
+    "raw": "鉄格子",
+    "translated": {
+      "en": "Iron Bars",
+      "fr": "Grille",
+      "it": "Grata",
+      "de": "Gitter",
+      "es": "Reja",
+      "ko": "쇠창살",
+      "zht": "鐵柵欄",
+      "zhc": "铁栅栏",
+      "ru": "Решётка",
+      "th": "ลูกกรงเหล็ก",
+      "pt": "Grade de Ferro"
+    },
+    "count": 2
+  },
+  {
+    "raw": "黒い仮面",
+    "translated": {
+      "en": "Black Mask",
+      "fr": "Masque noir",
+      "it": "Maschera nera",
+      "de": "Schwarze Maske",
+      "es": "Máscara negra",
+      "ko": "검은 가면",
+      "zht": "黑色面具",
+      "zhc": "黑色面具",
+      "ru": "Черная маска",
+      "th": "หน้ากากดำ",
+      "pt": "Máscara Negra"
+    },
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0073",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "sc_e_0074",
+    "translated": {},
+    "count": 1
+  },
+  {
+    "raw": "精神が上がるオーブ",
+    "translated": {
+      "en": "Spirit Orb",
+      "fr": "Orbe de Sagesse",
+      "it": "Sfera di Spirito",
+      "de": "Kugel des Willens",
+      "es": "Orbe de Espíritu",
+      "ko": "정신력의 오브",
+      "zht": "精神寶珠",
+      "zhc": "精神宝珠",
+      "ru": "Сфера духа",
+      "th": "ออร์บจิตวิญญาณ",
+      "pt": "Orbe de Vigor"
+    },
+    "count": 1
+  },
+  {
+    "raw": "知性が上がるオーブ",
+    "translated": {
+      "en": "Intellect Orb",
+      "fr": "Orbe d'Intelligence",
+      "it": "Sfera di Intelligenza",
+      "de": "Kugel der Intelligenz",
+      "es": "Orbe de Inteligencia",
+      "ko": "지력의 오브",
+      "zht": "智力寶珠",
+      "zhc": "智力宝珠",
+      "ru": "Сфера интеллекта",
+      "th": "ออร์บสติปัญญา",
+      "pt": "Orbe de Intelecto"
+    },
+    "count": 1
+  },
+  {
+    "raw": "素早さが上がるオーブ",
+    "translated": {
+      "en": "Agility Orb",
+      "fr": "Orbe d'Agilité",
+      "it": "Sfera di Agilità",
+      "de": "Kugel der Agilität",
+      "es": "Orbe de Agilidad",
+      "ko": "민첩성의 오브",
+      "zht": "敏捷寶珠",
+      "zhc": "敏捷宝珠",
+      "ru": "Сфера ловкости",
+      "th": "ออร์บความเร็ว",
+      "pt": "Orbe de Agilidade"
+    },
+    "count": 1
+  },
+  {
+    "raw": "力が上がるオーブ",
+    "translated": {
+      "en": "Strength Orb",
+      "fr": "Orbe de Force",
+      "it": "Sfera di Forza",
+      "de": "Kugel der Stärke",
+      "es": "Orbe de Fuerza",
+      "ko": "힘의 오브",
+      "zht": "力量寶珠",
+      "zhc": "力量宝珠",
+      "ru": "Сфера силы",
+      "th": "ออร์บพละกำลัง",
+      "pt": "Orbe de Força"
+    },
+    "count": 1
+  },
+  {
+    "raw": "アルテマの本",
+    "translated": {
+      "en": "Ultima Tome",
+      "fr": "Tome d'Ultima",
+      "it": "Tomo di Ultima",
+      "de": "Ultima-Grimoire",
+      "es": "Libro de Artema",
+      "ko": "알테마의 서",
+      "zht": "究極之書",
+      "zhc": "究极之书",
+      "ru": "Том «Ультима»",
+      "th": "หนังสือพลังอัลทิมา",
+      "pt": "Tomo da Última"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ワープゾーン",
+    "translated": {
+      "en": "Warp Zone",
+      "fr": "Zone de téléportation",
+      "it": "Zona di teletrasporto",
+      "de": "Teleportzone",
+      "es": "Zona de teletransporte",
+      "ko": "워프 존",
+      "zht": "傳送區",
+      "zhc": "传送区",
+      "ru": "Зона телепортации",
+      "th": "โซนวาร์ป",
+      "pt": "Zona de Teletransporte"
+    },
+    "count": 2
+  },
+  {
+    "raw": "sc_e_0082:皇帝１",
+    "translated": {},
+    "count": 3
+  },
+  {
+    "raw": "落とし穴",
+    "translated": {
+      "en": "Pitfall",
+      "fr": "Trappe",
+      "it": "Botola",
+      "de": "Falltür",
+      "es": "Trampilla",
+      "ko": "함정",
+      "zht": "陷坑",
+      "zhc": "陷坑",
+      "ru": "Яма-ловушка",
+      "th": "หลุมพราง",
+      "pt": "Alçapão"
+    },
+    "count": 1
+  },
+  {
+    "raw": "落とし穴に落ちたときの煙",
+    "translated": {
+      "en": "Smoke from Falling into a Pitfall",
+      "fr": "Fumée de chute dans la trappe",
+      "it": "Fumo della caduta nella botola",
+      "de": "Rauch beim Sturz in die Falltür",
+      "es": "Humo al caer en la trampilla",
+      "ko": "함정에 빠졌을 때의 연기",
+      "zht": "掉進陷坑時的煙",
+      "zhc": "掉进陷坑时的烟",
+      "ru": "Дым при падении в яму-ловушку",
+      "th": "ควันเมื่อตกหลุมพราง",
+      "pt": "Fumaça ao Cair no Alçapão"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ジェイドからの出口",
+    "translated": {
+      "en": "Jade Passage Exit",
+      "fr": "Sortie du Sentier de jade",
+      "it": "Uscita dal Varco di giada",
+      "de": "Ausgang der Jade-Passage",
+      "es": "Salida del Pasaje de jade",
+      "ko": "제이드 출구",
+      "zht": "翡翠通道出口",
+      "zhc": "翡翠通道出口",
+      "ru": "Выход из Нефритового прохода",
+      "th": "ทางออกจากเส้นทางหยก",
+      "pt": "Saída do Caminho de Jade"
+    },
+    "count": 1
+  },
+  {
+    "raw": "壁紙",
+    "translated": {
+      "en": "Backdrop",
+      "fr": "Toile de fond",
+      "it": "Sfondo",
+      "de": "Hintergrund",
+      "es": "Fondo",
+      "ko": "배경",
+      "zht": "背景圖",
+      "zhc": "背景图",
+      "ru": "Фон",
+      "th": "ภาพพื้นหลัง",
+      "pt": "Pano de Fundo"
+    },
+    "count": 1
+  },
+  {
+    "raw": "パンデモニウムの入り口",
+    "translated": {
+      "en": "Pandaemonium Entrance",
+      "fr": "Entrée de Pandémonium",
+      "it": "Ingresso di Pandæmonium",
+      "de": "Eingang von Pandämonium",
+      "es": "Entrada de Pandemónium",
+      "ko": "판데모니움 입구",
+      "zht": "萬魔殿入口",
+      "zhc": "万魔殿入口",
+      "ru": "Вход в Пандемониум",
+      "th": "ทางเข้าแพนเดโมเนียม",
+      "pt": "Entrada do Pandemônio"
+    },
+    "count": 1
+  },
+  {
+    "raw": "ジェイドへのワープ",
+    "translated": {
+      "en": "Warp to the Jade Passage",
+      "fr": "Téléportation vers le Sentier de jade",
+      "it": "Teletrasporto al Varco di giada",
+      "de": "Teleport zur Jade-Passage",
+      "es": "Teletransporte al Pasaje de jade",
+      "ko": "제이드로 가는 워프",
+      "zht": "前往翡翠通道的傳送",
+      "zhc": "前往翡翠通道的传送",
+      "ru": "Телепорт в Нефритовый проход",
+      "th": "วาร์ปไปยังเส้นทางหยก",
+      "pt": "Teletransporte para o Caminho de Jade"
+    },
+    "count": 1
+  },
+  {
+    "raw": "パンデモニウム8へ",
+    "translated": {
+      "en": "To Pandaemonium 8",
+      "fr": "Vers Pandémonium 8",
+      "it": "Verso Pandæmonium 8",
+      "de": "Zu Pandämonium 8",
+      "es": "Hacia Pandemónium 8",
+      "ko": "판데모니움 8로",
+      "zht": "前往萬魔殿8",
+      "zhc": "前往万魔殿8",
+      "ru": "В Пандемониум 8",
+      "th": "ไปยังแพนเดโมเนียม 8",
+      "pt": "Para o Pandemônio 8"
+    },
+    "count": 2
+  },
+  {
+    "raw": "パンデモニウム10へ",
+    "translated": {
+      "en": "To Pandaemonium 10",
+      "fr": "Vers Pandémonium 10",
+      "it": "Verso Pandæmonium 10",
+      "de": "Zu Pandämonium 10",
+      "es": "Hacia Pandemónium 10",
+      "ko": "판데모니움 10으로",
+      "zht": "前往萬魔殿10",
+      "zhc": "前往万魔殿10",
+      "ru": "В Пандемониум 10",
+      "th": "ไปยังแพนเดโมเนียม 10",
+      "pt": "Para o Pandemônio 10"
+    },
+    "count": 1
+  },
+  {
+    "raw": "パンデモニウム9へ",
+    "translated": {
+      "en": "To Pandaemonium 9",
+      "fr": "Vers Pandémonium 9",
+      "it": "Verso Pandæmonium 9",
+      "de": "Zu Pandämonium 9",
+      "es": "Hacia Pandemónium 9",
+      "ko": "판데모니움 9로",
+      "zht": "前往萬魔殿9",
+      "zhc": "前往万魔殿9",
+      "ru": "В Пандемониум 9",
+      "th": "ไปยังแพนเดโมเนียม 9",
+      "pt": "Para o Pandemônio 9"
+    },
+    "count": 2
+  },
+  {
+    "raw": "皇帝死亡",
+    "translated": {
+      "en": "Emperor's Death",
+      "fr": "Mort de l'Empereur",
+      "it": "Morte dell'Imperatore",
+      "de": "Tod des Imperators",
+      "es": "Muerte del Emperador",
+      "ko": "황제 사망",
+      "zht": "皇帝死亡",
+      "zhc": "皇帝死亡",
+      "ru": "Смерть Императора",
+      "th": "การสิ้นพระชนม์ของจักรพรรดิ",
+      "pt": "Morte do Imperador"
+    },
+    "count": 1
+  },
+  {
+    "raw": "パンデモニウム3へ",
+    "translated": {
+      "en": "To Pandaemonium 3",
+      "fr": "Vers Pandémonium 3",
+      "it": "Verso Pandæmonium 3",
+      "de": "Zu Pandämonium 3",
+      "es": "Hacia Pandemónium 3",
+      "ko": "판데모니움 3으로",
+      "zht": "前往萬魔殿3",
+      "zhc": "前往万魔殿3",
+      "ru": "В Пандемониум 3",
+      "th": "ไปยังแพนเดโมเนียม 3",
+      "pt": "Para o Pandemônio 3"
+    },
+    "count": 2
+  },
+  {
+    "raw": "パンデモニウム2へ",
+    "translated": {
+      "en": "To Pandaemonium 2",
+      "fr": "Vers Pandémonium 2",
+      "it": "Verso Pandæmonium 2",
+      "de": "Zu Pandämonium 2",
+      "es": "Hacia Pandemónium 2",
+      "ko": "판데모니움 2로",
+      "zht": "前往萬魔殿2",
+      "zhc": "前往万魔殿2",
+      "ru": "В Пандемониум 2",
+      "th": "ไปยังแพนเดโมเนียม 2",
+      "pt": "Para o Pandemônio 2"
+    },
+    "count": 1
+  },
+  {
+    "raw": "パンデモニウム4へ",
+    "translated": {
+      "en": "To Pandaemonium 4",
+      "fr": "Vers Pandémonium 4",
+      "it": "Verso Pandæmonium 4",
+      "de": "Zu Pandämonium 4",
+      "es": "Hacia Pandemónium 4",
+      "ko": "판데모니움 4로",
+      "zht": "前往萬魔殿4",
+      "zhc": "前往万魔殿4",
+      "ru": "В Пандемониум 4",
+      "th": "ไปยังแพนเดโมเนียม 4",
+      "pt": "Para o Pandemônio 4"
+    },
+    "count": 3
+  },
+  {
+    "raw": "パンデモニウム7へ",
+    "translated": {
+      "en": "To Pandaemonium 7",
+      "fr": "Vers Pandémonium 7",
+      "it": "Verso Pandæmonium 7",
+      "de": "Zu Pandämonium 7",
+      "es": "Hacia Pandemónium 7",
+      "ko": "판데모니움 7로",
+      "zht": "前往萬魔殿7",
+      "zhc": "前往万魔殿7",
+      "ru": "В Пандемониум 7",
+      "th": "ไปยังแพนเดโมเนียม 7",
+      "pt": "Para o Pandemônio 7"
+    },
+    "count": 2
+  },
+  {
+    "raw": "パンデモニウム6へ",
+    "translated": {
+      "en": "To Pandaemonium 6",
+      "fr": "Vers Pandémonium 6",
+      "it": "Verso Pandæmonium 6",
+      "de": "Zu Pandämonium 6",
+      "es": "Hacia Pandemónium 6",
+      "ko": "판데모니움 6으로",
+      "zht": "前往萬魔殿6",
+      "zhc": "前往万魔殿6",
+      "ru": "В Пандемониум 6",
+      "th": "ไปยังแพนเดโมเนียม 6",
+      "pt": "Para o Pandemônio 6"
+    },
+    "count": 1
+  }
+]

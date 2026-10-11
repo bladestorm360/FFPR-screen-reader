@@ -1,0 +1,3 @@
+1807e1900	Last.Entity.Field.FieldColliderEntity public override bool CanEnter(FieldEntity enterEntity, Vector2 moveVector) { }
+180289b20	Last.Map.FieldController public void SetEventEntityGroup(string eventGroup) { }
+18028c210	Last.Map.FieldController private void SetupCurrentMappingData(string eventGroup) { }

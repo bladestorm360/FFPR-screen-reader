@@ -5,6 +5,7 @@
 // AddCount, TakeCount) and shop close (ShopController.Close). The magic shop's slot grid is in
 // shop_magic.cpp. Every class is Last.UI.KeyInput and identical in all five games; no hooked
 // body is folded in any game (one RVA each in every dump.cs).
+#include "../ui/preferences.h"
 #include "shop.h"
 #include "shop_internal.h"
 #include "../core.h"
@@ -148,7 +149,7 @@ void announce_focused_item(void* content, int index, int count)
 
     std::wstring base = price.empty() ? item_name : item_name + L", " + price;
     std::wstring announcement = base;
-    if (settings::get_bool("AutoDetail", true)) {
+    if (ui::prefs::auto_detail_enabled()) {
         std::wstring detail = description_from_ui();
         if (!text::is_blank(detail)) announcement = base + L": " + detail;
     }

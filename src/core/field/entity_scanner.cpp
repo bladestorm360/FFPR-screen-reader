@@ -12,11 +12,13 @@
 #include <map>
 #include <unordered_set>
 #include "entity_translator.h"
+#include "event_labels.h"
 #include "field_api.h"
 #include "field_internal.h"
 #include "map_names.h"
 #include "object_cache.h"
 #include "path_search.h"
+#include "baked_nav.h"
 #include "../game.h"
 #include "../hooks.h"
 #include "../il2cpp.h"
@@ -24,6 +26,7 @@
 #include "../modtext.h"
 #include "../settings.h"
 #include "../text.h"
+#include "../ui/preferences.h"
 
 namespace field {
 
@@ -53,13 +56,23 @@ bool contains(const std::wstring& s, const wchar_t* part) { return s.find(part) 
 // Filters (Core/Filters)
 // =========================================================================================
 
-/// PathfindingFilter: entities with a valid path from the player (OnCycle). Its IsEnabled is
-/// the "PathfindingFilter" setting.
-bool pathfinding_enabled() { return settings::get_bool("PathfindingFilter", false); }
+/// PathfindingFilter (OnCycle), three ways since 2026-10-11 (user): "Current floor" lists only
+/// what walking reaches on this sub-map; "Current map with vehicles" adds what a vehicle the
+/// party has here reaches; "Current map" lists everything, and a target cut off on this floor
+/// is routed through another floor. The old on/off setting maps to floor / map.
+int pathfinding_mode()
+{
+    int mode = settings::get_int(ui::prefs::kPathfindingFilterMode, -1);
+    if (mode < 0) mode = settings::get_bool("PathfindingFilter", false) ? ui::prefs::kFilterCurrentFloor : ui::prefs::kFilterCurrentMap;
+    return std::clamp(mode, 0, ui::prefs::kPathfindingFilterModeMax);
+}
+bool pathfinding_enabled() { return pathfinding_mode() != ui::prefs::kFilterCurrentMap; }
 
 bool pathfinding_passes(const EntityPtr& e, const FilterContext& ctx)
 {
     if (!e || !e->is_alive()) return false;
+    // Another floor's entry exists only under "Current map", which lists everything.
+    if (e->remote()) return pathfinding_mode() == ui::prefs::kFilterCurrentMap;
     // A vehicle-only trigger hidden for the current vehicle is not a walking target: it is
     // reached by boarding its vehicle, so the walking path test does not apply.
     if (e->game && entity_is_hidden_by_vehicle(e->game)) return true;
@@ -67,7 +80,8 @@ bool pathfinding_passes(const EntityPtr& e, const FilterContext& ctx)
     // FF5 PathSearchMode.Quick: the filter runs once per entity and never pays for breadcrumb
     // chaining, so a target past the game's search window can be filtered out yet still be
     // routable with the announce key.
-    PathInfo p = find_path_to_quick(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player);
+    PathInfo p = find_path_to_quick(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player,
+                                    TargetKind::Infer, pathfinding_mode() == ui::prefs::kFilterCurrentMapWithVehicles);
     return p.success;
 }
 
@@ -144,9 +158,9 @@ bool placeholder(Context& c)
     return fn(raw.c_str());
 }
 
-EntityPtr make_event(const Context& c, const std::wstring& name, const std::wstring& type)
+EntityPtr make_event(const Context& c, const std::wstring& type)
 {
-    EntityPtr e = make(Kind::Event, c, name);
+    EntityPtr e = make(Kind::Event, c, safe_event_label(c.fe, type));
     e->event_type = type;
     return e;
 }
@@ -223,9 +237,7 @@ Detection goto_map_detector(Context& c)
 
     void* prop = c.property();
     if (prop && r::kPropertyTelepoPoint.is(prop)) {
-        std::wstring name = entity_name_from_property(c.fe);
-        if (name.empty()) name = T(L"Warp Tile");
-        return detected(make_event(c, name, L"Warp Tile"));
+        return detected(make_event(c, L"Warp Tile"));
     }
     return not_handled();
 }
@@ -313,9 +325,7 @@ Detection to_layer_detector(Context& c)
         if (lower == L"toupper" || lower == L"tobottom" || text::starts_with(lower, L"tolayer")) layer = true;
     }
     if (!layer) return not_handled();
-    std::wstring name = entity_name_from_property(c.fe);
-    if (name.empty()) name = c.go_name;
-    return detected(make_event(c, name, L"ToLayer"));
+    return detected(make_event(c, L"ToLayer"));
 }
 
 /// EventTriggerDetector (120): every other EventTriggerEntity, scenery excepted.
@@ -323,12 +333,7 @@ Detection event_trigger_detector(Context& c)
 {
     if (!c.is_event_trigger) return not_handled();
     if (entity_is_scenery(c.fe) || placeholder(c)) return skip();
-    std::wstring name = entity_name_from_property(c.fe);
-    if (name.empty() || name == L"GeneralEventObject") {
-        name = classify_by_dialogue(c.fe);
-        if (name.empty()) name = clean_object_name(c.go_name, T(L"Event Trigger"));
-    }
-    return detected(make_event(c, name, L"Event"));
+    return detected(make_event(c, L"Event"));
 }
 
 /// InteractiveEntityDetector (130): FieldMapObjectDefault and any IInteractiveEntity left.
@@ -338,20 +343,13 @@ Detection interactive_detector(Context& c)
 
     if (r::kFieldMapObjectDefault.is(c.fe)) {
         if (!call_virtual_bool(r::mMapObjectGetCanAction, c.fe)) return skip();
-        std::wstring name = entity_name_from_property(c.fe);
-        if (name.empty() || name == L"GeneralEventObject") {
-            name = classify_by_dialogue(c.fe);
-            if (name.empty()) name = interactive_object_name(c.property(), c.go_name);
-        }
-        return detected(make_event(c, name, L"Interactive Object"));
+        return detected(make_event(c, L"Interactive Object"));
     }
 
     if (implements(c.fe, r::kIInteractiveEntity)) {
         // ObjectType 0 + PointIn = entry points (not useful to navigate to)
         if (c.object_type() == 0 && contains(c.go_lower, L"pointin")) return skip();
-        std::wstring name = entity_name_from_property(c.fe);
-        if (name.empty()) name = clean_object_name(c.go_name, T(L"Object"));
-        return detected(make_event(c, name, L"Interactive"));
+        return detected(make_event(c, L"Interactive"));
     }
     return not_handled();
 }
@@ -399,12 +397,19 @@ int g_index = 0;
 Category g_category = Category::All;
 int g_last_scanned_map_id = -1;
 
+// The other floors' entries (baked data), built once per map while the filter is "Current
+// map" (user, 2026-10-11); appended after the live entities.
+std::vector<EntityPtr> g_remote;
+int g_remote_map_id = -1;
+
 // Selected entity identity, to keep focus across re-sorts
 EntityPtr g_sel;
 bool g_sel_has = false;
 Vec3 g_sel_pos{};
 Category g_sel_category = Category::All;
 std::wstring g_sel_name;
+int g_sel_remote = 0;            // another floor's entry: its floor and cell identify it
+int g_sel_cx = 0, g_sel_cy = 0;
 
 bool player_local_position(Vec3& out)
 {
@@ -486,7 +491,7 @@ void renumber_npcs(std::vector<EntityPtr>& list)
     struct Member { EntityPtr e; long long number; };
     std::map<std::wstring, std::vector<Member>> groups;
     for (auto& e : list) {
-        if (e->kind != Kind::NPC) continue;
+        if (e->kind != Kind::NPC || e->remote()) continue;   // other floors are numbered per floor (build_remote)
         long long number = -1;
         std::wstring base = strip_instance_number(e->converted_name, number);
         groups[base].push_back({e, number});
@@ -511,6 +516,98 @@ void renumber_npcs(std::vector<EntityPtr>& list)
     }
 }
 
+/// The entries of the other floors (user, 2026-10-11: "destinations from other floors need to
+/// be visible ... current map should include all dungeon floors, town floors etc"): the talk
+/// targets, chests, save points and outward exits of every sub-map connected to this one by
+/// exits and warps without crossing a world map, from the baked data
+/// (baked_nav::connected_objects). Named as the live list names them, the floor's title after
+/// the name ("Potion (Kashuan Keep 2F)"); NPCs are numbered within their floor as on this one.
+/// What the story has changed there (an opened chest, someone who has left) is not known from
+/// here, and the game's conditional object groups (the "ev_*" variants of a floor) fold into
+/// one entry per name and cell.
+void build_remote(void* map_handle)
+{
+    g_remote.clear();
+    const std::vector<baked_nav::RemoteObject> objs = baked_nav::connected_objects(map_handle);
+    struct Member { EntityPtr e; long long number; };
+    std::map<std::wstring, std::vector<Member>> npc_groups;   // "floor\nbase name"
+    std::unordered_set<std::wstring> seen;
+    bool (*placeholder_fn)(const wchar_t*) = game::flags().placeholder_entity;
+    for (const auto& r : objs) {
+        auto e = std::make_shared<Entity>();
+        e->remote_map_id = r.map_id;
+        e->cell_layer = r.cell.layer;
+        e->cell_x = r.cell.x;
+        e->cell_y = r.cell.y;
+        e->floor_name = resolve_map_name(r.map_id);
+        long long number = -1;
+        std::wstring base;
+        switch (r.type) {
+        case baked::ObjType::NPC:
+        case baked::ObjType::ShopNPC: {
+            if (placeholder_fn && placeholder_fn(r.raw_name.c_str())) continue;
+            std::wstring name = r.raw_name.empty() ? std::wstring() : translate_entity_name(r.raw_name);
+            if (name.empty() || name == L"NPC") name = T(L"NPC");
+            e->kind = Kind::NPC;
+            e->name = name;
+            e->shop = r.shop;
+            base = strip_instance_number(name, number);
+            break;
+        }
+        case baked::ObjType::TreasureBox: {
+            std::wstring item = r.content_id > 0 ? resolve_item_name(r.content_id) : std::wstring();
+            e->kind = Kind::TreasureChest;
+            e->name = item.empty() ? T(L"Treasure Chest") : item;
+            break;
+        }
+        case baked::ObjType::SavePoint:
+            e->kind = Kind::SavePoint;
+            e->name = T(L"Save Point");
+            break;
+        case baked::ObjType::GotoMap: {
+            std::wstring dest_name = resolve_map_name(r.dest_map_id);
+            e->kind = Kind::MapExit;
+            e->dest_map_id = r.dest_map_id;
+            e->dest_name = dest_name;
+            e->name = !dest_name.empty() ? TF(L"Exit to {0}", {dest_name}) : T(L"Exit");
+            break;
+        }
+        default:
+            continue;
+        }
+        e->converted_name = e->name;
+        // One entry per name and cell (a floor's story variants repeat its people), one exit per
+        // destination per floor.
+        const std::wstring where = e->kind == Kind::MapExit ? std::to_wstring(r.dest_map_id)
+                                                            : std::to_wstring(r.cell.x) + L"," + std::to_wstring(r.cell.y);
+        const std::wstring key = e->floor_name + L"\n" + std::to_wstring(static_cast<int>(e->kind)) + L"\n" +
+                                 (e->kind == Kind::NPC ? base : e->name) + L"\n" + where;
+        if (!seen.insert(key).second) continue;
+        if (e->kind == Kind::NPC) npc_groups[e->floor_name + L"\n" + base].push_back({e, number});
+        g_remote.push_back(e);
+    }
+    for (auto& kv : npc_groups) {
+        auto& members = kv.second;
+        const std::wstring base = kv.first.substr(kv.first.find(L'\n') + 1);
+        if (members.size() == 1) {
+            members[0].e->name = base;
+            continue;
+        }
+        std::stable_sort(members.begin(), members.end(), [](const Member& a, const Member& b) {
+            if (a.number != b.number) {
+                if (a.number < 0) return false;   // unnumbered after the numbered
+                if (b.number < 0) return true;
+                return a.number < b.number;
+            }
+            if (a.e->cell_y != b.e->cell_y) return a.e->cell_y < b.e->cell_y;   // top to bottom
+            return a.e->cell_x < b.e->cell_x;
+        });
+        int k = 0;
+        for (auto& m : members) m.e->name = base + L" " + std::to_wstring(++k);
+    }
+    LOGF("[EntityScanner] other floors: %zu entries from %zu baked objects", g_remote.size(), objs.size());
+}
+
 int find_entity_by_identifier()
 {
     // Reference match: the same entity object persists across scans, so the cursor stays on
@@ -520,15 +617,23 @@ int find_entity_by_identifier()
             if (g_filtered[i] == g_sel) return static_cast<int>(i);
     }
     if (!g_sel_has) return -1;
+    if (g_sel_remote > 0) {
+        // Another floor's entry: the same floor and cell (a rebuilt list has new addresses).
+        for (size_t i = 0; i < g_filtered.size(); ++i) {
+            const auto& e = g_filtered[i];
+            if (e->remote_map_id == g_sel_remote && e->cell_x == g_sel_cx && e->cell_y == g_sel_cy) return static_cast<int>(i);
+        }
+        return -1;
+    }
     for (size_t i = 0; i < g_filtered.size(); ++i) {
         const auto& e = g_filtered[i];
-        if (e->category() == g_sel_category && vec_distance(e->position(), g_sel_pos) < 0.5f)
+        if (!e->remote() && e->category() == g_sel_category && vec_distance(e->position(), g_sel_pos) < 0.5f)
             return static_cast<int>(i);
     }
     if (!g_sel_name.empty()) {
         for (size_t i = 0; i < g_filtered.size(); ++i) {
             const auto& e = g_filtered[i];
-            if (e->category() == g_sel_category && e->name == g_sel_name) return static_cast<int>(i);
+            if (!e->remote() && e->category() == g_sel_category && e->name == g_sel_name) return static_cast<int>(i);
         }
     }
     return -1;
@@ -550,7 +655,12 @@ void apply_filter()
     if (player_local_position(player_pos)) {
         std::vector<std::pair<float, EntityPtr>> keyed;
         keyed.reserve(g_filtered.size());
-        for (auto& e : g_filtered) keyed.emplace_back(vec_distance(e->position(), player_pos), e);
+        // The other floors' entries have no position here: they follow the live ones, floor by
+        // floor in the order they were built (the nearest floor first).
+        for (size_t i = 0; i < g_filtered.size(); ++i) {
+            const auto& e = g_filtered[i];
+            keyed.emplace_back(e->remote() ? 1.0e9f + static_cast<float>(i) : vec_distance(e->position(), player_pos), e);
+        }
         std::stable_sort(keyed.begin(), keyed.end(),
                          [](const auto& a, const auto& b) { return a.first < b.first; });
         for (size_t i = 0; i < keyed.size(); ++i) g_filtered[i] = keyed[i].second;
@@ -577,6 +687,7 @@ void clear_selected_identifier()
     g_sel.reset();
     g_sel_has = false;
     g_sel_name.clear();
+    g_sel_remote = 0;
 }
 
 void save_selected_identifier()
@@ -588,6 +699,37 @@ void save_selected_identifier()
     g_sel_pos = e->position();
     g_sel_category = e->category();
     g_sel_name = e->name;
+    g_sel_remote = e->remote_map_id;
+    g_sel_cx = e->cell_x;
+    g_sel_cy = e->cell_y;
+}
+
+/// A route that went on through the transition (baked_nav::pending_goal): its destination is
+/// selected on the new floor (a live entity now, or still another floor's entry), so the
+/// directions key and the beacon keep leading to it (user, 2026-10-11: the destination was
+/// lost after "take the exit to ...").
+void select_pending_destination(int map_id)
+{
+    baked_nav::MapGoal goal;
+    TargetKind kind = TargetKind::Infer;
+    std::wstring name;
+    if (!baked_nav::pending_goal(goal, kind, name)) return;
+    FilterContext ctx;
+    for (size_t i = 0; i < g_filtered.size(); ++i) {
+        const auto& e = g_filtered[i];
+        bool hit = false;
+        if (e->remote()) {
+            hit = e->remote_map_id == goal.map_id && e->cell_x == goal.cell.x && e->cell_y == goal.cell.y;
+        } else if (goal.map_id == map_id) {
+            baked_route::Cell c;
+            hit = baked_nav::cell_at(ctx.map_handle, e->position(), c) && c.x == goal.cell.x && c.y == goal.cell.y;
+        }
+        if (!hit) continue;
+        g_index = static_cast<int>(i);
+        save_selected_identifier();
+        LOGF("[EntityScanner] destination kept through the transition: %ls", e->name.c_str());
+        return;
+    }
 }
 
 void ensure_correct_map()
@@ -634,13 +776,27 @@ void scan_entities()
             }
         }
 
+        const bool map_changed = map_id != g_last_scanned_map_id;
         g_entities.clear();
         for (auto& kv : g_entity_map) g_entities.push_back(kv.second);
         renumber_npcs(g_entities);
+        // "Current map": the other floors' entries after the live ones, built once per map.
+        if (pathfinding_mode() == ui::prefs::kFilterCurrentMap) {
+            if (g_remote_map_id != map_id) {
+                FilterContext ctx;
+                build_remote(ctx.map_handle);
+                g_remote_map_id = map_id;
+            }
+            g_entities.insert(g_entities.end(), g_remote.begin(), g_remote.end());
+        } else if (g_remote_map_id != -1) {
+            g_remote.clear();
+            g_remote_map_id = -1;
+        }
         g_last_scanned_map_id = map_id;
         apply_filter();
 
         if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
+        if (map_changed) select_pending_destination(map_id);
     });
 }
 
@@ -764,7 +920,7 @@ std::vector<unity::Vec3> map_exit_positions()
     // GetMapExitPositions: every MapExitEntity of the unfiltered list (wall-tone suppression)
     std::vector<unity::Vec3> out;
     for (auto& e : g_entities)
-        if (e->kind == Kind::MapExit) out.push_back(e->pos);
+        if (e->kind == Kind::MapExit && !e->remote()) out.push_back(e->pos);
     return out;
 }
 

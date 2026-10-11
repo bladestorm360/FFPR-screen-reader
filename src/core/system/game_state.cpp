@@ -10,6 +10,7 @@
 #include "refs.h"
 #include "field/scene_events.h"
 #include "system/system.h"
+#include "battle/battle.h"
 
 namespace ffpr::system {
 namespace {
@@ -90,6 +91,9 @@ ChangeState_t o_ChangeState;
 
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
+    hooks::guarded("GameState.BattleTransition", [&] {
+        if (self && kMainGame.is(self)) battle::main_game_transition(state);
+    });
     o_ChangeState(self, state, mi);
     hooks::guarded("GameState.ChangeState", [&] {
         if (self && kMainGame.is(self)) change_state_postfix(self, state);

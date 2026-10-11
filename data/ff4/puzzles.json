@@ -1,15 +1,15 @@
 {
-  "_comment": "Guided puzzle solutions for FINAL FANTASY IV (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff4_master/map.txt); cells are baked tile coordinates (tools/mapdump/ff4_objects.jsonl). Authored 2026-10-10 from the dumps' developer labels; not yet tested in game.",
+  "_comment": "Guided puzzle solutions for FINAL FANTASY IV (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff4_master/map.txt); cells are baked tile coordinates, one row above the dumps' ty for tile objects since the 2026-10-11 bottom-edge fix in bake_maps.py (tools/mapdump/ff4_objects.jsonl). Authored 2026-10-10 from the dumps' developer labels; not yet tested in game.",
   "puzzles": [
     {
       "id": "troia_castle_treasury",
       "_about": "Troia Castle B1: the four floor switches are stepped on in order, 1 to 4 (the developers' label: スイッチ（1→2→3→4→終了）). Switches at (2,7) (5,7) (8,7) (11,7), the doors on the row below.",
       "maps": [102],
       "steps": [
-        {"map": 102, "x": 2, "y": 7, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "1"},
-        {"map": 102, "x": 5, "y": 7, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "2"},
-        {"map": 102, "x": 8, "y": 7, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "3"},
-        {"map": 102, "x": 11, "y": 7, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "4"}
+        {"map": 102, "x": 2, "y": 6, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "1"},
+        {"map": 102, "x": 5, "y": 6, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "2"},
+        {"map": 102, "x": 8, "y": 6, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "3"},
+        {"map": 102, "x": 11, "y": 6, "layer": 0, "examine": false, "text": "Step on switch {0}", "arg": "4"}
       ]
     },
     {
@@ -17,8 +17,8 @@
       "_about": "Castle Baron: the two wall switches in the castle at (18,31) and (18,20).",
       "maps": [4],
       "steps": [
-        {"map": 4, "x": 18, "y": 31, "layer": 0, "examine": true, "text": "Examine the switch"},
-        {"map": 4, "x": 18, "y": 20, "layer": 0, "examine": true, "text": "Examine the switch"}
+        {"map": 4, "x": 18, "y": 30, "layer": 0, "examine": true, "text": "Examine the switch"},
+        {"map": 4, "x": 18, "y": 19, "layer": 0, "examine": true, "text": "Examine the switch"}
       ]
     },
     {
@@ -26,7 +26,7 @@
       "_about": "Castle Baron 1F: the switch at (18,9) opens the door at (19,7).",
       "maps": [5],
       "steps": [
-        {"map": 5, "x": 18, "y": 9, "layer": 0, "examine": true, "text": "Examine the switch"}
+        {"map": 5, "x": 18, "y": 8, "layer": 0, "examine": true, "text": "Examine the switch"}
       ]
     },
     {
@@ -34,7 +34,7 @@
       "_about": "Castle Baron 1F (west): the switch at (18,9) opens the door at (16,7).",
       "maps": [16],
       "steps": [
-        {"map": 16, "x": 18, "y": 9, "layer": 0, "examine": true, "text": "Examine the switch"}
+        {"map": 16, "x": 18, "y": 8, "layer": 0, "examine": true, "text": "Examine the switch"}
       ]
     },
     {
@@ -42,8 +42,8 @@
       "_about": "Town of Baron, Devil's Road: the switch at (5,11) opens the hidden door at (6,9).",
       "maps": [29],
       "steps": [
-        {"map": 29, "x": 5, "y": 11, "layer": 0, "examine": true, "text": "Examine the switch"},
-        {"map": 29, "x": 6, "y": 9, "layer": 0, "examine": false, "text": "Go through the hidden door"}
+        {"map": 29, "x": 5, "y": 10, "layer": 0, "examine": true, "text": "Examine the switch"},
+        {"map": 29, "x": 6, "y": 8, "layer": 0, "examine": false, "text": "Go through the hidden door"}
       ]
     }
   ]

@@ -3,6 +3,7 @@
 #include <vector>
 #include "field_api.h"
 #include "baked_router.h"
+#include "route_progress.h"
 
 // The game-side glue of the baked-map router (baked_router.h): the live map, the player's
 // cell and layer, the current vehicle, the owned auto-vehicles, the live blockers and the
@@ -20,7 +21,28 @@ namespace field::baked_nav {
 bool available(void* map_handle);
 
 /// The route for the current map, or false (then the caller may try the game's searcher).
-bool find(unity::Vec3 from, unity::Vec3 to, void* map_handle, void* player, bool full, PathInfo& out);
+/// `kind` says where the route ends (field_api.h TargetKind). Full mode keeps the planned
+/// route: asked again for the same target from a cell on it, it speaks the rest from there;
+/// a target cut off on this floor is reached through another floor ("take the exit to ...");
+/// and when nothing reaches it `out.reason` says why when the router knows ("Story gated",
+/// "Blocked by an NPC", "Requires Ship"). Quick mode with `with_vehicles` counts a world-map
+/// target as reachable when a vehicle the party has here carries the player to it.
+bool find(unity::Vec3 from, unity::Vec3 to, void* map_handle, void* player, bool full, TargetKind kind,
+          bool with_vehicles, PathInfo& out);
+
+/// The audio beacon follows the planned route (the FFXII mod's model; user, 2026-10-11): the
+/// next corner of the route to `target` from the player's cell, planning the route when none
+/// is active or the player has left it (a failed plan is retried after two seconds). False when
+/// the baked data does not know the map or no route exists: the beacon then falls back to the
+/// target itself.
+struct Corner {
+    bool found = false;
+    bool arrived = false;          // the player stands on the route's last cell
+    unity::Vec3 point{};           // the corner to steer at (map local space)
+    int steps_to_corner = 0;
+    int steps_left = 0;            // to the end of the route
+};
+bool follow(void* map_handle, void* player, unity::Vec3 target, TargetKind kind, Corner& out);
 
 /// The player's cell and layer on the current map's baked grid (false off the field).
 bool player_cell(void* map_handle, void* player, baked_route::Cell& out);
@@ -29,15 +51,12 @@ bool cell_at(void* map_handle, unity::Vec3 world, baked_route::Cell& out);
 /// The centre of a baked cell in the map's local space (the inverse of cell_at).
 unity::Vec3 world_of(void* map_handle, const baked_route::Cell& cell);
 
-/// The cells a route may end on for a target at `target` (the counter rule for a service NPC,
-/// else the cell and its neighbours), on every layer the map has.
+/// The cells a route may end on for a target at `target` (baked_router.h goals_for, kind
+/// inferred from what is baked there), under the player's current movement rules.
 std::vector<baked_route::Cell> goal_cells(void* map_handle, unity::Vec3 target);
 
-/// "North 3, East 2, board the Ship, East 40, land, West 2" from a list of phases.
-struct Phase {
-    std::vector<baked_route::Cell> cells;
-    std::wstring action_before;   // spoken before this phase's legs (empty = none)
-};
+/// Movement instructions, with interaction facing only at the arrival cell.
+using Phase = route_progress::Phase;
 std::wstring describe(const std::vector<Phase>& phases);
 
 /// Forget the cached reachability flood (a scan or a map change).
@@ -49,6 +68,7 @@ struct MapGoal {
     int map_id = 0;
     baked_route::Cell cell;
     bool examine = false;   // the target is examined from a neighbouring cell (a switch, a clock)
+    std::vector<baked_route::Cell> cells;   // explicit goal cells (baked_router goals_for), else from cell/examine
 };
 
 /// The first leg of the shortest way from the player to `goal`, possibly on another map: the
@@ -61,13 +81,57 @@ struct CrossLeg {
     bool on_this_map = false;        // the goal itself is the end of this leg
     int next_map_id = 0;             // the map the exit / warp leads to (when !on_this_map)
     std::vector<baked_route::Cell> cells;
+    std::vector<Phase> phases;       // the leg as phases (the action word in action_after)
     std::wstring description;        // the spoken directions, action word included
     int steps_here = 0;              // steps of this leg
     int steps_total = 0;             // estimated steps to the goal across every map
 };
-CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal);
+/// `with_gates`: the current map's live story gates (a sealed door, a locked gate) close the
+/// cells and exits they stand on; false ignores them, which tells whether a gate alone is
+/// what cuts the goal off.
+CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool with_gates = true);
 
 /// The map master name of a baked map id, through the game ("Citadel of Trials 2F"), or empty.
 std::wstring map_name_of(int map_id);
+
+// --- other floors (user, 2026-10-11: "destinations from other floors need to be visible ...
+// current map should include all dungeon floors, town floors etc") ---------------------------
+/// A baked object on another floor of the current map: a talk target, a chest, a save point or
+/// an exit that leads out of the group. `raw_name` is the developer's name (PropertyEntity.Name,
+/// to be translated like a live entity's).
+struct RemoteObject {
+    int map_id = 0;                 // the floor's map master id (the id its exit was reached by)
+    baked_route::Cell cell;
+    baked::ObjType type = baked::ObjType::Event;
+    std::wstring raw_name;
+    std::wstring group;             // the object's Tiled group ("entity_default" or an "ev_e_N" variant)
+    int content_id = 0;             // TreasureBox: its contents
+    int dest_map_id = 0;            // GotoMap: where it leads (never a floor of this group)
+    bool shop = false;              // ShopNPC
+};
+/// The objects of every sub-map connected to the current one through exits and warps without
+/// crossing a world map (a dungeon's floors, a town's houses and castle), in breadth-first
+/// order from here; the current floor's own objects are not included. Empty on a world map,
+/// off the field, or on a map the baked data does not know.
+std::vector<RemoteObject> connected_objects(void* map_handle);
+
+/// The route to `goal` wherever it is: on this floor the ordinary kept route (find); on another
+/// floor the first leg ("..., take the exit to X") and `out.next_map_id`. A route that goes on
+/// past this map is remembered as the pending destination under `name`, so that after the
+/// transition `continue_pending` speaks the next leg; a route ending at the goal clears it.
+/// False only when the baked data cannot route here at all.
+bool route_to_goal(void* map_handle, void* player, const MapGoal& goal, TargetKind kind, const std::wstring& name,
+                   PathInfo& out);
+/// The pending destination (a spoken route that continues on another floor), or false.
+bool pending_goal(MapGoal& goal, TargetKind& kind, std::wstring& name);
+void remember_destination(const MapGoal& goal, TargetKind kind, const std::wstring& name);
+void clear_pending();
+/// After a map change (entity_nav subscribes, 0.8 s after "Entering X"): speaks "<name>: <the
+/// next leg>" to the pending destination from where the player arrived. Cleared when that leg
+/// ends at the destination or nothing reaches it any more.
+void continue_pending();
+/// The beacon's next corner towards a goal on this map or another floor: the plan is kept and
+/// re-made silently when the player leaves it, like `follow`.
+bool follow_goal(void* map_handle, void* player, const MapGoal& goal, TargetKind kind, Corner& out);
 
 } // namespace field::baked_nav

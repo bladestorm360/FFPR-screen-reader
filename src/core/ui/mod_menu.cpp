@@ -10,7 +10,7 @@
 // entity filters, stopping the EXP tick) belong there.
 //
 // Cross-game layout (docs/FEATURES.md section 12): FF1's layout everywhere, except game content
-// that does not exist: "Multi-hit Damage" only where game::flags().multi_hit_setting (FF1-FF3),
+// that does not exist; displayed hit counters are supported wherever native UI shows them,
 // and no "Battle Results" section in FF2 (FF2 has no experience points, so no EXP counter).
 //
 // FF5's additions (FF5 Core/ModMenu.cs: place and wording as there): "Landing Pings" after
@@ -59,6 +59,7 @@ struct Item {
 struct State {
     bool open = false;
     int index = 0;
+    int page = -1;                         // -1: category list; otherwise its header index
     std::vector<Item> items;
     uint64_t input_frame = UINT64_MAX;
     bool input_result = false;
@@ -173,10 +174,10 @@ void initialize()
     }
 
     // Navigation Filters section
-    v.push_back(header(L"Navigation Filters"));
-    v.push_back(toggle(L"Pathfinding Filter", p::kPathfindingFilter, p::kPathfindingFilterDefault,
-                       L"On. Entity cycling shows only entities reachable via pathfinding.",
-                       L"Off. All entities appear when cycling, including unreachable ones."));
+    v.push_back(header(L"Navigation"));
+    v.push_back(enumeration(L"Pathfinding Filter", {p::kPathfindingFilterModeNames[0], p::kPathfindingFilterModeNames[1], p::kPathfindingFilterModeNames[2]},
+                            p::kPathfindingFilterMode, p::kPathfindingFilterModeDefault, p::kPathfindingFilterModeMax,
+                            L"Current floor: entity cycling shows only what walking reaches on this floor. Current map with vehicles: also what a vehicle you have here reaches. Current map: everything, and a target cut off on this floor is routed through another floor."));
     v.push_back(toggle(L"Map Exit Filter", p::kMapExitFilter, p::kMapExitFilterDefault,
                        L"On. Multiple exits leading to the same destination collapse to the closest one.",
                        L"Off. All map exits appear in navigation."));
@@ -188,20 +189,20 @@ void initialize()
                        L"Off. L3 toggles beacon navigation; R3 toggles pathfinding filter; game cannot see them."));
 
     // Battle Settings section
-    v.push_back(header(L"Battle Settings"));
+    v.push_back(header(L"Battle"));
     v.push_back(enumeration(L"Enemy HP Display", {L"Numbers", L"Percentage", L"Hidden"},
                             p::kEnemyHPDisplay, p::kEnemyHPDisplayDefault, p::kEnemyHPDisplayMax,
-                            L"Controls how enemy HP appears in battle: numeric value, percentage of max, or hidden."));
+                            L"Optional enemy HP disclosure. Numbers reads current and maximum HP; Percentage reads remaining HP as a percentage; Hidden omits HP. These values are not displayed in native targeting panels."));
     if (game::is(game::Id::FF5)) {
         // FFV_ScreenReaderMod.ToggleEnemyLetters: store, then "Settings.Changed.EnemyLetters" (flip)
         v.push_back(toggle(L"Enemy Letters", p::kEnemyLetters, p::kEnemyLettersDefault,
                            L"Adds a letter such as A or B to enemies that share a name, so you can tell them apart.",
                            L"Adds a letter such as A or B to enemies that share a name, so you can tell them apart."));
     }
-    if (game::flags().multi_hit_setting) {
+    { // The native hit renderer is the gate, including games whose count API is unused.
         v.push_back(enumeration(L"Multi-hit Damage", {L"Total only", L"With hit count"},
                                 p::kMultiHitDamage, p::kMultiHitDamageDefault, p::kMultiHitDamageMax,
-                                L"On multi-hit physical attacks, optionally prepend the number of hits, e.g. '14x1552 damage'."));
+                                L"Announces the number of hits when the game displays a hit counter. Total damage remains a separate number."));
     }
 
     // Battle Results section (FF2 has no experience points)
@@ -215,9 +216,9 @@ void initialize()
     }
 
     // Announcements section
-    v.push_back(header(L"Announcements"));
+    v.push_back(header(L"Speech"));
     v.push_back(toggle(L"Auto Detail", p::kAutoDetail, p::kAutoDetailDefault,
-                       L"On. Descriptions and stats announce automatically on focus for items, magic, equipment, and shops.",
+                       L"On. Reads displayed descriptions and current information buffers after their titles, including status and battle results.",
                        L"Off. Use the I key to read descriptions on demand."));
     v.push_back(toggle(L"Beacon Destination Announcement", p::kAnnounceOnBeaconRestart, p::kAnnounceOnBeaconRestartDefault,
                        L"On. Restarting the beacon also re-speaks the current destination.",
@@ -228,6 +229,32 @@ void initialize()
 
     // Close Menu action
     v.push_back(action(L"Close Menu", &close_menu, L"Closes the mod menu and returns to the game."));
+}
+
+// Keep setting definitions in one place while presenting only the current category.
+std::vector<int> page_items()
+{
+    const State& s = st();
+    std::vector<int> result;
+    const int count = static_cast<int>(s.items.size());
+    if (s.page < 0) {
+        for (int i = 0; i < count; ++i)
+            if (s.items[i].kind == Kind::Header || i == count - 1) result.push_back(i);
+    } else {
+        for (int i = s.page + 1; i < count - 1 && s.items[i].kind != Kind::Header; ++i)
+            result.push_back(i);
+    }
+    return result;
+}
+
+void enter_page(int header_index)
+{
+    State& s = st();
+    s.page = header_index;
+    const auto items = page_items();
+    if (items.empty()) { s.page = -1; return; }
+    s.index = items.front();
+    ffpr::say(T(s.items[header_index].name), true);
 }
 
 // --- item behaviour ---------------------------------------------------------------------------
@@ -333,14 +360,9 @@ std::wstring description(const Item& i)
 std::pair<int, int> navigable_position()
 {
     const State& s = st();
-    int count = 0;
-    int index = -1;
-    for (int i = 0; i < static_cast<int>(s.items.size()); ++i) {
-        if (s.items[static_cast<size_t>(i)].kind == Kind::Header) continue;
-        if (i == s.index) index = count;
-        ++count;
-    }
-    return {index, count};
+    const auto items = page_items();
+    const auto it = std::find(items.begin(), items.end(), s.index);
+    return {it == items.end() ? -1 : static_cast<int>(it - items.begin()), static_cast<int>(items.size())};
 }
 
 void announce_current_item(bool interrupt = true)
@@ -385,11 +407,11 @@ bool handle_input_now()
     modal_keys::sample();
     using modal_keys::pressed;
 
-    // Escape or F8 to close
-    if (pressed(VK_ESCAPE) || pressed(VK_F8)) {
+    if (pressed(VK_F8)) {
         close();
         return true;
     }
+    if (pressed(VK_ESCAPE)) { back(); return true; }
     // Up arrow - previous item
     if (pressed(VK_UP)) {
         navigate_previous();
@@ -431,6 +453,7 @@ int install()
 
     actions::define("ModMenu.Open", [] { open(); });
     actions::define("ModMenu.Close", [] { close(); });
+    actions::define("ModMenu.Back", [] { back(); });
     actions::define("ModMenu.HandleInput", [] { handle_input(); });
     actions::define("ModMenu.NavigateNext", [] { navigate_next(); });
     actions::define("ModMenu.NavigatePrevious", [] { navigate_previous(); });
@@ -453,14 +476,12 @@ void open()
 
     s.open = true;
     s.index = 0;
+    s.page = -1;
     modal_keys::seed();
 
     // F8 and the controller Start button leave the controller in the same state: MOD_MENU, so
     // the D-pad / stick drive the menu instead of acting underneath it.
     sync_router(true);
-
-    // Skip the section header at index 0
-    if (s.items.size() > 1 && s.items[0].kind == Kind::Header) s.index = 1;
 
     // Announce that the menu opened, then the first item after a short delay.
     ffpr::say(T(L"Mod menu"), true);
@@ -480,6 +501,17 @@ void close()
     ffpr::say(T(L"Mod menu closed"), true);
 }
 
+void back()
+{
+    State& s = st();
+    if (!s.open) return;
+    if (s.page < 0) { close(); return; }
+    s.index = s.page;
+    s.page = -1;
+    ffpr::say(T(L"Mod menu"), true);
+    announce_current_item(false);
+}
+
 bool handle_input()
 {
     State& s = st();
@@ -493,32 +525,20 @@ bool handle_input()
 void navigate_next()
 {
     State& s = st();
-    const int n = static_cast<int>(s.items.size());
-    if (n == 0) return;
-    const int start = s.index;
-    do {
-        ++s.index;
-        if (s.index >= n) s.index = 0;
-        // Skip section headers
-        if (s.items[static_cast<size_t>(s.index)].kind != Kind::Header) break;
-    } while (s.index != start);
-
+    const auto items = page_items();
+    if (items.empty()) return;
+    auto it = std::find(items.begin(), items.end(), s.index);
+    s.index = it == items.end() || ++it == items.end() ? items.front() : *it;
     announce_current_item();
 }
 
 void navigate_previous()
 {
     State& s = st();
-    const int n = static_cast<int>(s.items.size());
-    if (n == 0) return;
-    const int start = s.index;
-    do {
-        --s.index;
-        if (s.index < 0) s.index = n - 1;
-        // Skip section headers
-        if (s.items[static_cast<size_t>(s.index)].kind != Kind::Header) break;
-    } while (s.index != start);
-
+    const auto items = page_items();
+    if (items.empty()) return;
+    auto it = std::find(items.begin(), items.end(), s.index);
+    s.index = it == items.end() || it == items.begin() ? items.back() : *--it;
     announce_current_item();
 }
 
@@ -528,7 +548,10 @@ void adjust_current_item(int delta)
     if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return;
 
     const Item& item = s.items[static_cast<size_t>(s.index)];
-    if (item.kind == Kind::Header) return;
+    if (item.kind == Kind::Header) {
+        if (delta > 0) { enter_page(s.index); announce_current_item(false); }
+        return;
+    }
 
     adjust(item, delta);
     announce_current_item();
@@ -540,7 +563,7 @@ void toggle_current_item()
     if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return;
 
     const Item& item = s.items[static_cast<size_t>(s.index)];
-    if (item.kind == Kind::Header) return;
+    if (item.kind == Kind::Header) { enter_page(s.index); announce_current_item(false); return; }
 
     activate(item);
 

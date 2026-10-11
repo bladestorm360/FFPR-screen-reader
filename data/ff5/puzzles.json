@@ -1,13 +1,13 @@
 {
-  "_comment": "Guided puzzle solutions for FINAL FANTASY V (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff5_master/map.txt); cells are baked tile coordinates (tools/mapdump/ff5_objects.jsonl). Authored 2026-10-10 from the dumps' developer labels; not yet tested in game. FF5's other switch rooms (the Library of the Ancients B1, the Catapult, Castle Tycoon's storehouse, the Great Sea Trench's skull switches, the Pyramid's doors) are listed in OPEN_ISSUES.md to author next.",
+  "_comment": "Guided puzzle solutions for FINAL FANTASY V (src/core/field/puzzle_guide.cpp). Map ids are the map master's (tools/mapdump/ff5_master/map.txt); cells are baked tile coordinates, one row above the dumps' ty for tile objects since the 2026-10-11 bottom-edge fix in bake_maps.py (tools/mapdump/ff5_objects.jsonl). Authored 2026-10-10 from the dumps' developer labels; not yet tested in game. FF5's other switch rooms (the Library of the Ancients B1, the Catapult, Castle Tycoon's storehouse, the Great Sea Trench's skull switches, the Pyramid's doors) are listed in OPEN_ISSUES.md to author next.",
   "puzzles": [
     {
       "id": "fire_powered_ship_engine_room",
       "_about": "Fire-Powered Ship engine room: the switch at (7,11) first; the second switch at (5,7) appears afterwards (its group ev_e_0216).",
       "maps": [256],
       "steps": [
-        {"map": 256, "x": 7, "y": 11, "layer": 1, "examine": true, "text": "Examine the switch"},
-        {"map": 256, "x": 5, "y": 7, "layer": 1, "examine": true, "text": "Examine the switch"}
+        {"map": 256, "x": 7, "y": 10, "layer": 1, "examine": true, "text": "Examine the switch"},
+        {"map": 256, "x": 5, "y": 6, "layer": 1, "examine": true, "text": "Examine the switch"}
       ]
     }
   ]

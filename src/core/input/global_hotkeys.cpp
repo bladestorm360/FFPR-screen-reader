@@ -64,6 +64,7 @@ void announce_current_vehicle()
 
 void handle_item_details_key()
 {
+    if (queries::is("ReviewBuffer.IsActive")) { actions::run("ReviewBuffer.Details"); return; }
     // 15-puzzle: current cursor row/column.
     if (queries::is("PuzzleGameState.IsActive")) {
         actions::run("PuzzlePatches.AnnouncePosition");

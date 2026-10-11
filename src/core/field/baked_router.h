@@ -33,6 +33,11 @@ struct Request {
     int vehicle_group = 0;            // riding: that group's world layer; 0 = on foot
     std::vector<int> auto_groups;     // on foot: groups ridden automatically when owned
     std::vector<Cell> blocked;        // live blockers; layer -1 = every layer
+    struct Directional { Cell cell; int axis; }; // 1 blocks north/south, 2 blocks east/west
+    std::vector<Directional> directional;
+    bool ignore_hazards = false;     // filter reachability includes destinations behind events
+    bool live_hazards = false;       // current map: replace baked variants with active triggers
+    std::vector<Cell> hazards;
     bool goals_open = true;           // a goal cell may be entered although it is closed: the
                                       // game opens a GotoMap entity's cells for the route
                                       // (IMapAccessor.CombinedGotoMapEntityCurrentMappingData);
@@ -46,8 +51,37 @@ struct Route {
     int steps() const { return cells.empty() ? 0 : static_cast<int>(cells.size()) - 1; }
 };
 
-/// A* for the shortest route. Empty `goals` = not found.
+/// A* for the shortest route with turns priced (BDFFHD's model; user decision 2026-10-11):
+/// a change of direction costs 1.5 steps, so an open room is crossed in two long runs and not
+/// in a staircase of single steps, and a turn is traded for at most one extra step. Empty
+/// `goals` = not found.
 Route find(const Request& r);
+
+/// How a route may end at its target (user, 2026-10-11: "pinpoint", never "within 1 step").
+///  Interact    an NPC, chest, switch: end on a neighbouring cell the target is used from (a
+///              service NPC: its counter's RelayInteraction tile) and say which way to face;
+///  Transition  an exit, a town tile, a warp pad: end ON it, on a cell the player can really
+///              step onto (world maps: the terrain attribute the current transport crosses;
+///              Salamand's two side tiles stand on wall attribute 19 and are never goals);
+///  Spot        a waypoint, a vehicle, a save point: end on the cell itself;
+///  Infer       by what is baked at the target cell (an exit or warp pad: Transition; a talk
+///              object: Interact; else Spot).
+enum class GoalKind { Infer, Interact, Transition, Spot };
+
+struct Goals {
+    std::vector<Cell> cells;      // where the route may end (empty = nothing to route to)
+    bool face = false;            // an interaction: the facing is spoken at the end
+    std::vector<Cell> faced;      // the target's own cells, which the final cell faces
+};
+
+/// The goal cells for `target` under the request's movement rules (its submap, transport and
+/// passages; `start` is not used). `accept_bits` are the NPC accept_action_direction bits in
+/// direction order north, east, south, west (0 = ignore the mask).
+Goals goals_for(const Request& movement, const Cell& target, GoalKind kind);
+
+/// The direction index (0 north, 1 east, 2 south, 3 west) from `from` towards `to`, by the
+/// larger axis delta (ties: the vertical). -1 when the cells coincide.
+int direction_towards(const Cell& from, const Cell& to);
 
 /// Every cell reachable from `start` under the request's rules (goals ignored): one BFS, then
 /// O(1) tests, for the pathfinding filter (one flood per scan instead of one search per entity).
@@ -62,6 +96,7 @@ Reach flood(const Request& r);
 
 /// Cell tests shared with the callers: open for the request's movement rules.
 bool open(const Request& r, const baked::Grids& g, const Cell& c);
+bool direction_allowed(const Request& r, const Cell& from, const Cell& to);
 /// The layer the player is on after stepping on `c` (ToLayer objects), else c.layer.
 int layer_after(const baked::Grids& g, int from_layer, int x, int y);
 

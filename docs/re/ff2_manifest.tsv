@@ -1,0 +1,35 @@
+1803d8260	Serial.FF2.UI.KeyInput.ResultCharacterListController public void SetData(BattleResultData data) { }
+1803d9e50	Serial.FF2.UI.KeyInput.ResultPointController public override void ShowSkillLevels(BattleResultData data, bool isNext, Action onComplite) { }
+1803db950	Serial.FF2.UI.KeyInput.ResultStatusUpController public void SetData(BattleResultData.BattleResultCharacterData targetData) { }
+180c0b750	Last.InGame.Effects.EncountEffectController public void ShowDisplay() { }
+180797910	Last.Management.SubSceneManagerMainGame public void ChangeState(SubSceneManagerMainGame.State state) { }
+1804371d0	Last.UI.KeyInput.BattleCommandSelectController public void SetCommandData(OwnedCharacterData data, IEnumerable<OwnedCharacterData> targets, IEnumerable<OwnedItemData> items) { }
+180635b20	Last.UI.KeyInput.BattlePlayerInfomationController public void UpdateView(IEnumerable<BattlePlayerData> players, bool isTarget) { }
+1807c6910	Last.UI.KeyInput.ItemTargetSelectContentController public void UpdateView(OwnedCharacterData data) { }
+1807c7b40	Last.UI.KeyInput.ItemTargetSelectContentView private void UseHp() { }
+1807c7ef0	Last.UI.KeyInput.ItemTargetSelectContentView private void UseMp() { }
+1805b9800	Last.UI.KeyInput.ResultMenuController public void Show(BattleResultData data, bool isReverse) { }
+1802698f0	Last.UI.KeyInput.ResultMenuController public void UpdateView() { }
+1805b92a0	Last.UI.KeyInput.ResultMenuController private void ShowPointsInit() { }
+1805b9020	Last.UI.KeyInput.ResultMenuController private void ShowLevelUpAbilitysInit() { }
+1805b96f0	Last.UI.KeyInput.ResultMenuController private void ShowStatusUpInit() { }
+1805b8e20	Last.UI.KeyInput.ResultMenuController private void ShowGetItemsInit() { }
+1805b8d00	Last.UI.KeyInput.ResultMenuController private void ShowGetAbilitysInit() { }
+1805bc730	Last.UI.KeyInput.ResultSkillController public void Show(BattleResultData data, bool isNext, Action onComplite) { }
+1805bbc00	Last.UI.KeyInput.ResultSkillController private void SetLevelUpList(List<BattleResultData.BattleResultCharacterData> list) { }
+1808e3340	Last.UI.KeyInput.ResultStatusContentController public void SetData(int beforValue, int afterValue, int beforePercentValue = 0, int afterPercentValue = 0) { }
+180324fa0	.FieldMap private void InitPlayer() { }
+18032a3e0	.FieldMap private void UpdatePlayer() { }
+1803d9370	Serial.FF2.UI.KeyInput.ResultPointController private void PointsInit() { }
+1803da130	Serial.FF2.UI.KeyInput.ResultPointController private void SkilllLevelsInit() { }
+1803da240	Serial.FF2.UI.KeyInput.ResultPointController private void StatusUpInit() { }
+1808ac600	Last.Management.CheatSettingsClient public void SetIsEnableEncount(bool isEnable) { }
+1808af7e0	Last.Management.ConfigClient public void SetIsAutoDash(int value) { }
+1805bccb0	Last.UI.KeyInput.ResultSkillController public void UpdateContentPage() { }
+1805bb500	Last.UI.KeyInput.ResultSkillController private void SetLearningList(List<BattleResultData.BattleResultCharacterData> list) { }
+1805bb350	Last.UI.KeyInput.ResultSkillController private void SetJobProficiencyLevelUpList(List<BattleResultData.BattleResultCharacterData> list) { }
+180329780	.FieldMap private void UpdatePlayerStatePlay() { }
+1803d79d0	Serial.FF2.UI.KeyInput.ResultCharacterListContentController public void SetData(BattleResultData.BattleResultCharacterData targetData) { }
+1803d76d0	Serial.FF2.UI.KeyInput.ResultCharacterListContentController public void ForcedEndPerformance() { }
+1803d89b0	Serial.FF2.UI.KeyInput.ResultGetPointController public override void SetData(BattleResultData data) { }
+1805bccb0	Last.UI.KeyInput.ResultSkillController public void UpdateContentPage() { }

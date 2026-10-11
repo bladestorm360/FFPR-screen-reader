@@ -79,7 +79,6 @@ void configure(game::Flags& f)
     f.has_mp = true;
     f.has_airship = true;
     f.has_vehicle_pads = true;
-    f.multi_hit_setting = true;
     f.has_skill_levels = true;
     f.has_levels = false;   // characters grow by use; no level anywhere (user, 2026-10-10)
     f.reads_job_slot = false;   // no jobs: the slot's job text repeats the name (user, 2026-10-10)

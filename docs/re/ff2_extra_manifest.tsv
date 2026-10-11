@@ -1,0 +1,11 @@
+180324fa0	.FieldMap private void InitPlayer() { }
+18032a3e0	.FieldMap private void UpdatePlayer() { }
+1803d9370	Serial.FF2.UI.KeyInput.ResultPointController private void PointsInit() { }
+1803da130	Serial.FF2.UI.KeyInput.ResultPointController private void SkilllLevelsInit() { }
+1803da240	Serial.FF2.UI.KeyInput.ResultPointController private void StatusUpInit() { }
+1808ac600	Last.Management.CheatSettingsClient public void SetIsEnableEncount(bool isEnable) { }
+1808af7e0	Last.Management.ConfigClient public void SetIsAutoDash(int value) { }
+1805bccb0	Last.UI.KeyInput.ResultSkillController public void UpdateContentPage() { }
+180329780	.FieldMap private void UpdatePlayerStatePlay() { }
+1803d76d0	Serial.FF2.UI.KeyInput.ResultCharacterListContentController public void ForcedEndPerformance() { }
+1803d89b0	Serial.FF2.UI.KeyInput.ResultGetPointController public override void SetData(BattleResultData data) { }
