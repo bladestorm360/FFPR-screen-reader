@@ -76,8 +76,14 @@ bool visible(void* component)
 bool world_visible(void* entity)
 {
     if (!visible(entity)) return false;
-    for (void* renderer : unity::components_in_children(entity, kRenderer, false))
-        if (visible(renderer) && ref::call<bool>(mRendererEnabled, renderer) && ref::call<bool>(mRendererVisible, renderer)) return true;
+    // All six UnityPlayer binaries register this bool(Renderer*) binding, even
+    // when IL2CPP strips the managed get_isVisible wrapper (observed in FF2).
+    using IsVisible = bool (*)(void*);
+    static IsVisible is_visible = reinterpret_cast<IsVisible>(il2cpp::resolve_icall("UnityEngine.Renderer::get_isVisible"));
+    for (void* renderer : unity::components_in_children(entity, kRenderer, false)) {
+        if (!visible(renderer) || !ref::call<bool>(mRendererEnabled, renderer)) continue;
+        if (mRendererVisible ? ref::call<bool>(mRendererVisible, renderer) : is_visible && is_visible(renderer)) return true;
+    }
     return false;
 }
 

@@ -46,7 +46,6 @@ ref::Method mInitStartPopup{kNewGameWindow, "InitStartPopup", 0};
 ref::Method mGetAutoName{kNewGameWindow, "GetAutoName", 1};
 
 ref::Class kNewGamePopup{"Serial.FF3.UI.KeyInput", "NewGamePopup", game::kFF3};
-ref::Method mPopupGetMessage{kNewGamePopup, "get_Message", 0};
 
 ref::Class kSelectData{"Last.Data", "NewGameSelectData", game::kFF3};
 ref::Field fSelName{kSelectData, "<CharacterName>k__BackingField"};
@@ -134,8 +133,7 @@ void on_init_start_popup(void* self)
 {
     void* popup = ref::rd<void*>(self, fNgwPopup);
     if (!popup) return;
-    const std::wstring message = ref::call_str(mPopupGetMessage, popup);
-    if (!message.empty()) ffpr::say(message);
+    ffpr::dialogue::read_popup_message(popup, "NewGame.Confirmation");
 }
 
 void on_set_target(void* list_ctrl, int index)

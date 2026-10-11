@@ -66,10 +66,12 @@ void run_tick()
         Pending& p = g_tasks[i];
         bool done = p.cancelled;
         if (!done && p.step) {
-            // A callback can cancel itself. Keep its closure alive until it returns.
-            Step step = p.step;
+            // Move, rather than copy: mutable captures are the reader's state across frames.
+            // Keep the executing closure alive even if it cancels itself.
+            Step step = std::move(p.step);
             bool again = hooks::guarded_r(p.label.c_str(), false, [&] { return step(); });
             done = p.cancelled || !again || --p.frames_left <= 0;
+            if (!done) p.step = std::move(step);
             if (again && p.frames_left <= 0)
                 LOGF("frame: stopped %s after its frame budget", p.label.c_str());
         } else if (!done && ((p.due_frame && g_frame >= p.due_frame) || (p.due_time > 0 && t_now >= p.due_time))) {

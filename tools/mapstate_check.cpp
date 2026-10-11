@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iterator>
 #include <string>
+#include <chrono>
 using namespace field;
 int failures = 0;
 void expect(bool pass, const char* message) { if (!pass) { ++failures; std::printf("FAIL %s\n", message); } }
@@ -19,6 +20,14 @@ int main()
         const std::string root = "data/ff" + std::to_string(n) + "/";
         const std::string bytes = read(root + "maps.bin");
         expect(baked::load(bytes.data(), bytes.size()), "matching bake loads");
+        const auto decoding_started = std::chrono::steady_clock::now();
+        std::vector<const baked::Grids*> decoded;
+        for (int i = 0; i < baked::submap_count(); ++i) decoded.push_back(&baked::grids(*baked::submap_at(i)));
+        for (int i = 0; i < baked::submap_count(); ++i)
+            expect(decoded[static_cast<size_t>(i)] == &baked::grids(*baked::submap_at(i)),
+                   "prepared grids retain immutable cache identities");
+        const double decode_ms = std::chrono::duration<double, std::milli>(
+            std::chrono::steady_clock::now() - decoding_started).count();
         json::Value records;
         expect(json::parse(read(root + "mapstate.json"), records), "navigation decisions parse");
         map_state::Flags flags;
@@ -58,7 +67,8 @@ int main()
                 expect(before.cells == after.cells, "a battle leaves permanent captain obstacles intact");
             }
         }
-        std::printf("FF%d: %d known, %d conservative map variants; %d solid NPC checks\n", n, known, unknown, solid);
+        std::printf("FF%d: %d known, %d conservative maps; %d solid NPC checks; all grids decoded %.1f ms offline\n",
+                    n, known, unknown, solid, decode_ms);
     }
     std::printf("%s: %d failures\n", failures ? "FAIL" : "PASS", failures);
     return failures ? 1 : 0;

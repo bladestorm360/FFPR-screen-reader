@@ -43,7 +43,10 @@ namespace data {
 std::string game_file(const char* kind);
 /// Raw UTF-8 of a shared resource ("MODTEXT_COMMON").
 std::string resource(const char* name);
-/// Parsed game file, cached for the process. A null-typed value when absent or malformed.
+/// Worker-only preparation, with one atomic publication of immutable JSON tables.
+void prepare_game_json();
+bool game_data_ready();
+/// Parsed game file; null when preparation is pending, absent or malformed. Never waits/parses.
 const json::Value& game_json(const char* kind);
 
 } // namespace data

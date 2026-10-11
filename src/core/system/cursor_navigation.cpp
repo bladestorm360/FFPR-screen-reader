@@ -157,10 +157,12 @@ void cursor_navigation_postfix(void* cur)
     }
 
     if (query_is("ConfigMenuState.ShouldSuppress", menu_state::CONFIG_MENU)) return;
-    if (query_is("BattleCommandState.ShouldSuppress", menu_state::BATTLE_COMMAND)) return;
-    if (query_is("BattleTargetState.ShouldSuppress", menu_state::BATTLE_TARGET)) return;
-    if (query_is("BattleItemMenuState.ShouldSuppress", menu_state::BATTLE_ITEM)) return;
-    if (query_is("BattleMagicMenuState.ShouldSuppress", menu_state::BATTLE_MAGIC)) return;
+    // Battle readers publish native menu state directly; no separate suppression
+    // queries exist. Keep the active state guards without dead query lookups.
+    if (menu_state::is_active(menu_state::BATTLE_COMMAND)) return;
+    if (menu_state::is_active(menu_state::BATTLE_TARGET)) return;
+    if (menu_state::is_active(menu_state::BATTLE_ITEM)) return;
+    if (menu_state::is_active(menu_state::BATTLE_MAGIC)) return;
     if (queries::is("ShopMenuTracker.ValidateState")) return;
     if (query_is("ItemMenuState.ShouldSuppress", menu_state::ITEM_MENU)) return;
     if (query_is("EquipMenuState.ShouldSuppress", menu_state::EQUIP_MENU)) return;

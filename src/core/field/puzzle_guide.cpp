@@ -57,7 +57,7 @@ int g_arrived_step = -1;   // the step whose arrival was already announced
 
 void load()
 {
-    if (g_loaded) return;
+    if (g_loaded || !data::game_data_ready()) return;
     g_loaded = true;
     g_puzzles = new std::vector<Puzzle>();
     const json::Value& root = data::game_json("puzzles");
@@ -137,6 +137,7 @@ void announce_step(bool interrupt)
 void start_or_repeat()
 {
     load();
+    if (!g_puzzles) { ffpr::say(T(L"Navigation data is loading")); return; }
     if (!active()) {
         const int map_id = current_map_id();
         for (size_t i = 0; i < g_puzzles->size(); ++i) {

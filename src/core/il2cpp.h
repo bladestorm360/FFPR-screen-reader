@@ -109,6 +109,9 @@ inline T read_field(void* obj, int32_t offset)
 
 /// Native code address of a resolved method — this is what we hand to MinHook.
 void* method_pointer(Method* m);
+/// Engine internal call, including bindings whose managed wrapper was stripped.
+/// Resolve/call on a game-owned thread; null means unavailable.
+void* resolve_icall(const char* name);
 
 /// The System.Type object for a class (needed to call non-generic GetComponent(Type)).
 void* class_type_object(Class* k);

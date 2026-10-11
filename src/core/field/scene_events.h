@@ -10,9 +10,9 @@
 //   2. clears the GameObjectCache (field/object_cache.h), as FF1 did here,
 //   3. fires events::Kind::SceneLoaded.
 //
-// There is one rescan path: fieldnav (audio_loops.cpp) subscribes to SceneLoaded and, 0.5 s
-// later (FF1's DelayedInitialScan), calls field::request_rescan() and restarts the audio
-// loops; fieldnav also resets the LocationMessageTracker there. The rest of FF1's
+// Scans start from the native Player/Transport state after map initialization,
+// never from additive UI scene loads. SceneLoaded stops audio and resets the
+// LocationMessageTracker. The rest of FF1's
 // OnSceneLoaded belongs to other areas, which subscribe the same way and read the names here:
 // the title press-prompt arm (scene "Title"), the battle-exit clear (previous name contains
 // "Battle", current does not), ConfigMenuState/KeyHelp resets, MovementSoundPatches.ResetState

@@ -1,7 +1,7 @@
 // Ports FF1 Core/AudioLoopManager.cs (wall-tone and beacon coroutine loops) and, from
 // Core/FFI_ScreenReaderMod.cs: the reactions of ToggleWallTones / ToggleAudioBeacons,
 // RestartBeacon, RestartEntityBeacon, the audio-loop part of OnSceneLoaded (StopAll +
-// SuppressBriefly(1.0)) and of DelayedInitialScan (0.5 s later: scan, then StartIfEnabled on a
+// SuppressBriefly(1.0)) and native MapChanged readiness (start audio on a
 // field scene).
 //
 // The C# coroutines resumed once per frame and paced themselves with Time.time. Here one frame
@@ -38,6 +38,7 @@
 #include "../refs.h"
 #include "../settings.h"
 #include "../unity.h"
+#include "../system/system.h"
 #include "../field/baked_nav.h"
 #include "../field/field_api.h"
 #include "../field/path_search.h"
@@ -66,8 +67,6 @@ constexpr unity::Vec3 kDirNorth{0, 16, 0};
 constexpr unity::Vec3 kDirSouth{0, -16, 0};
 constexpr unity::Vec3 kDirEast{16, 0, 0};
 constexpr unity::Vec3 kDirWest{-16, 0, 0};
-
-ref::Class kFieldPlayerController{"Last.Map", "FieldPlayerController"};
 
 /// The beacon's target identity (C# compared the target object by reference).
 struct TargetRef {
@@ -554,20 +553,18 @@ void tick()
     if (g_landing_running) landing_ping_step();
 }
 
-/// FFI_ScreenReaderMod.OnSceneLoaded (audio part) and DelayedInitialScan.
+/// Scene loads stop audio; native MapChanged readiness restarts it.
 void on_scene_loaded()
 {
     // Stop audio loops during the scene transition and suppress briefly
     stop_all();
     suppress_briefly(1.0f);
 
-    // DelayedInitialScan: wait 0.5 s for the scene to initialise and entities to spawn
-    frame::after_seconds(0.5, [] {
-        ::field::request_rescan();
-        // Only restart audio loops on field scenes (not title, boot, splash...)
-        if (unity::find_object(kFieldPlayerController))
-            start_if_enabled();
-    }, "fieldnav.DelayedInitialScan");
+    // Additive UI scenes do not signal a ready field. MapTransition owns the one
+    // bounded scan at native Player/Transport entry, after construction finishes.
+    // An additive UI scene can finish after Player entry. Restore only the flags
+    // for field audio here; never scan entities or look for a player component.
+    if (system::is_field_navigation_ready() && !queries::is("BattleStateHelper.IsInBattle")) start_if_enabled();
 }
 
 int install()
@@ -597,10 +594,11 @@ int install()
     });
 
     events::on(events::Kind::SceneLoaded, [] { on_scene_loaded(); });
+    events::on(events::Kind::MapChanged, [] { start_if_enabled(); });
     events::on(events::Kind::BattleStart, [] { stop_all(); });
     events::on(events::Kind::BattleEnd, [] { start_if_enabled(); });
 
-    // Loops are NOT started here: they start after a scene load on a field scene, or from the
+    // Loops are NOT started here: they start at native field readiness, or from the
     // player's toggle (as in FF1).
     return 0;
 }

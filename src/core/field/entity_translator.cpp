@@ -21,7 +21,7 @@ std::map<std::wstring, std::set<std::wstring>> g_untranslated_by_map;
 
 void initialize()
 {
-    if (g_initialized) return;
+    if (g_initialized || !data::game_data_ready()) return;
     g_initialized = true;
     const json::Value& v = data::game_json("translation");
     if (!v.is_object()) {

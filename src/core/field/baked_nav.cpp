@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <climits>
+#include <atomic>
 #include <unordered_map>
 #include "baked_nav.h"
 #include "baked_map.h"
@@ -18,6 +19,7 @@
 #include "../hooks.h"
 #include "../log.h"
 #include "../frame.h"
+#include "../background.h"
 #include "../modtext.h"
 #include "../say.h"
 #include "../text.h"
@@ -42,24 +44,15 @@ ref::Field fTriggerPower{kTrigger, "<TriggerPower>k__BackingField"};
 void invalidate_active();
 constexpr int kTransportSubmarine = 6;
 
-bool g_load_tried = false;
+std::atomic<bool> g_prepared{false};
+bool g_load_started = false; // boot/main-thread request only; all decoding belongs to worker
 bool g_loaded = false;
 std::string* g_blob = nullptr;   // the embedded resource bytes: the reader keeps the pointer
 std::unordered_map<int, bool>* g_size_warned = nullptr;
 
 bool ensure_loaded()
 {
-    if (g_load_tried) return g_loaded;
-    g_load_tried = true;
-    g_blob = new std::string(data::game_file("maps"));
-    g_loaded = !g_blob->empty() && baked::load(g_blob->data(), g_blob->size());
-    if (g_loaded)
-        LOGF("[BakedMap] %s: %d sub-maps, %d vehicles", game::key(), baked::submap_count(),
-             static_cast<int>(baked::transports().size()));
-    else
-        LOGF("[BakedMap] no baked maps for %s (%zu bytes): the game's route searcher is used", game::key(),
-             g_blob->size());
-    return g_loaded;
+    return g_prepared.load(std::memory_order_acquire) && g_loaded;
 }
 
 const baked::Submap* current_submap(void* map_handle)
@@ -232,7 +225,8 @@ Blockers live_blockers(const baked::Submap& sm, const baked::Grids& g, const std
                 if (collision_type == 6 || collision_type == 7) out.directional.push_back({at, collision_type == 6 ? 1 : 2});
                 else out.gates.push_back(at);
             }
-        } else if (kTrigger.is(fe) && !entity_is_scenery(fe) && ref::rd<bool>(fe, fTriggerPower)) {
+        } else if ((type == 2 || type == 28) && kTrigger.is(fe) &&
+                   !entity_is_scenery(fe) && ref::rd<bool>(fe, fTriggerPower)) {
             const auto* o = baked_by_entity_id(g, id, baked::ObjType::Event, c);
             if (!o) o = baked_by_entity_id(g, id, baked::ObjType::Warp, c);
             add_footprint(out.triggers, o, c, false);
@@ -489,6 +483,29 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
 
 } // namespace
 
+void preload()
+{
+    if (g_load_started) return;
+    g_load_started = true;
+    if (!background::post([] {
+        const double started = frame::now();
+        data::prepare_game_json();
+        g_blob = new std::string(data::game_file("maps"));
+        g_loaded = !g_blob->empty() && baked::load(g_blob->data(), g_blob->size());
+        if (g_loaded) {
+            // Decode once here. All readers, including worker projections, then use
+            // immutable tables; map transitions never allocate/decode whole grids.
+            for (int i = 0; i < baked::submap_count(); ++i) (void)baked::grids(*baked::submap_at(i));
+        }
+        LOGF("[BakedMap] %s prepared on data worker: %d maps, %.1f ms, loaded=%d",
+             game::key(), g_loaded ? baked::submap_count() : 0, (frame::now() - started) * 1000, g_loaded);
+        g_prepared.store(true, std::memory_order_release);
+    })) {
+        LOGF("[BakedMap] cannot start data worker; navigation preparation unavailable");
+        g_load_started = false;
+    }
+}
+bool prepared() { return g_prepared.load(std::memory_order_acquire); }
 bool available(void* map_handle) { return current_submap(map_handle) != nullptr; }
 
 bool player_cell(void* map_handle, void* player, Cell& out)
@@ -790,7 +807,8 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
             out.on_this_map = true;
             out.phases = phases;
             out.description = describe(phases);
-            if (req.ignore_hazards) out.description = T(L"Event trigger on the route") + L", " + out.description;
+            if (baked_route::crosses_event(route.cells, req.hazards))
+                out.description = T(L"Event trigger on the route") + L", " + out.description;
             out.cells = route.cells;
             out.steps_here = route.steps();
             out.steps_total = goal_steps;
@@ -825,7 +843,8 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         out.cells = route.cells;
         out.phases = phases;
         out.description = describe(phases);
-        if (req.ignore_hazards) out.description = T(L"Event trigger on the route") + L", " + out.description;
+        if (baked_route::crosses_event(route.cells, req.hazards))
+            out.description = T(L"Event trigger on the route") + L", " + out.description;
         out.steps_here = route.steps();
         out.steps_total = goal_steps;
         return out;
@@ -940,8 +959,8 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
         req.live_hazards = true;
         req.hazards = live.triggers;
         auto annotate_events = [&](const std::vector<Phase>& phases) {
-            for (const Phase& p : phases) for (const Cell& c : p.cells) for (const Cell& event : live.triggers)
-                if (c.x == event.x && c.y == event.y && (event.layer < 0 || c.layer == event.layer)) {
+            for (const Phase& p : phases)
+                if (baked_route::crosses_event(p.cells, live.triggers)) {
                     out.description = T(L"Event trigger on the route") + L", " + out.description;
                     return;
                 }
@@ -1149,12 +1168,19 @@ Pending* g_pending = nullptr;
 
 std::vector<RemoteObject> connected_objects(void* map_handle)
 {
-    std::vector<RemoteObject> out;
     const baked::Submap* here = current_submap(map_handle);
+    if (!here || here->world) return {};
+    map_state::Resolver state;
+    return connected_objects_snapshot(current_map_id(), state);
+}
+std::vector<RemoteObject> connected_objects_snapshot(int map_id, map_state::Resolver& state)
+{
+    std::vector<RemoteObject> out;
+    if (!prepared()) return out;
+    const baked::Submap* here = baked::submap_by_map_id(map_id);
     if (!here || here->world) return out;
     return hooks::guarded_r("BakedNav.ConnectedObjects", out, [&] {
-        map_state::Resolver state;
-        const std::vector<Floor> floors = connected_floors(here, current_map_id(), state);
+        const std::vector<Floor> floors = connected_floors(here, map_id, state);
         auto in_group = [&](int map_id) {
             const baked::Submap* s = baked::submap_by_map_id(map_id);
             if (!s) return false;
@@ -1194,7 +1220,7 @@ std::vector<RemoteObject> connected_objects(void* map_handle)
                 out.push_back(r);
             }
         }
-        LOGF("[BakedNav] other floors of map %d: %zu floors, %zu objects", current_map_id(), floors.size(), out.size());
+        LOGF("[BakedNav] other floors of map %d: %zu floors, %zu objects", map_id, floors.size(), out.size());
         return out;
     });
 }

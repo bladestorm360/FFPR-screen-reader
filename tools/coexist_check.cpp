@@ -231,7 +231,25 @@ int main()
     std::printf("stats: %u long resume, %u short, %u refused unhooks\n", l, s, p);
     check(s == 0, "no hook fell back to the short resume");
 
+    // First FF2 boot failed after one trampoline page filled. Exercise many pages
+    // without loading a game, rather than testing only five transient hooks.
+    auto* many = static_cast<unsigned char*>(VirtualAlloc(nullptr, 0x10000,
+        MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
+    bool many_ok = many != nullptr;
+    if (many) {
+        std::memset(many, 0xCC, 0x10000);
+        for (int i = 0; i < 512; ++i) {
+            auto* target = many + i * 64;
+            std::memcpy(target, kProlog5, sizeof(kProlog5));
+            void* original = nullptr;
+            const auto status = MH_CreateHook(target, kOurs[0], &original);
+            if (status != MH_OK) { std::printf("  allocation hook %d: %s\n", i, MH_StatusToString(status)); many_ok = false; break; }
+        }
+    }
+    check(many_ok, "512 simultaneous hooks span multiple trampoline pages");
+
     MH_Uninitialize();
+    if (many) VirtualFree(many, 0, MEM_RELEASE);
     std::printf(g_failures ? "COEXIST CHECK FAILED (%d)\n" : "COEXIST CHECK PASSED\n", g_failures);
     return g_failures ? 1 : 0;
 }

@@ -25,6 +25,19 @@ struct Cell {
     bool operator==(const Cell& o) const { return layer == o.layer && x == o.x && y == o.y; }
 };
 
+// Ordinary exits, vehicle pads and layer switches are never story-event hazards.
+inline bool step_event(const baked::Object& object) {
+    return (object.type == baked::ObjType::Event && (object.a != 0 || object.b != 0)) ||
+           (object.type == baked::ObjType::Warp && object.d == 1);
+}
+inline bool crosses_event(const std::vector<Cell>& path, const std::vector<Cell>& events) {
+    // The initial cell is already occupied; only subsequent displacement can trigger one.
+    for (size_t i = 1; i < path.size(); ++i) for (const Cell& event : events)
+        if (path[i].x == event.x && path[i].y == event.y &&
+            (event.layer < 0 || path[i].layer == event.layer)) return true;
+    return false;
+}
+
 struct Request {
     const baked::Submap* submap = nullptr;
     Cell start;

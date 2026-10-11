@@ -1,9 +1,15 @@
 # Testing the native mod
 
-Nothing here has been tested in a game yet. Test one game at a time. Report what you hear,
+Offline checks pass; user gameplay testing has identified regressions recorded in the
+[October 11 follow-up](FOLLOWUP_2026_10_11.md). Test one game at a time. Report what you hear,
 and attach `ffpr_screen_reader.log` from that game's folder if something is wrong.
 
 ## October 11 audit test
+
+Follow-up checks: confirmation bodies speak on entry before their Yes/No choices;
+check save, load, quicksave, return to title and quit. Check the title prompt and repeat
+world/town/floor transitions for delay. Ordinary FF2 world exits must not announce an
+event, and field audio/navigation should recover after loading.
 
 Build, native-name, DLL host, scheduler and baked-route checks are offline validation.
 They do not confirm gameplay or measure game startup time.

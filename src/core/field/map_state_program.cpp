@@ -135,7 +135,7 @@ void add_obstacles(Resolver& resolver, const baked::Submap& sm, baked_route::Req
             (npc && (o.d & 1)) ||
             (gates && ((o.type == baked::ObjType::Entity || o.type == baked::ObjType::AnimEntity) && (o.d & 1)));
         const bool collider = gates && o.type == baked::ObjType::CollisionEntity;
-        const bool trigger = o.type == baked::ObjType::Event || (o.type == baked::ObjType::Warp && o.d == 1);
+        const bool trigger = baked_route::step_event(o);
         if (!solid && !collider && !trigger) continue;
         for (int y = o.ty; y < o.ty + o.th; ++y) for (int x = o.tx; x < o.tx + o.tw; ++x) {
             baked_route::Cell cell{sm.world || (npc && (o.d & 2)) ? -1 : o.layer, x, y};

@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <map>
+#include <atomic>
 #include "modtext.h"
 #include "game.h"
 #include "log.h"
@@ -16,7 +17,8 @@ HMODULE self_module()
                        reinterpret_cast<LPCWSTR>(&self_module), &h);
     return h;
 }
-std::map<std::string, json::Value>* g_cache = nullptr;
+using Tables = std::map<std::string, json::Value>;
+std::atomic<const Tables*> g_cache{nullptr};
 }
 
 std::string resource(const char* name)
@@ -42,21 +44,32 @@ std::string game_file(const char* kind)
     return resource(name.c_str());
 }
 
+void prepare_game_json()
+{
+    if (game_data_ready()) return;
+    auto* tables = new Tables;
+    for (const char* kind : {"translation", "eventlabels", "maptitles", "mapstate", "puzzles"}) {
+        json::Value v;
+        const std::string raw = game_file(kind);
+        if (!raw.empty()) {
+            std::string err;
+            if (!json::parse(raw, v, &err)) {
+                LOGF("data: %s_%s is malformed: %s", kind, game::key(), err.c_str());
+                v = json::Value{};
+            }
+        }
+        tables->emplace(kind, std::move(v));
+    }
+    g_cache.store(tables, std::memory_order_release);
+}
+bool game_data_ready() { return g_cache.load(std::memory_order_acquire) != nullptr; }
 const json::Value& game_json(const char* kind)
 {
-    if (!g_cache) g_cache = new std::map<std::string, json::Value>();
-    auto it = g_cache->find(kind);
-    if (it != g_cache->end()) return it->second;
-    json::Value v;
-    std::string raw = game_file(kind);
-    if (!raw.empty()) {
-        std::string err;
-        if (!json::parse(raw, v, &err)) {
-            LOGF("data: %s_%s is malformed: %s", kind, game::key(), err.c_str());
-            v = json::Value{};
-        }
-    }
-    return (*g_cache)[kind] = std::move(v);
+    static const json::Value empty;
+    const auto* tables = g_cache.load(std::memory_order_acquire);
+    if (!tables) return empty;
+    const auto it = tables->find(kind);
+    return it == tables->end() ? empty : it->second;
 }
 
 } // namespace data

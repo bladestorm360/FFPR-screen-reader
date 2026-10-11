@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <functional>
 #include "refs.h"
 
 // The dialogue area: message windows, fade/scroll/line-fade system messages, popups and the
@@ -14,6 +15,12 @@
 //            "PopupState.Clear"
 // Main thread only, like the C# originals.
 namespace ffpr::dialogue {
+
+/// One native opening/update event, bounded wait for rendered body, cancelled on close.
+void read_popup_when_ready(void* popup, const char* context, std::function<std::wstring()> reader,
+                           std::function<bool()> current = {});
+/// Non-Popup confirmation layouts (e.g. new-game confirmation); reads the actual Text field.
+void read_popup_message(void* popup, const char* context);
 
 // --- MessageWindowPatches -------------------------------------------------------------
 /// MessageWindowPatches.IsInDialogue: a message window has content (SetContent .. Close).

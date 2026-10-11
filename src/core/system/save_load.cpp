@@ -11,6 +11,7 @@
 #include "text.h"
 #include "ui_util.h"
 #include "unity.h"
+#include "displayed_ui.h"
 #include "dialogue/dialogue.h"
 #include "system/system.h"
 
@@ -207,25 +208,6 @@ std::wstring read_slot_from_transform(void* slot, int slot_index, bool& found)
 
 // --- SaveLoadPatches ------------------------------------------------------------------------
 
-// TextUtils-free StripRichTextTags: remove every "<...>" tag (Regex <[^>]+>).
-std::wstring strip_rich_text_tags(const std::wstring& s)
-{
-    std::wstring out;
-    out.reserve(s.size());
-    for (size_t i = 0; i < s.size(); ++i) {
-        if (s[i] == L'<') {
-            size_t j = s.find(L'>', i + 1);
-            if (j != std::wstring::npos && j > i + 1) { i = j; continue; }
-        }
-        out.push_back(s[i]);
-    }
-    return out;
-}
-
-// Frames a popup read waits for SavePopup.messageText to be filled in (bounded, 2-30).
-constexpr int kPopupReadMinFrames = 2;
-constexpr int kPopupReadMaxFrames = 30;
-
 // ReadPopupTextDelayed: from two frames on, read SavePopup.messageText plus the focused button
 // as soon as the text is there. The C# read once at two frames and read messageText only.
 //
@@ -239,40 +221,17 @@ constexpr int kPopupReadMaxFrames = 30;
 // announcement.
 void read_popup_text_delayed(void* popup, const char* context)
 {
-    int frames = 0;
-    frame::every_frame([popup, context, frames]() mutable {
-        ++frames;
-        if (frames < kPopupReadMinFrames) return true;
-        bool done = hooks::guarded_r("SaveLoad.ReadPopupText", true, [&] {
-            if (!unity::alive(popup) || !unity::active_in_hierarchy(popup)) return true;
-            void* message_text = ref::rd<void*>(popup, fSavePopupMessage);
-            if (!message_text) {
-                LOGF("[SaveLoad] %s: messageText pointer is null", context);
-                return true;
-            }
-            std::wstring message = unity::ui_text(message_text);
-            if (text::is_blank(message)) {
-                // The completion layout: the sentence is the title ("Save complete").
-                void* title_text = ref::rd<void*>(popup, fSavePopupTitle);
-                std::wstring title = title_text ? unity::ui_text(title_text) : std::wstring();
-                if (!text::is_blank(title) && unity::active_in_hierarchy(title_text)) {
-                    message = title;
-                    LOGF("[SaveLoad] %s: message empty, speaking the title", context);
-                }
-            }
-            if (text::is_blank(message)) {
-                if (frames >= kPopupReadMaxFrames) LOGF("[SaveLoad] %s: message and title still empty after %d frames", context, frames);
-                return false;   // not filled in yet: retry
-            }
-            message = strip_rich_text_tags(message);
-            // Append the initially-focused button (Yes/No) so it is heard right after the body;
-            // save, load and quick save share this SavePopup layout.
-            std::wstring button = dialogue::read_focused_button(popup, fSavePopupCursor, fSavePopupCommands);
-            ffpr::say(text::is_blank(button) ? message : message + L" " + button);
-            return true;
-        });
-        return !done && frames < kPopupReadMaxFrames;
-    }, "SaveLoad.ReadPopupText", kPopupReadMaxFrames + 1);
+    dialogue::read_popup_when_ready(popup, context, [popup] {
+        void* message_text = ref::rd<void*>(popup, fSavePopupMessage);
+        std::wstring message = displayed::text(message_text);
+        if (message.empty() && !text::is_blank(unity::ui_text(message_text))) return std::wstring();
+        if (message.empty()) message = displayed::text(ref::rd<void*>(popup, fSavePopupTitle));
+        if (message.empty()) return std::wstring();
+        const auto sub = displayed::text_field(popup, "subMessageText");
+        if (!sub.empty()) message += L". " + sub;
+        const auto button = dialogue::read_focused_button(popup, fSavePopupCursor, fSavePopupCommands);
+        return button.empty() ? message : message + L" " + button;
+    }, [popup] { return dialogue::popup_state::active_popup() == popup; });
 }
 
 // ReadSavePopup

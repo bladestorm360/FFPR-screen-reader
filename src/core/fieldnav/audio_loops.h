@@ -3,7 +3,7 @@
 // Ports FF1 Core/AudioLoopManager.cs: the wall-tone loop and the audio-beacon loop, plus the
 // audio-loop parts of FFI_ScreenReaderMod (ToggleWallTones / ToggleAudioBeacons reactions,
 // RestartBeacon, RestartEntityBeacon, the OnSceneLoaded stop/suppress and the restart in
-// DelayedInitialScan).
+// native MapChanged readiness).
 //
 // Both loops are allowed per-frame audio work. One frame subscriber runs them with the C#
 // coroutines' cadence: wall tones every 100 ms, beacons on their own proximity interval, each

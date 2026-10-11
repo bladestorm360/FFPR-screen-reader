@@ -55,6 +55,8 @@ int field_command_count(void* cursor);
 // --- GameStatePatches -----------------------------------------------------------------------
 /// GameStatePatches.IsFieldPlayerState: the main game is in its Player state.
 bool is_field_player_state();
+/// Native Player or Transport state: map construction is finished.
+bool is_field_navigation_ready();
 /// The main game is in a field state (Init, ChangeMap, FieldReady, Player, Transport) or its
 /// state is not known yet: no menu, shop or battle screen can have focus. Menu readers whose
 /// deferred reads can be reached by the game's UI pre-load (the command bars) skip when true.

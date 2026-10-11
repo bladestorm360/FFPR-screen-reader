@@ -9,9 +9,7 @@
 // Inside such a query or action, cursor::current() is the cursor being handled; outside one it
 // is empty (cursor == nullptr). The generic reader calls, while it is set:
 //   queries  "NewGamePatches.IsHandlingCursor", "JobSelectionPatches.IsHandlingCursor",
-//            "ConfigMenuState.ShouldSuppress", "BattleCommandState.ShouldSuppress",
-//            "BattleTargetState.ShouldSuppress", "BattleItemMenuState.ShouldSuppress",
-//            "BattleMagicMenuState.ShouldSuppress", "ShopMenuTracker.ValidateState",
+//            "ConfigMenuState.ShouldSuppress", "ShopMenuTracker.ValidateState",
 //            "ItemMenuState.ShouldSuppress", "EquipMenuState.ShouldSuppress",
 //            "MagicMenuState.ShouldSuppress", "StatusMenuState.ShouldSuppress",
 //            "StatusDetailsState.ShouldSuppress", "BestiaryStateTracker.IsInBestiary",

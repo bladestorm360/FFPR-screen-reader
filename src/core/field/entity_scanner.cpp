@@ -9,6 +9,7 @@
 // EntityDetectionContext.TypeName is the entity's runtime class name. (In the C# mod it was
 // the Il2CppInterop wrapper's type, usually the static type FieldEntity.)
 #include <algorithm>
+#include <atomic>
 #include <map>
 #include <unordered_set>
 #include "entity_translator.h"
@@ -20,6 +21,10 @@
 #include "path_search.h"
 #include "baked_nav.h"
 #include "../game.h"
+#include "../background.h"
+#include "../frame.h"
+#include "../system/system.h"
+#include "map_state.h"
 #include "../hooks.h"
 #include "../il2cpp.h"
 #include "../log.h"
@@ -522,90 +527,101 @@ void renumber_npcs(std::vector<EntityPtr>& list)
 /// exits and warps without crossing a world map, from the baked data
 /// (baked_nav::connected_objects). Named as the live list names them, the floor's title after
 /// the name ("Potion (Kashuan Keep 2F)"); NPCs are numbered within their floor as on this one.
-/// What the story has changed there (an opened chest, someone who has left) is not known from
-/// here, and the game's conditional object groups (the "ev_*" variants of a floor) fold into
-/// one entry per name and cell.
-void build_remote(void* map_handle)
-{
-    g_remote.clear();
-    const std::vector<baked_nav::RemoteObject> objs = baked_nav::connected_objects(map_handle);
+/// Story groups and collected chests are projected from a copied native flag snapshot.
+/// Formatting reads native names on the main thread in bounded batches.
+struct RemoteBuilder {
+    std::vector<baked_nav::RemoteObject> objs;
+    size_t next = 0;
     struct Member { EntityPtr e; long long number; };
     std::map<std::wstring, std::vector<Member>> npc_groups;   // "floor\nbase name"
     std::unordered_set<std::wstring> seen;
     bool (*placeholder_fn)(const wchar_t*) = game::flags().placeholder_entity;
-    for (const auto& r : objs) {
-        auto e = std::make_shared<Entity>();
-        e->remote_map_id = r.map_id;
-        e->cell_layer = r.cell.layer;
-        e->cell_x = r.cell.x;
-        e->cell_y = r.cell.y;
-        e->floor_name = resolve_map_name(r.map_id);
-        long long number = -1;
-        std::wstring base;
-        switch (r.type) {
-        case baked::ObjType::NPC:
-        case baked::ObjType::ShopNPC: {
-            if (placeholder_fn && placeholder_fn(r.raw_name.c_str())) continue;
-            std::wstring name = r.raw_name.empty() ? std::wstring() : translate_entity_name(r.raw_name);
-            if (name.empty() || name == L"NPC") name = T(L"NPC");
-            e->kind = Kind::NPC;
-            e->name = name;
-            e->shop = r.shop;
-            base = strip_instance_number(name, number);
-            break;
-        }
-        case baked::ObjType::TreasureBox: {
-            std::wstring item = r.content_id > 0 ? resolve_item_name(r.content_id) : std::wstring();
-            e->kind = Kind::TreasureChest;
-            e->name = item.empty() ? T(L"Treasure Chest") : item;
-            break;
-        }
-        case baked::ObjType::SavePoint:
-            e->kind = Kind::SavePoint;
-            e->name = T(L"Save Point");
-            break;
-        case baked::ObjType::GotoMap: {
-            std::wstring dest_name = resolve_map_name(r.dest_map_id);
-            e->kind = Kind::MapExit;
-            e->dest_map_id = r.dest_map_id;
-            e->dest_name = dest_name;
-            e->name = !dest_name.empty() ? TF(L"Exit to {0}", {dest_name}) : T(L"Exit");
-            break;
-        }
-        default:
-            continue;
-        }
-        e->converted_name = e->name;
-        // One entry per name and cell (a floor's story variants repeat its people), one exit per
-        // destination per floor.
-        const std::wstring where = e->kind == Kind::MapExit ? std::to_wstring(r.dest_map_id)
-                                                            : std::to_wstring(r.cell.x) + L"," + std::to_wstring(r.cell.y);
-        const std::wstring key = e->floor_name + L"\n" + std::to_wstring(static_cast<int>(e->kind)) + L"\n" +
-                                 (e->kind == Kind::NPC ? base : e->name) + L"\n" + where;
-        if (!seen.insert(key).second) continue;
-        if (e->kind == Kind::NPC) npc_groups[e->floor_name + L"\n" + base].push_back({e, number});
-        g_remote.push_back(e);
-    }
-    for (auto& kv : npc_groups) {
-        auto& members = kv.second;
-        const std::wstring base = kv.first.substr(kv.first.find(L'\n') + 1);
-        if (members.size() == 1) {
-            members[0].e->name = base;
-            continue;
-        }
-        std::stable_sort(members.begin(), members.end(), [](const Member& a, const Member& b) {
-            if (a.number != b.number) {
-                if (a.number < 0) return false;   // unnumbered after the numbered
-                if (b.number < 0) return true;
-                return a.number < b.number;
+    explicit RemoteBuilder(std::vector<baked_nav::RemoteObject> objects) : objs(std::move(objects)) { g_remote.clear(); }
+    bool step() {
+        const double until = frame::now() + 0.002;
+        int count = 0;
+        for (; next < objs.size() && count++ < 16 && frame::now() < until; ++next) {
+            const auto& r = objs[next];
+            auto e = std::make_shared<Entity>();
+            e->remote_map_id = r.map_id;
+            e->cell_layer = r.cell.layer;
+            e->cell_x = r.cell.x;
+            e->cell_y = r.cell.y;
+            e->floor_name = resolve_map_name(r.map_id);
+            long long number = -1;
+            std::wstring base;
+            switch (r.type) {
+            case baked::ObjType::NPC:
+            case baked::ObjType::ShopNPC: {
+                if (placeholder_fn && placeholder_fn(r.raw_name.c_str())) continue;
+                std::wstring name = r.raw_name.empty() ? std::wstring() : translate_entity_name(r.raw_name);
+                if (name.empty() || name == L"NPC") name = T(L"NPC");
+                e->kind = Kind::NPC;
+                e->name = name;
+                e->shop = r.shop;
+                base = strip_instance_number(name, number);
+                break;
             }
-            if (a.e->cell_y != b.e->cell_y) return a.e->cell_y < b.e->cell_y;   // top to bottom
-            return a.e->cell_x < b.e->cell_x;
-        });
-        int k = 0;
-        for (auto& m : members) m.e->name = base + L" " + std::to_wstring(++k);
+            case baked::ObjType::TreasureBox: {
+                std::wstring item = r.content_id > 0 ? resolve_item_name(r.content_id) : std::wstring();
+                e->kind = Kind::TreasureChest;
+                e->name = item.empty() ? T(L"Treasure Chest") : item;
+                break;
+            }
+            case baked::ObjType::SavePoint:
+                e->kind = Kind::SavePoint;
+                e->name = T(L"Save Point");
+                break;
+            case baked::ObjType::GotoMap: {
+                std::wstring dest_name = resolve_map_name(r.dest_map_id);
+                e->kind = Kind::MapExit;
+                e->dest_map_id = r.dest_map_id;
+                e->dest_name = dest_name;
+                e->name = !dest_name.empty() ? TF(L"Exit to {0}", {dest_name}) : T(L"Exit");
+                break;
+            }
+            default:
+                continue;
+            }
+            e->converted_name = e->name;
+            // One entry per name and cell (a floor's story variants repeat its people), one exit per
+            // destination per floor.
+            const std::wstring where = e->kind == Kind::MapExit ? std::to_wstring(r.dest_map_id)
+                                                                : std::to_wstring(r.cell.x) + L"," + std::to_wstring(r.cell.y);
+            const std::wstring key = e->floor_name + L"\n" + std::to_wstring(static_cast<int>(e->kind)) + L"\n" +
+                                     (e->kind == Kind::NPC ? base : e->name) + L"\n" + where;
+            if (!seen.insert(key).second) continue;
+            if (e->kind == Kind::NPC) npc_groups[e->floor_name + L"\n" + base].push_back({e, number});
+            g_remote.push_back(e);
+        }
+        if (next < objs.size()) return true;
+        for (auto& kv : npc_groups) {
+            auto& members = kv.second;
+            const std::wstring base = kv.first.substr(kv.first.find(L'\n') + 1);
+            if (members.size() == 1) {
+                members[0].e->name = base;
+                continue;
+            }
+            std::stable_sort(members.begin(), members.end(), [](const Member& a, const Member& b) {
+                if (a.number != b.number) {
+                    if (a.number < 0) return false;   // unnumbered after the numbered
+                    if (b.number < 0) return true;
+                    return a.number < b.number;
+                }
+                if (a.e->cell_y != b.e->cell_y) return a.e->cell_y < b.e->cell_y;   // top to bottom
+                return a.e->cell_x < b.e->cell_x;
+            });
+            int k = 0;
+            for (auto& m : members) m.e->name = base + L" " + std::to_wstring(++k);
+        }
+        LOGF("[EntityScanner] other floors: %zu entries from %zu baked objects", g_remote.size(), objs.size());
+        return false;
     }
-    LOGF("[EntityScanner] other floors: %zu entries from %zu baked objects", g_remote.size(), objs.size());
+};
+void build_remote(void* map_handle)
+{
+    RemoteBuilder builder(baked_nav::connected_objects(map_handle));
+    while (builder.step()) {} // explicit manual refresh; automatic transitions use bounded steps
 }
 
 int find_entity_by_identifier()
@@ -745,8 +761,139 @@ void ensure_correct_map()
 // =========================================================================================
 namespace scanner {
 
+namespace {
+std::atomic<uint64_t> g_scan_generation{0};
+bool g_scan_running = false;
+void finish_scan(int map_id, bool remote_ready = false)
+{
+    const bool map_changed = map_id != g_last_scanned_map_id;
+    g_entities.clear();
+    for (auto& kv : g_entity_map) g_entities.push_back(kv.second);
+    renumber_npcs(g_entities);
+    if (pathfinding_mode() == ui::prefs::kFilterCurrentMap) {
+        if (g_remote_map_id != map_id && !remote_ready) {
+            FilterContext ctx;
+            build_remote(ctx.map_handle);
+            g_remote_map_id = map_id;
+        }
+        g_entities.insert(g_entities.end(), g_remote.begin(), g_remote.end());
+    } else if (g_remote_map_id != -1) {
+        g_remote.clear();
+        g_remote_map_id = -1;
+    }
+    g_last_scanned_map_id = map_id;
+    apply_filter();
+    if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
+    if (map_changed) select_pending_destination(map_id);
+}
+}
+
+void cancel_scan()
+{
+    ++g_scan_generation;
+    g_scan_running = false;
+    frame::cancel_label("EntityScanner.Scan");
+}
+void invalidate_map()
+{
+    cancel_scan();
+    g_entity_map.clear();
+    g_remote_map_id = -1;
+    g_remote.clear();
+    g_entities.clear();
+    g_filtered.clear();
+    g_index = 0;
+    g_last_scanned_map_id = -1;
+}
+bool needs_scan(int map_id) { return map_id != g_last_scanned_map_id && !g_scan_running; }
+
+void schedule_scan()
+{
+    cancel_scan();
+    const uint64_t generation = g_scan_generation;
+    g_scan_running = true;
+    struct Scan {
+        int map_id = 0;
+        size_t next = 0;
+        std::wstring asset;
+        std::vector<void*> entities;
+        double started = 0;
+    };
+    auto scan = std::make_shared<Scan>();
+    frame::every_frame([scan, generation, frames = 0]() mutable {
+        if (generation != g_scan_generation) return false;
+        if (++frames >= 300) { g_scan_running = false; LOGF("[EntityScanner] preparation not ready within frame budget"); return false; }
+        if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return false; }
+        if (!baked_nav::prepared()) return true; // atomic readiness only, never parse/wait
+        if (!scan->map_id) {
+            scan->map_id = current_map_id_or_user_data();
+            if (scan->map_id <= 0) { g_scan_running = false; return false; }
+            scan->started = frame::now();
+            scan->asset = current_map_asset_name();
+            scan->entities = all_field_entities();
+            std::unordered_set<void*> current(scan->entities.begin(), scan->entities.end());
+            g_entity_map.erase(std::remove_if(g_entity_map.begin(), g_entity_map.end(), [&](const auto& kv) {
+                return !current.count(kv.first) || !kv.second->is_alive();
+            }), g_entity_map.end());
+        }
+        if (scan->map_id != current_map_id_or_user_data()) { g_scan_running = false; return false; }
+        // Unity/IL2CPP reads must remain on their owner thread. Spread conversions
+        // across frames, capped at 16 entities or 2 ms of work per dispatch.
+        const double until = frame::now() + 0.002;
+        int count = 0;
+        while (scan->next < scan->entities.size() && count++ < 16 && frame::now() < until) {
+            void* fe = scan->entities[scan->next++];
+            if (std::any_of(g_entity_map.begin(), g_entity_map.end(), [fe](const auto& kv) { return kv.first == fe; })) continue;
+            if (!scan->asset.empty() && !entity_on_current_map(fe, scan->asset)) continue;
+            auto entity = hooks::guarded_r("EntityScanner.Convert", EntityPtr(), [fe] { return convert(fe); });
+            if (entity) g_entity_map.emplace_back(fe, std::move(entity));
+        }
+        if (scan->next < scan->entities.size()) return true;
+        if (pathfinding_mode() == ui::prefs::kFilterCurrentMap && g_remote_map_id != scan->map_id) {
+            map_state::Resolver state; // Copy live flags here; worker receives no game pointers.
+            const int map_id = scan->map_id;
+            const double started = scan->started;
+            if (background::post([map_id, started, generation, state = std::move(state)]() mutable {
+                if (generation != g_scan_generation) return; // obsolete queued work owns no live objects
+                auto objects = baked_nav::connected_objects_snapshot(map_id, state);
+                frame::post([map_id, started, generation, objects = std::move(objects)]() mutable {
+                    if (generation != g_scan_generation) return;
+                    if (map_id != current_map_id_or_user_data()) { g_scan_running = false; return; }
+                    if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return; }
+                    auto builder = std::make_shared<RemoteBuilder>(std::move(objects));
+                    frame::every_frame([map_id, started, generation, builder, frames = 0]() mutable {
+                        if (generation != g_scan_generation) return false;
+                        if (++frames >= 1800 || map_id != current_map_id_or_user_data()) { g_scan_running = false; return false; }
+                        if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return false; }
+                        bool failed = true;
+                        const bool more = hooks::guarded_r("EntityScanner.FormatRemote", false, [&] {
+                            const bool result = builder->step(); failed = false; return result;
+                        });
+                        if (failed) { g_scan_running = false; return false; }
+                        if (more) return true;
+                        g_remote_map_id = map_id;
+                        finish_scan(map_id, true);
+                        g_scan_running = false;
+                        LOGF("[EntityScanner] ready map %d: %zu live, %zu remote; %.1f ms elapsed across frames",
+                             map_id, g_entity_map.size(), g_remote.size(), (frame::now() - started) * 1000);
+                        return false;
+                    }, "EntityScanner.ScanRemote", 1800);
+                });
+            })) return false;
+        }
+        // Worker creation failure must not put projection back on the game thread.
+        finish_scan(scan->map_id, true);
+        g_scan_running = false;
+        LOGF("[EntityScanner] ready map %d: %zu live; %.1f ms elapsed across frames",
+             scan->map_id, g_entity_map.size(), (frame::now() - scan->started) * 1000);
+        return false;
+    }, "EntityScanner.Scan", 300);
+}
+
 void scan_entities()
 {
+    if (g_scan_running) return;
+    if (!baked_nav::prepared()) { schedule_scan(); return; }
     hooks::guarded("EntityScanner.ScanEntities", [&] {
         int map_id = current_map_id_or_user_data();
         std::wstring asset = current_map_asset_name();
@@ -776,32 +923,13 @@ void scan_entities()
             }
         }
 
-        const bool map_changed = map_id != g_last_scanned_map_id;
-        g_entities.clear();
-        for (auto& kv : g_entity_map) g_entities.push_back(kv.second);
-        renumber_npcs(g_entities);
-        // "Current map": the other floors' entries after the live ones, built once per map.
-        if (pathfinding_mode() == ui::prefs::kFilterCurrentMap) {
-            if (g_remote_map_id != map_id) {
-                FilterContext ctx;
-                build_remote(ctx.map_handle);
-                g_remote_map_id = map_id;
-            }
-            g_entities.insert(g_entities.end(), g_remote.begin(), g_remote.end());
-        } else if (g_remote_map_id != -1) {
-            g_remote.clear();
-            g_remote_map_id = -1;
-        }
-        g_last_scanned_map_id = map_id;
-        apply_filter();
-
-        if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
-        if (map_changed) select_pending_destination(map_id);
+        finish_scan(map_id);
     });
 }
 
 void force_rescan()
 {
+    if (g_scan_running) return;
     g_entity_map.clear();
     scan_entities();
 }

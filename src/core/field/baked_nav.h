@@ -4,6 +4,7 @@
 #include "field_api.h"
 #include "baked_router.h"
 #include "route_progress.h"
+namespace field::map_state { class Resolver; }
 
 // The game-side glue of the baked-map router (baked_router.h): the live map, the player's
 // cell and layer, the current vehicle, the owned auto-vehicles, the live blockers and the
@@ -16,6 +17,10 @@
 // alone cannot reach the target ("board the Ship", "land"). Quick = per entity / per tick:
 // one reachability flood per player cell, no blockers, no boarding.
 namespace field::baked_nav {
+
+/// Starts data-only preparation on the native worker. Does not wait for or call the game.
+void preload();
+bool prepared();
 
 /// True when the baked data knows the current map (and its size agrees with the live map).
 bool available(void* map_handle);
@@ -114,6 +119,8 @@ struct RemoteObject {
 /// order from here; the current floor's own objects are not included. Empty on a world map,
 /// off the field, or on a map the baked data does not know.
 std::vector<RemoteObject> connected_objects(void* map_handle);
+/// Pure immutable bake/state projection, safe on the data worker after prepared().
+std::vector<RemoteObject> connected_objects_snapshot(int map_id, map_state::Resolver& state);
 
 /// The route to `goal` wherever it is: on this floor the ordinary kept route (find); on another
 /// floor the first leg ("..., take the exit to X") and `out.next_map_id`. A route that goes on

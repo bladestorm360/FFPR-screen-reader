@@ -13,6 +13,8 @@
 #include "text.h"
 #include "ui_util.h"
 #include "unity.h"
+#include "displayed_ui.h"
+#include <unordered_set>
 #include "dialogue/dialogue.h"
 #include "system/cursor_event.h"
 
@@ -30,7 +32,9 @@ ref::Class kGameOverView{"Last.UI.KeyInput", "GameOverPopupView"};
 ref::Class kInfoPopup{"Last.UI.KeyInput", "InfomationPopup"};
 ref::Class kInputPopup{"Last.UI.KeyInput", "InputPopup"};
 ref::Class kChangeNamePopup{"Last.UI.KeyInput", "ChangeNamePopup"};
-ref::Class kShopController{"Last.UI.KeyInput", "ShopController"};
+ref::Class kJobPopup{"Last.UI.KeyInput", "JobChangePopup"};
+ref::Class kPlayDataPopup{"Last.UI.KeyInput", "PlayDataPopupController"};
+ref::Class kWarehousePopup{"Last.UI.KeyInput", "WarehousePopupController"};
 ref::Class kTouchCommonPopup{"Last.UI.Touch", "CommonPopup"};
 ref::Class kIconTextView{"Last.UI", "IconTextView"};
 ref::Class kCommonCommand{"Last.UI.KeyInput", "CommonCommand"};
@@ -55,7 +59,7 @@ ref::Field fGameOverLoadCursor{kGameOverLoadPopup, "selectCursor"};
 ref::Field fGameOverLoadCommands{kGameOverLoadPopup, "commandList"};
 ref::Field fGameOverCtrlView{kGameOverController, "view"};
 ref::Field fGameOverViewLoadPopup{kGameOverView, "loadPopup"};
-ref::Field fShopIsOpen{kShopController, "<IsOpne>k__BackingField"};
+ref::Field fJobCommands{kJobPopup, "commandList"};
 ref::Field fTouchCommonTitle{kTouchCommonPopup, "titleText"};    // Text
 ref::Field fTouchCommonMessage{kTouchCommonPopup, "messageText"};
 
@@ -65,6 +69,10 @@ ref::Method mCommonSetCursor{kCommonPopup, "SetCommandSelectCursor", 0};
 ref::Method mGameOverSetCursor{kGameOverSelectPopup, "SetCommandSelectCursor", 0};
 ref::Method mGameOverLoadSetCursor{kGameOverLoadPopup, "SetCommandSelectCursor", 0};
 ref::Method mInitSaveLoadPopup{kGameOverController, "InitSaveLoadPopup", 0};
+ref::Method mPlayDataDisplay{kPlayDataPopup, "Open", 0};
+ref::Method mPlayDataClose{kPlayDataPopup, "Close", 0};
+ref::Method mWarehouseShow{kWarehousePopup, "Show", 7};
+ref::Method mWarehouseClose{kWarehousePopup, "Close", 0};
 
 // Dedup contexts (FF1 lastCommonPopupCursorIndex, lastGameOverSelectCursorIndex,
 // lastGameOverLoadCursorIndex). Session scope: reset only where FF1 reset them.
@@ -117,13 +125,7 @@ bool g_own_focus_reader = false;
 // TextUtils.StripIconMarkup(s.Trim())
 std::wstring strip_icons(const std::wstring& s) { return text::trim(text::strip_markup(text::trim(s))); }
 
-bool is_shop_active()
-{
-    void* shop = unity::find_object(kShopController);
-    return shop && ref::rd<bool>(shop, fShopIsOpen);
-}
-
-std::wstring read_text(void* text_component) { return unity::ui_text(text_component); }
+std::wstring read_text(void* text_component) { return displayed::text(text_component); }
 
 std::wstring read_icon_text_view(void* view)
 {
@@ -153,8 +155,12 @@ std::wstring read_button_from_command_list(void* popup, ref::Field& command_list
 // --- type-specific readers ------------------------------------------------------------------
 std::wstring read_common_popup(void* p)
 {
-    return build_announcement(read_icon_text_view(ref::rd<void*>(p, fCommonTitle)),
-                              read_text(ref::rd<void*>(p, fCommonMessage)));
+    void* component = ref::rd<void*>(p, fCommonMessage);
+    auto body = read_text(component);
+    const auto image_message = displayed::text_field(p, "imageTextMessage");
+    if (!text::is_blank(unity::ui_text(component)) && body.empty() && image_message.empty()) return {};
+    if (!image_message.empty()) { if (!body.empty()) body += L". "; body += image_message; }
+    return build_announcement(read_icon_text_view(ref::rd<void*>(p, fCommonTitle)), body);
 }
 
 std::wstring read_magic_stone_popup(void* p)
@@ -181,6 +187,21 @@ std::wstring read_touch_common_popup(void* p)
 {
     return build_announcement(read_text(ref::rd<void*>(p, fTouchCommonTitle)),
                               read_text(ref::rd<void*>(p, fTouchCommonMessage)));
+}
+
+std::wstring read_rendered_popup(void* root)
+{
+    std::unordered_set<void*> buttons;
+    void* commands = displayed::field(root, "commandList");
+    for (int i = 0; i < unity::list_count(commands); ++i)
+        buttons.insert(displayed::field(unity::list_at(commands, i), "text"));
+    std::wstring body;
+    for (void* component : unity::texts(root, false)) {
+        if (buttons.count(component)) continue;
+        const auto line = displayed::text(component);
+        if (!line.empty()) { if (!body.empty()) body += L". "; body += line; }
+    }
+    return body;
 }
 
 // --- focus readers ----------------------------------------------------------------------------
@@ -248,17 +269,12 @@ void game_over_focus_changed(void* popup, ref::Field& cursor_field, ref::Field& 
 // DelayedGameOverLoadPopupRead: one frame after InitSaveLoadPopup, read the load popup's message.
 void delayed_game_over_load_popup_read(void* controller)
 {
-    frame::next_frame([controller] {
-        hooks::guarded("Popup.GameOverLoadRead", [&] {
-            if (!unity::alive(controller)) return;
-            void* view = ref::rd<void*>(controller, fGameOverCtrlView);
-            if (!view) return;
-            void* load_popup = ref::rd<void*>(view, fGameOverViewLoadPopup);
-            if (!load_popup) return;
-            std::wstring message = read_text(ref::rd<void*>(load_popup, fGameOverLoadMessage));
-            if (!text::is_blank(message)) ffpr::say(strip_icons(message), false);
-        });
-    }, "Popup.GameOverLoadRead");
+    void* view = ref::rd<void*>(controller, fGameOverCtrlView);
+    void* popup = view ? ref::rd<void*>(view, fGameOverViewLoadPopup) : nullptr;
+    if (!popup) return;
+    read_popup_when_ready(popup, "Popup.GameOverLoadRead", [popup] {
+        return read_text(ref::rd<void*>(popup, fGameOverLoadMessage));
+    }, [popup] { return popup == g_game_over_load_popup; });
 }
 
 // --- open / close -------------------------------------------------------------------------------
@@ -278,18 +294,13 @@ std::wstring read_focused_common_button(void* popup)
 // the title screen? No").
 void delayed_common_popup_read(void* popup)
 {
-    frame::next_frame([popup] {
-        std::wstring announcement;
-        hooks::guarded("Popup.CommonPopupRead", [&] {
-            if (!unity::alive(popup)) return;
-            std::wstring message = read_common_popup(popup);
-            std::wstring button = read_focused_common_button(popup);
-            if (!text::is_blank(message) && !text::is_blank(button)) announcement = message + L" " + button;
-            else announcement = text::is_blank(message) ? button : message;
-        });
+    read_popup_when_ready(popup, "Popup.CommonPopupRead", [popup] {
+        std::wstring message = read_common_popup(popup);
+        if (text::is_blank(message)) return std::wstring(); // never settle for buttons alone
+        std::wstring button = read_focused_common_button(popup);
         g_suppress_next_common_focus = false;
-        if (!text::is_blank(announcement)) ffpr::say(announcement, false);
-    }, "Popup.CommonPopupRead");
+        return text::is_blank(button) ? message : message + L" " + button;
+    }, [popup] { return popup_state::active_popup() == popup; });
 }
 
 using Reader = std::wstring (*)(void*);
@@ -299,20 +310,14 @@ void handle_popup_detected(const char* type_name, void* popup, ref::Field* comma
                            bool own_focus_reader = false)
 {
     popup_state::set_active(type_name, popup, command_list, own_focus_reader);
-    frame::next_frame([popup, reader] {
-        hooks::guarded("Popup.DelayedRead", [&] {
-            if (!unity::alive(popup)) return;
-            std::wstring announcement = reader(popup);
-            if (!announcement.empty()) ffpr::say(announcement, false);
-        });
-    }, "Popup.DelayedRead");
+    read_popup_when_ready(popup, "Popup.DelayedRead", [popup, reader] { return reader(popup); },
+                          [popup] { return popup_state::active_popup() == popup; });
 }
 
 // PopupOpen_Postfix
 void popup_open(void* p)
 {
     if (!p) return;
-    if (is_shop_active()) return;
 
     if (kCommonPopup.is(p)) {
         // Read message + focused button together (message first); suppress the open-time focus
@@ -349,11 +354,19 @@ void popup_open(void* p)
         handle_popup_detected("TouchCommonPopup", p, nullptr, &read_touch_common_popup);
         return;
     }
+    if (kJobPopup.is(p)) {
+        handle_popup_detected("JobChangePopup", p, &fJobCommands, &read_rendered_popup);
+        return;
+    }
+    // Remaining Popup subclasses (job/name/other information layouts): rendered Texts,
+    // excluding command-button labels, which retain their existing focus reader.
+    handle_popup_detected("Popup", p, nullptr, &read_rendered_popup);
 }
 
 // PopupClose_Postfix
 void popup_close()
 {
+    frame::cancel_label("Popup.Body.");
     if (popup_state::is_confirmation_popup_active()) popup_state::clear();
     dedup::reset(kCtxPopupButton);
     dedup::reset(kCtxGameOverButton);
@@ -377,9 +390,53 @@ Void_t o_CommonSetCursor;
 Void_t o_GameOverSetCursor;
 Void_t o_GameOverLoadSetCursor;
 Void_t o_InitSaveLoadPopup;
+Void_t o_PlayDataDisplay, o_PlayDataClose, o_WarehouseClose;
+using WarehouseShow_t = void (*)(void*, void*, void*, void*, int32_t, int32_t, void*, void*, const void*);
+WarehouseShow_t o_WarehouseShow;
+
+void d_PlayDataDisplay(void* self, const void* mi)
+{
+    o_PlayDataDisplay(self, mi);
+    hooks::guarded("Popup.PlayData", [=] {
+        if (kPlayDataPopup.is(self))
+            handle_popup_detected("PlayDataPopup", self, nullptr, &read_rendered_popup);
+    });
+}
+void d_PlayDataClose(void* self, const void* mi)
+{
+    o_PlayDataClose(self, mi);
+    hooks::guarded("Popup.PlayDataClose", [=] {
+        if (kPlayDataPopup.is(self) && popup_state::active_popup() == self) popup_close();
+    });
+}
+void d_WarehouseShow(void* self, void* item, void* comment, void* command, int32_t max_count,
+                     int32_t possible_count, void* selected, void* cancel, const void* mi)
+{
+    o_WarehouseShow(self, item, comment, command, max_count, possible_count, selected, cancel, mi);
+    hooks::guarded("Popup.Warehouse", [=] {
+        if (!kWarehousePopup.is(self)) return;
+        popup_state::set_active("WarehousePopup", self, nullptr);
+        read_popup_when_ready(self, "Warehouse.Show", [=] {
+            return read_rendered_popup(displayed::field(self, "view"));
+        }, [=] { return popup_state::active_popup() == self; });
+    });
+}
+void d_WarehouseClose(void* self, const void* mi)
+{
+    o_WarehouseClose(self, mi);
+    hooks::guarded("Popup.WarehouseClose", [=] {
+        if (kWarehousePopup.is(self) && popup_state::active_popup() == self) popup_close();
+    });
+}
 
 void d_PopupOpen(void* self, const void* mi)
 {
+    // The native Open sets its cursor before returning. Arm the existing opening
+    // guard before that callback, so the message still precedes the first button.
+    if (self && kCommonPopup.is(self)) {
+        g_suppress_next_common_focus = true;
+        dedup::reset(kCtxPopupButton);
+    }
     o_PopupOpen(self, mi);
     hooks::guarded("Popup.Open", [&] { popup_open(self); });
 }
@@ -387,7 +444,10 @@ void d_PopupOpen(void* self, const void* mi)
 void d_PopupClose(void* self, const void* mi)
 {
     o_PopupClose(self, mi);
-    hooks::guarded("Popup.Close", [&] { popup_close(); });
+    hooks::guarded("Popup.Close", [&] {
+        // Closing an older/parent popup must not retire the newly focused reader.
+        if (!popup_state::active_popup() || popup_state::active_popup() == self) popup_close();
+    });
 }
 
 void d_CommonSetCursor(void* self, const void* mi)
@@ -439,6 +499,10 @@ int install()
     if (hooks::attach(mGameOverSetCursor, &d_GameOverSetCursor, &o_GameOverSetCursor)) ++n;
     if (hooks::attach(mGameOverLoadSetCursor, &d_GameOverLoadSetCursor, &o_GameOverLoadSetCursor)) ++n;
     if (hooks::attach(mInitSaveLoadPopup, &d_InitSaveLoadPopup, &o_InitSaveLoadPopup)) ++n;
+    if (hooks::attach(mPlayDataDisplay, &d_PlayDataDisplay, &o_PlayDataDisplay)) ++n;
+    if (hooks::attach(mPlayDataClose, &d_PlayDataClose, &o_PlayDataClose)) ++n;
+    if (hooks::attach(mWarehouseShow, &d_WarehouseShow, &o_WarehouseShow)) ++n;
+    if (hooks::attach(mWarehouseClose, &d_WarehouseClose, &o_WarehouseClose)) ++n;
 
     queries::define("PopupState.IsConfirmationPopupActive", [] { return popup_state::is_confirmation_popup_active(); });
     queries::define("PopupState.ShouldSuppress", [] { return popup_state::should_suppress(); });
@@ -452,6 +516,29 @@ core::Install s_install{"Popup", &install, 100};
 
 } // namespace
 
+void read_popup_when_ready(void* popup, const char* context, std::function<std::wstring()> reader,
+                           std::function<bool()> current)
+{
+    if (!popup) return;
+    const std::string label = std::string("Popup.Body.") + context;
+    frame::every_frame([popup, reader = std::move(reader), current = std::move(current),
+                       context, frames = 0]() mutable {
+        if (!unity::alive(popup) || (current && !current())) return false;
+        if (++frames < 2 || !displayed::visible(popup)) return frames < 60;
+        const auto body = reader();
+        if (text::is_blank(body)) {
+            if (frames == 60) LOGF("[Popup] %s: no rendered body within 60 frames", context);
+            return frames < 60;
+        }
+        ffpr::say(text::clean(body), true);
+        return false;
+    }, label.c_str(), 60);
+}
+void read_popup_message(void* popup, const char* context)
+{
+    read_popup_when_ready(popup, context, [popup] { return displayed::text_field(popup, "messageText"); });
+}
+
 // --- PopupState ---------------------------------------------------------------------------------
 namespace popup_state {
 
@@ -463,6 +550,7 @@ bool has_own_focus_reader() { return g_own_focus_reader; }
 
 void set_active(const char* type_name, void* popup, ref::Field* command_list, bool own_focus_reader)
 {
+    frame::cancel_label("Popup.Body."); // Retire the reader for prior popup content.
     menu_state::set_active(menu_state::POPUP, true);
     g_popup_type = type_name ? type_name : "";
     g_popup = popup;
@@ -472,6 +560,7 @@ void set_active(const char* type_name, void* popup, ref::Field* command_list, bo
 
 void clear()
 {
+    frame::cancel_label("Popup.Body.");
     menu_state::reset(menu_state::POPUP);   // MenuStateRegistry.SetActive(POPUP, false)
     g_popup_type.clear();
     g_popup = nullptr;

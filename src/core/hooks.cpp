@@ -47,8 +47,11 @@ const char* foreign_jump(const void* target)
 
 bool detour_one(void* target, const std::string& label, void* detour, void** original)
 {
-    if (mh::create(target, detour, original) != MH_OK) {
-        LOGF("hook: create failed: %s @ %p", label.c_str(), target);
+    const MH_STATUS status = mh::create(target, detour, original);
+    if (status != MH_OK) {
+        const DWORD error = GetLastError();
+        LOGF("hook: create failed: %s @ %p: %s (%d), Win32=%lu",
+             label.c_str(), target, MH_StatusToString(status), static_cast<int>(status), error);
         ++g_failed;
         return false;
     }

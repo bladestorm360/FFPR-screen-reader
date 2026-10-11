@@ -161,6 +161,15 @@ bool is_field_player_state()
     });
 }
 
+bool is_field_navigation_ready()
+{
+    return hooks::guarded_r("GameState.IsFieldNavigationReady", false, [] {
+        if (!g_main_game || !kMainGame.is(g_main_game)) return false;
+        const int state = ref::call<int32_t>(mGetCurrentState, g_main_game);
+        return state == kStatePlayer || state == kStateTransport;
+    });
+}
+
 // IsFieldState: the main game is in one of its field states (Init, ChangeMap, FieldReady, Player,
 // Transport: 0-4 in all six dump.cs files), or no state is known yet. No menu, shop or battle
 // screen can have focus then, so a menu reader's deferred read is a stray.

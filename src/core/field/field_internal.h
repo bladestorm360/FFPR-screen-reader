@@ -247,6 +247,10 @@ struct FilterContext {
 // --- EntityScanner (entity_scanner.cpp) -----------------------------------------------------
 namespace scanner {
 void scan_entities();
+void schedule_scan();
+void cancel_scan();
+void invalidate_map();
+bool needs_scan(int map_id);
 void force_rescan();
 void next_entity();
 void previous_entity();

@@ -20,6 +20,7 @@ void d_group(void* self, void* group, const void* mi)
         void* model = ref::rd<void*>(ref::rd<void*>(self, r::fMapManager), fModel);
         if (model) map_state::observe_current(ref::rd<int32_t>(model, fMapId), ref::str(group));
         baked_nav::invalidate();
+        scanner::invalidate_map();
     });
 }
 int install() { return hooks::attach(mGroup, &d_group, &o_group) ? 1 : 0; }

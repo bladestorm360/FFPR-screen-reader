@@ -3,6 +3,7 @@
 #include "core/core.h"
 #include "core/dedup.h"
 #include "core/frame.h"
+#include "core/field/baked_nav.h"
 #include "core/game.h"
 #include "core/hooks.h"
 #include "core/il2cpp.h"
@@ -183,6 +184,7 @@ void boot_guarded(bool smoke)
     LOGF("boot: %d hooks installed, %d failed", hooks::installed(), hooks::failed());
 
     il2cpp::detach_current_thread();
+    field::baked_nav::preload();
     speech::wait_and_load(kSpeechWaitMs);
     LOGF("boot: startup complete");
     (void)smoke;

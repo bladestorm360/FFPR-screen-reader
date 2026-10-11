@@ -16,6 +16,7 @@
 #include "../say.h"
 #include "../text.h"
 #include "../field/field_api.h"
+#include "../field/field_internal.h"
 
 namespace ffpr::fieldnav::location_message {
 namespace {
@@ -104,10 +105,11 @@ ref::Method mChangeState{kSubSceneManagerMainGame, "ChangeState", 1};
 
 // SubSceneManagerMainGame.State (identical in all five games)
 constexpr int32_t kStateChangeMap = 1;
-constexpr int32_t kStateFieldReady = 2;
 constexpr int32_t kStatePlayer = 3;
+constexpr int32_t kStateTransport = 4;
 
 int g_last_announced_map_id = -1;
+bool g_needs_map_scan = true;
 
 /// FFI_ScreenReaderMod.ClearMenuFlagsForMapTransition: clear menu and popup flags a set/clear
 /// mismatch left behind, so they cannot block the field on the new map. Battle flags stay.
@@ -147,10 +149,13 @@ void check_map_transition()
         return;
 
     // Same map: no announcement
-    if (current_map_id == g_last_announced_map_id)
+    if (current_map_id == g_last_announced_map_id && !g_needs_map_scan) {
+        if (::field::scanner::needs_scan(current_map_id)) ::field::request_rescan();
         return;
+    }
 
     g_last_announced_map_id = current_map_id;
+    g_needs_map_scan = false;
 
     // The map really changed, so the transition is over (no menu is possible during it).
     clear_menu_flags_for_map_transition();
@@ -175,10 +180,14 @@ ChangeState_t o_ChangeState = nullptr;
 
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
+    if (state == kStateChangeMap) {
+        g_needs_map_scan = true;
+        ::field::scanner::invalidate_map();
+    }
     o_ChangeState(self, state, mi);
     hooks::guarded("MapTransition.ChangeState", [&] {
-        // Only check on the field-related states
-        if (state == kStateChangeMap || state == kStateFieldReady || state == kStatePlayer)
+        // Never scan/name the incoming map while ChangeMap/FieldReady constructs it.
+        if (state == kStatePlayer || state == kStateTransport)
             check_map_transition();
     });
 }

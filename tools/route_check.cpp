@@ -33,6 +33,32 @@ void expect(bool ok, const char* what)
     if (!ok) ++g_failures;
 }
 
+void check_event_warnings()
+{
+    b::Object object{};
+    object.type = b::ObjType::GotoMap;
+    object.a = 101;
+    expect(!r::step_event(object), "ordinary town/room exits are not story events");
+    object.type = b::ObjType::ToLayer;
+    expect(!r::step_event(object), "ordinary layer changes are not story events");
+    object.type = b::ObjType::TransportationEventAction;
+    expect(!r::step_event(object), "vehicle boarding pads are not story events");
+    object.type = b::ObjType::Event;
+    expect(r::step_event(object), "a script-backed event remains a route hazard");
+    object.a = object.b = 0;
+    expect(!r::step_event(object), "inert cutscene markers are not hazards");
+    object.type = b::ObjType::Warp;
+    object.d = 0;
+    expect(!r::step_event(object), "examined warps do not trigger by walking across them");
+    object.d = 1;
+    expect(r::step_event(object), "step-on warps remain route hazards");
+    const std::vector<r::Cell> path{{1, 91, 116}, {1, 91, 115}};
+    expect(!r::crosses_event(path, {}), "FF2 ordinary Altair entry has no false event warning");
+    expect(!r::crosses_event(path, {{-1, 91, 116}}), "already occupied starting tile is not an upcoming event");
+    expect(!r::crosses_event(path, {{0, 91, 115}}), "event on another layer does not affect this route");
+    expect(r::crosses_event(path, {{-1, 91, 115}}), "an active event at the destination is still announced");
+}
+
 std::vector<char> read_file(const std::wstring& path)
 {
     std::vector<char> out;
@@ -377,6 +403,7 @@ void check_ff1()
 
 int wmain(int argc, wchar_t** argv)
 {
+    check_event_warnings();
     {
         namespace progress = field::route_progress;
         progress::Phase p;

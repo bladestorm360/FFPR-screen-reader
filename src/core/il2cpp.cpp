@@ -94,6 +94,15 @@ struct MethodInfoHead { void* methodPointer; };
 
 namespace il2cpp {
 
+void* resolve_icall(const char* name)
+{
+    using Resolve = void* (*)(const char*);
+    Resolve resolve = g_game ? reinterpret_cast<Resolve>(GetProcAddress(g_game, "il2cpp_resolve_icall")) : nullptr;
+    if (!resolve || !name) return nullptr;
+    __try { return resolve(name); }
+    __except (EXCEPTION_EXECUTE_HANDLER) { return nullptr; }
+}
+
 bool module_present()
 {
     // Cheap and side-effect free: this only walks the loader's module list. It does NOT

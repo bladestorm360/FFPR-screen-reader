@@ -99,7 +99,7 @@ std::wstring vehicle_game_name(int transportation_id, const std::wstring& messag
 
 // --- selection ---------------------------------------------------------------------------
 Target selected();
-/// The rescan the C# mod runs after a scene load / map change (DelayedInitialScan).
+/// Event-bound asynchronous rescan after native map readiness.
 void request_rescan();
 
 } // namespace field

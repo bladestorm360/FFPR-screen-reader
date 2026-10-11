@@ -7,8 +7,8 @@
 //
 // Parity notes (behaviour as FF1 actually ran, nothing fixed):
 //  * InitStartPopup: the C# looked up a field "newGamePopup" by reflection. FF1's KeyInput
-//    controller has no such field (it is "popup"), so the C# always spoke "Start game?". So does
-//    this port.
+//    controller has no such field (it is "popup"). The shared native reader now uses the
+//    actual popup's rendered message instead of that fallback.
 //  * InitNameSelect: the C# tried to append ". Current: {auto name}" through
 //    GetField("autoNameIndex"). Il2CppInterop exposes IL2CPP fields as properties, so GetField
 //    always returned null and the suffix was never spoken. Not added here.
@@ -23,6 +23,7 @@
 #include <cstring>
 #include <string>
 #include "../../core/core.h"
+#include "../../core/displayed_ui.h"
 #include "../../core/dedup.h"
 #include "../../core/frame.h"
 #include "../../core/hooks.h"
@@ -390,9 +391,9 @@ void on_init_name_input(void* self)
     ffpr::say(announcement);
 }
 
-void on_init_start_popup()
+void on_init_start_popup(void* self)
 {
-    ffpr::say(T(L"Start game?"));
+    dialogue::read_popup_message(displayed::field(self, "popup"), "NewGame.Confirmation");
 }
 
 // --- detours ---------------------------------------------------------------------------------
@@ -462,7 +463,7 @@ void d_InitNameInput(void* self, const void* mi)
 void d_InitStartPopup(void* self, const void* mi)
 {
     o_InitStartPopup(self, mi);
-    hooks::guarded("NewGame.InitStartPopup", [&] { on_init_start_popup(); });
+    hooks::guarded("NewGame.InitStartPopup", [&] { on_init_start_popup(self); });
 }
 
 template <typename D, typename O>

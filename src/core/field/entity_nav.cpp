@@ -299,7 +299,7 @@ void d_SceneLoaded(int32_t scene, int32_t mode, const void* mi)
         cache::clear_all();
 
         // Everything else of FF1's OnSceneLoaded runs in the areas that own it, from this
-        // event (fieldnav: audio stop, location tracker reset, DelayedInitialScan).
+        // event (fieldnav: audio stop and location tracker reset).
         events::fire(events::Kind::SceneLoaded);
     });
 }
@@ -329,8 +329,12 @@ int install()
                              "BakedNav.ContinuePending");
     });
     events::on(events::Kind::BattleStart, [] {
+        scanner::cancel_scan();
         frame::cancel_label("BakedNav.ContinuePending");
         baked_nav::invalidate();
+    });
+    events::on(events::Kind::SceneLoaded, [] {
+        if (scene_name() == L"Title") scanner::invalidate_map();
     });
 
     int n = hooks::attach(mInternalSceneLoaded, &d_SceneLoaded, &o_SceneLoaded) ? 1 : 0;
@@ -367,12 +371,10 @@ Target selected()
     return t;
 }
 
-/// DelayedInitialScan's EntityScanner.ScanEntities (fieldnav runs it 0.5 s after a scene load,
-/// and on a map change).
+/// Event-bound, asynchronous scan after native field readiness.
 void request_rescan()
 {
-    scanner::scan_entities();
-    LOGF("[EntityScanner] Delayed scan complete");
+    scanner::schedule_scan();
 }
 
 } // namespace field
