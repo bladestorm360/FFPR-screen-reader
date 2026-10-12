@@ -132,6 +132,20 @@ std::wstring describe_path(const std::vector<Vec3>& path)
 /// and asks again, and the search re-runs from the new position.
 constexpr size_t kMaxSpokenLegs = 6;
 
+void fill_native_walk(PathInfo& info, int width, int height)
+{
+    route_progress::Phase phase;
+    for (const Vec3& point : info.world_path) {
+        const Vec3 c = cell_of(width, height, point, 0);
+        const baked_route::Cell tile{-1, static_cast<int>(c.x), static_cast<int>(c.y)};
+        phase.cells.push_back(tile);
+    }
+    info.walk_phases = {std::move(phase)};
+    info.map_width = width;
+    info.map_height = height;
+    info.full_description = describe_path(info.world_path);
+}
+
 /// FF5 DescribeRoute, for breadcrumb routes: at most six legs, then "and N more".
 std::wstring describe_chained_route(const std::vector<Vec3>& path)
 {
@@ -545,6 +559,7 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
                 info.world_path = std::move(chained);
                 info.step_count = info.world_path.empty() ? 0 : static_cast<int>(info.world_path.size()) - 1;
                 info.description = describe_chained_route(info.world_path);
+                fill_native_walk(info, width, height);
                 return true;
             }
             info.error = L"No path found";
@@ -557,6 +572,14 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
         info.step_count = n > 0 ? n - 1 : 0;
         info.description = kind == TargetKind::Interact && info.world_path.size() <= 1
             ? TF(L"face {0}", {direction_name(from, to)}) : describe_path(info.world_path);
+        fill_native_walk(info, width, height);
+        if (kind == TargetKind::Interact) {
+            info.walk_phases.back().arrival_facing = TF(L"face {0}", {direction_name(info.world_path.back(), to)});
+            const Vec3 target = cell_of(width, height, to, 0);
+            const auto& arrival = info.walk_phases.back().cells.back();
+            info.walk_phases.back().arrival_direction = baked_route::direction_towards(arrival,
+                baked_route::Cell{-1, static_cast<int>(target.x), static_cast<int>(target.y)});
+        }
         return true;
     });
 

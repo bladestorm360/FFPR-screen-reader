@@ -22,6 +22,10 @@ The user asked for labels by inference (2026-10-11), under these rules:
    what the building is. Labels must read naturally: "House", never "Four Old Men's House".
 7. An authored entry replaces the master's title when the master is wrong, not only when it is
    missing: FF1's churches are "2F" in the master.
+8. A room's principal displayed purpose takes precedence over one service point. FF2's
+   Rebel Hideout tutorial rooms contain a revival circle, but their NPCs teach game systems;
+   the user specifies "Tutorial Chamber" (2026-10-12). The circle keeps its own descriptive
+   navigation label, "Magic Circle".
 
 The dialogue scans (session scripts: each NPC's `message_key` and the messages its script
 shows, read from the `story_mes` table, with `story_cha` giving the speaker's role) covered
@@ -72,6 +76,7 @@ Melmond has no church any more ("The vampire attacked, destroying our church").
 | id | sub-map | label | evidence |
 |---|---|---|---|
 | 4 | Map_20011_10 Altair | Church | entity 教会 "Church", no NPC |
+| 7 | Map_20011_3 Altair | Rebel Hideout Tutorial Chamber | early tutorial room; ten lesson NPCs, Magic Circle and its interaction event, plus two other NPCs |
 | 19 | Map_20021_5 Gatrea | Church | entity 教会 |
 | 26 | Map_20031_5 Fynn | Pub | occupied Fynn: eight Palamecian soldiers, a man in blue; its back door leads to 27 (Scott) - the pub where the password is given |
 | 27 | Map_20031_6 Fynn | Scott's Room | NPC スコット Scott, entity "Ring's Glow", three potions: the back room where Scott dies |
@@ -92,7 +97,7 @@ Melmond has no church any more ("The vampire attacked, destroying our church").
 | 229 | Map_30111_2 Leviathan | Ricard's Room | NPC リチャード Ricard with the swallowed villagers |
 | 230 | Map_30111_3 Leviathan | Big Horn's Room | NPC ビックホーン Big Horn (the boss), two chests |
 | 325-329 | Map_20131_6..10 Altair | Rebel Hideout | MSG_MAP_NAME_11, the early rooms' title (user, 2026-10-10) |
-| 327 | Map_20131_8 Altair | Rebel Hideout Revival Chamber | event 生き返りの間 "room of revival", Magic Circle, ten elders |
+| 327 | Map_20131_8 Altair | Rebel Hideout Tutorial Chamber | later version of map 7; ten elders teach game systems; circle is a secondary service point |
 | 330 | Map_20131_11 Altair (late) | Church | entity 教会 |
 | 331 | Map_20141_5 Gatrea (late) | Church | entity 教会 |
 
@@ -104,6 +109,44 @@ above (soldiers, chests, the deck); Castle Deist 176 (entrance hall), 177, 178 (
 The snowcraft room the user mentioned is titled by the game, so nothing was needed there.
 `translation.json`: 協会 now reads "Church" in every language (copied from 教会; it read
 "Association").
+
+### Tutorial-room context correction, 2026-10-12
+
+Offline evidence: `../tools/mapdump/ff2_objects.jsonl`, `ff2_scripts.jsonl`,
+`ff2_master/map.txt`, `script.txt`, and `story_mes_en.txt`. Map IDs 7 (`Map_20011_3`)
+and 327 (`Map_20131_8`) both contain ten lesson NPCs. Scripts `sc_e_0181`, `sc_e_0183`
+through `sc_e_0191` present lessons on status, skill levels, monsters, key terms, weapons,
+armor, fleeing, magic, chests and formation (message keys `E0181_00_007_a_01` onward).
+Their dialogue confirms the room's tutorial role. The early map has two additional NPCs.
+
+Both maps render `魔法陣`, a noninteractive 48 by 48 pixel animated circle at tile (10,12),
+covering cells x=10..12, y=9..11 under the baked tile-anchor convention. Its interactive
+`生き返りの間` event is at baked cell (11,10), inside the circle (its raw dump anchor is
+(11,11); `tile_row` subtracts its 16-pixel height), and uses script 713
+(`sc_chu_20011_3`). The previous event classifier saw the script's `Msg` instructions
+and assigned the generic "Conversation" label; the animation itself is scenery and stays
+excluded. A reviewed exact-name override now describes that displayed point as "Magic
+Circle". No script contents, hidden conditions, costs or numerical effects are announced.
+
+`data/ff2/map_titles.json` authors both versions as native `MSG_MAP_NAME_11` plus the mod
+description "Tutorial Chamber". `map_names.cpp::override_title` already applies these
+entries to current and off-floor map names, so no geometry/grid rebake or routing changes
+are needed. `data/ff2/event_label_overrides.json` preserves the two circle-name overrides
+when `tools/audit_event_labels.py::build(2)` regenerates its labels/audit. Both new mod
+descriptions have all 12 locales. Existing NPC/event inclusion and dialogue timing remain.
+
+Luna (`gpt-6-luna`, low effort) handled the bounded JSON title/locale/override edits. Sol
+reviewed the diff and verified the two room IDs, all 12 locale keys, copied circle
+translations and exact override scope. Regenerating FF2 labels changed only `魔法陣` and
+`生き返りの間`; no other label changed. Sol owns investigation, generator integration,
+build/smoke checks and deployment. No outstanding delegated work remains.
+
+Canonical build checks pass: 7,016 native-name checks, zero missing/undefined names, and
+existing map/route/autowalk/input/NPC checks. The isolated DLL smoke test passes. Deployment
+initially stopped because FF2 was running; after the user closed it, `deploy.bat ff2`
+succeeded. FF2's installed DLL matches SHA-256
+`17EFABD48586375DDBEC4D182644CC0C7B5A51A6F0A10625520D64F73B1979DB`.
+No games were launched or controlled. Gameplay confirmation remains user-side.
 
 ## FF3
 

@@ -181,6 +181,7 @@ ChangeState_t o_ChangeState = nullptr;
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
     if (state == kStateChangeMap) {
+        events::fire(events::Kind::MapChanging);
         g_needs_map_scan = true;
         ::field::scanner::invalidate_map();
     }

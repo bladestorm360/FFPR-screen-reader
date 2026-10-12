@@ -3,6 +3,8 @@
 
 // Shared between the input area's own files only. Other areas use input.h.
 namespace input {
+// Called after controller routing; retains consumed gestures until release.
+void update_native_input_ownership();
 
 // SDL3 button indices (SDL3.cs constants; identical to the SDL3 header's enum values).
 constexpr int kSouth = 0, kEast = 1, kWest = 2, kNorth = 3, kBack = 4, kGuide = 5, kStart = 6,

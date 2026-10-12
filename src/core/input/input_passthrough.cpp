@@ -1,12 +1,14 @@
 // Ports FF1 Patches/InputPassthroughPatches.cs.
 //
-// Postfixes on System.Input.InputSystemManager GetKeyDown / GetKey / GetKeyUp (the
+// Prefix ownership on both native input APIs, then ordinary SDL passthrough.
+// System.Input.InputSystemManager GetKeyDown / GetKey / GetKeyUp (the
 // InputActionType overloads) and GetAnyKey:
 //  1. while the mod owns input (mod mode, mod menu, text input, confirmation dialog) the game
 //     gets no input at all, keyboard included;
 //  2. otherwise the SDL controller state is fed to the game for every button the router did
 //     not consume.
-// One RVA each in all five dump.cs (no folded bodies). InputActionType is identical in all five.
+// Result controllers bypass the manager via InputListener/KeyConfig in all six games.
+// See docs/re/RESULTS.md for caller paths and verified listener signatures.
 #include <cstdint>
 #include "input_internal.h"
 #include "../core.h"
@@ -21,6 +23,24 @@ ref::Method mGetKeyDown{kInputSystemManager, "GetKeyDown", 1};
 ref::Method mGetKey{kInputSystemManager, "GetKey", 1};
 ref::Method mGetKeyUp{kInputSystemManager, "GetKeyUp", 1};
 ref::Method mGetAnyKey{kInputSystemManager, "GetAnyKey", 0};
+ref::Class kListener{"System.Input", "InputListener"};
+ref::Method mListenerDown{kListener, "GetKeyDown", 4}, mListenerHeld{kListener, "GetKey", 3}, mListenerUp{kListener, "GetKeyUp", 3};
+ref::Method mAnyHeld{kListener, "AnyKey", 1}, mAnyDown{kListener, "AnyKeyDown", 0}, mAnyUp{kListener, "AnyKeyUp", 0};
+ref::Class kInputValue{"System.Input", "InputValue"};
+ref::Field fKeyName{kInputValue, "Name"};
+bool g_owned_buttons[kButtonCount]{};
+
+bool native_input_blocked()
+{
+    if (suppress_game_input()) return true;
+    if (!queries::is("ReviewBuffer.IsResults")) return false;
+    for (Key k : {Key::UpArrow, Key::DownArrow, Key::LeftArrow, Key::RightArrow,
+                  Key::W, Key::S, Key::A, Key::D, Key::I, Key::F7, Key::F8, Key::F5})
+        if (key_in_use(k)) return true;
+    for (int i = 0; i < kButtonCount; ++i)
+        if (g_owned_buttons[i] && (button_held(i) || button_released(i))) return true;
+    return false;
+}
 
 // InputSystemManager.InputActionType
 constexpr int32_t kActionEnter = 0;
@@ -149,41 +169,105 @@ bool postfix(bool result, F&& sdl)
 
 bool d_GetKeyDown(void* self, int32_t type, const void* mi)
 {
+    if (native_input_blocked()) return false; // before native key checks or side effects
     const bool r = o_GetKeyDown(self, type, mi);
-    if (queries::is("ReviewBuffer.IsResults") && type >= kActionUp && type <= kActionRight &&
-        (key_held(Key::UpArrow) || key_held(Key::DownArrow) || key_held(Key::LeftArrow) || key_held(Key::RightArrow) ||
-         key_held(Key::W) || key_held(Key::S) || key_held(Key::A) || key_held(Key::D))) return false;
     return hooks::guarded_r("InputPassthrough.GetKeyDown", r, [&] { return postfix(r, [&] { return sdl_key_down(type); }); });
 }
 
 bool d_GetKey(void* self, int32_t type, const void* mi)
 {
+    if (native_input_blocked()) return false;
     const bool r = o_GetKey(self, type, mi);
     return hooks::guarded_r("InputPassthrough.GetKey", r, [&] { return postfix(r, [&] { return sdl_key_held(type); }); });
 }
 
 bool d_GetKeyUp(void* self, int32_t type, const void* mi)
 {
+    if (native_input_blocked()) return false;
     const bool r = o_GetKeyUp(self, type, mi);
     return hooks::guarded_r("InputPassthrough.GetKeyUp", r, [&] { return postfix(r, [&] { return sdl_key_released(type); }); });
 }
 
+bool any_sdl(Check check)
+{
+    for (int i = 0; i < kButtonCount; ++i)
+        if (pass(i, check)) return true;
+    return false;
+}
 bool d_GetAnyKey(void* self, const void* mi)
 {
+    if (native_input_blocked()) return false;
     const bool r = o_GetAnyKey(self, mi);
-    // Reviewing results must not also dismiss the native phase via its AnyKey branch.
-    if (queries::is("ReviewBuffer.IsResults") &&
-        (key_pressed(Key::I) || key_pressed(Key::L) || key_pressed(Key::UpArrow) || key_pressed(Key::DownArrow) ||
-         key_pressed(Key::LeftArrow) || key_pressed(Key::RightArrow) || key_pressed(Key::W) || key_pressed(Key::S) ||
-         key_pressed(Key::A) || key_pressed(Key::D))) return false;
     return hooks::guarded_r("InputPassthrough.GetAnyKey", r, [&] {
-        return postfix(r, [] {
-            // Any button held that the router did not consume.
-            for (int i = 0; i < kButtonCount; ++i)
-                if (button_held(i) && !router::is_button_consumed(i)) return true;
-            return false;
-        });
+        return postfix(r, [] { return any_sdl(&button_held); });
     });
+}
+
+// InputListener reads KeyConfig directly. AnyKeyDown/Up inline GetKey checks,
+// so guard all six entry points rather than relying on the manager or one wrapper.
+using ListenerDown = bool (*)(void*, void*, int32_t, bool, bool, const void*);
+using ListenerKey = bool (*)(void*, void*, int32_t, bool, const void*);
+using ListenerAny = bool (*)(void*, int32_t, const void*);
+ListenerDown o_listener_down;
+ListenerKey o_listener_held, o_listener_up;
+ListenerAny o_any_held;
+GetAnyKey_t o_any_down, o_any_up;
+
+int listener_action(void* key)
+{
+    const auto name = ref::rd_str(key, fKeyName);
+    for (auto [label, action] : {std::pair{L"Action", kActionEnter}, {L"Cancel", kActionCancel},
+            {L"Menu", kActionMenu}, {L"Shortcut", kActionShortcut},
+            {L"Up", kActionUp}, {L"Down", kActionDown}, {L"Left", kActionLeft}, {L"Right", kActionRight},
+            {L"SwitchLeft", kActionSwitchLeft}, {L"SwitchRight", kActionSwitchRight},
+            {L"PageUp", kActionPageUp}, {L"PageDown", kActionPageDown}, {L"Start", kActionStart},
+            {L"StickL", kActionStickL}, {L"StickR", kActionStickR}})
+        if (name == label) return action;
+    return -1;
+}
+template <typename F>
+bool result_listener_passthrough(bool native, int32_t device, F&& read_sdl)
+{
+    // Preserve other native screens. Results need SDL too because this caller
+    // bypasses the manager, and Unity gamepad devices are disabled by the mod.
+    if (native || !queries::is("ReviewBuffer.IsResults") || (device != 1 && device != 3)) return native;
+    return gamepad_available() && read_sdl();
+}
+bool d_listener_down(void* self, void* key, int32_t device, bool mouse, bool ignore, const void* mi)
+{
+    if (native_input_blocked()) return false;
+    const bool r = o_listener_down(self, key, device, mouse, ignore, mi);
+    return result_listener_passthrough(r, device, [&] { return sdl_key_down(listener_action(key)); });
+}
+bool d_listener_held(void* self, void* key, int32_t device, bool ignore, const void* mi)
+{
+    if (native_input_blocked()) return false;
+    const bool r = o_listener_held(self, key, device, ignore, mi);
+    return result_listener_passthrough(r, device, [&] { return sdl_key_held(listener_action(key)); });
+}
+bool d_listener_up(void* self, void* key, int32_t device, bool ignore, const void* mi)
+{
+    if (native_input_blocked()) return false;
+    const bool r = o_listener_up(self, key, device, ignore, mi);
+    return result_listener_passthrough(r, device, [&] { return sdl_key_released(listener_action(key)); });
+}
+bool d_any_held(void* self, int32_t device, const void* mi)
+{
+    if (native_input_blocked()) return false;
+    const bool r = o_any_held(self, device, mi);
+    return result_listener_passthrough(r, device, [] { return any_sdl(&button_held); });
+}
+bool d_any_down(void* self, const void* mi)
+{
+    if (native_input_blocked()) return false;
+    const bool r = o_any_down(self, mi);
+    return result_listener_passthrough(r, 3, [] { return any_sdl(&button_pressed); });
+}
+bool d_any_up(void* self, const void* mi)
+{
+    if (native_input_blocked()) return false;
+    const bool r = o_any_up(self, mi);
+    return result_listener_passthrough(r, 3, [] { return any_sdl(&button_released); });
 }
 
 int install()
@@ -193,10 +277,22 @@ int install()
     n += hooks::attach(mGetKey, &d_GetKey, &o_GetKey) ? 1 : 0;
     n += hooks::attach(mGetKeyUp, &d_GetKeyUp, &o_GetKeyUp) ? 1 : 0;
     n += hooks::attach(mGetAnyKey, &d_GetAnyKey, &o_GetAnyKey) ? 1 : 0;
-    LOGF("[InputPassthrough] Patched InputSystemManager (%d of 4: GetKeyDown/GetKey/GetKeyUp/GetAnyKey)", n);
+    n += hooks::attach(mListenerDown, &d_listener_down, &o_listener_down) ? 1 : 0;
+    n += hooks::attach(mListenerHeld, &d_listener_held, &o_listener_held) ? 1 : 0;
+    n += hooks::attach(mListenerUp, &d_listener_up, &o_listener_up) ? 1 : 0;
+    n += hooks::attach(mAnyHeld, &d_any_held, &o_any_held) ? 1 : 0;
+    n += hooks::attach(mAnyDown, &d_any_down, &o_any_down) ? 1 : 0;
+    n += hooks::attach(mAnyUp, &d_any_up, &o_any_up) ? 1 : 0;
+    LOGF("[InputPassthrough] Patched manager/listener input ownership (%d of 10)", n);
     return n;
 }
 core::Install s_install{"InputPassthrough", &install, 60};
 
 } // namespace
+void update_native_input_ownership()
+{
+    const bool owned = suppress_game_input();
+    for (int i = 0; i < kButtonCount; ++i)
+        g_owned_buttons[i] = (owned || g_owned_buttons[i]) && (button_held(i) || button_released(i));
+}
 } // namespace input

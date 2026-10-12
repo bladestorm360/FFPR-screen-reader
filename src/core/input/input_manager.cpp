@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include "input_internal.h"
+#include "../fieldnav/autowalk.h"
 #include "../core.h"
 #include "../frame.h"
 #include "../refs.h"
@@ -108,12 +109,10 @@ bool try_execute(Key key, Mod mods, Context active)
 }
 
 // --- binding bodies that were lambdas or private methods in FF1 -----------------------------------
-/// Backslash / P: mark the entity as the navigation target, then restart the beacon or speak.
+/// Backslash / P: the shared start/stop, directions and beacon request policy.
 void announce_entity_or_restart_beacon()
 {
-    actions::run("NavigationTargetTracker.MarkEntity");
-    if (ui::prefs::audio_beacons_enabled()) actions::run("Mod.RestartEntityBeacon");
-    else actions::run("Mod.AnnounceCurrentEntity");
+    actions::run("Mod.NavigateToEntity");
 }
 
 /// R: repeat the current dialogue / message.
@@ -168,7 +167,7 @@ void initialize_bindings()
     reg_field(Key::Backslash, Mod::Ctrl, "Mod.ToggleToLayerFilter", "Toggle layer filter");
     reg_field(Key::Backslash, Mod::Shift, "Mod.TogglePathfindingFilter", "Toggle pathfinding filter");
     register_binding(Key::Backslash, Mod::None, Context::Field, &announce_entity_or_restart_beacon,
-                     "Announce current entity / restart beacon");
+                     "Navigate to current entity / stop autowalk");
 
     // --- Field: manual entity rescan (backtick) ---
     reg_field(Key::BackQuote, Mod::None, "Mod.ForceEntityRescan", "Force entity rescan");
@@ -182,7 +181,7 @@ void initialize_bindings()
     reg_field(Key::P, Mod::Ctrl, "Mod.ToggleToLayerFilter", "Toggle layer filter (alt)");
     reg_field(Key::P, Mod::Shift, "Mod.TogglePathfindingFilter", "Toggle pathfinding filter (alt)");
     register_binding(Key::P, Mod::None, Context::Field, &announce_entity_or_restart_beacon,
-                     "Announce current entity / restart beacon (alt)");
+                     "Navigate to current entity / stop autowalk (alt)");
 
     // --- Field: waypoint keys ---
     reg(Key::Comma, Mod::Shift, Context::Field, "WaypointHandler.CyclePreviousCategory", "Previous waypoint category");
@@ -286,7 +285,7 @@ Context determine_context(bool on_demand)
     if (queries::is("ShopMenuTracker.IsShopMenuActive") && queries::is("ShopMenuTracker.ValidateState")) return Context::Shop;
     // Field keys only while on a field map with no menu open; otherwise Global, so the field
     // keys are silent and the global info keys still work.
-    if (queries::is("GameStatePatches.IsFieldPlayerState") && is_on_valid_map(on_demand) && !menu_state::any_active()) return Context::Field;
+    if (queries::is("GameStatePatches.IsFieldNavigationReady") && is_on_valid_map(on_demand) && !menu_state::any_active()) return Context::Field;
     return Context::Global;
 }
 
@@ -379,6 +378,7 @@ void update()
 {
     // Gamepad and keyboard state for this frame.
     gamepad::update();
+    ffpr::fieldnav::autowalk::input_updated();
 
     // Unity legacy Input off while the mod consumes input (the mod reads the keyboard with
     // GetAsyncKeyState, unaffected). With the InputSystemManager hooks: no game keyboard at all.
@@ -387,6 +387,7 @@ void update()
     // Controller routing and IsFieldActive first, every frame.
     const Context context = determine_context(false);
     router::update(context);
+    update_native_input_ownership();
 
     // Per-frame footstep tile-crossing poll (field-active gated, silent in vehicles).
     if (actions::defined("MovementSoundPatches.PollFootsteps")) actions::run("MovementSoundPatches.PollFootsteps");

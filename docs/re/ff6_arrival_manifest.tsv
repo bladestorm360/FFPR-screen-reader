@@ -1,0 +1,13 @@
+180940580	EventTriggerEntity.OnTriggerEnterCustom
+1802F10A0	EventTriggerEntity.OnTriggerStayCustom
+180940540	EventTriggerEntity.IsTriggerEnable
+180E118B0	GotoMapEventEntity.OnTriggerStayCustom
+180E11800	GotoMapEventEntity.CanEnter
+1802F10A0	FieldEntity.Look
+180FE8170	FieldEntity.LookAt
+180FE9D80	FieldEntity.To4Direction
+180E0EDC0	FieldSpriteEntity.LookAt
+18088A8A0	FootEvent.SetupTriggerObstacles
+180889230	FootEvent.PreExcute
+180888240	FootEvent.Excute
+1808897D0	FootEvent.RequestTriggerAction

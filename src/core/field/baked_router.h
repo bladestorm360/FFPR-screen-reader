@@ -95,6 +95,8 @@ Goals goals_for(const Request& movement, const Cell& target, GoalKind kind);
 /// The direction index (0 north, 1 east, 2 south, 3 west) from `from` towards `to`, by the
 /// larger axis delta (ties: the vertical). -1 when the cells coincide.
 int direction_towards(const Cell& from, const Cell& to);
+/// Face the nearest cell of an interaction's actual footprint, including NPC counters.
+int facing_direction(const Cell& from, const Goals& goals);
 
 /// Every cell reachable from `start` under the request's rules (goals ignored): one BFS, then
 /// O(1) tests, for the pathfinding filter (one flood per scan instead of one search per entity).

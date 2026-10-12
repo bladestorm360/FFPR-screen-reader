@@ -21,6 +21,9 @@
 #include "scene_events.h"
 #include "../core.h"
 #include "../frame.h"
+#include "../fieldnav/autowalk.h"
+#include "../fieldnav/audio_loops.h"
+#include "../ui/preferences.h"
 #include "../hooks.h"
 #include "../log.h"
 #include "../modtext.h"
@@ -123,7 +126,7 @@ TargetKind target_kind_of(const Entity& e)
 }
 
 /// AnnounceCurrentEntity: the path to the selected entity.
-void announce_current_entity()
+void announce_current_entity(bool walking = false)
 {
     if (!ensure_field_context()) return;
     refresh_entities_if_needed();
@@ -136,21 +139,31 @@ void announce_current_entity()
     mark_entity();
 
     FilterContext ctx;
-    if (ctx.player_position.x == 0 && ctx.player_position.y == 0 && ctx.player_position.z == 0) {
+    if (!ctx.field_player || !unity::transform(ctx.field_player)) {
         speak(T(L"Cannot determine directions"));
         return;
     }
     const TargetKind kind = target_kind_of(*e);
     PathInfo p;
+    baked_nav::MapGoal walk_goal;
+    bool have_walk_goal = false;
     if (e->remote()) {
         // Another floor (user, 2026-10-11): the first leg, and the destination is remembered so
         // that the next leg follows the transition (baked_nav::continue_pending).
         baked_nav::MapGoal goal;
         goal.map_id = e->remote_map_id;
         goal.cell = baked_route::Cell{e->cell_layer, e->cell_x, e->cell_y};
+        walk_goal = goal;
+        have_walk_goal = true;
         baked_nav::route_to_goal(ctx.map_handle, ctx.field_player, goal, kind, e->display_name() + L" (" + e->floor_name + L")", p);
     } else {
         p = find_path_to(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player, kind);
+        baked_route::Cell walk_cell;
+        if (baked_nav::cell_at(ctx.map_handle, e->position(), walk_cell)) {
+            walk_goal.map_id = current_map_id();
+            walk_goal.cell = walk_cell;
+            have_walk_goal = true;
+        }
         // Cut off on this floor and routed through another one: remembered the same way.
         baked_route::Cell c;
         if (p.success && p.next_map_id > 0 && baked_nav::cell_at(ctx.map_handle, e->position(), c)) {
@@ -164,7 +177,26 @@ void announce_current_entity()
     }
     // No route: the reason when the router knows it ("Story gated", "Blocked by an NPC",
     // "Requires Ship"; user, 2026-10-11), else "No path".
-    speak(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")));
+    if (walking) {
+        ffpr::fieldnav::autowalk::start(p, have_walk_goal ? &walk_goal : nullptr, kind, e->display_name());
+    } else {
+        speak(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")));
+    }
+}
+
+/// Shared keyboard/controller policy; autowalk speech remains its independent setting.
+void navigate_to_entity()
+{
+    if (!ensure_field_context()) return;
+    if (ffpr::fieldnav::autowalk::stop_requested()) return;
+    mark_entity();
+    const bool walking = ui::prefs::autowalk_enabled();
+    if (ui::prefs::audio_beacons_enabled()) {
+        if (walking || ui::prefs::beacon_with_directions_enabled())
+            ffpr::fieldnav::audio_loops::restart_beacon();
+        else { actions::run("Mod.RestartEntityBeacon"); return; }
+    }
+    announce_current_entity(walking);
 }
 
 void announce_entity_only()
@@ -309,6 +341,7 @@ int install()
     actions::define("Mod.CycleNext", [] { cycle(true); });
     actions::define("Mod.CyclePrevious", [] { cycle(false); });
     actions::define("Mod.AnnounceCurrentEntity", [] { announce_current_entity(); });
+    actions::define("Mod.NavigateToEntity", [] { navigate_to_entity(); });
     actions::define("Mod.AnnounceEntityOnly", [] { announce_entity_only(); });
     actions::define("Mod.ForceEntityRescan", [] { force_entity_rescan(); });
     actions::define("Mod.CycleNextCategory", [] { category_next(); });
@@ -325,6 +358,7 @@ int install()
     // A route that goes on past a transition (user, 2026-10-11): 0.8 s after "Entering X", the
     // next leg to the remembered destination from where the player arrived.
     events::on(events::Kind::MapChanged, [] {
+        if (ffpr::fieldnav::autowalk::active()) return; // walker owns continuation and its speech setting
         frame::after_seconds(0.8, [] { hooks::guarded("BakedNav.ContinuePending", [] { baked_nav::continue_pending(); }); },
                              "BakedNav.ContinuePending");
     });

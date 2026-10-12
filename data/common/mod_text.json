@@ -14050,6 +14050,9 @@
   "Battle": {
     "en": "Battle"
   },
+  "Navigation audio": {
+    "en": "Navigation audio"
+  },
   "Status damage": {
     "en": "Status damage"
   },
@@ -14088,5 +14091,33 @@
   },
   "Wait to watch the intro cinematic, or press a button to open the title menu.": {
     "en": "Wait to watch the intro cinematic, or press a button to open the title menu."
+  },
+  "Tutorial Chamber": {
+    "en": "Tutorial Chamber",
+    "ja": "チュートリアルの間",
+    "fr": "Salle des tutoriels",
+    "it": "Sala dei tutorial",
+    "de": "Tutorialkammer",
+    "es": "Sala de tutoriales",
+    "ko": "튜토리얼 방",
+    "zht": "教學室",
+    "zhc": "教学室",
+    "ru": "Учебная комната",
+    "th": "ห้องสอนการเล่น",
+    "pt": "Câmara de tutoriais"
+  },
+  "Magic Circle": {
+    "en": "Magic Circle",
+    "ja": "魔法陣",
+    "fr": "Cercle magique",
+    "it": "Cerchio magico",
+    "de": "Zauberkreis",
+    "es": "Círculo mágico",
+    "ko": "마법진",
+    "zht": "魔法陣",
+    "zhc": "魔法阵",
+    "ru": "Магический круг",
+    "th": "วงเวทมนตร์",
+    "pt": "Círculo mágico"
   }
 }

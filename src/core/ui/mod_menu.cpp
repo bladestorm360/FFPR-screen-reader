@@ -9,16 +9,10 @@
 // defines it - the side effects of FF1's FFI_ScreenReaderMod.Toggle* methods (audio loops,
 // entity filters, stopping the EXP tick) belong there.
 //
-// Cross-game layout (docs/FEATURES.md section 12): FF1's layout everywhere, except game content
-// that does not exist; displayed hit counters are supported wherever native UI shows them,
-// and no "Battle Results" section in FF2 (FF2 has no experience points, so no EXP counter).
-//
-// FF5's additions (FF5 Core/ModMenu.cs: place and wording as there): "Landing Pings" after
-// "Beacon Navigation" and "Landing Ping Volume" after "Beacon Volume", in every game with a
-// ship-type vehicle (the landing-ping loop plays only on a ship or submarine; FF4's
-// transportation master has neither); "Enemy Letters" after "Enemy HP Display", FF5 only (for
-// FF5's own battle target reader, which src/games/ff5 has not ported yet: battle_target.cpp).
-// FF5 had one description per item, used for both states here.
+// Cross-game layout: exactly Speech, Navigation audio and Battle categories, followed by the
+// root Close Menu action. Game-specific entries remain conditional; FF2 has no EXP counter.
+// FF5's Landing Pings are available where a ship-type vehicle exists (not FF4 or FF6), and
+// Enemy Letters remains FF5-only. Displayed hit counters are supported wherever native UI shows them.
 #include <windows.h>
 #include <algorithm>
 #include <cstdint>
@@ -141,40 +135,54 @@ void initialize()
     // FF4 and FF6 have no ship-type vehicle (FF6's mod menu had no Landing Pings entry either)
     const bool landing_pings = !game::is(game::Id::FF4) && !game::is(game::Id::FF6);
 
-    // Audio Feedback section
-    v.push_back(header(L"Audio Feedback"));
+    // Speech
+    v.push_back(header(L"Speech"));
+    v.push_back(toggle(L"Auto Detail", p::kAutoDetail, p::kAutoDetailDefault,
+                       L"On. Reads displayed descriptions and current information buffers after their titles, including status and battle results.",
+                       L"Off. Use the I key to read descriptions on demand."));
+    v.push_back(toggle(L"Beacon Destination Announcement", p::kAnnounceOnBeaconRestart, p::kAnnounceOnBeaconRestartDefault,
+                       L"On. Restarting the beacon also re-speaks the current destination.",
+                       L"Off. Restarting the beacon only re-pings, without speaking."));
+    v.push_back(toggle(L"Menu Position Announcements", p::kMenuPositionAnnouncements, p::kMenuPositionAnnouncementsDefault,
+                       L"On. List entries announce their position, for example, 3 of 12.",
+                       L"Off. List entries do not announce position."));
+
+    // Navigation audio and navigation filters
+    v.push_back(header(L"Navigation audio"));
     v.push_back(toggle(L"Wall Tones", p::kWallTones, p::kWallTonesDefault,
                        L"On. Directional tones play as you approach walls.",
                        L"Off. No directional wall feedback."));
+    v.push_back(volume(L"Wall Tone Volume", p::kWallToneVolume, p::kWallToneVolumeDefault,
+                       L"Volume of directional wall proximity tones, zero to one hundred percent."));
+    v.push_back(volume(L"Wall Bump Volume", p::kWallBumpVolume, p::kWallBumpVolumeDefault,
+                       L"Volume of wall bump sound effects, zero to one hundred percent."));
     v.push_back(toggle(L"Footsteps", p::kFootsteps, p::kFootstepsDefault,
                        L"On. A click plays for each tile of player movement.",
                        L"Off. No per-tile movement sound."));
+    v.push_back(volume(L"Footstep Volume", p::kFootstepVolume, p::kFootstepVolumeDefault,
+                       L"Volume of footstep sounds, zero to one hundred percent."));
     v.push_back(toggle(L"Beacon Navigation", p::kAudioBeacons, p::kAudioBeaconsDefault,
-                       L"On. Audio beacon is the primary navigation aid; turn-by-turn pathfinding is disabled.",
+                       L"On. Audio pings follow the route. Enable Beacon with directions to hear directions as well.",
                        L"Off. Turn-by-turn pathfinding is used for navigation."));
+    v.push_back(volume(L"Beacon Volume", p::kBeaconVolume, p::kBeaconVolumeDefault,
+                       L"Volume of audio beacon pings, zero to one hundred percent."));
+    v.push_back(toggle(L"Beacon with directions", p::kBeaconWithDirections, p::kBeaconWithDirectionsDefault,
+                       L"On. Enables Beacon Navigation. A navigation request both restarts the beacon and reads directions. During autowalk, Speak autowalk path controls route speech.",
+                       L"Off. Beacon Navigation restarts the beacon without directions."));
     if (landing_pings) {
         v.push_back(toggle(L"Landing Pings", p::kLandingPings, p::kLandingPingsDefault,
                            L"While riding a vehicle, pings the directions in which you can land or get off.",
                            L"While riding a vehicle, pings the directions in which you can land or get off."));
-    }
-
-    // Volume Controls section
-    v.push_back(header(L"Volume Controls"));
-    v.push_back(volume(L"Wall Bump Volume", p::kWallBumpVolume, p::kWallBumpVolumeDefault,
-                       L"Volume of wall bump sound effects, zero to one hundred percent."));
-    v.push_back(volume(L"Footstep Volume", p::kFootstepVolume, p::kFootstepVolumeDefault,
-                       L"Volume of footstep sounds, zero to one hundred percent."));
-    v.push_back(volume(L"Wall Tone Volume", p::kWallToneVolume, p::kWallToneVolumeDefault,
-                       L"Volume of directional wall proximity tones, zero to one hundred percent."));
-    v.push_back(volume(L"Beacon Volume", p::kBeaconVolume, p::kBeaconVolumeDefault,
-                       L"Volume of audio beacon pings, zero to one hundred percent."));
-    if (landing_pings) {
         v.push_back(volume(L"Landing Ping Volume", p::kLandingPingVolume, p::kLandingPingVolumeDefault,
                            L"Volume of the landing pings."));
     }
+    v.push_back(toggle(L"Autowalk", p::kAutowalk, p::kAutowalkDefault,
+                       L"On. Backslash, P, Slash for a waypoint, or the controller left trigger walks to the destination. Press again to stop. Manual input, menus and battles stop the walk.",
+                       L"Off. Navigation requests give directions or restart the beacon."));
+    v.push_back(toggle(L"Speak autowalk path", p::kSpeakAutowalkPath, p::kSpeakAutowalkPathDefault,
+                       L"On. Reads the full current route when autowalk starts, and the next leg after a map transition.",
+                       L"Off. Autowalk starts without reading the route. Arrival and required actions are still announced."));
 
-    // Navigation Filters section
-    v.push_back(header(L"Navigation"));
     v.push_back(enumeration(L"Pathfinding Filter", {p::kPathfindingFilterModeNames[0], p::kPathfindingFilterModeNames[1], p::kPathfindingFilterModeNames[2]},
                             p::kPathfindingFilterMode, p::kPathfindingFilterModeDefault, p::kPathfindingFilterModeMax,
                             L"Current floor: entity cycling shows only what walking reaches on this floor. Current map with vehicles: also what a vehicle you have here reaches. Current map: everything, and a target cut off on this floor is routed through another floor."));
@@ -188,44 +196,28 @@ void initialize()
                        L"On. L3 and R3 pass through to the game (auto-dash and encounter toggle). Mod functions move to mod mode.",
                        L"Off. L3 toggles beacon navigation; R3 toggles pathfinding filter; game cannot see them."));
 
-    // Battle Settings section
+    // Battle
     v.push_back(header(L"Battle"));
     v.push_back(enumeration(L"Enemy HP Display", {L"Numbers", L"Percentage", L"Hidden"},
                             p::kEnemyHPDisplay, p::kEnemyHPDisplayDefault, p::kEnemyHPDisplayMax,
                             L"Optional enemy HP disclosure. Numbers reads current and maximum HP; Percentage reads remaining HP as a percentage; Hidden omits HP. These values are not displayed in native targeting panels."));
     if (game::is(game::Id::FF5)) {
-        // FFV_ScreenReaderMod.ToggleEnemyLetters: store, then "Settings.Changed.EnemyLetters" (flip)
         v.push_back(toggle(L"Enemy Letters", p::kEnemyLetters, p::kEnemyLettersDefault,
                            L"Adds a letter such as A or B to enemies that share a name, so you can tell them apart.",
                            L"Adds a letter such as A or B to enemies that share a name, so you can tell them apart."));
     }
-    { // The native hit renderer is the gate, including games whose count API is unused.
-        v.push_back(enumeration(L"Multi-hit Damage", {L"Total only", L"With hit count"},
-                                p::kMultiHitDamage, p::kMultiHitDamageDefault, p::kMultiHitDamageMax,
-                                L"Announces the number of hits when the game displays a hit counter. Total damage remains a separate number."));
-    }
+    v.push_back(enumeration(L"Multi-hit Damage", {L"Total only", L"With hit count"},
+                            p::kMultiHitDamage, p::kMultiHitDamageDefault, p::kMultiHitDamageMax,
+                            L"Announces the number of hits when the game displays a hit counter. Total damage remains a separate number."));
 
-    // Battle Results section (FF2 has no experience points)
+    // EXP counter remains conditional because FF2 has no experience points.
     if (!game::is(game::Id::FF2)) {
-        v.push_back(header(L"Battle Results"));
         v.push_back(toggle(L"EXP Counter Sound", p::kExpCounter, p::kExpCounterDefault,
                            L"On. A rapid tick plays while the EXP bar fills on the battle results screen.",
                            L"Off. The EXP bar fills silently on the battle results screen."));
         v.push_back(volume(L"EXP Counter Volume", p::kExpCounterVolume, p::kExpCounterVolumeDefault,
                            L"Volume of the EXP counter tick, zero to one hundred percent."));
     }
-
-    // Announcements section
-    v.push_back(header(L"Speech"));
-    v.push_back(toggle(L"Auto Detail", p::kAutoDetail, p::kAutoDetailDefault,
-                       L"On. Reads displayed descriptions and current information buffers after their titles, including status and battle results.",
-                       L"Off. Use the I key to read descriptions on demand."));
-    v.push_back(toggle(L"Beacon Destination Announcement", p::kAnnounceOnBeaconRestart, p::kAnnounceOnBeaconRestartDefault,
-                       L"On. Restarting the beacon also re-speaks the current destination.",
-                       L"Off. Restarting the beacon only re-pings, without speaking."));
-    v.push_back(toggle(L"Menu Position Announcements", p::kMenuPositionAnnouncements, p::kMenuPositionAnnouncementsDefault,
-                       L"On. List entries announce their position, for example, 3 of 12.",
-                       L"Off. List entries do not announce position."));
 
     // Close Menu action
     v.push_back(action(L"Close Menu", &close_menu, L"Closes the mod menu and returns to the game."));

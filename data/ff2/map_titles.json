@@ -1,6 +1,7 @@
 {
   "_comment": "Titles for maps the game's map master leaves untitled (map.txt map_title None, floor 0), by map id; resolved by src/core/field/map_names.cpp override_title. A string is a message key of the game's own text. An object is a label inferred from the map's baked contents under the user's rules of 2026-10-11 (a named NPC's house, a generic NPC's House, else the event or key item the room holds, else nothing): {\"text\": mod text key}, {\"owner\": baked NPC name} = N's House, {\"room\": baked NPC name} = N's Room, {\"item\": item message} = I Room; a list joins its parts. Evidence per entry is in docs/MAP_LABELS.md. FF2's late-game Altair rebel hideout rooms (map_20131_6 to _10) carry no title, so the mod said plain 'Altair' there (user, 2026-10-10); MSG_MAP_NAME_11 = 'Rebel Hideout', the early rooms' title.",
   "4": {"text": "Church"},
+  "7": ["MSG_MAP_NAME_11", {"text": "Tutorial Chamber"}],
   "19": {"text": "Church"},
   "26": {"text": "Pub"},
   "27": {"room": "スコット"},
@@ -22,7 +23,7 @@
   "230": {"room": "ビックホーン"},
   "325": "MSG_MAP_NAME_11",
   "326": "MSG_MAP_NAME_11",
-  "327": ["MSG_MAP_NAME_11", {"text": "Revival Chamber"}],
+  "327": ["MSG_MAP_NAME_11", {"text": "Tutorial Chamber"}],
   "328": "MSG_MAP_NAME_11",
   "329": "MSG_MAP_NAME_11",
   "330": {"text": "Church"},

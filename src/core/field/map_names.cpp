@@ -70,7 +70,7 @@ std::wstring message(const std::wstring& key) { return get_message(key); }
 ///   {"entity": E} the translated name of the baked object E that defines the room (FF3's
 ///                 "Resurrection" and "Healing Spring" points);
 ///   {"item": M}   "I Room" for the key item named by the game message M.
-/// A list joins its parts with spaces ("Rebel Hideout Revival Chamber").
+/// A list joins its parts with spaces ("Rebel Hideout Tutorial Chamber").
 std::wstring without_descriptor(std::wstring name)
 {
     for (wchar_t open : {L'(', L'（'}) {

@@ -41,7 +41,7 @@ bool is_zero(unity::Vec3 v)
 
 bool ensure_field_context()
 {
-    if (queries::is("BattleStateHelper.IsInBattle") || !queries::is("GameStatePatches.IsFieldPlayerState")) return false;
+    if (queries::is("BattleStateHelper.IsInBattle") || !queries::is("GameStatePatches.IsFieldNavigationReady")) return false;
     if (menu_state::any_active())
         return false;
 

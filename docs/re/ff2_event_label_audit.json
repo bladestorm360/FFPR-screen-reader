@@ -2435,8 +2435,8 @@
     "id": 17,
     "raw": "魔法陣",
     "type": 10,
-    "label": "Interactive object",
-    "reason": "neutral fallback; no supported inference"
+    "label": "Magic Circle",
+    "reason": "reviewed exact-name override"
   },
   {
     "submap": "Map_20011_3",
@@ -2444,8 +2444,8 @@
     "id": 19,
     "raw": "生き返りの間",
     "type": 2,
-    "label": "Conversation",
-    "reason": "script presents dialogue; text/participants withheld"
+    "label": "Magic Circle",
+    "reason": "reviewed exact-name override"
   },
   {
     "submap": "Map_20021_5",
@@ -3551,8 +3551,8 @@
     "id": 16,
     "raw": "魔法陣",
     "type": 10,
-    "label": "Interactive object",
-    "reason": "neutral fallback; no supported inference"
+    "label": "Magic Circle",
+    "reason": "reviewed exact-name override"
   },
   {
     "submap": "Map_20131_8",
@@ -3560,8 +3560,8 @@
     "id": 17,
     "raw": "生き返りの間",
     "type": 2,
-    "label": "Conversation",
-    "reason": "script presents dialogue; text/participants withheld"
+    "label": "Magic Circle",
+    "reason": "reviewed exact-name override"
   },
   {
     "submap": "Map_20141_5",

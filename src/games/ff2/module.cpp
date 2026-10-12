@@ -85,11 +85,8 @@ void configure(game::Flags& f)
     f.placeholder_entity = &placeholder_entity;
     f.vehicle_message_id = &vehicle_message_id;
 
-    // FF2 has no EXP. FF1's ShowPointsInit (gil + EXP + EXP tick) never runs in FF2, and FF1's
-    // ShowStatusUpInit ("X leveled up to N" with FF1's stats) would double FF2's own stat pages:
-    // battle_result.cpp announces FF2's phases instead.
-    hooks::disable("ResultMenuController.ShowPointsInit");
-    hooks::disable("ResultMenuController.ShowStatusUpInit");
+    // Unified result hooks read visible totals and FF2 native growth phases.
+
 }
 
 } // namespace

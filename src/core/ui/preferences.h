@@ -32,6 +32,9 @@ inline constexpr const char* kToLayerFilter = "ToLayerFilter";              // L
 inline constexpr const char* kWallTones = "WallTones";                      // Wall Tones
 inline constexpr const char* kFootsteps = "Footsteps";                      // Footsteps
 inline constexpr const char* kAudioBeacons = "AudioBeacons";                // Beacon Navigation
+inline constexpr const char* kAutowalk = "Autowalk";
+inline constexpr const char* kSpeakAutowalkPath = "SpeakAutowalkPath";
+inline constexpr const char* kBeaconWithDirections = "BeaconWithDirections";
 inline constexpr const char* kAutoDetail = "AutoDetail";                    // Auto Announcement Detail
 inline constexpr const char* kStickClickNormalization = "StickClickNormalization"; // Stick Click Normalization
 inline constexpr const char* kAnnounceOnBeaconRestart = "AnnounceOnBeaconRestart"; // Announce Destination on Beacon Restart
@@ -58,6 +61,9 @@ inline constexpr bool kToLayerFilterDefault = false;
 inline constexpr bool kWallTonesDefault = false;
 inline constexpr bool kFootstepsDefault = false;
 inline constexpr bool kAudioBeaconsDefault = false;
+inline constexpr bool kAutowalkDefault = false;
+inline constexpr bool kSpeakAutowalkPathDefault = false;
+inline constexpr bool kBeaconWithDirectionsDefault = false;
 inline constexpr bool kAutoDetailDefault = false;
 inline constexpr bool kStickClickNormalizationDefault = false;
 inline constexpr bool kAnnounceOnBeaconRestartDefault = false;
@@ -99,6 +105,9 @@ inline bool to_layer_filter_enabled() { return settings::get_bool(kToLayerFilter
 inline bool wall_tones_enabled() { return settings::get_bool(kWallTones, kWallTonesDefault); }
 inline bool footsteps_enabled() { return settings::get_bool(kFootsteps, kFootstepsDefault); }
 inline bool audio_beacons_enabled() { return settings::get_bool(kAudioBeacons, kAudioBeaconsDefault); }
+inline bool autowalk_enabled() { return settings::get_bool(kAutowalk, kAutowalkDefault); }
+inline bool speak_autowalk_path_enabled() { return settings::get_bool(kSpeakAutowalkPath, kSpeakAutowalkPathDefault); }
+inline bool beacon_with_directions_enabled() { return settings::get_bool(kBeaconWithDirections, kBeaconWithDirectionsDefault); }
 inline bool auto_detail_enabled() { return settings::get_bool(kAutoDetail, kAutoDetailDefault); }
 inline bool stick_click_normalization_enabled() { return settings::get_bool(kStickClickNormalization, kStickClickNormalizationDefault); }
 inline bool announce_on_beacon_restart_enabled() { return settings::get_bool(kAnnounceOnBeaconRestart, kAnnounceOnBeaconRestartDefault); }

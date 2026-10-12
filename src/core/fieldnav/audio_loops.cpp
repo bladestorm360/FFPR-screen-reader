@@ -32,6 +32,7 @@
 #include "../audio/sound.h"
 #include "../audio/sound_constants.h"
 #include "../core.h"
+#include "../ui/preferences.h"
 #include "../frame.h"
 #include "../hooks.h"
 #include "../log.h"
@@ -578,6 +579,14 @@ int install()
     actions::define("Settings.Changed.AudioBeacons", [] {
         if (settings::get_bool("AudioBeacons", false)) start_beacon_loop();
         else stop_beacon_loop();
+    });
+    actions::define("Settings.Changed.BeaconWithDirections", [] {
+        if (ui::prefs::beacon_with_directions_enabled()) {
+            // Enabling the combined option must actually enable both aids. The existing
+            // beacon switch can still be turned off explicitly afterwards.
+            ui::prefs::save_audio_beacons(true);
+            ui::prefs::notify_changed(ui::prefs::kAudioBeacons);
+        }
     });
     // FF5 AudioLoopManager.ToggleLandingPings (the mod menu, FF5's Shift+;)
     actions::define("Settings.Changed.LandingPings", [] {

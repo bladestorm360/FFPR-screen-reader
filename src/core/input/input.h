@@ -34,6 +34,8 @@ enum class Key : uint8_t {
 bool key_pressed(Key k);
 /// GamepadManager.IsKeyCodeHeld.
 bool key_held(Key k);
+/// Down/held/release ownership, including the physical state before the frame poll.
+bool key_in_use(Key k);
 /// GamepadManager.AnyKeyboardKeyDown: any tracked key went down this frame.
 bool any_key_pressed();
 /// InputHelper.IsShiftHeld / IsCtrlHeld (either side).
@@ -45,7 +47,7 @@ int vk(Key k);
 const char* key_name(Key k);
 
 /// WindowsFocusHelper.IsGameWindowFocused: the game's main window is the foreground window.
-/// Fails open (true) when the window cannot be resolved.
+/// Unresolved windows fall back to comparing the foreground process ID.
 bool game_window_focused();
 
 // --- gamepad (SDL3) ------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 // game::kFF5, so nothing in this file needs to list them:
 //   job_ability.cpp (jobs, abilities, FF5 magic, the details key), status_details.cpp,
 //   naming.cpp, timers.cpp, ff5_mod.cpp (9, Shift+;, LandingPings / EnemyLetters),
-//   battle_target.cpp ("All allies" / "All enemies"), battle_results.cpp (the L results log),
+//   battle_target.cpp ("All allies" / "All enemies"), battle_results.cpp (historical placeholder; shared native results now owns phases),
 //   ff5_common.cpp (MenuFocusAnnouncer, CharacterStatusHelper).
 // No core hook is switched off for FF5: every FF5 screen that replaces a core reader does so by
 // re-defining the core's actions/queries (status navigation) or by hooking FF5-only classes.

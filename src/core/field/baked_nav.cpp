@@ -134,20 +134,15 @@ baked_route::Goals goals_for(const baked::Submap& sm, const Cell& target, Target
 /// Direction to the interaction from the route's arrival cell.
 std::wstring facing_text(const std::vector<Cell>& cells, const baked_route::Goals& goals)
 {
-    if (!goals.face || cells.empty() || goals.faced.empty()) return L"";
-    const Cell& last = cells.back();
-    const Cell* nearest = nullptr;
-    int best = 1 << 30;
-    for (const Cell& c : goals.faced) {
-        const int d = std::abs(c.x - last.x) + std::abs(c.y - last.y);
-        if (d < best) {
-            best = d;
-            nearest = &c;
-        }
-    }
-    const int dir = baked_route::direction_towards(last, *nearest);
+    const int dir = cells.empty() ? -1 : baked_route::facing_direction(cells.back(), goals);
     if (dir < 0) return L"";
     return TF(L"face {0}", {T(direction_key(dir))});
+}
+
+void annotate_facing(Phase& phase, const baked_route::Goals& goals)
+{
+    phase.arrival_direction = phase.cells.empty() ? -1 : baked_route::facing_direction(phase.cells.back(), goals);
+    phase.arrival_facing = facing_text(phase.cells, goals);
 }
 
 /// Live obstacles for an explicit route, by what they are (user, 2026-10-11: say why a route
@@ -539,7 +534,7 @@ std::vector<Cell> goal_cells(void* map_handle, Vec3 target)
     return goals_for(*sm, cell_of(*sm, target, 1), TargetKind::Infer).cells;
 }
 
-std::wstring describe(const std::vector<Phase>& phases)
+std::wstring describe(const std::vector<Phase>& phases, bool full)
 {
     std::vector<std::wstring> parts;
     size_t total_legs = 0;
@@ -550,7 +545,7 @@ std::wstring describe(const std::vector<Phase>& phases)
     }
     // A route the game's searcher could have given is spoken whole (FF1); a longer one is
     // capped as FF5 capped its chained routes: the player walks what was heard and asks again.
-    const size_t cap = total_steps > kOldWindowSteps ? kMaxSpokenLegs : total_legs;
+    const size_t cap = !full && total_steps > kOldWindowSteps ? kMaxSpokenLegs : total_legs;
     size_t spoken = 0;
     for (size_t pi = 0; pi < phases.size(); ++pi) {
         const Phase& p = phases[pi];
@@ -803,6 +798,7 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
             if (!route.found) return out;
             Phase p;
             p.cells = route.cells;
+            annotate_facing(p, goals_for(*here, goal.cell, TargetKind::Infer));
             phases.push_back(p);
             out.on_this_map = true;
             out.phases = phases;
@@ -818,7 +814,10 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         const State& hop = states[static_cast<size_t>(first)];
         if (!hop.via) return out;
         const baked::Object& o = *hop.via;
-        for (int y = o.ty; y < o.ty + o.th; ++y)
+        const bool examine_warp = o.type == baked::ObjType::Warp && o.d != 1;
+        const auto warp_goals = goals_for(*here, Cell{o.layer, o.tx, o.ty}, TargetKind::Interact);
+        if (examine_warp) req.goals = warp_goals.cells;
+        else for (int y = o.ty; y < o.ty + o.th; ++y)
             for (int x = o.tx; x < o.tx + o.tw; ++x)
                 req.goals.push_back(Cell{here->world ? start.layer : o.layer, x, y});
         req.blocked = live.hard(with_gates);
@@ -833,6 +832,8 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         std::wstring dest_name = map_name_of(hop.via_dest);
         if (o.type == baked::ObjType::Warp) {
             p.action_after = o.d == 1 ? T(L"step on the warp") : T(L"examine the warp");
+            p.manual_after = o.d != 1;
+            if (examine_warp) annotate_facing(p, warp_goals);
         } else {
             p.action_after = dest_name.empty() ? T(L"take the exit") : TF(L"take the exit to {0}", {dest_name});
         }
@@ -906,6 +907,11 @@ void fill_result(const baked::Submap& sm, const std::vector<Phase>& phases, Path
         out.step_count += p.cells.empty() ? 0 : static_cast<int>(p.cells.size()) - 1;
     }
     out.description = describe(phases);
+    out.full_description = describe(phases, true);
+    out.walk_phases = phases;
+    out.map_width = sm.width;
+    out.map_height = sm.height;
+    out.wraps = sm.world;
 }
 
 } // namespace
@@ -962,6 +968,7 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
             for (const Phase& p : phases)
                 if (baked_route::crosses_event(p.cells, live.triggers)) {
                     out.description = T(L"Event trigger on the route") + L", " + out.description;
+                    out.full_description = T(L"Event trigger on the route") + L", " + out.full_description;
                     return;
                 }
         };
@@ -1043,7 +1050,7 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
                  out.reason.empty() ? L"no reason known" : out.reason.c_str());
             return true;
         }
-        if (phases.back().action_after.empty()) phases.back().arrival_facing = facing_text(phases.back().cells, goals);
+        if (phases.back().action_after.empty()) annotate_facing(phases.back(), goals);
         set_active(map_id, target, map_id, phases, next_map);
         fill_result(*sm, phases, out);
         annotate_events(phases);
@@ -1119,6 +1126,30 @@ bool follow(void* map_handle, void* player, Vec3 target, TargetKind kind, Corner
         corner_of(*sm, rest, at, out);
         return true;
     });
+}
+
+bool walk_edge(void* map_handle, void* player, const Cell& from, const Cell& to, bool goal_edge)
+{
+    const baked::Submap* sm = current_submap(map_handle);
+    if (!sm) return true; // native searcher fallback; native collision still owns movement
+    const auto& g = baked::grids(*sm);
+    baked_route::Request req;
+    req.submap = sm;
+    req.start = from;
+    req.goals = {to};
+    req.passages = game::flags().has_hidden_passages;
+    world_mode(req);
+    const Blockers live = live_blockers(*sm, g, {});
+    req.directional = live.directional;
+    for (const Cell& c : live.hard())
+        if (c.x == to.x && c.y == to.y && (c.layer < 0 || c.layer == to.layer)) return false;
+    // Stairs may be open on either the incoming or outgoing layer, just like the planner.
+    const Cell incoming{from.layer, to.x, to.y};
+    const bool open = baked_route::open(req, g, to) ||
+        (from.layer != to.layer && baked_route::open(req, g, incoming));
+    // Native exit/town cells can be closed in the static grid and explicitly entered as a
+    // route goal. Keep that planner rule only for the final edge; live gates still veto it.
+    return baked_route::direction_allowed(req, from, to) && (open || goal_edge);
 }
 
 // --- other floors (user, 2026-10-11) ---------------------------------------------------------

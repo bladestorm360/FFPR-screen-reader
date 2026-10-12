@@ -1,5 +1,9 @@
 # Port status
 
+October 12 results follow-up supersedes all historical L-log references below:
+all six games use native current-phase buffers, concise displayed totals and
+Autodetail-controlled details, with prefix input ownership. [Evidence](re/RESULTS.md).
+
 Current shared audit: [AUDIT_2026_10.md](AUDIT_2026_10.md). Its renderer-backed readers,
 native results phases, map-state projection, thread fixes and controls supersede historical
 parity findings below. Implemented/offline-verified behavior still requires user gameplay testing.
@@ -491,6 +495,10 @@ Re-test steps: `TESTING.md`, FF2 items 9-11.
     (new `Entity::converted_name`), orders a group by the developers' numbers (then top-to-
     bottom, left-to-right position) so a number never moves with the player, and NPC only
     (events, exits and chests are named otherwise).
+    October 12 follow-up replaces the trailing-digit-only logic with shared live/remote
+    normalization of prefixes, suffixes, Japanese full-width/circled numbering and nested
+    script/NPC metadata. Duplicate suffixes now follow the requested Soldier1/Soldier2
+    wording. [Current all-map/language evidence](FOLLOWUP_2026_10_12.md).
 
 Re-test steps: `TESTING.md`, FF2 items 12-16.
 

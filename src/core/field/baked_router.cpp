@@ -264,6 +264,18 @@ int direction_towards(const Cell& from, const Cell& to)
     return dx > 0 ? 1 : 3;
 }
 
+int facing_direction(const Cell& from, const Goals& goals)
+{
+    if (!goals.face || goals.faced.empty()) return -1;
+    const Cell* nearest = nullptr;
+    int best = 1 << 30;
+    for (const Cell& c : goals.faced) {
+        const int distance = std::abs(c.x - from.x) + std::abs(c.y - from.y);
+        if (distance < best) { best = distance; nearest = &c; }
+    }
+    return direction_towards(from, *nearest);
+}
+
 std::vector<Leg> legs(const std::vector<Cell>& cells)
 {
     std::vector<Leg> out;

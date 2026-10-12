@@ -104,6 +104,7 @@ namespace events {
 enum class Kind : uint8_t {
     SceneLoaded,      // a Unity scene finished loading (arg: none)
     MapChanged,       // field map id changed
+    MapChanging,      // native ChangeMap entry, before old map objects are invalidated
     BattleStart,
     BattleEnd,
     MenuOpened,

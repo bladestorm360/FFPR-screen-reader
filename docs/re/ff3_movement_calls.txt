@@ -1,0 +1,697 @@
+
+FF3 InputDevice.ObserveInput RVA 395FF0
+180395FF0 mov qword ptr [rsp + 8], rcx
+180395FF5 push rbp
+180395FF6 push rbx
+180395FF7 push rsi
+180395FF8 push rdi
+180395FF9 push r12
+180395FFB push r14
+180395FFD push r15
+180395FFF sub rsp, 0x90
+180396006 lea rbp, [rsp + 0x20]
+18039600B movaps xmmword ptr [rbp + 0x60], xmm6
+18039600F movaps xmmword ptr [rbp + 0x50], xmm7
+180396013 mov r14, rcx
+180396016 cmp byte ptr [rip + 0x1c54955], 0
+18039601D jne 0x180396031
+18039601F mov ecx, dword ptr [rip + 0x142fe2b]
+180396025 call 0x18023bba0 ;
+18039602A mov byte ptr [rip + 0x1c54941], 1
+180396031 xorps xmm0, xmm0
+180396034 xor eax, eax
+180396036 movups xmmword ptr [rbp + 0x18], xmm0
+18039603A mov qword ptr [rbp + 0x28], rax
+18039603E xor edi, edi
+180396040 mov r12d, edi
+180396043 mov eax, dword ptr [rsp]
+180396046 sub rsp, 0x10
+18039604A lea r15, [rsp + 0x20]
+18039604F mov eax, dword ptr [r15]
+180396052 mov qword ptr [rbp], r15
+180396056 mov esi, 0xffffffff
+18039605B mov dword ptr [rbp + 0xc0], esi
+180396061 cmp byte ptr [r14 + 0x28], dil
+180396065 je 0x180396434
+18039606B xor edx, edx
+18039606D mov rcx, r14
+180396070 call 0x180396ed0 ; .InputDevice.get_InputAxis
+180396075 movq xmm6, rax
+18039607A mov rcx, qword ptr [rip + 0x1f15827]
+180396081 test byte ptr [rcx + 0x12f], 2
+180396088 je 0x180396097
+18039608A cmp dword ptr [rcx + 0xe0], edi
+180396090 jne 0x180396097
+180396092 call 0x1801c99c0 ;
+180396097 xor ecx, ecx
+180396099 call 0x18154d2e0 ; UnityEngine.Vector2.get_zero
+18039609E xor r8d, r8d
+1803960A1 mov rdx, rax
+1803960A4 movq rcx, xmm6
+1803960A9 call 0x18154d4b0 ; UnityEngine.Vector2.op_Inequality
+1803960AE test al, al
+1803960B0 je 0x180396218
+1803960B6 mov rdx, qword ptr [r14 + 0x40]
+1803960BA test rdx, rdx
+1803960BD je 0x18039646d
+1803960C3 mov r8, qword ptr [rip + 0x1f18e36]
+1803960CA lea rcx, [rbp + 0x30]
+1803960CE call 0x1810eb840 ;
+1803960D3 movups xmm0, xmmword ptr [rbp + 0x30]
+1803960D7 movups xmmword ptr [rbp + 0x18], xmm0
+1803960DB movsd xmm1, qword ptr [rbp + 0x40]
+1803960E0 movsd qword ptr [rbp + 0x28], xmm1
+1803960E5 nop word ptr [rax + rax]
+1803960F0 mov rdx, qword ptr [rip + 0x1f37d01]
+1803960F7 lea rcx, [rbp + 0x18]
+1803960FB call 0x180a4ee80 ;
+180396100 test al, al
+180396102 je 0x1803961af
+180396108 mov rbx, qword ptr [rbp + 0x28]
+18039610C test rbx, rbx
+18039610F je 0x18039644b
+180396115 mov r10, qword ptr [rip + 0x1f65a34]
+18039611C mov r11, qword ptr [rbx]
+18039611F movzx ecx, di
+180396122 movzx r8d, word ptr [r11 + 0x126]
+18039612A cmp di, r8w
+18039612E jae 0x180396157
+180396130 mov r9, qword ptr [r11 + 0xb0]
+180396137 nop word ptr [rax + rax]
+180396140 movzx edx, cx
+180396143 mov eax, edx
+180396145 add rax, rax
+180396148 cmp qword ptr [r9 + rax*8], r10
+18039614C je 0x180396197
+18039614E inc cx
+180396151 cmp cx, r8w
+180396155 jb 0x180396140
+180396157 mov r8d, 8
+18039615D mov rdx, r10
+180396160 mov rcx, rbx
+180396163 call 0x1801f9690 ;
+180396168 mov rdx, qword ptr [rax + 8]
+18039616C mov rcx, rbx
+18039616F call qword ptr [rax]
+180396171 test al, al
+180396173 je 0x1803960f0
+180396179 movq r9, xmm6
+18039617E mov r8, rbx
+180396181 mov rdx, qword ptr [rip + 0x1f659c8]
+180396188 mov ecx, 3
+18039618D call 0x1800dee40 ;
+180396192 jmp 0x1803960f0 ;
+180396197 add rdx, rdx
+18039619A mov eax, dword ptr [r9 + rdx*8 + 8]
+18039619F add eax, 8
+1803961A2 add rax, 0x13
+1803961A6 shl rax, 4
+1803961AA add rax, r11
+1803961AD jmp 0x180396168 ;
+1803961AF mov esi, edi
+1803961B1 mov dword ptr [rbp + 0xc0], edi
+1803961B7 mov dword ptr [r15], 0x5b
+1803961BE mov rdx, qword ptr [rip + 0x1f2c6a3]
+1803961C5 lea rcx, [rbp + 0x18]
+1803961C9 call 0x18026d8f0 ; folded body (2513 aliases)
+1803961CE jmp 0x180396208 ;
+1803961D0 mov rdx, qword ptr [rip + 0x1f2c691]
+1803961D7 lea rcx, [rbp + 0x18]
+1803961DB call 0x18026d8f0 ; folded body (2513 aliases)
+1803961E0 mov r12, qword ptr [rbp + 0xc8]
+1803961E7 test r12, r12
+1803961EA jne 0x180396451
+1803961F0 mov esi, dword ptr [rbp + 0xc0]
+1803961F6 xor edi, edi
+1803961F8 mov r14, qword ptr [rbp + 0xb0]
+1803961FF mov r15, qword ptr [rbp]
+180396203 cmp esi, -1
+180396206 je 0x180396218
+180396208 movsxd rax, esi
+18039620B cmp dword ptr [r15 + rax*4], 0x5b
+180396210 jne 0x180396218
+180396212 test esi, esi
+180396214 js 0x180396218
+180396216 dec esi
+180396218 mov rax, qword ptr [rip + 0x1f66249]
+18039621F test byte ptr [rax + 0x12f], 2
+180396226 je 0x180396240
+180396228 cmp dword ptr [rax + 0xe0], 0
+18039622F jne 0x180396240
+180396231 mov rcx, rax
+180396234 call 0x1801c99c0 ;
+180396239 mov rax, qword ptr [rip + 0x1f66228]
+180396240 mov rax, qword ptr [rax + 0xb8]
+180396247 xor r9d, r9d
+18039624A xor r8d, r8d
+18039624D mov rdx, qword ptr [rax + 8]
+180396251 mov rcx, r14
+180396254 call 0x180396480 ; .InputDevice.ObserveKeyInput
+180396259 mov rax, qword ptr [rip + 0x1f66208]
+180396260 mov rcx, qword ptr [rax + 0xb8]
+180396267 xor r9d, r9d
+18039626A lea r8d, [r9 + 1]
+18039626E mov rdx, qword ptr [rcx + 0x10]
+180396272 mov rcx, r14
+180396275 call 0x180396480 ; .InputDevice.ObserveKeyInput
+18039627A mov rax, qword ptr [rip + 0x1f661e7]
+180396281 mov rcx, qword ptr [rax + 0xb8]
+180396288 xor r9d, r9d
+18039628B lea r8d, [r9 + 2]
+18039628F mov rdx, qword ptr [rcx + 0x50]
+180396293 mov rcx, r14
+180396296 call 0x180396480 ; .InputDevice.ObserveKeyInput
+18039629B mov rax, qword ptr [rip + 0x1f661c6]
+1803962A2 mov rcx, qword ptr [rax + 0xb8]
+1803962A9 xor r9d, r9d
+1803962AC lea r8d, [r9 + 3]
+1803962B0 mov rdx, qword ptr [rcx + 0x48]
+1803962B4 mov rcx, r14
+1803962B7 call 0x180396480 ; .InputDevice.ObserveKeyInput
+1803962BC mov rax, qword ptr [rip + 0x1f661a5]
+1803962C3 mov rcx, qword ptr [rax + 0xb8]
+1803962CA xor r9d, r9d
+1803962CD lea r8d, [r9 + 4]
+1803962D1 mov rdx, qword ptr [rcx + 0x28]
+1803962D5 mov rcx, r14
+1803962D8 call 0x180396480 ; .InputDevice.ObserveKeyInput
+1803962DD mov rax, qword ptr [rip + 0x1f66184]
+1803962E4 mov rcx, qword ptr [rax + 0xb8]
+1803962EB xor r9d, r9d
+1803962EE lea r8d, [r9 + 5]
+1803962F2 mov rdx, qword ptr [rcx + 0x30]
+1803962F6 mov rcx, r14
+1803962F9 call 0x180396480 ; .InputDevice.ObserveKeyInput
+1803962FE mov rax, qword ptr [rip + 0x1f66163]
+180396305 mov rcx, qword ptr [rax + 0xb8]
+18039630C xor r9d, r9d
+18039630F lea r8d, [r9 + 6]
+180396313 mov rdx, qword ptr [rcx + 0x68]
+180396317 mov rcx, r14
+18039631A call 0x180396480 ; .InputDevice.ObserveKeyInput
+18039631F mov rdx, qword ptr [r14 + 0x40]
+180396323 test rdx, rdx
+180396326 je 0x18039646d
+18039632C mov r8, qword ptr [rip + 0x1f18bcd]
+180396333 lea rcx, [rbp + 0x30]
+180396337 call 0x1810eb840 ;
+18039633C movups xmm0, xmmword ptr [rbp + 0x30]
+180396340 movups xmmword ptr [rbp + 0x18], xmm0
+180396344 movsd xmm1, qword ptr [rbp + 0x40]
+180396349 movsd qword ptr [rbp + 0x28], xmm1
+18039634E nop
+180396350 mov rdx, qword ptr [rip + 0x1f37aa1]
+180396357 lea rcx, [rbp + 0x18]
+18039635B call 0x180a4ee80 ;
+180396360 test al, al
+180396362 je 0x18039640a
+180396368 mov rbx, qword ptr [rbp + 0x28]
+18039636C test rbx, rbx
+18039636F je 0x18039645c
+180396375 mov r10, qword ptr [rip + 0x1f657d4]
+18039637C mov r11, qword ptr [rbx]
+18039637F movzx eax, di
+180396382 movzx r8d, word ptr [r11 + 0x126]
+18039638A cmp di, r8w
+18039638E jae 0x1803963b7
+180396390 mov r9, qword ptr [r11 + 0xb0]
+180396397 nop word ptr [rax + rax]
+1803963A0 movzx edx, ax
+1803963A3 mov ecx, edx
+1803963A5 add rcx, rcx
+1803963A8 cmp qword ptr [r9 + rcx*8], r10
+1803963AC je 0x1803963f2
+1803963AE inc ax
+1803963B1 cmp ax, r8w
+1803963B5 jb 0x1803963a0
+1803963B7 mov r8d, 8
+1803963BD mov rdx, r10
+1803963C0 mov rcx, rbx
+1803963C3 call 0x1801f9690 ;
+1803963C8 mov rdx, qword ptr [rax + 8]
+1803963CC mov rcx, rbx
+1803963CF call qword ptr [rax]
+1803963D1 test al, al
+1803963D3 je 0x180396350
+1803963D9 mov r8, rbx
+1803963DC mov rdx, qword ptr [rip + 0x1f6576d]
+1803963E3 mov ecx, 7
+1803963E8 call 0x1800dd780 ;
+1803963ED jmp 0x180396350 ;
+1803963F2 add rdx, rdx
+1803963F5 mov eax, dword ptr [r9 + rdx*8 + 8]
+1803963FA add eax, 8
+1803963FD add rax, 0x13
+180396401 shl rax, 4
+180396405 add rax, r11
+180396408 jmp 0x1803963c8 ;
+18039640A movsxd rax, esi
+18039640D mov dword ptr [r15 + rax*4 + 4], 0xec
+180396416 jmp 0x18039641f ;
+180396418 mov r12, qword ptr [rbp + 0xc8]
+18039641F mov rdx, qword ptr [rip + 0x1f2c442]
+180396426 lea rcx, [rbp + 0x18]
+18039642A call 0x18026d8f0 ; folded body (2513 aliases)
+18039642F test r12, r12
+180396432 jne 0x180396462
+180396434 movaps xmm6, xmmword ptr [rbp + 0x60]
+180396438 movaps xmm7, xmmword ptr [rbp + 0x50]
+18039643C lea rsp, [rbp + 0x70]
+180396440 pop r15
+180396442 pop r14
+180396444 pop r12
+180396446 pop rdi
+180396447 pop rsi
+180396448 pop rbx
+180396449 pop rbp
+18039644A ret
+18039644B call 0x18023bd10 ;
+180396450 nop
+180396451 xor edx, edx
+180396453 mov rcx, r12
+180396456 call 0x18023bce0 ;
+18039645B nop
+18039645C call 0x18023bd10 ;
+180396461 nop
+180396462 xor edx, edx
+180396464 mov rcx, r12
+180396467 call 0x18023bce0 ;
+18039646C int3
+18039646D call 0x18023bd10 ;
+180396472 int3
+180396473 int3
+180396474 int3
+180396475 int3
+180396476 int3
+180396477 int3
+180396478 int3
+180396479 int3
+18039647A int3
+18039647B int3
+18039647C int3
+18039647D int3
+18039647E int3
+18039647F int3
+
+FF3 InputDevice.get_InputAxis RVA 396ED0
+180396ED0 push rbx
+180396ED2 sub rsp, 0x60
+180396ED6 cmp byte ptr [rip + 0x1c53a97], 0
+180396EDD movaps xmmword ptr [rsp + 0x50], xmm6
+180396EE2 movaps xmmword ptr [rsp + 0x40], xmm7
+180396EE7 jne 0x180396efb
+180396EE9 mov ecx, dword ptr [rip + 0x142f051]
+180396EEF call 0x18023bba0 ;
+180396EF4 mov byte ptr [rip + 0x1c53a79], 1
+180396EFB mov rcx, qword ptr [rip + 0x1f149a6]
+180396F02 test byte ptr [rcx + 0x12f], 2
+180396F09 je 0x180396f19
+180396F0B cmp dword ptr [rcx + 0xe0], 0
+180396F12 jne 0x180396f19
+180396F14 call 0x1801c99c0 ;
+180396F19 xor ecx, ecx
+180396F1B call 0x18154d2e0 ; UnityEngine.Vector2.get_zero
+180396F20 mov rcx, qword ptr [rip + 0x1f65019]
+180396F27 mov qword ptr [rsp + 0x80], rax
+180396F2F movss xmm7, dword ptr [rsp + 0x80]
+180396F38 movss xmm6, dword ptr [rsp + 0x84]
+180396F41 test byte ptr [rcx + 0x12f], 2
+180396F48 je 0x180396f58
+180396F4A cmp dword ptr [rcx + 0xe0], 0
+180396F51 jne 0x180396f58
+180396F53 call 0x1801c99c0 ;
+180396F58 mov rcx, qword ptr [rip + 0x1f41e41]
+180396F5F call 0x180f6c390 ;
+180396F64 mov rcx, qword ptr [rip + 0x1f654fd]
+180396F6B mov rbx, rax
+180396F6E test byte ptr [rcx + 0x12f], 2
+180396F75 je 0x180396f8c
+180396F77 cmp dword ptr [rcx + 0xe0], 0
+180396F7E jne 0x180396f8c
+180396F80 call 0x1801c99c0 ;
+180396F85 mov rcx, qword ptr [rip + 0x1f654dc]
+180396F8C mov rcx, qword ptr [rcx + 0xb8]
+180396F93 mov qword ptr [rsp + 0x70], rdi
+180396F98 movaps xmmword ptr [rsp + 0x30], xmm8
+180396F9E test rbx, rbx
+180396FA1 je 0x180397178
+180396FA7 mov rdx, qword ptr [rcx + 0x38]
+180396FAB xor edi, edi
+180396FAD xor r9d, r9d
+180396FB0 mov qword ptr [rsp + 0x20], rdi
+180396FB5 mov rcx, rbx
+180396FB8 lea r8d, [rdi + 3]
+180396FBC call 0x180a07970 ; System.Input.InputListener.GetKey
+180396FC1 movss xmm8, dword ptr [rip + 0x150dd1a]
+180396FCA test al, al
+180396FCC je 0x180396fd3
+180396FCE subss xmm7, xmm8
+180396FD3 mov rcx, qword ptr [rip + 0x1f64f66]
+180396FDA test byte ptr [rcx + 0x12f], 2
+180396FE1 je 0x180396ff0
+180396FE3 cmp dword ptr [rcx + 0xe0], edi
+180396FE9 jne 0x180396ff0
+180396FEB call 0x1801c99c0 ;
+180396FF0 mov rcx, qword ptr [rip + 0x1f41da9]
+180396FF7 call 0x180f6c390 ;
+180396FFC mov rcx, qword ptr [rip + 0x1f65465]
+180397003 mov rbx, rax
+180397006 test byte ptr [rcx + 0x12f], 2
+18039700D je 0x180397023
+18039700F cmp dword ptr [rcx + 0xe0], edi
+180397015 jne 0x180397023
+180397017 call 0x1801c99c0 ;
+18039701C mov rcx, qword ptr [rip + 0x1f65445]
+180397023 mov rcx, qword ptr [rcx + 0xb8]
+18039702A test rbx, rbx
+18039702D je 0x180397178
+180397033 mov rdx, qword ptr [rcx + 0x40]
+180397037 xor r9d, r9d
+18039703A mov rcx, rbx
+18039703D mov qword ptr [rsp + 0x20], rdi
+180397042 lea r8d, [r9 + 3]
+180397046 call 0x180a07970 ; System.Input.InputListener.GetKey
+18039704B test al, al
+18039704D je 0x180397054
+18039704F addss xmm7, xmm8
+180397054 mov rcx, qword ptr [rip + 0x1f64ee5]
+18039705B test byte ptr [rcx + 0x12f], 2
+180397062 je 0x180397071
+180397064 cmp dword ptr [rcx + 0xe0], edi
+18039706A jne 0x180397071
+18039706C call 0x1801c99c0 ;
+180397071 mov rcx, qword ptr [rip + 0x1f41d28]
+180397078 call 0x180f6c390 ;
+18039707D mov rcx, qword ptr [rip + 0x1f653e4]
+180397084 mov rbx, rax
+180397087 test byte ptr [rcx + 0x12f], 2
+18039708E je 0x1803970a4
+180397090 cmp dword ptr [rcx + 0xe0], edi
+180397096 jne 0x1803970a4
+180397098 call 0x1801c99c0 ;
+18039709D mov rcx, qword ptr [rip + 0x1f653c4]
+1803970A4 mov rcx, qword ptr [rcx + 0xb8]
+1803970AB test rbx, rbx
+1803970AE je 0x180397178
+1803970B4 mov rdx, qword ptr [rcx + 0x28]
+1803970B8 xor r9d, r9d
+1803970BB mov rcx, rbx
+1803970BE mov qword ptr [rsp + 0x20], rdi
+1803970C3 lea r8d, [r9 + 3]
+1803970C7 call 0x180a07970 ; System.Input.InputListener.GetKey
+1803970CC test al, al
+1803970CE je 0x1803970d5
+1803970D0 addss xmm6, xmm8
+1803970D5 mov rcx, qword ptr [rip + 0x1f64e64]
+1803970DC test byte ptr [rcx + 0x12f], 2
+1803970E3 je 0x1803970f2
+1803970E5 cmp dword ptr [rcx + 0xe0], edi
+1803970EB jne 0x1803970f2
+1803970ED call 0x1801c99c0 ;
+1803970F2 mov rcx, qword ptr [rip + 0x1f41ca7]
+1803970F9 call 0x180f6c390 ;
+1803970FE mov rcx, qword ptr [rip + 0x1f65363]
+180397105 mov rbx, rax
+180397108 test byte ptr [rcx + 0x12f], 2
+18039710F je 0x180397125
+180397111 cmp dword ptr [rcx + 0xe0], edi
+180397117 jne 0x180397125
+180397119 call 0x1801c99c0 ;
+18039711E mov rcx, qword ptr [rip + 0x1f65343]
+180397125 mov rcx, qword ptr [rcx + 0xb8]
+18039712C test rbx, rbx
+18039712F je 0x180397178
+180397131 mov rdx, qword ptr [rcx + 0x30]
+180397135 xor r9d, r9d
+180397138 mov rcx, rbx
+18039713B mov qword ptr [rsp + 0x20], rdi
+180397140 lea r8d, [r9 + 3]
+180397144 call 0x180a07970 ; System.Input.InputListener.GetKey
+180397149 test al, al
+18039714B je 0x180397152
+18039714D subss xmm6, xmm8
+180397152 movaps xmm8, xmmword ptr [rsp + 0x30]
+180397158 movaps xmm0, xmm7
+18039715B mov rdi, qword ptr [rsp + 0x70]
+180397160 movaps xmm7, xmmword ptr [rsp + 0x40]
+180397165 unpcklps xmm0, xmm6
+180397168 movaps xmm6, xmmword ptr [rsp + 0x50]
+18039716D movq rax, xmm0
+180397172 add rsp, 0x60
+180397176 pop rbx
+180397177 ret
+180397178 call 0x18023bd10 ;
+18039717D int3
+18039717E int3
+18039717F int3
+
+FF3 FieldEntity.get_IsMoving RVA F0FA30
+180F0FA30 push rbx
+180F0FA32 sub rsp, 0x20
+180F0FA36 movss xmm1, dword ptr [rcx + 0x70]
+180F0FA3B xorps xmm0, xmm0
+180F0FA3E comiss xmm1, xmm0
+180F0FA41 mov rbx, rcx
+180F0FA44 jbe 0x180f0fa4e
+180F0FA46 mov al, 1
+180F0FA48 add rsp, 0x20
+180F0FA4C pop rbx
+180F0FA4D ret
+180F0FA4E cmp byte ptr [rip + 0x10e3c30], 0
+180F0FA55 jne 0x180f0fa69
+180F0FA57 mov ecx, dword ptr [rip + 0x8d0a07]
+180F0FA5D call 0x18023bba0 ;
+180F0FA62 mov byte ptr [rip + 0x10e3c1c], 1
+180F0FA69 mov rax, qword ptr [rbx + 0x88]
+180F0FA70 test rax, rax
+180F0FA73 je 0x180f0fa82
+180F0FA75 cmp dword ptr [rax + 0x18], 0
+180F0FA79 setg al
+180F0FA7C add rsp, 0x20
+180F0FA80 pop rbx
+180F0FA81 ret
+180F0FA82 call 0x18023bd10 ;
+180F0FA87 int3
+180F0FA88 int3
+180F0FA89 int3
+180F0FA8A int3
+180F0FA8B int3
+180F0FA8C int3
+180F0FA8D int3
+180F0FA8E int3
+180F0FA8F int3
+
+FF3 FieldEntity.get_IsMovingDestPosition RVA F0FA20
+180F0FA20 movss xmm1, dword ptr [rcx + 0x70]
+180F0FA25 xorps xmm0, xmm0
+180F0FA28 comiss xmm1, xmm0
+180F0FA2B seta al
+180F0FA2E ret
+180F0FA2F int3
+
+FF3 FieldPlayerKeyController.OnTouchPadCallback RVA 71BE50
+18071BE50 mov qword ptr [rsp + 0x18], rbx
+18071BE55 push rbp
+18071BE56 lea rbp, [rsp - 0x57]
+18071BE5B sub rsp, 0x90
+18071BE62 cmp byte ptr [rip + 0x18d25f5], 0
+18071BE69 mov rbx, rcx
+18071BE6C movaps xmmword ptr [rsp + 0x80], xmm6
+18071BE74 movq xmm6, rdx
+18071BE79 jne 0x18071be8d
+18071BE7B mov ecx, dword ptr [rip + 0x10c63e3]
+18071BE81 call 0x18023bba0 ;
+18071BE86 mov byte ptr [rip + 0x18d25d1], 1
+18071BE8D mov rcx, qword ptr [rip + 0x1b8fa14]
+18071BE94 test byte ptr [rcx + 0x12f], 2
+18071BE9B je 0x18071beab
+18071BE9D cmp dword ptr [rcx + 0xe0], 0
+18071BEA4 jne 0x18071beab
+18071BEA6 call 0x1801c99c0 ;
+18071BEAB xor ecx, ecx
+18071BEAD call 0x18154d2e0 ; UnityEngine.Vector2.get_zero
+18071BEB2 xor r8d, r8d
+18071BEB5 mov rdx, rax
+18071BEB8 movq rcx, xmm6
+18071BEBD call 0x18154d4b0 ; UnityEngine.Vector2.op_Inequality
+18071BEC2 test al, al
+18071BEC4 je 0x18071c18e
+18071BECA mov rcx, qword ptr [rbx + 0x20]
+18071BECE mov qword ptr [rsp + 0xa0], rsi
+18071BED6 mov qword ptr [rsp + 0xa8], rdi
+18071BEDE test rcx, rcx
+18071BEE1 je 0x18071c1a7
+18071BEE7 xor edx, edx
+18071BEE9 call 0x181105ce0 ; UnityEngine.Component.get_transform
+18071BEEE test rax, rax
+18071BEF1 je 0x18071c1a7
+18071BEF7 xor r8d, r8d
+18071BEFA movaps xmmword ptr [rsp + 0x70], xmm7
+18071BEFF mov rdx, rax
+18071BF02 lea rcx, [rbp + 0x17]
+18071BF06 call 0x18154a2b0 ; UnityEngine.Transform.get_localPosition
+18071BF0B mov rcx, qword ptr [rip + 0x1b8f996]
+18071BF12 movsd xmm7, qword ptr [rax]
+18071BF16 test byte ptr [rcx + 0x12f], 2
+18071BF1D mov esi, dword ptr [rax + 8]
+18071BF20 je 0x18071bf30
+18071BF22 cmp dword ptr [rcx + 0xe0], 0
+18071BF29 jne 0x18071bf30
+18071BF2B call 0x1801c99c0 ;
+18071BF30 xor r8d, r8d
+18071BF33 lea rcx, [rbp + 0x17]
+18071BF37 movq rdx, xmm6
+18071BF3C call 0x18154d450 ; UnityEngine.Vector2.op_Implicit
+18071BF41 mov rcx, qword ptr [rip + 0x1b8fa28]
+18071BF48 movsd xmm6, qword ptr [rax]
+18071BF4C test byte ptr [rcx + 0x12f], 2
+18071BF53 mov edi, dword ptr [rax + 8]
+18071BF56 je 0x18071bf66
+18071BF58 cmp dword ptr [rcx + 0xe0], 0
+18071BF5F jne 0x18071bf66
+18071BF61 call 0x1801c99c0 ;
+18071BF66 movss xmm1, dword ptr [rip + 0x13df14e]
+18071BF6E lea r8, [rbp + 7]
+18071BF72 xor r9d, r9d
+18071BF75 movsd qword ptr [rbp + 7], xmm6
+18071BF7A lea rcx, [rbp + 0x17]
+18071BF7E mov dword ptr [rbp + 0xf], edi
+18071BF81 call 0x18154f980 ; UnityEngine.Vector3.op_Multiply
+18071BF86 xor r9d, r9d
+18071BF89 lea r8, [rbp + 7]
+18071BF8D lea rdx, [rbp + 0x17]
+18071BF91 lea rcx, [rbp + 0x27]
+18071BF95 movsd xmm0, qword ptr [rax]
+18071BF99 mov eax, dword ptr [rax + 8]
+18071BF9C movsd qword ptr [rbp + 7], xmm0
+18071BFA1 mov dword ptr [rbp + 0xf], eax
+18071BFA4 movsd qword ptr [rbp + 0x17], xmm7
+18071BFA9 mov dword ptr [rbp + 0x1f], esi
+18071BFAC call 0x18154f770 ; UnityEngine.Vector3.op_Addition
+18071BFB1 mov rcx, qword ptr [rip + 0x1b8f810]
+18071BFB8 movaps xmm7, xmmword ptr [rsp + 0x70]
+18071BFBD movsd xmm0, qword ptr [rax]
+18071BFC1 test byte ptr [rcx + 0x12f], 2
+18071BFC8 mov esi, dword ptr [rax + 8]
+18071BFCB movsd qword ptr [rbp + 7], xmm0
+18071BFD0 je 0x18071bfe0
+18071BFD2 cmp dword ptr [rcx + 0xe0], 0
+18071BFD9 jne 0x18071bfe0
+18071BFDB call 0x1801c99c0 ;
+18071BFE0 movss xmm0, dword ptr [rbp + 7]
+18071BFE5 xor edx, edx
+18071BFE7 call 0x18104ebe0 ; UnityEngine.Mathf.RoundToInt
+18071BFEC xor edx, edx
+18071BFEE movd xmm0, eax
+18071BFF2 cvtdq2ps xmm0, xmm0
+18071BFF5 movss dword ptr [rbp + 7], xmm0
+18071BFFA movss xmm0, dword ptr [rbp + 0xb]
+18071BFFF call 0x18104ebe0 ; UnityEngine.Mathf.RoundToInt
+18071C004 mov r8, qword ptr [rbx + 0x40]
+18071C008 movd xmm0, eax
+18071C00C cvtdq2ps xmm0, xmm0
+18071C00F movss dword ptr [rbp + 0xb], xmm0
+18071C014 test r8, r8
+18071C017 je 0x18071c17e
+18071C01D mov rdx, qword ptr [rip + 0x1be069c]
+18071C024 xor ecx, ecx
+18071C026 call 0x1800dd780 ;
+18071C02B movzx eax, al
+18071C02E test eax, eax
+18071C030 je 0x18071c17e
+18071C036 mov r8, qword ptr [rbx + 0x28]
+18071C03A test r8, r8
+18071C03D je 0x18071c11e
+18071C043 mov rdx, qword ptr [rip + 0x1be0996]
+18071C04A mov ecx, 0x1b
+18071C04F call 0x1800dd780 ;
+18071C054 xor ecx, ecx
+18071C056 test al, al
+18071C058 sete cl
+18071C05B test ecx, ecx
+18071C05D je 0x18071c11e
+18071C063 mov rcx, qword ptr [rip + 0x1be0476]
+18071C06A test byte ptr [rcx + 0x12f], 2
+18071C071 je 0x18071c081
+18071C073 cmp dword ptr [rcx + 0xe0], 0
+18071C07A jne 0x18071c081
+18071C07C call 0x1801c99c0 ;
+18071C081 xor ecx, ecx
+18071C083 call 0x180645130 ; Last.Management.UserDataManager.Instance
+18071C088 test rax, rax
+18071C08B je 0x18071c1a7
+18071C091 xor edx, edx
+18071C093 mov rcx, rax
+18071C096 call 0x180646af0 ; Last.Management.UserDataManager.get_Config
+18071C09B test rax, rax
+18071C09E je 0x18071c1a7
+18071C0A4 xor edx, edx
+18071C0A6 mov rcx, rax
+18071C0A9 call 0x180662ec0 ; Last.Data.User.Config.get_IsAutoDash
+18071C0AE mov rcx, qword ptr [rip + 0x1b9dfd3]
+18071C0B5 mov edi, eax
+18071C0B7 test byte ptr [rcx + 0x12f], 2
+18071C0BE je 0x18071c0ce
+18071C0C0 cmp dword ptr [rcx + 0xe0], 0
+18071C0C7 jne 0x18071c0ce
+18071C0C9 call 0x1801c99c0 ;
+18071C0CE xor edx, edx
+18071C0D0 mov ecx, edi
+18071C0D2 call 0x180dd4400 ; System.Convert.ToBoolean / System.Convert.ToBoolean / System.ParameterizedStrings.AsBool / Cysharp.Threading.Tasks.UniTaskStatusExtensions.IsCompleted
+18071C0D7 movzx edx, byte ptr [rbx + 0x58]
+18071C0DB mov rcx, qword ptr [rbx + 0x20]
+18071C0DF test al, al
+18071C0E1 jne 0x18071c0f4
+18071C0E3 test dl, dl
+18071C0E5 jne 0x18071c105
+18071C0E7 test rcx, rcx
+18071C0EA je 0x18071c1a7
+18071C0F0 xor edx, edx
+18071C0F2 jmp 0x18071c113 ;
+18071C0F4 test dl, dl
+18071C0F6 je 0x18071c105
+18071C0F8 test rcx, rcx
+18071C0FB je 0x18071c1a7
+18071C101 xor edx, edx
+18071C103 jmp 0x18071c113 ;
+18071C105 test rcx, rcx
+18071C108 je 0x18071c1a7
+18071C10E mov edx, 1
+18071C113 xor r9d, r9d
+18071C116 xor r8d, r8d
+18071C119 call 0x180f17590 ; Last.Entity.Field.FieldPlayer.ChangeMoveState
+18071C11E mov rcx, qword ptr [rbx + 0x20]
+18071C122 xor eax, eax
+18071C124 mov qword ptr [rbp + 0x17], rax
+18071C128 test rcx, rcx
+18071C12B je 0x18071c1a7
+18071C12D movsd xmm0, qword ptr [rbp + 0x17]
+18071C132 lea rdx, [rbp + 7]
+18071C136 mov r10, qword ptr [rcx]
+18071C139 xor r9d, r9d
+18071C13C movsd qword ptr [rbp + 0x17], xmm0
+18071C141 xor r8d, r8d
+18071C144 movsd xmm0, qword ptr [rbp + 7]
+18071C149 mov dword ptr [rbp + 0x1f], eax
+18071C14C mov rax, qword ptr [r10 + 0x388]
+18071C153 mov qword ptr [rsp + 0x38], rax
+18071C158 lea rax, [rbp + 0x17]
+18071C15C movsd qword ptr [rbp + 7], xmm0
+18071C161 xorps xmm0, xmm0
+18071C164 movss dword ptr [rsp + 0x30], xmm0
+18071C16A mov qword ptr [rsp + 0x28], rax
+18071C16F mov byte ptr [rsp + 0x20], 0
+18071C174 mov dword ptr [rbp + 0xf], esi
+18071C177 call qword ptr [r10 + 0x380]
+18071C17E mov rsi, qword ptr [rsp + 0xa0]
+18071C186 mov rdi, qword ptr [rsp + 0xa8]
+18071C18E mov rbx, qword ptr [rsp + 0xb0]
+18071C196 movaps xmm6, xmmword ptr [rsp + 0x80]
+18071C19E add rsp, 0x90
+18071C1A5 pop rbp
+18071C1A6 ret
+18071C1A7 call 0x18023bd10 ;
+18071C1AC int3
+18071C1AD int3
+18071C1AE int3
+18071C1AF int3

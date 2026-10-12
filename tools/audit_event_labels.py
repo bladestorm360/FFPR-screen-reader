@@ -29,7 +29,7 @@ NOUNS = {
 }
 SAFE = set(NOUNS) | {'Party chat', 'Conversation', 'Scene trigger',
                     'Event trigger', 'Interactive object', 'Layer transition',
-                    'Warp tile', 'Vehicle interaction', 'Switch trigger'}
+                    'Warp tile', 'Vehicle interaction', 'Switch trigger', 'Magic Circle'}
 
 
 def load(path):

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "../unity.h"
+#include "route_progress.h"
 
 // The field-navigation contract between the entity area (src/core/field: EntityScanner,
 // FieldNavigationHelper, EntityNavigationManager, MapNameResolver) and its users (waypoints,
@@ -22,6 +23,10 @@ struct PathInfo {
     int step_count = 0;
     std::wstring description;
     std::vector<unity::Vec3> world_path;
+    std::vector<route_progress::Phase> walk_phases; // exact cells, layers and manual action boundaries
+    std::wstring full_description;
+    int map_width = 0, map_height = 0;
+    bool wraps = false;
     int next_map_id = 0;          // the route continues on this map after its last leg ("take
                                   // the exit to ..."): the target is cut off on this floor or
                                   // lies on another one (baked_nav); 0 = the route ends at the target
@@ -51,6 +56,9 @@ void* player();
 /// The field's map accessor (IMapAccessor used by FieldNavigationHelper), or null.
 void* map_handle();
 unity::Vec3 player_position();
+/// Turn the idle native player in place (0 north, 1 east, 2 south, 3 west), without movement
+/// or interaction. True only when native direction state confirms the requested heading.
+bool face_player(void* player, int direction);
 /// FFI_ScreenReaderMod.GetCurrentMapId: the current map id, or -1.
 int current_map_id();
 /// World positions of the current map's exits (for wall tones near exits).

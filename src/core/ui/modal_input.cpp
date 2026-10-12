@@ -8,6 +8,7 @@
 #include "log.h"
 #include "mod_ui.h"
 #include "modal_keys.h"
+#include "../input/input.h"
 
 namespace ui {
 namespace modal_keys {
@@ -25,6 +26,7 @@ constexpr int kOtherKeys[] = {
 bool g_cur[256];
 bool g_prev[256];
 uint64_t g_sampled_frame = UINT64_MAX;
+bool g_prime = true;
 
 bool hw_down(int vk) { return (GetAsyncKeyState(vk) & 0x8000) != 0; }
 
@@ -40,16 +42,27 @@ void for_each_key(F&& fn)
 
 void seed()
 {
-    for_each_key([](int vk) {
-        g_cur[vk] = hw_down(vk);
+    const bool focused = input::game_window_focused();
+    for_each_key([focused](int vk) {
+        g_cur[vk] = focused && hw_down(vk);
         g_prev[vk] = g_cur[vk];
     });
+    g_prime = !focused;
     g_sampled_frame = frame::count();
 }
 
 void sample()
 {
     const uint64_t f = frame::count();
+    // Every modal (including direct HandleInput actions and the late UI tick) shares this
+    // gate. Never read another application's keys; seed held keys when focus returns.
+    if (!input::game_window_focused()) {
+        for_each_key([](int vk) { g_cur[vk] = g_prev[vk] = false; });
+        g_prime = true;
+        g_sampled_frame = f;
+        return;
+    }
+    if (g_prime) { seed(); return; }
     if (f == g_sampled_frame) return;
     g_sampled_frame = f;
     for_each_key([](int vk) {

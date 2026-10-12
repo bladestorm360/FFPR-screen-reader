@@ -96,7 +96,7 @@
   "柵５": "Interactive object",
   "炎": "Interactive object",
   "王の死": "Scene trigger",
-  "生き返りの間": "Conversation",
+  "生き返りの間": "Magic Circle",
   "皇帝死亡": "Interactive object",
   "知性が上がるオーブ": "Conversation",
   "竜巻突入トリガー": "Interactive object",
@@ -120,6 +120,6 @@
   "隠し通路": "Conversation",
   "飛空艇": "Interactive object",
   "飛竜の卵": "Interactive object",
-  "魔法陣": "Interactive object",
+  "魔法陣": "Magic Circle",
   "黒い仮面": "Interactive object"
 }

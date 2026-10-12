@@ -1,0 +1,207 @@
+[
+  {
+    "namespace": "Serial.FF0.UI.KeyInput",
+    "class": "ResultCharacterListContentView",
+    "fields": [
+      "private Text nameText; // 0x18",
+      "private Text nextValueText; // 0x20",
+      "private Text expValueText; // 0x28",
+      "private Text beforLevelText; // 0x30",
+      "private Text afterLevelText; // 0x38",
+      "private Image arrowImage; // 0x40",
+      "private GameObject levelupBaseObject; // 0x48",
+      "private Text levelUpText; // 0x50",
+      "private bool <IsTextView>k__BackingField; // 0x58"
+    ],
+    "methods": [
+      "public bool get_IsTextView() { }",
+      "private void set_IsTextView(bool value) { }",
+      "public void Initialize() { }",
+      "public void SetNameText(string value) { }",
+      "public void SetNextText(string value) { }",
+      "public void SetExpText(string value) { }",
+      "public void SetNameTextColor(Color32 value) { }",
+      "public void SetNextTextColor(Color32 value) { }",
+      "public void SetExpText(Color32 value) { }",
+      "public void SetLevelUpText(string beforValue, string afterValue) { }",
+      "public void SwitchViewObject(bool isText, bool isLevelUp = False) { }",
+      "private void SetLevelUpObjectActive(bool isActive) { }",
+      "private void CommonInitialize() { }",
+      "private void UseName() { }",
+      "private void UseNext() { }",
+      "private void UseExp() { }",
+      "public void .ctor() { }"
+    ]
+  },
+  {
+    "namespace": "Serial.FF0.UI.KeyInput",
+    "class": "ResultGetPointController",
+    "fields": [
+      "private ResultGetPointView view; // 0x18"
+    ],
+    "methods": [
+      "public override void Initialize() { }",
+      "public override void SetData(BattleResultData data) { }",
+      "public void .ctor() { }"
+    ]
+  },
+  {
+    "namespace": "Serial.FF0.UI.KeyInput",
+    "class": "ResultGetPointView",
+    "fields": [
+      "private Text getGilFixText; // 0x18",
+      "private Text getGilValueText; // 0x20",
+      "private Text getExpFixText; // 0x28",
+      "private Text getExpValueText; // 0x30"
+    ],
+    "methods": [
+      "public void Initialize() { }",
+      "public void SetGilValue(string value) { }",
+      "public void SetExpValue(string value) { }",
+      "private void CommonInitialize() { }",
+      "private void UseGilText() { }",
+      "private void UsetExpText() { }",
+      "public void .ctor() { }"
+    ]
+  },
+  {
+    "namespace": "Serial.FF0.UI.KeyInput",
+    "class": "ResultPointController",
+    "fields": [
+      "private ResultPointView view; // 0x18",
+      "private KeyIconController keyIconController; // 0x20",
+      "private ResultGetPointControllerBase getPointController; // 0x28",
+      "private ResultCharacterListController characterListConteroller; // 0x30",
+      "private ResultStatusUpController statusUpController; // 0x38",
+      "private Action onComplite; // 0x40",
+      "private StateMachine<ResultPointController.State> stateMachine; // 0x48",
+      "private ResultPointController.State nextState; // 0x50",
+      "private float inputWait; // 0x54",
+      "private BattleResultData targetData; // 0x58",
+      "private List<BattleResultData.BattleResultCharacterData> statusupList; // 0x60",
+      "private int statusupIndex; // 0x68",
+      "private bool isNext; // 0x6C"
+    ],
+    "methods": [
+      "public override void Initialize() { }",
+      "public override void UpdateController() { }",
+      "public override void ShowPointList(BattleResultData data, bool isNext, Action onComplite) { }",
+      "public override void ShowBeforStatus(BattleResultData data, bool isNext, Action onComplite) { }",
+      "private void CreateState() { }",
+      "private void SetNextState(ResultPointController.State state) { }",
+      "private void NonInit() { }",
+      "private void PointsInit() { }",
+      "private void PointsUpdate() { }",
+      "private void PointsExit() { }",
+      "private void StatusUpInit() { }",
+      "private void StatusUpUpdate() { }",
+      "private void StatusUpExit() { }",
+      "public void .ctor() { }"
+    ]
+  },
+  {
+    "namespace": "Serial.FF0.UI.KeyInput",
+    "class": "ResultStatusUpView",
+    "fields": [
+      "private Text nameText; // 0x18"
+    ],
+    "methods": [
+      "public void Initialize() { }",
+      "public void SetNameText(string value) { }",
+      "private void CommonInitialize() { }",
+      "private void UseName() { }",
+      "public void .ctor() { }"
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "class": "ResultItemView",
+    "fields": [
+      "private Text titleText; // 0x18"
+    ],
+    "methods": [
+      "public void Initialize() { }",
+      "private void CommonInitialize() { }",
+      "private void UseTitle() { }",
+      "public void .ctor() { }"
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "class": "ResultMenuController",
+    "fields": [
+      "private ResultMenuView view; // 0x18",
+      "private ResultPointControllerBase pointController; // 0x20",
+      "private int postionY; // 0x28",
+      "private ResultItemController itemControlle; // 0x30",
+      "private ResultSkillController skillController; // 0x38",
+      "private StateMachine<ResultMenuController.State> stateMachine; // 0x40",
+      "private ResultMenuController.State nextState; // 0x48",
+      "private float inputWait; // 0x4C",
+      "private TimeFunction inputAction; // 0x50",
+      "private BattleResultData targetData; // 0x58",
+      "private RectTransform baseRectTransform; // 0x60"
+    ],
+    "methods": [
+      "public void Initialize() { }",
+      "public void Show(BattleResultData data, bool isReverse) { }",
+      "public void Close() { }",
+      "public void UpdateView() { }",
+      "public void UpdateController() { }",
+      "public bool IsFinish() { }",
+      "private void SetPostion(bool isReverse) { }",
+      "private void CreateState() { }",
+      "private void SetNextState(ResultMenuController.State state) { }",
+      "private bool IsToItemList() { }",
+      "private bool IsToAbilityLevelUp() { }",
+      "private bool IsToSkillLevel() { }",
+      "private bool IsToAbilityList() { }",
+      "private bool IsToStatusUp() { }",
+      "private bool IsWeaponSkillLevelUp() { }",
+      "private bool IsToJobProficiencyLevelUp() { }",
+      "private void NonInit() { }",
+      "private void ShowPointsInit() { }",
+      "private void ShowPointsUpdate() { }",
+      "private void ShowPointsExit() { }",
+      "private void ShowLevelUpAbilitysInit() { }",
+      "private void ShowLevelUpAbilityUpdate() { }",
+      "private void ShowLevelUpAbilityExit() { }",
+      "private void ShowStatusUpInit() { }",
+      "private void ShowStatusUpUpdate() { }",
+      "private void ShowStatusUpExit() { }",
+      "private void ShowGetItemsInit() { }",
+      "private void ShowGetItemsUpdate() { }",
+      "private void ShowGetItemsExit() { }",
+      "private void ShowGetAbilitysInit() { }",
+      "private void ShowGetAbilitysUpdate() { }",
+      "private void ShowGetAbilitysExit() { }",
+      "private void EndWaitInit() { }",
+      "public void .ctor() { }",
+      "private void <ShowPointsInit>b__29_0() { }",
+      "private void <ShowLevelUpAbilitysInit>b__32_0() { }",
+      "private void <ShowStatusUpInit>b__35_0() { }",
+      "private void <ShowGetItemsInit>b__38_0() { }",
+      "private void <ShowGetAbilitysInit>b__41_0() { }"
+    ]
+  },
+  {
+    "namespace": "Last.UI.KeyInput",
+    "class": "ResultSkillView",
+    "fields": [
+      "private GameObject contentsParent; // 0x18",
+      "private Animator upperArrow; // 0x20",
+      "private Animator underArrow; // 0x28",
+      "private CustomScrollView scrollView; // 0x30",
+      "private KeyIconController keyIconController; // 0x38"
+    ],
+    "methods": [
+      "public GameObject get_ContentsParent() { }",
+      "public void SetEnableSkillView(bool isEnable) { }",
+      "public Animator get_UpperArrowImage() { }",
+      "public Animator get_UnderArrowImage() { }",
+      "public CustomScrollView get_ScrollView() { }",
+      "public KeyIconController get_KeyIconController() { }",
+      "public void .ctor() { }"
+    ]
+  }
+]

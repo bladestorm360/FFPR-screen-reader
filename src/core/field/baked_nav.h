@@ -62,7 +62,9 @@ std::vector<baked_route::Cell> goal_cells(void* map_handle, unity::Vec3 target);
 
 /// Movement instructions, with interaction facing only at the arrival cell.
 using Phase = route_progress::Phase;
-std::wstring describe(const std::vector<Phase>& phases);
+std::wstring describe(const std::vector<Phase>& phases, bool full = false);
+/// Recheck a single autowalk edge against current NPCs, story gates and movement rules.
+bool walk_edge(void* map_handle, void* player, const baked_route::Cell& from, const baked_route::Cell& to, bool goal_edge);
 
 /// Forget the cached reachability flood (a scan or a map change).
 void invalidate();

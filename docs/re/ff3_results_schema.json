@@ -1,0 +1,1569 @@
+[
+  {
+    "ns": "Serial.FF3.UI.Touch",
+    "class": "StatusDetailsController",
+    "fields": [
+      "private StatusDetailsView view; // 0x70",
+      "private AbilityCharaStatusController statusController; // 0x78"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "47B3E0"
+      ],
+      [
+        "SetActive",
+        "47B500"
+      ],
+      [
+        "UpdateView",
+        "47B910"
+      ],
+      [
+        "SetParameter",
+        "47B510"
+      ],
+      [
+        "GetValueLimit",
+        "47B0F0"
+      ],
+      [
+        "GetJobExp",
+        "47AF30"
+      ],
+      [
+        "GetAttackCount",
+        "47A790"
+      ],
+      [
+        "GetAttackType",
+        "47AEA0"
+      ],
+      [
+        "GetSkillLevel",
+        "47B050"
+      ],
+      [
+        "GetPhysicalWeaponType",
+        "47AFD0"
+      ],
+      [
+        "GetAccuracyRate",
+        "47A270"
+      ],
+      [
+        "GetWeaponNum",
+        "47B100"
+      ],
+      [
+        "InitNone",
+        "26D8F0"
+      ],
+      [
+        "InitDisplay",
+        "47B120"
+      ],
+      [
+        "UpdateDisplay",
+        "26D8F0"
+      ],
+      [
+        "ExitDisplay",
+        "2BCA70"
+      ],
+      [
+        "InitializeButton",
+        "47B2F0"
+      ],
+      [
+        ".ctor",
+        "2BFDF0"
+      ],
+      [
+        "<InitDisplay>b__16_1",
+        "47B750"
+      ],
+      [
+        "<InitializeButton>b__19_0",
+        "47B770"
+      ],
+      [
+        "<InitializeButton>b__19_1",
+        "47B840"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.Touch",
+    "class": "ResultCharacterListController",
+    "fields": [
+      "private ResultCharacterListView view; // 0x18",
+      "private List<ResultCharacterListContentController> contentList; // 0x20",
+      "private List<IEnumerator> performanceList; // 0x28",
+      "private int perormanceEndCount; // 0x30"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "4780E0"
+      ],
+      [
+        "SetData",
+        "478370"
+      ],
+      [
+        "PlayPerformance",
+        "478230"
+      ],
+      [
+        "ForcedEndPerformance",
+        "477DB0"
+      ],
+      [
+        "IsEndPerformance",
+        "4781E0"
+      ],
+      [
+        ".ctor",
+        "4784A0"
+      ],
+      [
+        "<PlayPerformance>b__6_0",
+        "478490"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.Touch",
+    "class": "ResultPointController",
+    "fields": [
+      "private ResultPointView view; // 0x18",
+      "private ResultGetPointControllerBase getPointController; // 0x20",
+      "private ResultCharacterListController characterListConteroller; // 0x28",
+      "private ResultStatusUpController statusUpController; // 0x30",
+      "private Action onComplite; // 0x38",
+      "private Action onClick; // 0x40",
+      "private StateMachine<ResultPointController.State> stateMachine; // 0x48",
+      "private ResultPointController.State nextState; // 0x50",
+      "private float inputWait; // 0x54",
+      "private BattleResultData targetData; // 0x58",
+      "private List<BattleResultData.BattleResultCharacterData> statusupList; // 0x60",
+      "private int statusupIndex; // 0x68"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "4792A0"
+      ],
+      [
+        "UpdateController",
+        "479BC0"
+      ],
+      [
+        "ShowPointList",
+        "479700"
+      ],
+      [
+        "ShowBeforStatus",
+        "4796B0"
+      ],
+      [
+        "OnClick",
+        "479380"
+      ],
+      [
+        "CreateState",
+        "479090"
+      ],
+      [
+        "SetNextState",
+        "394CF0"
+      ],
+      [
+        "NonInit",
+        "479340"
+      ],
+      [
+        "PointsInit",
+        "4793A0"
+      ],
+      [
+        "PointsUpdate",
+        "479680"
+      ],
+      [
+        "PointsExit",
+        "26D8F0"
+      ],
+      [
+        "StatusUpInit",
+        "479750"
+      ],
+      [
+        "StatusUpUpdate",
+        "479680"
+      ],
+      [
+        "StatusUpExit",
+        "26D8F0"
+      ],
+      [
+        ".ctor",
+        "479CB0"
+      ],
+      [
+        "<PointsInit>b__21_0",
+        "479970"
+      ],
+      [
+        "<StatusUpInit>b__24_1",
+        "479AA0"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.Touch",
+    "class": "ResultPointView",
+    "fields": [],
+    "methods": [
+      [
+        "Initialize",
+        "26D8F0"
+      ],
+      [
+        "CommonInitialize",
+        "26D8F0"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.Touch",
+    "class": "ResultStatusUpController",
+    "fields": [
+      "private ResultStatusUpView view; // 0x18",
+      "private List<ResultStatusContentController> contentList; // 0x20"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "479D20"
+      ],
+      [
+        "SetData",
+        "479ED0"
+      ],
+      [
+        ".ctor",
+        "47A080"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.Touch",
+    "class": "ResultStatusUpView",
+    "fields": [
+      "private Text nameText; // 0x18"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "47A1A0"
+      ],
+      [
+        "SetNameText",
+        "3C5AE0"
+      ],
+      [
+        "CommonInitialize",
+        "47A0F0"
+      ],
+      [
+        "UseName",
+        "2F65C0"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.KeyInput",
+    "class": "StatusDetailsController",
+    "fields": [
+      "private StatusDetailsView view; // 0x70",
+      "private AbilityCharaStatusController statusController; // 0x78"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "6C9EB0"
+      ],
+      [
+        "SetActive",
+        "6C9EF0"
+      ],
+      [
+        "SetKeyHelp",
+        "6C9F30"
+      ],
+      [
+        "IsClose",
+        "26C0C0"
+      ],
+      [
+        "UpdateView",
+        "6CA6E0"
+      ],
+      [
+        "SetParameter",
+        "6CA180"
+      ],
+      [
+        "GetValueLimit",
+        "47B0F0"
+      ],
+      [
+        "GetJobExp",
+        "6C9CF0"
+      ],
+      [
+        "GetAttackCount",
+        "6C9690"
+      ],
+      [
+        "GetAttackType",
+        "47AEA0"
+      ],
+      [
+        "GetSkillLevel",
+        "6C9D90"
+      ],
+      [
+        "GetPhysicalWeaponType",
+        "47AFD0"
+      ],
+      [
+        "GetAccuracyRate",
+        "6C9170"
+      ],
+      [
+        "GetWeaponNum",
+        "47B100"
+      ],
+      [
+        "InitNone",
+        "26D8F0"
+      ],
+      [
+        "InitDisplay",
+        "6C9E30"
+      ],
+      [
+        "UpdateDisplay",
+        "6CA3C0"
+      ],
+      [
+        "ExitDisplay",
+        "2BCA70"
+      ],
+      [
+        ".ctor",
+        "6CA8F0"
+      ],
+      [
+        "<InitDisplay>b__18_0",
+        "47B750"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.KeyInput",
+    "class": "ResultCharacterListController",
+    "fields": [
+      "private ResultCharacterListView view; // 0x18",
+      "private List<ResultCharacterListContentController> contentList; // 0x20",
+      "private List<IEnumerator> performanceList; // 0x28",
+      "private int perormanceEndCount; // 0x30"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "6C6A20"
+      ],
+      [
+        "SetData",
+        "6C6CB0"
+      ],
+      [
+        "PlayPerformance",
+        "6C6B70"
+      ],
+      [
+        "ForcedEndPerformance",
+        "6C66F0"
+      ],
+      [
+        "IsEndPerformance",
+        "6C6B20"
+      ],
+      [
+        ".ctor",
+        "6C6DE0"
+      ],
+      [
+        "<PlayPerformance>b__6_0",
+        "478490"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.KeyInput",
+    "class": "ResultPointController",
+    "fields": [
+      "private ResultPointView view; // 0x18",
+      "private KeyIconController keyIconController; // 0x20",
+      "private ResultGetPointControllerBase getPointController; // 0x28",
+      "private ResultCharacterListController characterListConteroller; // 0x30",
+      "private ResultStatusUpController statusUpController; // 0x38",
+      "private Action onComplite; // 0x40",
+      "private StateMachine<ResultPointController.State> stateMachine; // 0x48",
+      "private ResultPointController.State nextState; // 0x50",
+      "private float inputWait; // 0x54",
+      "private BattleResultData targetData; // 0x58",
+      "private List<BattleResultData.BattleResultCharacterData> statusupList; // 0x60",
+      "private int statusupIndex; // 0x68",
+      "private bool isNext; // 0x6C"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "6C7B60"
+      ],
+      [
+        "UpdateController",
+        "6C8B00"
+      ],
+      [
+        "ShowPointList",
+        "6C81F0"
+      ],
+      [
+        "ShowBeforStatus",
+        "6C8150"
+      ],
+      [
+        "CreateState",
+        "6C7950"
+      ],
+      [
+        "SetNextState",
+        "394CF0"
+      ],
+      [
+        "NonInit",
+        "6C7C10"
+      ],
+      [
+        "PointsInit",
+        "6C7C60"
+      ],
+      [
+        "PointsUpdate",
+        "6C7F20"
+      ],
+      [
+        "PointsExit",
+        "26D8F0"
+      ],
+      [
+        "StatusUpInit",
+        "6C83C0"
+      ],
+      [
+        "StatusUpUpdate",
+        "6C8730"
+      ],
+      [
+        "StatusUpExit",
+        "26D8F0"
+      ],
+      [
+        ".ctor",
+        "6C8BB0"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.KeyInput",
+    "class": "ResultPointView",
+    "fields": [],
+    "methods": [
+      [
+        "Initialize",
+        "26D8F0"
+      ],
+      [
+        "CommonInitialize",
+        "26D8F0"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.KeyInput",
+    "class": "ResultStatusUpController",
+    "fields": [
+      "private ResultStatusUpView view; // 0x18",
+      "private List<ResultStatusContentController> contentList; // 0x20"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "6C8C20"
+      ],
+      [
+        "SetData",
+        "6C8DD0"
+      ],
+      [
+        ".ctor",
+        "6C8F80"
+      ]
+    ]
+  },
+  {
+    "ns": "Serial.FF3.UI.KeyInput",
+    "class": "ResultStatusUpView",
+    "fields": [
+      "private Text nameText; // 0x18"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "6C90A0"
+      ],
+      [
+        "SetNameText",
+        "3C5AE0"
+      ],
+      [
+        "CommonInitialize",
+        "6C8FF0"
+      ],
+      [
+        "UseName",
+        "2F65C0"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.Touch",
+    "class": "ResultItemController",
+    "fields": [
+      "private ResultItemView view; // 0x18",
+      "private List<ItemListContentController> itemContentList; // 0x20",
+      "private Action onClick; // 0x28",
+      "private Action onComplite; // 0x30",
+      "private StateMachine<ResultItemController.State> stateMachine; // 0x38",
+      "private ResultItemController.State nextState; // 0x40"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "489E50"
+      ],
+      [
+        "UpdateController",
+        "48A560"
+      ],
+      [
+        "Show",
+        "48A3F0"
+      ],
+      [
+        "OnClick",
+        "475030"
+      ],
+      [
+        "SetList",
+        "48A220"
+      ],
+      [
+        "CreateState",
+        "489CD0"
+      ],
+      [
+        "SetNextState",
+        "342640"
+      ],
+      [
+        "NonInit",
+        "26D8F0"
+      ],
+      [
+        "ShowListInit",
+        "48A380"
+      ],
+      [
+        "ShowListUpdate",
+        "26D8F0"
+      ],
+      [
+        "ShowListExit",
+        "26D8F0"
+      ],
+      [
+        ".ctor",
+        "48A610"
+      ],
+      [
+        "<ShowListInit>b__15_0",
+        "3263E0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.Touch",
+    "class": "ResultMenuController",
+    "fields": [
+      "private ResultMenuView view; // 0x18",
+      "private ResultPointControllerBase pointController; // 0x20",
+      "private ResultItemController itemController; // 0x28",
+      "private ResultSkillController skillController; // 0x30",
+      "private TouchObjectBase touchBase; // 0x38",
+      "private int postionY; // 0x40",
+      "private StateMachine<ResultMenuController.State> stateMachine; // 0x48",
+      "private ResultMenuController.State nextState; // 0x50",
+      "private Action onClick; // 0x58",
+      "private BattleResultData targetData; // 0x60",
+      "private RectTransform baseRectTransform; // 0x68",
+      "private CommonPopup commonPopup; // 0x70"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "48C130"
+      ],
+      [
+        "Show",
+        "48D940"
+      ],
+      [
+        "Close",
+        "48B840"
+      ],
+      [
+        "UpdateView",
+        "26D8F0"
+      ],
+      [
+        "UpdateController",
+        "48DEE0"
+      ],
+      [
+        "IsFinish",
+        "48C410"
+      ],
+      [
+        "CreateState",
+        "48B880"
+      ],
+      [
+        "SetNextState",
+        "394CF0"
+      ],
+      [
+        "SetPostion",
+        "48CC60"
+      ],
+      [
+        "SetTouchBase",
+        "48CCD0"
+      ],
+      [
+        "IsToItemList",
+        "48C870"
+      ],
+      [
+        "IsToAbilityList",
+        "48C670"
+      ],
+      [
+        "IsToSkillLevel",
+        "48C9D0"
+      ],
+      [
+        "IsToAbilityLevelUp",
+        "48C460"
+      ],
+      [
+        "IsToStatusUp",
+        "48C9F0"
+      ],
+      [
+        "IsWeaponSkillLevelUp",
+        "48CB00"
+      ],
+      [
+        "IsToJobProficiencyLevelUp",
+        "48C8C0"
+      ],
+      [
+        "NonInit",
+        "48CC10"
+      ],
+      [
+        "ShowPointsInit",
+        "48D1C0"
+      ],
+      [
+        "ShowPointsUpdate",
+        "48D5A0"
+      ],
+      [
+        "ShowPointsExit",
+        "26D8F0"
+      ],
+      [
+        "ShowSkillLevelsInit",
+        "48D6B0"
+      ],
+      [
+        "ShowSkillLevelsUpdate",
+        "48D830"
+      ],
+      [
+        "ShowSkillLevelsExit",
+        "26D8F0"
+      ],
+      [
+        "ShowStatusUpInit",
+        "48D850"
+      ],
+      [
+        "ShowStatusUpUpdate",
+        "48D830"
+      ],
+      [
+        "ShowStatusUpExit",
+        "26D8F0"
+      ],
+      [
+        "ShowGetItemsInit",
+        "48CED0"
+      ],
+      [
+        "ShowGetItemsUpdate",
+        "48D100"
+      ],
+      [
+        "ShowGetItemsExit",
+        "26D8F0"
+      ],
+      [
+        "EndWaitInit",
+        "26D8F0"
+      ],
+      [
+        "GameEndPopupInit",
+        "48BC80"
+      ],
+      [
+        ".ctor",
+        "48DFB0"
+      ],
+      [
+        "<Initialize>b__13_0",
+        "48DC10"
+      ],
+      [
+        "<ShowPointsInit>b__31_0",
+        "48DCB0"
+      ],
+      [
+        "<ShowPointsInit>b__31_1",
+        "48DD30"
+      ],
+      [
+        "<ShowSkillLevelsInit>b__34_0",
+        "48DCB0"
+      ],
+      [
+        "<ShowSkillLevelsInit>b__34_1",
+        "48DC30"
+      ],
+      [
+        "<ShowSkillLevelsInit>b__34_2",
+        "48DDA0"
+      ],
+      [
+        "<ShowStatusUpInit>b__37_0",
+        "48DE10"
+      ],
+      [
+        "<ShowStatusUpInit>b__37_1",
+        "48DE70"
+      ],
+      [
+        "<ShowGetItemsInit>b__40_0",
+        "48DC30"
+      ],
+      [
+        "<ShowGetItemsInit>b__40_1",
+        "48DC40"
+      ],
+      [
+        "<GameEndPopupInit>b__44_0",
+        "48DA00"
+      ],
+      [
+        "<GameEndPopupInit>b__44_1",
+        "48DAF0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.Touch",
+    "class": "ResultSkillController",
+    "fields": [
+      "private ResultSkillView view; // 0x18",
+      "private List<ResultSkillContentController> contentList; // 0x20",
+      "private List<ResultLevelUpContentController> levelUpContentList; // 0x28",
+      "private Action onComplite; // 0x30",
+      "private StateMachine<ResultSkillController.State> stateMachine; // 0x38",
+      "private ResultSkillController.State nextState; // 0x40",
+      "private float inputWait; // 0x44"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "48F2D0"
+      ],
+      [
+        "UpdateController",
+        "490230"
+      ],
+      [
+        "Close",
+        "48E850"
+      ],
+      [
+        "Show",
+        "4901E0"
+      ],
+      [
+        "ShowLevelUp",
+        "490190"
+      ],
+      [
+        "ShowJobProficiencyLevelUp",
+        "490140"
+      ],
+      [
+        "SetLearningList",
+        "48F650"
+      ],
+      [
+        "SetLevelUpList",
+        "48FD50"
+      ],
+      [
+        "SetJobProficiencyLevelUpList",
+        "48F4A0"
+      ],
+      [
+        "SetLevelUpData",
+        "48FAC0"
+      ],
+      [
+        "CreateLevelUpList",
+        "48ED40"
+      ],
+      [
+        "CreateSkillContents",
+        "48EDF0"
+      ],
+      [
+        "InitializeSkillContents",
+        "48F180"
+      ],
+      [
+        "InitializeLevelUpContents",
+        "48F030"
+      ],
+      [
+        "CreateState",
+        "48EEB0"
+      ],
+      [
+        "SetNextState",
+        "342640"
+      ],
+      [
+        "NonInit",
+        "26D8F0"
+      ],
+      [
+        "ShowListInit",
+        "26D8F0"
+      ],
+      [
+        "ShowListUpdate",
+        "26D8F0"
+      ],
+      [
+        "ShowListExit",
+        "26D8F0"
+      ],
+      [
+        "SetEnableSkillView",
+        "48F480"
+      ],
+      [
+        "CreateContents",
+        "48E870"
+      ],
+      [
+        "CreateLevelUpContents",
+        "48EB00"
+      ],
+      [
+        ".ctor",
+        "490320"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.Touch",
+    "class": "ResultStatusContentController",
+    "fields": [
+      "private ParameterType type; // 0x18",
+      "private ResultStatusContentView view; // 0x20"
+    ],
+    "methods": [
+      [
+        "get_Type",
+        "2E0C10"
+      ],
+      [
+        "Initialize",
+        "4903C0"
+      ],
+      [
+        "SetData",
+        "490430"
+      ],
+      [
+        "SetCategoryName",
+        "490410"
+      ],
+      [
+        "SwitchJobParameterOrJobMasterText",
+        "4908A0"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.Touch",
+    "class": "ResultStatusContentView",
+    "fields": [
+      "private Text categoryText; // 0x18",
+      "private Text jobLevelText; // 0x20",
+      "private Text beforValueText; // 0x28",
+      "private Text afterValueText; // 0x30",
+      "private Image arrowImage; // 0x38",
+      "private Text upperJobMasterText; // 0x40",
+      "private Text lowerJobMasterText; // 0x48"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "491020"
+      ],
+      [
+        "SetCategoryText",
+        "3C5AE0"
+      ],
+      [
+        "SetBeforValueText",
+        "3BAF10"
+      ],
+      [
+        "SetAfterValueText",
+        "2F1860"
+      ],
+      [
+        "SetCategoryTextColor",
+        "3C5AA0"
+      ],
+      [
+        "SetBeforValueColor",
+        "3BCA10"
+      ],
+      [
+        "SetAfterValueColor",
+        "491060"
+      ],
+      [
+        "SetEnableArrowImage",
+        "2FA720"
+      ],
+      [
+        "SetArrowRotation",
+        "491100"
+      ],
+      [
+        "SetArrowImageColor",
+        "4910C0"
+      ],
+      [
+        "CommonInitialize",
+        "490B40"
+      ],
+      [
+        "UseValues",
+        "491200"
+      ],
+      [
+        "UseCategory",
+        "2F65C0"
+      ],
+      [
+        "SetParameterValueActive",
+        "491190"
+      ],
+      [
+        "SetUpperJobMasterTextActive",
+        "4911E0"
+      ],
+      [
+        "SetLowerJobMasterTextActive",
+        "491170"
+      ],
+      [
+        "SetJobLevelTextActive",
+        "491150"
+      ],
+      [
+        "SetAfterValueTextActive",
+        "4910A0"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.KeyInput",
+    "class": "ResultItemController",
+    "fields": [
+      "private ResultItemView view; // 0x18",
+      "private KeyIconController keyIconController; // 0x20",
+      "private List<ItemListContentController> itemContentList; // 0x28",
+      "private Action onComplite; // 0x30",
+      "private StateMachine<ResultItemController.State> stateMachine; // 0x38",
+      "private ResultItemController.State nextState; // 0x40",
+      "private float inputWait; // 0x44"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "619210"
+      ],
+      [
+        "UpdateController",
+        "619BD0"
+      ],
+      [
+        "Show",
+        "619900"
+      ],
+      [
+        "SetList",
+        "6195F0"
+      ],
+      [
+        "CreateState",
+        "619090"
+      ],
+      [
+        "SetNextState",
+        "342640"
+      ],
+      [
+        "NonInit",
+        "26D8F0"
+      ],
+      [
+        "ShowListInit",
+        "26D8F0"
+      ],
+      [
+        "ShowListUpdate",
+        "619750"
+      ],
+      [
+        "ShowListExit",
+        "26D8F0"
+      ],
+      [
+        ".ctor",
+        "619CC0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.KeyInput",
+    "class": "ResultMenuController",
+    "fields": [
+      "private ResultMenuView view; // 0x18",
+      "private ResultPointControllerBase pointController; // 0x20",
+      "private int postionY; // 0x28",
+      "private ResultItemController itemControlle; // 0x30",
+      "private ResultSkillController skillController; // 0x38",
+      "private StateMachine<ResultMenuController.State> stateMachine; // 0x40",
+      "private ResultMenuController.State nextState; // 0x48",
+      "private float inputWait; // 0x4C",
+      "private TimeFunction inputAction; // 0x50",
+      "private BattleResultData targetData; // 0x58",
+      "private RectTransform baseRectTransform; // 0x60"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "61B350"
+      ],
+      [
+        "Show",
+        "61C7C0"
+      ],
+      [
+        "Close",
+        "61AEC0"
+      ],
+      [
+        "UpdateView",
+        "26D8F0"
+      ],
+      [
+        "UpdateController",
+        "61C960"
+      ],
+      [
+        "IsFinish",
+        "61B410"
+      ],
+      [
+        "SetPostion",
+        "61BC50"
+      ],
+      [
+        "CreateState",
+        "61AF10"
+      ],
+      [
+        "SetNextState",
+        "39E170"
+      ],
+      [
+        "IsToItemList",
+        "61B870"
+      ],
+      [
+        "IsToAbilityLevelUp",
+        "61B460"
+      ],
+      [
+        "IsToSkillLevel",
+        "61B9D0"
+      ],
+      [
+        "IsToAbilityList",
+        "61B670"
+      ],
+      [
+        "IsToStatusUp",
+        "61B9F0"
+      ],
+      [
+        "IsWeaponSkillLevelUp",
+        "61BB00"
+      ],
+      [
+        "IsToJobProficiencyLevelUp",
+        "61B8C0"
+      ],
+      [
+        "NonInit",
+        "61BC10"
+      ],
+      [
+        "ShowPointsInit",
+        "61C260"
+      ],
+      [
+        "ShowPointsUpdate",
+        "61BFA0"
+      ],
+      [
+        "ShowPointsExit",
+        "26D8F0"
+      ],
+      [
+        "ShowLevelUpAbilitysInit",
+        "61BFE0"
+      ],
+      [
+        "ShowLevelUpAbilityUpdate",
+        "61BFA0"
+      ],
+      [
+        "ShowLevelUpAbilityExit",
+        "26D8F0"
+      ],
+      [
+        "ShowStatusUpInit",
+        "61C6B0"
+      ],
+      [
+        "ShowStatusUpUpdate",
+        "61BFA0"
+      ],
+      [
+        "ShowStatusUpExit",
+        "26D8F0"
+      ],
+      [
+        "ShowGetItemsInit",
+        "61BDE0"
+      ],
+      [
+        "ShowGetItemsUpdate",
+        "61BEB0"
+      ],
+      [
+        "ShowGetItemsExit",
+        "26D8F0"
+      ],
+      [
+        "ShowGetAbilitysInit",
+        "61BCC0"
+      ],
+      [
+        "ShowGetAbilitysUpdate",
+        "61BDC0"
+      ],
+      [
+        "ShowGetAbilitysExit",
+        "26D8F0"
+      ],
+      [
+        "EndWaitInit",
+        "53E420"
+      ],
+      [
+        ".ctor",
+        "61CA50"
+      ],
+      [
+        "<ShowPointsInit>b__29_0",
+        "61C880"
+      ],
+      [
+        "<ShowLevelUpAbilitysInit>b__32_0",
+        "61C880"
+      ],
+      [
+        "<ShowStatusUpInit>b__35_0",
+        "61C900"
+      ],
+      [
+        "<ShowGetItemsInit>b__38_0",
+        "61C870"
+      ],
+      [
+        "<ShowGetAbilitysInit>b__41_0",
+        "61C870"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.KeyInput",
+    "class": "ResultSkillController",
+    "fields": [
+      "private static readonly string UpTriggerName; // 0x0",
+      "private ResultSkillView view; // 0x18",
+      "private List<ResultSkillContentController> contentList; // 0x20",
+      "private List<ResultLevelUpContentController> levelUpContentList; // 0x28",
+      "private Action onComplite; // 0x30",
+      "private StateMachine<ResultSkillController.State> stateMachine; // 0x38",
+      "private ResultSkillController.State nextState; // 0x40",
+      "private float inputWait; // 0x44",
+      "private TimeFunction inputAction; // 0x48"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "61DD80"
+      ],
+      [
+        "UpdateController",
+        "61FA80"
+      ],
+      [
+        "OnDisable",
+        "61E0E0"
+      ],
+      [
+        "Close",
+        "61D310"
+      ],
+      [
+        "Show",
+        "61F500"
+      ],
+      [
+        "ShowLevelUp",
+        "61F010"
+      ],
+      [
+        "ShowJobProficiencyLevelUp",
+        "61EF70"
+      ],
+      [
+        "SetLearningList",
+        "61E2D0"
+      ],
+      [
+        "SetLevelUpList",
+        "61E9D0"
+      ],
+      [
+        "SetJobProficiencyLevelUpList",
+        "61E120"
+      ],
+      [
+        "SetLevelUpData",
+        "61E740"
+      ],
+      [
+        "CreateLevelUpList",
+        "61D800"
+      ],
+      [
+        "CreateSkillContents",
+        "61D8A0"
+      ],
+      [
+        "InitializeSkillContents",
+        "61DC30"
+      ],
+      [
+        "InitializeLevelUpContents",
+        "61DAE0"
+      ],
+      [
+        "UpdateArrow",
+        "61F710"
+      ],
+      [
+        "CreateState",
+        "61D960"
+      ],
+      [
+        "SetNextState",
+        "342640"
+      ],
+      [
+        "NonInit",
+        "61E0E0"
+      ],
+      [
+        "ShowListInit",
+        "61F0B0"
+      ],
+      [
+        "ShowListUpdate",
+        "61F0C0"
+      ],
+      [
+        "ShowListExit",
+        "26D8F0"
+      ],
+      [
+        "SetScrollValue",
+        "61EE90"
+      ],
+      [
+        "SetEnableSkillView",
+        "61E100"
+      ],
+      [
+        "CreateContents",
+        "61D330"
+      ],
+      [
+        "CreateLevelUpContents",
+        "61D5C0"
+      ],
+      [
+        ".ctor",
+        "61FBB0"
+      ],
+      [
+        ".cctor",
+        "61FB70"
+      ],
+      [
+        "<ShowListUpdate>b__30_0",
+        "61F5A0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.KeyInput",
+    "class": "ResultStatusContentController",
+    "fields": [
+      "private ParameterType type; // 0x18",
+      "private ResultStatusContentView view; // 0x20"
+    ],
+    "methods": [
+      [
+        "get_Type",
+        "2E0C10"
+      ],
+      [
+        "Initialize",
+        "96E850"
+      ],
+      [
+        "SetData",
+        "96E8A0"
+      ],
+      [
+        "SetCategoryName",
+        "490410"
+      ],
+      [
+        "SwitchJobParameterOrJobMasterText",
+        "96ED10"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  },
+  {
+    "ns": "Last.UI.KeyInput",
+    "class": "ResultStatusContentView",
+    "fields": [
+      "private Text categoryText; // 0x18",
+      "private Text jobLevelText; // 0x20",
+      "private Text beforValueText; // 0x28",
+      "private Text afterValueText; // 0x30",
+      "private Image arrowImage; // 0x38",
+      "private Text upperJobMasterText; // 0x40",
+      "private Text lowerJobMasterText; // 0x48"
+    ],
+    "methods": [
+      [
+        "Initialize",
+        "96F490"
+      ],
+      [
+        "SetCategoryText",
+        "3C5AE0"
+      ],
+      [
+        "SetBeforValueText",
+        "3BAF10"
+      ],
+      [
+        "SetAfterValueText",
+        "2F1860"
+      ],
+      [
+        "SetCategoryTextColor",
+        "3C5AA0"
+      ],
+      [
+        "SetBeforValueColor",
+        "3BCA10"
+      ],
+      [
+        "SetAfterValueColor",
+        "491060"
+      ],
+      [
+        "SetJobMasterTextColor",
+        "577C90"
+      ],
+      [
+        "SetEnableArrowImage",
+        "2FA720"
+      ],
+      [
+        "SetArrowRotation",
+        "491100"
+      ],
+      [
+        "SetArrowImageColor",
+        "4910C0"
+      ],
+      [
+        "CommonInitialize",
+        "96EFB0"
+      ],
+      [
+        "UseValues",
+        "491200"
+      ],
+      [
+        "UseCategory",
+        "2F65C0"
+      ],
+      [
+        "SetParameterValueActive",
+        "491190"
+      ],
+      [
+        "SetUpperJobMasterTextActive",
+        "4911E0"
+      ],
+      [
+        "SetLowerJobMasterTextActive",
+        "491170"
+      ],
+      [
+        "SetJobLevelTextActive",
+        "491150"
+      ],
+      [
+        "SetAfterValueTextActive",
+        "4910A0"
+      ],
+      [
+        ".ctor",
+        "2DD5B0"
+      ]
+    ]
+  }
+]

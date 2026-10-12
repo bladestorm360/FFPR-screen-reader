@@ -5,7 +5,7 @@ A screen reader mod for FINAL FANTASY I, II, III, IV, V and VI Pixel Remaster on
 ## What it is
 
 - It speaks the games through your screen reader: dialogue, menus, battles, the field and the title screen.
-- It adds navigation aids: wall tones, footsteps, an audio beacon, a list of destinations with step by step directions, and waypoints you can name.
+- It adds navigation aids: wall tones, footsteps, an audio beacon, optional autowalk, a list of destinations with step by step directions, and waypoints you can name.
 - One set of files works in all six games. The mod finds out by itself which game it is running in.
 - It is one native file, hid.dll. MelonLoader is not needed, but it can stay installed, and so can BepInEx, if you use them for other mods.
 - It replaces the six older screen reader mods, FFI_ScreenReader.dll to FFVI_ScreenReader.dll. Your old settings and waypoints carry over.
@@ -176,8 +176,8 @@ In the confirm window:
 
 These work on the field.
 
-- Backslash or P: directions to the selected destination. When beacon navigation is on, it restarts the beacon instead.
-- Slash: directions to the selected waypoint.
+- Backslash or P: navigate to the selected destination. With Autowalk on, start walking; press again to stop. Otherwise hear directions or restart the beacon. Beacon with directions lets both work together.
+- Slash: the same navigation action for the selected waypoint.
 - Shift+G: puzzle guide. On a map with a guided puzzle, it starts the guide and reads the first step with directions; press it again for the current step from where you stand now. Each step is spoken as "Step 2 of 4" with what to do and the way there. The guide notices when you reach a step and reads the next one.
 - Ctrl+G: stop the puzzle guide.
 
@@ -189,7 +189,7 @@ These work on the field.
 
 - Semicolon: wall tones on or off.
 - Apostrophe: footsteps on or off.
-- F6: beacon navigation on or off. When it is on, a sound plays from the direction of the selected destination, and turn by turn directions are off.
+- F6: beacon navigation on or off. When it is on, pings guide you along the route. Enable Beacon with directions in the Navigation audio category to hear directions as well.
 
 ### Menus and details
 
@@ -242,7 +242,7 @@ Names follow the same rule as in the game keys: A bottom, B right, X left, Y top
 - D-pad Left and Right: previous and next waypoint category.
 - Right stick Up and Down: previous and next destination.
 - Right stick Left and Right: previous and next destination category.
-- LT (L2, ZL): directions to the last destination or waypoint you selected. With beacon navigation on, it restarts the beacon. With nothing selected the mod says "No target selected".
+- LT (L2, ZL): navigate to the last destination or waypoint you selected. With Autowalk on, start walking; press again to stop. Otherwise hear directions or restart the beacon, or both with Beacon with directions on. With nothing selected the mod says "No target selected".
 - L3 and R3: see "Stick clicks" below.
 
 #### In menus and battle
@@ -324,15 +324,15 @@ Stick Click Normalization in the mod menu decides what the stick clicks do. It i
 - Shift+T: freeze or resume the timers.
 - H also reads MP.
 - I, in the Jobs and Abilities screens: the job's, ability's or spell's description.
-- L, on the battle results screen: open the results log. It lists each character's EXP gained, EXP to the next level, and ABP to the next job level.
 
-In the results log:
-
-- Up and Down arrows: previous or next character. Controller: D-pad or left stick.
-- Left and Right arrows: move between EXP, Next and ABP. Controller: D-pad or left stick.
-- Page Up and Page Down: previous or next page. Controller: LB and RB.
-- Enter or Home: read the current line again. Controller: A.
-- Escape: close the log. Controller: B.
+Battle results in all six games use the current native screen's buffer. Up/Down
+reviews lines; Left/Right goes to the first/last line; I reads current details.
+Controller mod mode: West (X/Square) reads details; shoulders or D-pad Up/Down
+review lines; D-pad Left/Right goes first/last.
+EXP and gil totals are announced automatically. With Autodetail off, items,
+member EXP and growth tables stay available for manual review; with it on,
+the current phase's details are read after its headline. Review arrows never
+advance the screen. Use the game's ordinary confirm control to continue.
 
 ### FINAL FANTASY VI
 
@@ -346,68 +346,52 @@ In the results log:
 
 ## Mod menu
 
-Open it with F8 or Start, on the field with no menu open. The game gets no keys while it is open.
+Open it with F8 or Start, on the field with no menu open. The game gets no keys while it is open. The root menu has three categories, in this order: Speech, Navigation audio, and Battle, followed by Close Menu. Press Enter or Right to enter a category. Escape or controller B returns to the root menu, and F8 closes the menu. Menu Position Announcements controls whether entries include their position; it is off by default.
+
+Alt+Tab keeps the menu at its current setting. Keyboard input in another application has no
+effect on it; on return, release any held keys before pressing a menu control.
 
 Keyboard:
 
-- Up and Down arrows: move. Section names are skipped.
+- Up and Down arrows: move through the root categories and Close Menu, or through settings in the open category.
 - Left and Right arrows: change the value. Volumes change in steps of 5 percent.
-- Enter or Space: toggle or choose. On a volume, it mutes, or sets it back to 50 percent.
+- Enter or Space: enter a category, toggle or choose. On a volume, it mutes, or sets it back to 50 percent. Right also enters a category.
 - I: describe the highlighted setting.
-- Escape or F8: close.
+- Escape: return to the root menu or close it from the root. F8 closes it from anywhere. Controller B returns to the root; Start closes the menu.
 
-Each entry is read with its value and its position in the menu.
+Entries include their position only when Menu Position Announcements is on.
 
 The entries, by section, with their defaults:
 
-### Audio Feedback
+### Speech
 
-- Wall Tones, off: tones play as you approach walls.
-- Footsteps, off: a click for each tile you move.
-- Beacon Navigation, off: the audio beacon guides you, and turn by turn directions are off.
-- Landing Pings, off: on a ship or submarine, pings the directions in which you can land. Not in FINAL FANTASY IV or VI.
+- Auto Detail, off: descriptions and current information buffers are read after their titles when they are displayed. Press I to read details on demand in either state.
+- Beacon Destination Announcement, off: restarting the beacon also says the destination.
+- Menu Position Announcements, off: list entries include their position, such as "3 of 12".
 
-### Volume Controls
+### Navigation audio
 
-All from 0 to 100 percent, default 50.
-
-- Wall Bump Volume.
-- Footstep Volume.
-- Wall Tone Volume.
-- Beacon Volume.
-- Landing Ping Volume. Not in FINAL FANTASY IV.
-
-### Navigation Filters
-
-- Pathfinding Filter, off.
+- Wall Tones, off: directional tones play as you approach walls.
+- Wall Tone Volume, then Wall Bump Volume: each ranges from 0 to 100 percent and defaults to 50.
+- Footsteps, off: a click plays for each tile of player movement. Footstep Volume follows it; 0 to 100 percent, default 50.
+- Beacon Navigation, off: pings guide you along the route. Beacon Volume follows it; 0 to 100 percent, default 50.
+- Beacon with directions, off: enables both route directions and Beacon Navigation for navigation requests. Beacon Navigation can then be turned off separately.
+- Landing Pings, off: on a ship or submarine, pings the directions in which you can land. Landing Ping Volume follows it; 0 to 100 percent, default 50. Neither setting appears in FINAL FANTASY IV or VI.
+- Autowalk, off: Backslash, P, Slash for a waypoint, or the controller's left trigger starts ordinary walking to the selected destination. Press again to stop. Manual input, menus, dialogue and battles stop the walk. Planned floor transitions continue towards the same destination. Boarding, landing, examining warps and confirming interactions remain manual; special flight controls remain manual too.
+- Speak autowalk path, off: reads every leg of the current route when autowalk starts, and the next leg after each planned map transition. Arrival and required actions are announced in either state.
+- Pathfinding Filter, Current map: cycles Current floor, Current map with vehicles, Current map.
 - Map Exit Filter, off.
 - Layer Transition Filter, off.
 - Stick Click Normalization, off.
 
-### Battle Settings
+### Battle
 
 - Enemy HP Display, Numbers: Numbers, Percentage or Hidden. This optional setting reveals
   enemy HP that the native targeting panel does not show. Numbers reads current/maximum;
   Percentage reads remaining HP as a percentage; Hidden omits it. F5 cycles the modes in battle.
 - Enemy Letters, off: adds a letter such as A or B to enemies that share a name. FINAL FANTASY V only. It has no effect yet; see Known issues.
-- Multi-hit Damage, With hit count: "With hit count" reads "14x1552 damage", "Total only" reads the total. FINAL FANTASY, II and III only.
-
-### Battle Results
-
-Not in FINAL FANTASY II, which has no experience points.
-
-- EXP Counter Sound, on: a tick plays while the EXP bar fills.
-- EXP Counter Volume, 50.
-
-### Announcements
-
-- Auto Detail, on: descriptions and stats are read as you move through items, magic, equipment and shops.
-- Beacon Destination Announcement, off: restarting the beacon also says the destination.
-- Menu Position Announcements, on: list entries say their position, such as "3 of 12".
-
-### Close Menu
-
-Closes the mod menu.
+- Multi-hit Damage, With hit count: adds the hit count when the game displays one. Total damage remains a separate number. Total only omits the hit count.
+- EXP Counter Sound, on: a tick plays while the EXP bar fills on the results screen. EXP Counter Volume follows it; 0 to 100 percent, default 50. Neither appears in FINAL FANTASY II.
 
 ## Features
 
@@ -453,7 +437,7 @@ Closes the mod menu.
 ### Pathfinding
 
 - Step by step directions to a destination or a waypoint, over the mod's own map of every floor: no distance limit. A long route reads up to 6 legs, then "and" the number of legs left; walk them and ask again, the rest of the same route follows from where you stand.
-- A route ends exactly where the thing is used: on an exit's own tile, on the tile in front of a shop counter, or beside a chest or person, followed by "face north" when you are not already facing it.
+- A route ends exactly where the thing is used: on an exit's own tile, on the tile in front of a shop counter, or beside a chest or person. Ordinary directions tell you which way to face at arrival. Autowalk turns the character towards the interactible automatically, so you can confirm immediately. It continues through planned stairs/exits and waits for the new floor's controls and fade before walking the next leg.
 - A destination cut off on the current floor is routed through another part of the map: the route ends with "take the exit to" a place. Go through, and after the floor's name the mod speaks the next leg from where you arrived, with the destination still selected; the beacon continues too. Selecting another entry forgets it.
 - When there is no route, the mod says why when it can: "Story gated" for a sealed door or a passage the story has not opened, "Blocked by an NPC" for someone standing in the only way, and on the world map "Requires Ship", "Requires Canoe" or "Requires Airship" for a vehicle you own. "Requires vehicle" means a vehicle you do not own yet would reach it.
 - On the world map, a ship or airship you own and have parked is used in the directions: "board the Ship", then the way across, "land", and the rest.
@@ -510,9 +494,6 @@ Closes the mod menu.
 ### FINAL FANTASY V
 
 - The Enemy Letters setting has no effect yet, and some statuses on battle targets are not read yet.
-- The results log has one page, with EXP, Next and ABP. Level-ups, learned abilities and items are not in it yet.
-- Mod mode then B does not open the results log. Use L.
-- ABP totals on the victory screen are not read yet.
 - Some kinds of damage are read as plain "damage".
 - Boko and some other vehicles may not be named correctly yet.
 

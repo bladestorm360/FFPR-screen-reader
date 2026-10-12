@@ -362,6 +362,14 @@ bool key_held(Key k)
     return v > 0 && v < kVkMax && g_key_cur[v];
 }
 
+bool key_in_use(Key k)
+{
+    if (!game_window_focused()) return false;
+    const int v = vk(k);
+    return v > 0 && v < kVkMax &&
+        (g_key_cur[v] || g_key_prev[v] || (GetAsyncKeyState(v) & 0x8000) != 0);
+}
+
 bool any_key_pressed() { return g_any_key_down; }
 
 bool shift_held() { return key_held(Key::LeftShift) || key_held(Key::RightShift); }
@@ -376,7 +384,13 @@ bool game_window_focused()
         EnumWindows(&find_window_proc, reinterpret_cast<LPARAM>(&st));
         g_game_window = st.unity ? st.unity : st.first;
     }
-    if (!g_game_window) return true;   // fail open: input is never blocked for good
+    if (!g_game_window) {
+        // If Unity's window is not resolved yet, only this process's foreground window
+        // may receive mod input. A missing cache must not admit another application's keys.
+        DWORD foreground_pid = 0;
+        GetWindowThreadProcessId(GetForegroundWindow(), &foreground_pid);
+        return foreground_pid == GetCurrentProcessId();
+    }
     return GetForegroundWindow() == g_game_window;
 }
 

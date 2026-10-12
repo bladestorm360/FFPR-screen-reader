@@ -6,6 +6,7 @@
 #include <functional>
 #include <string>
 #include "audio_loops.h"
+#include "autowalk.h"
 #include "fieldnav_util.h"
 #include "nav_target.h"
 #include "waypoints.h"
@@ -15,6 +16,7 @@
 #include "../settings.h"
 #include "../field/field_api.h"
 #include "../ui/mod_ui.h"
+#include "../ui/preferences.h"
 
 namespace ffpr::fieldnav::waypoints::controller {
 namespace {
@@ -83,6 +85,7 @@ void cycle_previous_category()
 void pathfind_to_current_waypoint()
 {
     if (!ensure_field_context()) return;
+    if (autowalk::stop_requested()) return;
 
     EntityPtr waypoint = nav::selected();
     if (!waypoint) {
@@ -95,15 +98,15 @@ void pathfind_to_current_waypoint()
     // Beacon mode: restart the beacon to re-ping toward this waypoint.
     if (settings::get_bool("AudioBeacons", false)) {
         audio_loops::restart_beacon();
-        if (settings::get_bool("AnnounceOnBeaconRestart", false))
+        if (!ui::prefs::autowalk_enabled() && !ui::prefs::beacon_with_directions_enabled()
+            && settings::get_bool("AnnounceOnBeaconRestart", false))
             ffpr::say(nav::format_current_waypoint());
-        return;
+        if (!ui::prefs::autowalk_enabled() && !ui::prefs::beacon_with_directions_enabled()) return;
     }
 
     // Turn-by-turn mode: A* path + descriptive route (as entity pathfinding).
     unity::Vec3 player_pos{};
-    player_local_position(player_pos);
-    if (is_zero(player_pos)) {
+    if (!player_local_position(player_pos)) {
         ffpr::say(T(L"Cannot determine directions"));
         return;
     }
@@ -116,7 +119,12 @@ void pathfind_to_current_waypoint()
         ? path_info.description
         : (!path_info.reason.empty() ? path_info.reason : T(L"No path"));
 
-    ffpr::say(announcement);
+    if (ui::prefs::autowalk_enabled()) {
+        ::field::baked_nav::MapGoal goal;
+        goal.map_id = ::field::current_map_id();
+        const bool have_goal = ::field::baked_nav::cell_at(::field::map_handle(), waypoint->position, goal.cell);
+        autowalk::start(path_info, have_goal ? &goal : nullptr, ::field::TargetKind::Spot, waypoint->name);
+    } else ffpr::say(announcement);
 }
 
 void add_new_waypoint_with_naming()

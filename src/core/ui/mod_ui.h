@@ -5,12 +5,13 @@
 //
 // KEYBOARD. Each modal reads its keys itself (GetAsyncKeyState edge detection, as FF1's
 // GamepadManager did), and only while it is open; the key state is seeded when it opens, so the
-// key that opened it is not a press. Each handle_input() runs at most once per frame: a second
+// key that opened it is not a press. The shared sampler ignores background input and seeds
+// held keys when focus returns. Each handle_input() runs at most once per frame: a second
 // call in the same frame returns the first call's result without acting again.
 //
 // Wiring (either works, without double handling):
 //   * The input area calls ui::handle_modal_input() at FF1 InputManager.Update's place (after
-//     the controller router, before the game-window focus check) and returns when it is true.
+//     the controller router) and returns when it is true; modal_keys applies the focus gate.
 //   * Otherwise a frame subscriber registered late (install order 490) calls it while a modal
 //     is open. The input area must then still skip its hotkeys while a modal is open
 //     (queries "TextInputWindow.IsOpen", "ConfirmationDialog.IsOpen", "ModMenu.IsOpen").

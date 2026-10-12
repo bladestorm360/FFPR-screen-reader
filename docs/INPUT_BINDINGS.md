@@ -12,13 +12,23 @@ Battle: T reads the active turn, H the active member's rendered statistics, and 
 visible party rows. Enemy HP's optional Numbers/Percentage/Hidden modes remain on F5.
 Controller mod mode: North (Y/Triangle) reads the turn; shoulders review party members.
 
-Results: Up/Down review current lines; Left/Right first/last; I or L reads current details.
-Controller mod mode: West (X/Square) reads details; shoulders review lines. Status retains
+Results: Up/Down review current lines; Left/Right first/last; I reads current details.
+Each native phase replaces the buffer; there is no separate L results log. Displayed
+EXP/gil totals are always announced. Member EXP, item/drop rows and stat tables follow
+Autodetail. Review input is consumed before both native input APIs, including held/release
+keys and the interval before the buffer is ready. Ordinary confirm advances normally.
+[Native phase/input evidence](re/RESULTS.md).
+Controller mod mode: West (X/Square) reads details; shoulders or D-pad Up/Down review lines, and D-pad
+Left/Right goes first/last. Status retains
 its grouped arrow/Shift/Ctrl review and native page controls. No keyboard mod mode exists.
 
 F8 settings opens on the field: select a category and then a setting. Escape/B returns to
 categories and closes from the root; F8 closes directly. F1/F3 read actual native changes
 after game input, including loaded encounter state and the world-map speed restriction.
+The only categories are Speech, Navigation audio, Battle, followed by Close Menu. Audio
+volumes are beside their related settings; EXP counter settings belong to Battle.
+All modal keyboard input requires game-window focus. Alt+Tab retains the current menu
+position; held keys on focus return do not act until released and pressed again.
 
 ## How a key is dispatched (each frame)
 
@@ -27,8 +37,9 @@ after game input, including loaded encounter state and the world-map speed restr
 2. While the mod owns input (`ControllerRouter.SuppressGameInput`), `Input.ResetInputAxes` runs.
 3. The context is computed (table below) and the controller router runs.
 4. `MovementSoundPatches.PollFootsteps` runs if defined.
-5. `ui::handle_modal_input()` (mod menu, text input, confirmation dialog). If a modal is open,
-   no hotkey runs this frame.
+5. `ui::handle_modal_input()` (mod menu, text input, confirmation dialog). Its shared sampler
+   checks foreground focus before any hardware-key read and seeds held keys on return.
+   If a modal is open, no hotkey runs this frame.
 6. Hotkeys run only while the game window is focused, a key went down, and no Unity
    `InputField` is selected.
 7. F8, then F5 / F7 (no modifier held), then the registry. With Alt held, the registry is
@@ -77,7 +88,7 @@ Checked in this order:
 | Shift+`[` | `Mod.CyclePreviousCategory` | Field |
 | `]` | `Mod.CycleNext` | Field |
 | Shift+`]` | `Mod.CycleNextCategory` | Field |
-| `\` | `NavigationTargetTracker.MarkEntity`, then `Mod.RestartEntityBeacon` (AudioBeacons on) or `Mod.AnnounceCurrentEntity` | Field |
+| `\` | `Mod.NavigateToEntity`: start/stop autowalk when enabled; otherwise directions, beacon restart, or both | Field |
 | Shift+`\` | `Mod.TogglePathfindingFilter` (cycles Current floor / Current map with vehicles / Current map) | Field |
 | Ctrl+`\` | `Mod.ToggleToLayerFilter` | Field |
 | `` ` `` | `Mod.ForceEntityRescan` | Field |
@@ -162,7 +173,7 @@ Labels follow the pad family (A/B/X/Y, Cross/Circle/Square/Triangle, Nintendo).
 | A / B / X / Y | silence speech, pass to game | silence speech, pass to game |
 | D-pad up / down / left / right | `WaypointHandler.CyclePrevious` / `CycleNext` / `CyclePreviousCategory` / `CycleNextCategory` (consumed) | game; in Status, BestiaryDetail, KeyHelp: up/down (also left stick) run `StatusNavigationReader`, `BestiaryNavigationReader`, `KeyHelpReader` `.NavigatePrevious` / `.NavigateNext` |
 | Right stick up / down / left / right | `Mod.CyclePrevious` / `Mod.CycleNext` / `Mod.CyclePreviousCategory` / `Mod.CycleNextCategory` | up: `GlobalHotkeyHandler.HandleItemDetailsKey`; down: `KeyHelpReader.AnnounceKeyHelp`; left: `UsableByAnnouncer.AnnounceForCurrentContext` |
-| Left trigger | `WaypointHandler.PathfindToCurrentWaypoint` if `NavigationTargetTracker.IsWaypoint`; `Mod.RestartEntityBeacon` / `Mod.AnnounceCurrentEntity` if `NavigationTargetTracker.IsEntity`; else "No target selected" | game (Page Up) |
+| Left trigger | `WaypointHandler.PathfindToCurrentWaypoint` if waypoint; `Mod.NavigateToEntity` if entity; else "No target selected". Both use the same autowalk/settings policy. | game (Page Up) |
 | L3 (released alone) | Stick Click Normalization off: `Mod.ToggleAudioBeacons`; on: a one-frame L3 press to the game | game |
 | R3 (released alone) | off: `Mod.TogglePathfindingFilter` (cycles the three filter modes); on: one-frame R3 press to the game | game |
 | L3 + R3 | `Mod.ToggleStickClickNormalization` | game |
@@ -210,7 +221,8 @@ gamepad state, labels, router state, `add_binding`, `save_and_announce`.
 ## Game input passthrough
 
 Hooks on `System.Input.InputSystemManager` `GetKeyDown(InputActionType)`, `GetKey`, `GetKeyUp`,
-`GetAnyKey` (one RVA each in all five games). While `ControllerRouter.SuppressGameInput` is true
+`GetAnyKey` (one RVA each in all six games), plus InputListener GetKeyDown/GetKey/GetKeyUp
+and AnyKey/AnyKeyDown/AnyKeyUp. Prefixes skip native checks for owned results gestures. While `ControllerRouter.SuppressGameInput` is true
 they return false. Otherwise a true keyboard result is kept and the SDL pad is added: Enter = A,
 Cancel = B, Shortcut = X, Menu = Y, SwitchLeft/Right = LB/RB, PageUp = LT (not on the active
 field), PageDown = RT, Start never, StickL/StickR = L3/R3, directions = left stick on the active

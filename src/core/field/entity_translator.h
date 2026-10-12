@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "npc_names.h"
 
 // FF1 Utils/EntityTranslator.cs: Japanese map-object names (PropertyEntity.Name, GameObject
 // names) translated to the game's language from the running game's own translation.json
@@ -8,6 +9,9 @@ namespace field {
 
 /// EntityTranslator.Translate: the name in the game's language, or the name unchanged.
 std::wstring translate_entity_name(const std::wstring& japanese_name);
+/// Normalize a converted NPC label, then translate any descriptive remainder exposed by
+/// nested developer prefixes. Keep its source ordinal separately for stable group ordering.
+npc_names::Label npc_display_label(const std::wstring& converted_name);
 /// EntityTranslator.ContainsJapanese (hiragana, katakana, CJK ideographs).
 bool contains_japanese(const std::wstring& s);
 /// EntityTranslator.ClearUntranslatedTracking (MapTransitionPatches.ResetMapTracking calls it).

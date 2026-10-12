@@ -10,6 +10,8 @@ struct Phase {
     std::wstring action_after;
     // Interaction guidance belongs to arrival, even when the last movement faced it.
     std::wstring arrival_facing;
+    int arrival_direction = -1; // structured cardinal heading; never parse localized speech
+    bool manual_after = false;   // e.g. an examine warp; walking alone cannot activate it
 };
 
 inline bool remaining(const std::vector<Phase>& phases, const baked_route::Cell& at,

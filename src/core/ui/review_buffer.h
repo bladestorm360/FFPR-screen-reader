@@ -8,9 +8,11 @@ enum class Domain { Results, Status, Information };
 struct Options {
     Domain domain = Domain::Results;
     bool announce = true;
-    bool headline_has_details = false;
     bool defer_details = false;
-    std::wstring entry_headline;
+    // Essential displayed totals are announced in either Autodetail state and
+    // retained as individual review lines. Detailed rows are separate.
+    std::vector<std::wstring> summary;
+    bool include_headline = false;
     int restore_index = 0;
     std::vector<int> groups;
 };

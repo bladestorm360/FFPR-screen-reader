@@ -33,9 +33,14 @@ They do not confirm gameplay or measure game startup time.
 5. Check multi-hit attacks and poison/venom. Field status animation is described without
    an invented numeric damage amount.
 6. Win battles with stat gains, job levels or learned abilities. Each native phase/page
-   announces on entry. I or L reads current details; arrows review current lines. Speech's
+   announces on entry. I reads current details; arrows review current lines. Speech's
    Auto Detail reads the current phase automatically. FF2 includes displayed evasion/
    accuracy multipliers and skill gains; unused hidden statistics stay absent.
+   With Auto Detail off, hear EXP/gil totals and phase headings, without individual
+   EXP/drop/stat rows. With it on, hear the current phase's details. Hold/release
+   each arrow: it must review without skipping a native page or its animation.
+   Confirm still advances. Check regular status entry with Auto Detail off too:
+   only its character/level headline should be automatic; I/arrows read the table.
 7. Highlight equipment and shop items: read native comparisons/arrows. Number keys review
    displayed multi-member shop comparisons. Bestiary secret item rows must stay secret.
 8. F1/F3 report the native post-input speed/encounter settings after loading. F1 on the
@@ -250,7 +255,7 @@ closed). FF2 Salamand is the reference; every step applies to all six games.
     whether or not you own it yet.
 13. **Pathfinding filter, three ways.** Shift+\ (or R3) cycles "Pathfinding filter: Current
     floor" / "Current map with vehicles" / "Current map", and the mod menu shows the same
-    three under Navigation Filters. Current floor: only targets walking reaches on this
+    three under Navigation audio. Current floor: only targets walking reaches on this
     sub-map. Current map with vehicles: on the world map with the ship parked here, towns
     across the sea join the list. Current map: everything, including targets routed through
     another floor. Your old on/off setting became Current floor (on) or Current map (off).
@@ -295,3 +300,73 @@ closed). `PORT_STATUS.md` items 37-39.
   target reader, results-log pages beyond points, ABP totals.
 - Mod text was checked against each game's own text on 2026-10-06 (docs/MODTEXT_MERGE.md);
   listen for terms that still sound wrong in your language.
+
+## Autowalk and combined navigation, 2026-10-11
+
+Implemented in the shared core for FF1–FF6. Offline replay passed 2,292 sampled baked
+map routes; all-six movement ABI and native-name checks passed. Gameplay confirmation
+remains user-side. Evidence and action boundaries: [autowalk](re/AUTOWALK.md).
+
+Final facing/transition build, hook coexistence, route/map-state/scheduler checks, 7,016 native-name checks,
+zero undefined wiring names and isolated DLL smoke passed. Deployed to all six games;
+each installed DLL matches SHA-256
+`7EA63358FBF982023AF9B17E198223A0A408AD056F223614436A6A1BA855FDBF`.
+No games launched. Native runtime hooks and movement/handback still need user confirmation.
+Additional regressions passed: native facing in all six binaries, all four arrival headings,
+zero movement/counters, transition readiness/cancellation and six real floor-route handoffs.
+
+1. On a field map, open F8 → Navigation audio. Enable Autowalk. Select a nearby destination
+   and press Backslash: hear "Autowalk started", walk there, then hear "Arrived". Confirm
+   immediately without a direction key: the character should already face the interactible.
+   Repeat from an adjacent cell while facing away, and with an NPC across a shop counter.
+2. Start another walk. Press Backslash again, then separately try a movement key,
+   opening a menu and entering a battle. Each must stop the walk and hand control back.
+3. Enable Speak autowalk path. Start a longer walk: hear the complete current-map route.
+   Disable it: hear the start/arrival messages, without route speech.
+4. Try stairs and a destination on another floor. The walk should continue after the
+   expected transition and fade, without another navigation request, following live gates.
+   Try a route through two or more floors, including one that leaves a floor and returns
+   to another part of it. The character should face the final interactible on arrival.
+   Cancel during loading and verify it stays stopped after the new floor becomes ready.
+   At a boarding/landing/examine action it
+   should stop and give the instruction; perform the action and request navigation again.
+5. Disable Autowalk and Beacon Navigation. Enable Beacon with directions; Beacon Navigation
+   should also become enabled. Backslash
+   should both ping and read directions. Disable Beacon with directions: beacon only.
+6. Controller: select a destination with the right stick and press LT. Repeat LT to stop;
+   move the left stick to take control. Try a waypoint with the D-pad/LT or Comma/Period/Slash.
+7. Close/reopen the game and verify the three settings persist. Repeat basic walk,
+   cancellation and combined-mode checks in each of the six games and on a world map.
+
+Special flight controllers, boarding and interaction confirmations remain manual.
+
+## Settings focus and NPC labels, October 12
+
+1. On the field, press F8. Confirm Speech, Navigation audio, Battle, then Close Menu.
+   Audio volumes follow their related options; EXP sound/volume are in Battle except FF2.
+2. Open a setting, Alt+Tab to another application, and use arrows, Enter, Space, I, Escape
+   and F8 there. Return to the game: selection and value must be unchanged. Held keys must
+   do nothing until released and pressed again. Test controller menu entry/return as usual.
+3. Cycle town NPCs. Unique names have no developer number; exact duplicates use sequential
+   suffixes, such as Soldier1/Soldier2. Move and cycle again: labels retain their assignment.
+   Check other-floor entries too; each floor has its own numbering group.
+4. In a Japanese-language session, confirm circled/full-width prefixes and suffixes follow
+   the same rule. Test waypoint naming and confirmation after Alt+Tab as well.
+
+Offline evidence: [October 12 follow-up](FOLLOWUP_2026_10_12.md). Gameplay confirmation pending.
+
+## FF2 tutorial-room labels, October 12
+
+Enter the Rebel Hideout room with the tutorial NPCs: its name should include Tutorial
+Chamber. Cycle its Events entries: the circle should be Magic Circle. NPC lessons and
+the circle's ordinary interaction should behave as before. Both early and later room
+versions use the same labels. [Source evidence](MAP_LABELS.md#tutorial-room-context-correction-2026-10-12).
+
+## Results follow-up deployment, October 12
+
+All six games have the verified current-phase buffer update, SHA-256
+`D45EE6672A8EE496F037F9E4FC4E5D22C58DBCC43B044582C966B40E9E09F5D3`.
+Canonical build, shared reader/input regressions, native PE phase/input assertions,
+7,052 native-name checks (zero missing), wiring checks and isolated DLL smoke passed.
+Gameplay confirmation is pending. Use item 6 above to check Autodetail both ways,
+arrow hold/release and normal confirm; also check ordinary status entry.

@@ -51,6 +51,11 @@ if errorlevel 1 (
 )
 
 echo Checking every game-code name against each game's dump.cs...
+"out\checks\autowalk_check.exe" > build_check\autowalk_report.txt 2>&1
+if errorlevel 1 (
+    echo Autowalk check FAILED - see build_check\autowalk_report.txt
+    exit /b 1
+)
 "out\checks\mapstate_check.exe" > build_check\mapstate_report.txt 2>&1
 if errorlevel 1 (
     echo Map-state check FAILED - see build_check\mapstate_report.txt
@@ -60,6 +65,28 @@ if errorlevel 1 (
 if errorlevel 1 (
     echo Scheduler check FAILED - see build_check\frame_report.txt
     exit /b 1
+)
+"out\checks\battle_results_check.exe" > build_check\battle_results_report.txt 2>&1
+if errorlevel 1 (
+    echo Battle results check FAILED - see build_check\battle_results_report.txt
+    exit /b 1
+)
+"out\checks\modal_input_check.exe" > build_check\modal_input_report.txt 2>&1
+if errorlevel 1 (
+    echo Modal input check FAILED - see build_check\modal_input_report.txt
+    exit /b 1
+)
+"out\checks\npc_names_check.exe" > build_check\npc_names_report.txt 2>&1
+if errorlevel 1 (
+    echo NPC naming check FAILED - see build_check\npc_names_report.txt
+    exit /b 1
+)
+for %%G in (ff1 ff2 ff3 ff4 ff5 ff6) do (
+    "out\checks\npc_label_audit_check.exe" %%G > build_check\%%G_npc_labels_report.txt 2>&1
+    if errorlevel 1 (
+        echo NPC label audit FAILED for %%G - see build_check\%%G_npc_labels_report.txt
+        exit /b 1
+    )
 )
 python tools\name_check.py
 if errorlevel 1 (

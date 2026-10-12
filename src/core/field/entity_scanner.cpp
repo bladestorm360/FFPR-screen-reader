@@ -13,6 +13,7 @@
 #include <map>
 #include <unordered_set>
 #include "entity_translator.h"
+#include "npc_names.h"
 #include "event_labels.h"
 #include "field_api.h"
 #include "field_internal.h"
@@ -468,57 +469,28 @@ void dedupe_map_exits(std::vector<EntityPtr>& list)
     list.swap(out);
 }
 
-/// Names end in the developers' per-map object number ("パラメキア兵7" -> "Palamecian Soldier
-/// 7", "ボーゲン11" -> "Borghen 11"), kept by the translator as " N". The user's rule
-/// (2026-10-10): an NPC is numbered only when several NPCs share the same name, 1..n within
-/// that group; a unique name carries no number. Groups keep the developers' order (then map
-/// position) so a number never changes as the player moves. Re-derived from the converted
-/// name on every scan, so an entity leaving the list renumbers its group.
-std::wstring strip_instance_number(const std::wstring& name, long long& number)
+// Preserve the existing remote story-variant identity guard exactly. Naming cleanup is
+// independent of entity inclusion: no new/broader deduplication is authorized here.
+std::wstring remote_guard_base(const std::wstring& name)
 {
-    number = -1;
     size_t end = name.size();
     while (end > 0 && is_decimal_digit(name[end - 1])) --end;
-    if (end == 0 || end == name.size()) return name;   // all digits, or no number
+    if (end == 0 || end == name.size()) return name;
     size_t base_end = end;
     while (base_end > 0 && name[base_end - 1] == L' ') --base_end;
-    if (base_end == 0) return name;
-    number = 0;
-    for (size_t i = end; i < name.size(); ++i) {
-        wchar_t c = name[i];
-        number = number * 10 + ((c >= 0xFF10 && c <= 0xFF19) ? c - 0xFF10 : c - L'0');
-    }
-    return name.substr(0, base_end);
+    return base_end == 0 ? name : name.substr(0, base_end);
 }
 
+// Assign names before distance/category/reachability filters. Conversion positions are
+// snapshots, not player-relative order; the same pure service numbers other floors below.
 void renumber_npcs(std::vector<EntityPtr>& list)
 {
-    struct Member { EntityPtr e; long long number; };
-    std::map<std::wstring, std::vector<Member>> groups;
+    std::vector<npc_names::Entry> entries;
     for (auto& e : list) {
-        if (e->kind != Kind::NPC || e->remote()) continue;   // other floors are numbered per floor (build_remote)
-        long long number = -1;
-        std::wstring base = strip_instance_number(e->converted_name, number);
-        groups[base].push_back({e, number});
+        if (e->kind != Kind::NPC || e->remote()) continue;
+        entries.push_back({&e->name, npc_display_label(e->converted_name), 0, 0, e->pos.x, -e->pos.y});
     }
-    for (auto& kv : groups) {
-        auto& members = kv.second;
-        if (members.size() == 1) {
-            members[0].e->name = kv.first;
-            continue;
-        }
-        std::stable_sort(members.begin(), members.end(), [](const Member& a, const Member& b) {
-            if (a.number != b.number) {
-                if (a.number < 0) return false;   // unnumbered after the numbered
-                if (b.number < 0) return true;
-                return a.number < b.number;
-            }
-            if (a.e->pos.y != b.e->pos.y) return a.e->pos.y > b.e->pos.y;   // top to bottom
-            return a.e->pos.x < b.e->pos.x;
-        });
-        int k = 0;
-        for (auto& m : members) m.e->name = kv.first + L" " + std::to_wstring(++k);
-    }
+    npc_names::renumber(entries);
 }
 
 /// The entries of the other floors (user, 2026-10-11: "destinations from other floors need to
@@ -532,8 +504,7 @@ void renumber_npcs(std::vector<EntityPtr>& list)
 struct RemoteBuilder {
     std::vector<baked_nav::RemoteObject> objs;
     size_t next = 0;
-    struct Member { EntityPtr e; long long number; };
-    std::map<std::wstring, std::vector<Member>> npc_groups;   // "floor\nbase name"
+    std::vector<npc_names::Entry> npc_entries;
     std::unordered_set<std::wstring> seen;
     bool (*placeholder_fn)(const wchar_t*) = game::flags().placeholder_entity;
     explicit RemoteBuilder(std::vector<baked_nav::RemoteObject> objects) : objs(std::move(objects)) { g_remote.clear(); }
@@ -548,7 +519,6 @@ struct RemoteBuilder {
             e->cell_x = r.cell.x;
             e->cell_y = r.cell.y;
             e->floor_name = resolve_map_name(r.map_id);
-            long long number = -1;
             std::wstring base;
             switch (r.type) {
             case baked::ObjType::NPC:
@@ -559,7 +529,7 @@ struct RemoteBuilder {
                 e->kind = Kind::NPC;
                 e->name = name;
                 e->shop = r.shop;
-                base = strip_instance_number(name, number);
+                base = remote_guard_base(name);
                 break;
             }
             case baked::ObjType::TreasureBox: {
@@ -591,29 +561,13 @@ struct RemoteBuilder {
             const std::wstring key = e->floor_name + L"\n" + std::to_wstring(static_cast<int>(e->kind)) + L"\n" +
                                      (e->kind == Kind::NPC ? base : e->name) + L"\n" + where;
             if (!seen.insert(key).second) continue;
-            if (e->kind == Kind::NPC) npc_groups[e->floor_name + L"\n" + base].push_back({e, number});
+            if (e->kind == Kind::NPC)
+                npc_entries.push_back({&e->name, npc_display_label(e->converted_name), r.map_id,
+                                       0, static_cast<float>(r.cell.x), static_cast<float>(r.cell.y)});
             g_remote.push_back(e);
         }
         if (next < objs.size()) return true;
-        for (auto& kv : npc_groups) {
-            auto& members = kv.second;
-            const std::wstring base = kv.first.substr(kv.first.find(L'\n') + 1);
-            if (members.size() == 1) {
-                members[0].e->name = base;
-                continue;
-            }
-            std::stable_sort(members.begin(), members.end(), [](const Member& a, const Member& b) {
-                if (a.number != b.number) {
-                    if (a.number < 0) return false;   // unnumbered after the numbered
-                    if (b.number < 0) return true;
-                    return a.number < b.number;
-                }
-                if (a.e->cell_y != b.e->cell_y) return a.e->cell_y < b.e->cell_y;   // top to bottom
-                return a.e->cell_x < b.e->cell_x;
-            });
-            int k = 0;
-            for (auto& m : members) m.e->name = base + L" " + std::to_wstring(++k);
-        }
+        npc_names::renumber(npc_entries);
         LOGF("[EntityScanner] other floors: %zu entries from %zu baked objects", g_remote.size(), objs.size());
         return false;
     }

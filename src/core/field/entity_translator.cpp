@@ -377,4 +377,13 @@ std::wstring translate_entity_name(const std::wstring& japanese_name)
     return japanese_name;
 }
 
+npc_names::Label npc_display_label(const std::wstring& converted_name)
+{
+    auto label = npc_names::parse(converted_name);
+    auto descriptive = npc_names::parse(translate_entity_name(label.base));
+    label.base = std::move(descriptive.base);
+    if (label.ordinal < 0) label.ordinal = descriptive.ordinal;
+    return label;
+}
+
 } // namespace field

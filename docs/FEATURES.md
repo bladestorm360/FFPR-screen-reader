@@ -81,7 +81,7 @@ Where a readme or plan disagreed with the code, the code was taken.
 | Pause menu (Space) | All | — | — | FF1, 3-5 `Patches/BattlePausePatches.cs`; FF2 special case in `Core/FFII_ScreenReaderMod.cs` (cursor path) |
 | Active character HP, MP, status | All | H; pad: mod mode + X | — | `Core/FFn_ScreenReaderMod.cs` (`AnnounceCharacterStatus`); FF4 `Core/GameAnnouncementHelper.cs` |
 | Results: gil, EXP, level-ups, items, skills | All | — | — | `Patches/BattleResultPatches.cs` |
-| Results detail log (EXP, next level, ABP per character) | 5 | L; pad: mod mode + B | — | FF5 `Core/BattleResultNavigator.cs`, `Utils/BattleResultDataStore.cs` |
+| Current native results phase buffer | 1–6 | arrows/I; pad: mod mode + West/shoulders | Autodetail controls detail rows | Shared `battle_result.cpp` and `review_buffer.cpp`; [evidence](re/RESULTS.md) |
 | EXP counter tick sound | 1 3 4 5 | — | `ExpCounter`, `ExpCounterVolume` | `Patches/BattleResultPatches.cs`, `Utils/SoundPlayer.cs` |
 | Clear stale battle state | 1 2 3 4 | Tab | — | `Core/InputManager.cs` |
 
@@ -157,7 +157,12 @@ The mod menu opens with F8 or Start. Field only in FF1-4; field and field menus 
 - Pad: D-pad or left stick move and change, A toggles, B or Start closes. FF5: right stick up describes.
 - Files: `Core/ModMenu.cs`, `Core/PreferencesManager.cs`.
 
-Menu layout, in order:
+Current native layout (user, 2026-10-12): Speech, Navigation audio, Battle, then Close Menu.
+Navigation audio holds audio options, each paired with its volume, and navigation settings.
+EXP counter sound/volume belong to Battle. Settings retain their existing keys and values;
+all modal keyboard input is foreground-focus gated. [Current implementation/evidence](FOLLOWUP_2026_10_12.md).
+
+Historical managed menu layouts, in order:
 
 - **FF1:** Audio Feedback (Wall Tones, Footsteps, Beacon Navigation); Volume Controls (4); Navigation Filters (3 filters, Stick Click Normalization); Battle Settings (Enemy HP Display, Multi-hit Damage); Battle Results (EXP Counter Sound, EXP Counter Volume); Announcements (Auto Detail, Beacon Destination Announcement, Menu Position Announcements); Close Menu.
 - **FF2:** as FF1, without Battle Results.
@@ -279,7 +284,7 @@ The Games column makes this the per-game table. Keys not listed belong to the ga
 | Shift+T | anywhere | Freeze or resume timers | 4 5 |
 | Tab | anywhere | Clear stale battle state | 1 2 3 4 |
 | 0 | anywhere | Dump untranslated names | 3 |
-| L | battle results | Results detail log | 5 |
+| I / arrows | battle results | Current phase details / line review | 1–6 |
 | Up/Down, Shift, Ctrl | status, bestiary | Stat, group, ends | All |
 | Up/Down, Ctrl | controls list | Entry, ends | All |
 | W and S | status, bestiary, controls list | Same as Up and Down | All |
@@ -313,7 +318,7 @@ Rules shared by all five:
 | FF4 | Moon pathfinding | `Field/FieldNavigationHelper.cs` |
 | FF4 | Timers | `Patches/TimerPatches.cs` |
 | FF5 | Jobs and abilities: change, equip, ABP | `Patches/JobAbilityPatches.cs`, `Utils/JobEquipData.cs` |
-| FF5 | Results detail log | `Core/BattleResultNavigator.cs` |
+| All six | Current-phase results buffer | Shared `battle_result.cpp`, `review_buffer.cpp` |
 | FF5 | Enemy letters, landing pings, breadcrumb routing | see sections 3, 7 and 5 |
 | FF5 | Timers | `Patches/TimerPatches.cs` |
 

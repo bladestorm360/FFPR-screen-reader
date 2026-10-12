@@ -100,7 +100,7 @@ void announce_mod_mode_controls()
     const std::wstring west = button_label(kWest);
     if (in_dialogue()) {
         ffpr::say(TF(L"{0} to repeat dialogue. {1} to cancel.", {west, back}), true);
-    } else if (queries::is("ReviewBuffer.IsActive")) {
+    } else if (queries::is("ReviewBuffer.IsResults") || queries::is("ReviewBuffer.IsActive")) {
         ffpr::say(TF(L"{0} for displayed result details. Shoulders review lines. {1} to cancel.", {west, back}), true);
     } else if (in_battle()) {
         ffpr::say(TF(L"{0} for party HP. {1} to cancel.", {west, back}), true);
@@ -183,8 +183,7 @@ void handle_normal_field()
         if (queries::is("NavigationTargetTracker.IsWaypoint")) {
             run_action("WaypointHandler.PathfindToCurrentWaypoint");
         } else if (queries::is("NavigationTargetTracker.IsEntity")) {
-            if (ui::prefs::audio_beacons_enabled()) run_action("Mod.RestartEntityBeacon");
-            else run_action("Mod.AnnounceCurrentEntity");
+            run_action("Mod.NavigateToEntity");
         } else {
             ffpr::say(T(L"No target selected"), true);
         }
@@ -298,10 +297,12 @@ void handle_mod_mode_state()
     // Dialogue first: with a message window up the player wants the message again.
     if (in_dialogue()) {
         if (button_pressed(kWest)) { run_action("MessageWindowPatches.RepeatLastDialogue"); g_state = RouterState::Normal; return; }
-    } else if (queries::is("ReviewBuffer.IsActive")) {
+    } else if (queries::is("ReviewBuffer.IsResults") || queries::is("ReviewBuffer.IsActive")) {
         if (button_pressed(kWest)) { run_action("ReviewBuffer.Details"); return; }
-        if (button_pressed(kRightShoulder)) { run_action("ReviewBuffer.Next"); return; }
-        if (button_pressed(kLeftShoulder)) { run_action("ReviewBuffer.Previous"); return; }
+        if (button_pressed(kRightShoulder) || button_pressed(kDpadDown)) { run_action("ReviewBuffer.Next"); return; }
+        if (button_pressed(kLeftShoulder) || button_pressed(kDpadUp)) { run_action("ReviewBuffer.Previous"); return; }
+        if (button_pressed(kDpadLeft)) { run_action("ReviewBuffer.First"); return; }
+        if (button_pressed(kDpadRight)) { run_action("ReviewBuffer.Last"); return; }
     } else if (in_battle()) {
         // Battle mod mode: X = party HP.
         if (button_pressed(kWest)) { run_action("Mod.AnnounceCharacterStatus"); g_state = RouterState::Normal; return; }

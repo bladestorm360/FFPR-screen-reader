@@ -136,6 +136,7 @@ int install()
     else LOGF("[GameState] FieldMap InitMenu fade-in callback not found - no config re-announce after the bestiary");
 
     queries::define("GameStatePatches.IsFieldPlayerState", [] { return is_field_player_state(); });
+    queries::define("GameStatePatches.IsFieldNavigationReady", [] { return is_field_navigation_ready(); });
     queries::define("GameStatePatches.IsFieldState", [] { return is_field_state(); });
     actions::define("GameStatePatches.ResetMainGameState", [] { reset_main_game_state(); });
     // FF1 FFI_ScreenReaderMod.OnSceneLoaded calls ResetMainGameState on the "Title" scene load:
