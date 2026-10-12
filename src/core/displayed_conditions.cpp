@@ -103,16 +103,22 @@ std::vector<std::wstring> condition_lines(void* content)
     return lines;
 }
 std::wstring conditions(void* content) { return ::text::join(condition_lines(content), L", "); }
+std::wstring skill_name(void* content)
+{
+    void* controller = kSkill.is(content) ? content : unity::get_component_in_children(content, kSkill, false);
+    auto it = g_weapons.find(controller);
+    if (it == g_weapons.end()) return {};
+    void* image = field(field(field(controller, "view"), "iconText"), "iconImage");
+    return image_sprite(image) == it->second.sprite ? it->second.description : std::wstring();
+}
 std::wstring skill_row(void* content)
 {
     auto value = ::text::join(texts(content), L" ");
     void* controller = kSkill.is(content) ? content : unity::get_component_in_children(content, kSkill, false);
-    auto it = g_weapons.find(controller);
-    if (it != g_weapons.end()) {
-        void* image = field(field(field(controller, "view"), "iconText"), "iconImage");
-        if (image_sprite(image) == it->second.sprite) value = it->second.description + L" " + value;
-    }
-    auto gauge = bar(field(field(controller, "view"), "gauge"));
+    const auto name = skill_name(controller);
+    if (!name.empty()) value = name + L" " + value;
+    const auto exact = skill_percentage(controller);
+    auto gauge = exact ? text::num(*exact) + L"%" : bar(field(field(controller, "view"), "gauge"));
     return value + (gauge.empty() ? L"" : L", " + gauge);
 }
 }

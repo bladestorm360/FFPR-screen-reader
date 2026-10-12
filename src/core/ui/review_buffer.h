@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <optional>
 #include <vector>
 
 // Current displayed page/phase only. Consumers supply renderer-backed lines.
@@ -13,6 +14,13 @@ struct Options {
     // retained as individual review lines. Detailed rows are separate.
     std::vector<std::wstring> summary;
     bool include_headline = false;
+    // Optional automatic current-page brief (e.g. changed stats). Row details
+    // are separate from the full displayed table kept for arrows/Autodetail.
+    std::optional<std::vector<std::wstring>> brief;
+    bool announce_brief = false;
+    // Per-detail-row I/West readings; an empty entry means no change in that row.
+    std::vector<std::wstring> row_details;
+    bool announce_brief_with_details = false;
     int restore_index = 0;
     std::vector<int> groups;
 };

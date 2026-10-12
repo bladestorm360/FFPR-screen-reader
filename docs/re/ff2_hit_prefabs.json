@@ -1,0 +1,206 @@
+[
+  {
+    "bundle": "hit_count_assets_all_bbd51f95a14468def7afd967252cb3fb.bundle",
+    "path_id": 6802344366482646575,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -5591130184618070417
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": 4425892763038484463
+      },
+      "m_Name": "",
+      "parent": {
+        "m_FileID": 0,
+        "m_PathID": 6922033771260568541
+      },
+      "sprites": [
+        {
+          "m_FileID": 2,
+          "m_PathID": 8431304031246476927
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": 41879197454712652
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": 4001855827005695980
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": -7198144454272576231
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": -8287120483772352988
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": 8304392995545904624
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": -2342970653401535362
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": 281743406202481834
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": 8469430947706459155
+        },
+        {
+          "m_FileID": 2,
+          "m_PathID": -7050262037720671419
+        }
+      ],
+      "battleViewText": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      },
+      "hitText": {
+        "m_FileID": 0,
+        "m_PathID": -6997656592854598358
+      },
+      "numRenderers": [
+        {
+          "m_FileID": 0,
+          "m_PathID": 4588101623480708035
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": 4979941462287535839
+        }
+      ],
+      "material": {
+        "m_FileID": 2,
+        "m_PathID": 5955824083490894225
+      }
+    }
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -9106538111363388369,
+    "sprite": "Battle_Common_DamageNumber_HIT_1"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -6876617806253918434,
+    "sprite": "Battle_Common_DamageNumber_HITS_10"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -5047500471484449306,
+    "sprite": "Battle_Common_DamageNumber_HIT_7"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -4989098863789334938,
+    "sprite": "Battle_Common_DamageNumber_HITS_4"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -4082044595142568430,
+    "sprite": "Battle_Common_DamageNumber_HIT_5"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -3571230518695560365,
+    "sprite": "Battle_Common_DamageNumber_HITS_8"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -3419833036501259269,
+    "sprite": "Battle_Common_DamageNumber_HIT_9"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -2793241298678615635,
+    "sprite": "Battle_Common_DamageNumber_HITS_7"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -2342417617061412993,
+    "sprite": "Battle_Common_DamageNumber_HITS_5"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -939324157598884627,
+    "sprite": "Battle_Common_DamageNumber_HIT_10"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": -526562607009164583,
+    "sprite": "Battle_Common_DamageNumber_HITS_1"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 121027416168028501,
+    "sprite": "Battle_Common_DamageNumber_HIT_12"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 1616119398619103295,
+    "sprite": "Battle_Common_DamageNumber_HITS_11"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 2371602531617097446,
+    "sprite": "Battle_Common_DamageNumber_HITS_6"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 3011383322714859814,
+    "sprite": "Battle_Common_DamageNumber_HIT_6"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 3072029313581814309,
+    "sprite": "Battle_Common_DamageNumber_HIT_4"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 5273539586526991535,
+    "sprite": "Battle_Common_DamageNumber_HITS_2"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 5480682200265773700,
+    "sprite": "Battle_Common_DamageNumber_HITS_9"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 6005281581392655451,
+    "sprite": "Battle_Common_DamageNumber_HIT_8"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 6023636181470122608,
+    "sprite": "Battle_Common_DamageNumber_HIT_11"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 6893511082194713864,
+    "sprite": "Battle_Common_DamageNumber_HITS_12"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 6948446608343946639,
+    "sprite": "Battle_Common_DamageNumber_HIT_2"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 7871713996786435516,
+    "sprite": "Battle_Common_DamageNumber_HIT_3"
+  },
+  {
+    "bundle": "hit_sprite_assets_all_6380dd1917bb4b39bda7a83852ce0447.bundle",
+    "path_id": 8278542432622879336,
+    "sprite": "Battle_Common_DamageNumber_HITS_3"
+  }
+]

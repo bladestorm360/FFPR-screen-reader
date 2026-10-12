@@ -17,7 +17,7 @@ set(FFPR_OPTS /W4 /permissive- /GR- /EHa /utf-8 /MP4 /Gy /wd4100 /wd4505)
 set(FFPR_INCLUDES
     "${CMAKE_SOURCE_DIR}/third_party/sdl3/include"
     "${CMAKE_SOURCE_DIR}/third_party/minhook/include"
-    "${CMAKE_SOURCE_DIR}/third_party/tolk")
+    "${CMAKE_SOURCE_DIR}/third_party/prism/include")
 
 # --- MinHook 1.3.4, built in from source with the [FFPR] coexistence changes (see
 # src/core/minhook_dyn.h): trampolines resume past the first 16 bytes of a target and never
@@ -100,7 +100,7 @@ target_compile_definitions(hid PRIVATE ${FFPR_DEFS})
 target_compile_options(hid PRIVATE ${FFPR_OPTS})
 # Export the real hid.dll surface (47 names) so the proxy is a drop-in replacement.
 target_link_options(hid PRIVATE "/DEF:${CMAKE_SOURCE_DIR}/src/proxy/hid.def" /OPT:REF /OPT:ICF)
-# Deliberately no Tolk/SDL import libraries: each is LoadLibrary'd at runtime, so a missing one
+# Deliberately no Prism/SDL import libraries: each is LoadLibrary'd at runtime, so a missing one
 # silences the mod instead of stopping the game from starting. MinHook is compiled in (above).
 set_target_properties(hid PROPERTIES
     OUTPUT_NAME hid

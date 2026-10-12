@@ -37,10 +37,20 @@ They do not confirm gameplay or measure game startup time.
    Auto Detail reads the current phase automatically. FF2 includes displayed evasion/
    accuracy multipliers and skill gains; unused hidden statistics stay absent.
    With Auto Detail off, hear EXP/gil totals and phase headings, without individual
-   EXP/drop/stat rows. With it on, hear the current phase's details. Hold/release
+   EXP/drop rows. FF2 has gil and weapon/spell gains rather than character EXP.
+   Battle's `Battle results: changed stats` toggle (default on) adds a concise changed-stat
+   rundown; toggle it off to hear only growth headings. The full table remains in arrows.
+   On a growth or FF2 weapon row, I reads that row's delta; an unchanged row says No stat
+   changes. FF2 weapon rows contain each displayed character/hand, weapon level and gauge
+   percentage. Autodetail reads that table but weapon delta summaries still require the
+   changed-stats toggle. Check percentage-only evasion gains and weapon level rollover.
+   No EXP total or member EXP row should appear in FF2. With Autodetail on, hear the current
+   phase's details. Hold/release
    each arrow: it must review without skipping a native page or its animation.
    Confirm still advances. Check regular status entry with Auto Detail off too:
    only its character/level headline should be automatic; I/arrows read the table.
+   Hit and damage speech now decodes visible digit sprites. Attack sound count does not
+   define the hit count. Report the spoken count and action if a rendered mismatch remains.
 7. Highlight equipment and shop items: read native comparisons/arrows. Number keys review
    displayed multi-member shop comparisons. Bestiary secret item rows must stay secret.
 8. F1/F3 report the native post-input speed/encounter settings after loading. F1 on the
@@ -62,11 +72,14 @@ For route failures, report the game, map, target and relevant story state.
    folder): `FFI_ScreenReader.dll` … `FFVI_ScreenReader.dll`. If you forget, the new mod says
    "Old screen reader still installed" at start.
    MelonLoader and BepInEx may stay (since 2026-10-07; see "With MelonLoader or BepInEx" below).
-3. From `ffpr-screen-reader`: `deploy.bat ff1` (or ff2 … ff6, or no argument for all six).
-   It copies `hid.dll`, `Tolk.dll`, `nvdaControllerClient64.dll` and `SDL3.dll` into the game
-   folder (MinHook is built into `hid.dll`).
-4. To undo: `uninstall.bat` (keeps Tolk and SDL3, which the old mods also use), then move the
-   old DLL back into `Mods`.
+3. Install the pinned Prism prerequisite separately once: `install_prism.bat ff1`
+   (or ff2 … ff6, or no argument for all six). Unchanged verified installs perform zero writes.
+4. From `ffpr-screen-reader`: `deploy.bat ff1` (or ff2 … ff6, or no argument for all six).
+   It checks Prism read-only, then copies only `hid.dll` and `SDL3.dll` into the game folder.
+   Prism, licenses and its receipt are not copied or repaired by normal deployment.
+5. To undo: `uninstall.bat`, then restore the old DLL/dependencies before using an old
+   Tolk-based reader. This user's requested migration retires game-root Tolk.dll; recovery
+   copies are kept in the development workspace.
 
 ## With MelonLoader or BepInEx (coexistence, 2026-10-07)
 
@@ -362,11 +375,14 @@ Chamber. Cycle its Events entries: the circle should be Magic Circle. NPC lesson
 the circle's ordinary interaction should behave as before. Both early and later room
 versions use the same labels. [Source evidence](MAP_LABELS.md#tutorial-room-context-correction-2026-10-12).
 
-## Results follow-up deployment, October 12
+## Results and Prism deployment, October 12
 
 All six games have the verified current-phase buffer update, SHA-256
-`D45EE6672A8EE496F037F9E4FC4E5D22C58DBCC43B044582C966B40E9E09F5D3`.
+`7339C5113508C6B5830401F771A867F47BB70FECA4D38729DE2AE6C6A3C978F6`.
 Canonical build, shared reader/input regressions, native PE phase/input assertions,
-7,052 native-name checks (zero missing), wiring checks and isolated DLL smoke passed.
+7,047 native-name checks (zero missing), wiring checks and isolated DLL smoke passed.
+Prism 0.18.3 x64 was installed separately in all six games; game-root Tolk.dll was removed
+after successful deployment. Fake API, package/SDK, dependency idempotence/rollback,
+actual mod-only deployment and scratch archive checks passed. [Migration record](PRISM_MIGRATION.md).
 Gameplay confirmation is pending. Use item 6 above to check Autodetail both ways,
-arrow hold/release and normal confirm; also check ordinary status entry.
+arrow hold/release and normal confirm; also check ordinary status entry and title/menu speech.

@@ -2,7 +2,7 @@
 
 Checks (BDFFHD's rule 2, for hid.dll):
   * every one of the 47 System32 hid.dll exports is exported by name;
-  * the DLL imports only system libraries (Tolk and SDL3 are LoadLibrary'd; MinHook is
+  * the DLL imports only system libraries (Prism and SDL3 are dynamically loaded; MinHook is
     compiled in).
 Usage: python tools/import_check.py out/hid.dll
 """

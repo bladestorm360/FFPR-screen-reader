@@ -16,12 +16,16 @@ Why hid.dll: every game loads a Windows file called hid.dll when it starts, to t
 ## Requirements
 
 - Windows, and one or more of the six games from Steam.
-- A screen reader that is running, such as NVDA or JAWS. Speech goes through Tolk.
+- A running screen reader, such as NVDA or JAWS.
+- Prism v0.18.3 (64-bit), installed separately with the supplied `install_prism.bat` command. Prism connects speech and braille output to supported screen readers.
 - The files in the zip:
   - hid.dll: the mod.
-  - Tolk.dll and nvdaControllerClient64.dll: speech.
   - SDL3.dll: the mod's sounds and controller support.
-  - SAAPI64.dll, if the zip has it: lets Tolk talk to the System Access screen reader.
+  - MinHook_LICENSE.txt: license for MinHook, which is built into hid.dll.
+
+Prism is a separate prerequisite and is not included in the mod release zip. Its installer
+uses the pinned official Prism v0.18.3 x64 package and installs it in the selected game's
+`.ffpr-deps\prism` folder. It performs no downloads.
 
 ### Getting the games
 
@@ -32,14 +36,18 @@ Why hid.dll: every game loads a Windows file called hid.dll when it starts, to t
 
 ## Installing
 
-Do this for each game. The same files go into every game.
+First install Prism once for each game, then install or update the mod. The mod files are the same in every game.
 
 1. Close the game.
 2. Open the game folder. With Steam's default library, the folders are in C:\Program Files (x86)\Steam\steamapps\common, and they are called FINAL FANTASY PR, FINAL FANTASY II PR, FINAL FANTASY III PR, FINAL FANTASY IV PR, FINAL FANTASY V PR and FINAL FANTASY VI PR.
 3. If your Steam library is on another drive, the path is drive letter, then the path to your library, then SteamLibrary\steamapps\common, then the game's folder.
 4. If you used the old screen reader, take its file out of the game's Mods folder. Delete it, or move it somewhere else. See the list below.
-5. Copy every file from the zip into the game folder, next to the game's exe. If Windows asks, replace the files that are already there.
-6. Start the game. You hear speech at the title screen.
+5. From the project folder, run `install_prism.bat ff1` for FINAL FANTASY, `ff2` for FINAL FANTASY II, and so on through `ff6` for FINAL FANTASY VI. This installs Prism once for that game. Repeat for each game you use.
+   For another Steam library, add `--game-root "path to steamapps\common"`.
+6. Copy the mod release files from the zip into the game folder, next to the game's exe. If Windows asks, replace the files that are already there.
+7. Start the game. You hear speech at the title screen.
+
+For later mod updates, copy the new mod release files into the game folder; do not reinstall Prism. Run `install_prism.bat` again only when you explicitly want to install or update the Prism dependency. The normal `deploy.bat [ffN]` command checks that Prism is installed, then deploys the mod files; it never downloads or installs Prism.
 
 The old screen reader files:
 
@@ -63,7 +71,7 @@ The mod only works in these six games. In another game, it says "this game is no
 - Delete hid.dll from the game folder. That turns the mod off: the game then uses the hid.dll that comes with Windows.
 - Earlier versions of this mod also put MinHook.x64.dll in the game folder. You can delete it, unless another mod you use needs it.
 - If you want, also delete ffpr_screen_reader.ini, which holds your settings, and the ffpr_screen_reader log files.
-- Tolk.dll, nvdaControllerClient64.dll and SDL3.dll can stay. The old screen readers use them too.
+- SDL3.dll can stay. Prism is installed separately in `.ffpr-deps\prism`.
 - To go back to an old screen reader, put its file back in the Mods folder. The old screen readers need MelonLoader.
 
 ## Settings and waypoints
@@ -329,8 +337,11 @@ Battle results in all six games use the current native screen's buffer. Up/Down
 reviews lines; Left/Right goes to the first/last line; I reads current details.
 Controller mod mode: West (X/Square) reads details; shoulders or D-pad Up/Down
 review lines; D-pad Left/Right goes first/last.
-EXP and gil totals are announced automatically. With Autodetail off, items,
-member EXP and growth tables stay available for manual review; with it on,
+EXP and gil totals are announced automatically. FF2 has gil and its own weapon/spell
+growth pages, rather than character EXP. Its weapon buffer contains displayed character,
+hand, weapon level and gauge percentage. I on a growth or weapon row reads that row's
+change; arrows always retain the full table. With Autodetail off, items,
+member EXP and full growth tables stay available for manual review; with it on,
 the current phase's details are read after its headline. Review arrows never
 advance the screen. Use the game's ordinary confirm control to continue.
 
@@ -391,6 +402,9 @@ The entries, by section, with their defaults:
   Percentage reads remaining HP as a percentage; Hidden omits it. F5 cycles the modes in battle.
 - Enemy Letters, off: adds a letter such as A or B to enemies that share a name. FINAL FANTASY V only. It has no effect yet; see Known issues.
 - Multi-hit Damage, With hit count: adds the hit count when the game displays one. Total damage remains a separate number. Total only omits the hit count.
+- Battle results: changed stats, on: automatically summarizes displayed stat gains and
+  FF2 weapon gauge changes. Off keeps those summaries manual with I on their buffer row.
+  Autodetail still reads the displayed table in either state.
 - EXP Counter Sound, on: a tick plays while the EXP bar fills on the results screen. EXP Counter Volume follows it; 0 to 100 percent, default 50. Neither appears in FINAL FANTASY II.
 
 ## Features
@@ -517,7 +531,7 @@ The entries, by section, with their defaults:
 
 The mod uses:
 
-- Tolk, by Davy Kager, under the GNU Lesser General Public License version 3.
 - MinHook, by Tsuda Kageyu, under the BSD 2-clause license, with the Hacker Disassembler Engine by Vyacheslav Patkov. It is built into hid.dll, changed so that it runs alongside MelonLoader and BepInEx. Its license is in MinHook_LICENSE.txt.
 - SDL3, by Sam Lantinga and the SDL contributors, under the zlib license.
-- The NVDA Controller Client, by NV Access.
+
+Speech and braille use Prism v0.18.3 x64, distributed and installed separately from its official release.

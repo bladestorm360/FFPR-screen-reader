@@ -1,0 +1,49 @@
+{
+  "native_sha256": "dbc8d9f674d3097b5bfa3c3b3ab877c32d92947bb40df545202ee574f2b0b19b",
+  "master_sha256": "3dab7f73b63a1a195ad3fb711bfba951c5efff5f41760fdc56f634fde6ff8a77",
+  "provider_rva": "6FC630",
+  "native_operands": {
+    "level": "ExpUtility.GetExpLevel(1, points, 1)",
+    "remaining": "ExpUtility.GetNextExp(1, points, 1)",
+    "interval": "ExpUtility.GetExpDifference(1, points, 1)"
+  },
+  "fill": "1 - remaining / interval; level 16 overrides fill to 1",
+  "thresholds": [
+    0,
+    20,
+    45,
+    70,
+    100,
+    135,
+    175,
+    220,
+    270,
+    330,
+    400,
+    480,
+    570,
+    660,
+    760,
+    860
+  ],
+  "intervals": [
+    20,
+    25,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    60,
+    70,
+    80,
+    90,
+    90,
+    100,
+    100
+  ],
+  "minimum_positive_gain_percent": 1.0,
+  "max_weapon_level": 16,
+  "max_magic_level": 16
+}

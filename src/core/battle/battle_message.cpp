@@ -34,6 +34,7 @@
 #include <utility>
 #include <vector>
 #include "battle_internal.h"
+#include "rendered_feedback.h"
 #include "battle.h"
 #include "battle_util.h"
 #include "../core.h"
@@ -77,8 +78,6 @@ ref::Method mCreateDamageViewFF5{kBasicFnFF5, "CreateDamageView", 5};
 
 ref::Class kDamageViewUI{"Last.UI", "DamageViewUIManager"};
 ref::Method mCreateHitCount{kDamageViewUI, "CreateHitCount", 3};
-ref::Class kViewDamage{"Last.Battle", "ViewDamageEntity"};
-ref::Field fRenderedDamage{kViewDamage, "damageValue_"};
 ref::Class kViewDamage12345{"Last.Battle", "ViewDamageEntity", kFF12345};
 ref::Method mCreateDamageValue{kViewDamage12345, "CreateDamageValue", 4};
 ref::Class kViewDamage6{"Last.Battle", "ViewDamageEntity", game::kFF6};
@@ -328,19 +327,9 @@ void rendered_damage(void* self, bool recovery, bool miss)
     hooks::guarded("Battle.DisplayedDamage", [=] {
         const auto name = unit_name(g_damage_context.unit);
         const int type = miss ? kHitMiss : g_damage_context.type;
-        // Native CreateDamageValue stores the absolute digits it actually draws.
-        // Snapshot text/context now; keep only the short-lived Unity renderer for reveal.
-        const int digits = ref::rd<int32_t>(self, fRenderedDamage);
-        frame::every_frame([self, name, digits, type, recovery] {
-            if (!unity::alive(self)) return false;
-            void* prefab = displayed::field(self, "prefab");
-            bool shown = false;
-            for (void* image : unity::components_in_children(prefab, unity::image_class(), false))
-                shown = shown || displayed::image_visible(image);
-            if (!shown) return true;
+        rendered::damage(self, miss, [name, type, recovery](int digits) {
             damage_view(name, digits, type < 0 ? kHitZero : type, recovery);
-            return false;
-        }, "Battle.DamageDisplay", 60);
+        });
     });
 }
 void d_render_damage(void* self, void* target, int32_t value, bool recovery, bool miss, const void* mi)
@@ -362,23 +351,7 @@ CreateHitCount_t o_CreateHitCount;
 void* d_CreateHitCount(void* self, int32_t hit_count_value, void* attack, void* target, const void* mi)
 {
     void* result = o_CreateHitCount(self, hit_count_value, attack, target, mi);
-    hooks::guarded("Battle.RenderedHitCount", [result, hit_count_value] {
-        if (!result || hit_count_value < 2 || ui::prefs::damage_display() != 1) return;
-        // Native SetNumSprite renders this exact integer as digit sprites. Read this
-        // independent visual event; a one-frame global damage multiplier lost counts
-        // across animation delays and could attach one target's count to another.
-        frame::every_frame([result, hit_count_value] {
-            if (!in_battle() || !unity::alive(result)) return false;
-            if (!displayed::image_visible(displayed::field(result, "hitText"))) return true;
-            void* images = displayed::field(result, "numRenderers");
-            bool shown = false;
-            for (int i = 0; i < unity::array_length(images); ++i)
-                shown = shown || displayed::image_visible(unity::array_at(images, i));
-            if (!shown) return true;
-            ffpr::say(TF(L"{0} hits", {text::num(hit_count_value)}), false);
-            return false;
-        }, "Battle.HitCount", 30);
-    });
+    hooks::guarded("Battle.RenderedHitCount", [result] { rendered::hit_count(result); });
     return result;
 }
 

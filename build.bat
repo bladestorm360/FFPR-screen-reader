@@ -71,6 +71,21 @@ if errorlevel 1 (
     echo Battle results check FAILED - see build_check\battle_results_report.txt
     exit /b 1
 )
+"out\checks\prism_check.exe" > build_check\prism_report.txt 2>&1
+if errorlevel 1 (
+    echo Prism check FAILED - see build_check\prism_report.txt
+    exit /b 1
+)
+python tools\prism_package_check.py > build_check\prism_package_report.txt 2>&1
+if errorlevel 1 (
+    echo Prism package check FAILED - see build_check\prism_package_report.txt
+    exit /b 1
+)
+python tools\prism_dependency_check.py > build_check\prism_dependency_report.txt 2>&1
+if errorlevel 1 (
+    echo Prism dependency check FAILED - see build_check\prism_dependency_report.txt
+    exit /b 1
+)
 "out\checks\modal_input_check.exe" > build_check\modal_input_report.txt 2>&1
 if errorlevel 1 (
     echo Modal input check FAILED - see build_check\modal_input_report.txt

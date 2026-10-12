@@ -7,9 +7,10 @@ that out\\hid.dll exists and is newer than every source file). The zip goes to
 releases\\FFPR_ScreenReader_<version>.zip and holds, at its top level, the files that go in
 each game folder:
 
-    hid.dll (MinHook is built in), Tolk.dll, nvdaControllerClient64.dll, SAAPI64.dll (if present),
-    SDL3.dll, readme.md (the user's combined readme, only if it exists), uninstall.bat is NOT
-    included (it targets this machine's Steam path).
+    hid.dll (MinHook is built in), SDL3.dll, MinHook_LICENSE.txt, and readme.md (the user's
+    combined readme, only if it exists). Prism v0.18.3 x64 is a separate prerequisite and is
+    installed with install_prism.bat; it is not included in the mod release zip. uninstall.bat
+    is NOT included (it targets this machine's Steam path).
 
 The readme is the user's: this script never writes or edits it.
 """
@@ -45,15 +46,12 @@ def main():
         print("FAIL: out\\hid.dll is older than the sources - run build.bat and smoketest.bat first")
         return 1
     files = [(dll, "hid.dll")]
-    for name in ("Tolk.dll", "nvdaControllerClient64.dll", "SDL3.dll"):
+    for name in ("SDL3.dll",):
         path = os.path.join(RUNTIME, name)
         if not os.path.exists(path):
             print(f"FAIL: third_party\\runtime\\{name} missing")
             return 1
         files.append((path, name))
-    saapi = os.path.join(RUNTIME, "SAAPI64.dll")
-    if os.path.exists(saapi):
-        files.append((saapi, "SAAPI64.dll"))
     # MinHook is compiled into hid.dll: its BSD-2 license must ship with the binary.
     files.append((os.path.join(ROOT, "third_party", "minhook", "LICENSE.txt"), "MinHook_LICENSE.txt"))
     readme = os.path.join(ROOT, "readme.md")

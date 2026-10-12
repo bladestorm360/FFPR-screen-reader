@@ -209,6 +209,9 @@ void initialize()
     v.push_back(enumeration(L"Multi-hit Damage", {L"Total only", L"With hit count"},
                             p::kMultiHitDamage, p::kMultiHitDamageDefault, p::kMultiHitDamageMax,
                             L"Announces the number of hits when the game displays a hit counter. Total damage remains a separate number."));
+    v.push_back(toggle(L"Battle results: changed stats", p::kAnnounceResultStatChanges, p::kAnnounceResultStatChangesDefault,
+                       L"On. Announces only the displayed stats that changed on each battle growth page. Arrows still review the full table.",
+                       L"Off. Changed stats remain available with I and arrow review."));
 
     // EXP counter remains conditional because FF2 has no experience points.
     if (!game::is(game::Id::FF2)) {

@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "package_id": "prism-0.18.3-windows-x64-7c7d09c8",
+  "version": "0.18.3",
+  "architecture": "x64",
+  "source_url": "https://github.com/ethindp/prism",
+  "source_commit": "94329ebeccbaee7f70b3494a290c9dfaac0184ee",
+  "release_asset": "https://github.com/ethindp/prism/releases/download/v0.18.3/prism-windows-x64.zip",
+  "archive_sha256": "13d3c9d1d524b0737cde261c6468845753e36b6c5c2637e7d26bfb8bf4d8783f",
+  "package_variant": "dynamic/release",
+  "toolchain": "Official upstream Windows x64 dynamic release; build options/compiler not independently reproduced. PE imports are system-only, with no CRT redistributable imports.",
+  "optional_wrapper_dlls": "Not installed: Tolk, SRAL, UniversalSpeech, SpeechCore. Native NVDA uses its built-in RPC binding; system SAPI and native backends remain available.",
+  "headers": {
+    "prism.h": "5303fd47f2305165d50e937609bbe59d3c2d928aa4270ffb7461dcc1fd3fab19",
+    "prism_version.h": "5a4d16504b20df777272dad406378eabcb3885519e239fb3496a16ebf9fa27bf"
+  },
+  "files": {
+    "prism.dll": {
+      "source": "bin/prism.dll",
+      "sha256": "7c7d09c8c7306e8e1a0c46d603ccb2a391c194c77843400c11b746e7dd56a467"
+    },
+    "LICENSES/concurrentqueue/LICENSE.md": {
+      "source": "LICENSES/concurrentqueue/LICENSE.md",
+      "sha256": "a0f53fe6abd691d725dd9478cd906e9010c80f06c3de3f83f74576e574d5a3d4"
+    },
+    "LICENSES/djinni/LICENSE": {
+      "source": "LICENSES/djinni/LICENSE",
+      "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+    },
+    "LICENSES/dr_wav/LICENSE": {
+      "source": "LICENSES/dr_wav/LICENSE",
+      "sha256": "a13603628866863f196c0201891a6dcc8062481e83b5d686f34cf9e45ceec899"
+    },
+    "LICENSES/fmt/LICENSE": {
+      "source": "LICENSES/fmt/LICENSE",
+      "sha256": "e53b24254a17f6acdaf967557c287dca7e920b22cc6290f6a84d57c34d942a6e"
+    },
+    "LICENSES/highway/LICENSE": {
+      "source": "LICENSES/highway/LICENSE",
+      "sha256": "d208152e2777ffd0126eacc1bd21c0320d69e4e6b622d21a2a12a47e8ef73763"
+    },
+    "LICENSES/moderncom/AUTHORS.md": {
+      "source": "LICENSES/moderncom/AUTHORS.md",
+      "sha256": "373aa5788d62a48b205b076a3cf966116960eee22aeef8146ea28a5a347c7d4b"
+    },
+    "LICENSES/moderncom/LICENSE": {
+      "source": "LICENSES/moderncom/LICENSE",
+      "sha256": "46bdc264e0055ac5e138a64cc7376b3f77b94e11256c43b6a19cf5ebd7006ac7"
+    },
+    "LICENSES/nvdaController/lgpl-2.1.txt": {
+      "source": "LICENSES/nvdaController/lgpl-2.1.txt",
+      "sha256": "30db0e56ab6acae4e198d348d348935d60a9db468420339e922e1720b34a4b9f"
+    },
+    "LICENSES/nvgt/LICENSE.md": {
+      "source": "LICENSES/nvgt/LICENSE.md",
+      "sha256": "c3f9771cadda97d53e0a1cc22565d5f48502968e863ab25ea77e46e0e505b215"
+    },
+    "LICENSES/prism/mpl-2.0.txt": {
+      "source": "LICENSES/prism/mpl-2.0.txt",
+      "sha256": "6ac0afba190f0aa30f9de97e8ae7ac5a1a6b7c3df42dbed92c13a096efcfa505"
+    },
+    "LICENSES/simdutf/apache-2.0.txt": {
+      "source": "LICENSES/simdutf/apache-2.0.txt",
+      "sha256": "850a7c05a1f9b8a354186d0be102432ef7bb9fec1b86a20914abf933cdcbaa91"
+    }
+  }
+}

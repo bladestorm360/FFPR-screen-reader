@@ -1,0 +1,10 @@
+1803D9370	FF2_PointsInit
+1808E3340	ResultStatusContent_SetData
+1803DB950	FF2_Status_SetData
+1804918A0	HitCount_GetSprite
+18063D6C0	FF2_Basic_CreateHitCount
+1804B6A20	Damage_CreateDamageValue
+1803DC2E0	Skill_LevelUpColor
+1803DC7D0	Skill_Weapon_Update
+1803DC770	Skill_Ability_Update
+1805335A0	CommonGauge_SetValue

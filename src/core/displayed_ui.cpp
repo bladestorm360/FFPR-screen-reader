@@ -73,6 +73,10 @@ bool visible(void* component)
     }
     return true;
 }
+bool container_visible(void* component)
+{
+    return unity::alive(component) && unity::active_in_hierarchy(component);
+}
 bool world_visible(void* entity)
 {
     if (!visible(entity)) return false;
@@ -101,7 +105,7 @@ std::wstring text_field(void* view, const char* name) { return text(field(view, 
 std::vector<std::wstring> texts(void* root)
 {
     std::vector<std::wstring> lines;
-    if (!visible(root)) return lines;
+    if (!container_visible(root)) return lines;
     for (void* t : unity::texts(root, false)) {
         auto line = text(t);
         if (!line.empty()) lines.push_back(std::move(line));
@@ -116,40 +120,17 @@ std::wstring pair(void* view, const char* label, const char* value)
     return v.empty() ? std::wstring() : (l.empty() ? v : l + L" " + v);
 }
 
-std::wstring comparison(void* view)
-{
-    auto category = text_field(view, "categoryText");
-    if (category.empty()) category = text_field(view, "paramNameText");
-    auto before = text_field(view, "beforValueText");
-    auto after = text_field(view, "afterValueText");
-    for (auto [value, suffix] : {std::pair{&before, "before"}, std::pair{&after, "after"}}) {
-        const std::string prefix(suffix);
-        auto percent = text_field(view, (prefix + "PercentValueText").c_str());
-        if (!percent.empty()) {
-            *value += text_field(view, (prefix + "MultipleSymbolText").c_str()) + percent +
-                      text_field(view, (prefix + "PercentSymbolText").c_str());
-        }
-    }
-    before += text_field(view, "beforValuePercentText");
-    after += text_field(view, "afterValuePercentText");
-    const auto arrow = comparison_arrow(view);
-    if (before.empty() && after.empty()) {
-        auto result = ::text::join(texts(view), L" ");
-        return result + (arrow.empty() ? L"" : L", " + arrow);
-    }
-    std::wstring result = category + (category.empty() ? L"" : L" ") + before;
-    if (!after.empty()) result += before.empty() ? after : TF(L" to {0}", {after});
-    if (!arrow.empty()) result += L", " + arrow;
-    return result;
-}
-
-std::wstring bar(void* component)
+std::optional<float> bar_fraction(void* component)
 {
     void* image = kImage.is(component) ? component : field(component, "gaugeImage");
     if (!visible(image) || ref::rd<int32_t>(image, fImageType) != 3) return {};
     const float amount = ref::rd<float>(image, fFill);
-    return std::isfinite(amount) && amount >= 0 && amount <= 1
-        ? std::to_wstring(static_cast<int>(std::lround(amount * 100))) + L"%" : std::wstring();
+    return std::isfinite(amount) && amount >= 0 && amount <= 1 ? std::optional<float>(amount) : std::nullopt;
+}
+std::wstring bar(void* component)
+{
+    const auto amount = bar_fraction(component);
+    return amount ? std::to_wstring(static_cast<int>(std::lround(*amount * 100))) + L"%" : std::wstring();
 }
 std::vector<std::wstring> vital_lines(void* view)
 {

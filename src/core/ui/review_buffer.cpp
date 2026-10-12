@@ -5,6 +5,7 @@
 #include "../core.h"
 #include "../displayed_ui.h"
 #include "../say.h"
+#include "../modtext.h"
 #include "../text.h"
 #include "../ui_util.h"
 #include "../input/input.h"
@@ -40,7 +41,7 @@ int install() {
 }
 core::Install s_install{"UI.ReviewBuffer", &install, 90};
 }
-bool active() { return displayed::visible(g_owner) && !g_buffer.empty(); }
+bool active() { return displayed::container_visible(g_owner) && !g_buffer.empty(); }
 bool owns(void* owner) { return owner && owner == g_owner; }
 Domain domain() { return g_domain; }
 int index() { return g_buffer.index(); }
@@ -53,7 +54,7 @@ void replace_lines(std::vector<std::wstring> lines, int restore_index) {
 }
 void show(void* owner, const std::wstring& headline, std::vector<std::wstring> lines, Options options) {
     clear();
-    if (!displayed::visible(owner)) return;
+    if (!displayed::container_visible(owner)) return;
     g_owner = owner;
     g_domain = options.domain;
     g_headline = headline;
@@ -72,10 +73,27 @@ void show(void* owner, const std::wstring& headline, std::vector<std::wstring> l
         if (!summary.empty()) announcement += (announcement.empty() ? L"" : L". ") + summary;
         if (!announcement.empty()) ffpr::say(announcement, true);
         if (prefs::auto_detail_enabled() && !options.defer_details && !details.empty()) ffpr::say(details, false);
+        if ((!prefs::auto_detail_enabled() || options.announce_brief_with_details) &&
+            options.announce_brief && options.brief && !options.defer_details) {
+            const auto brief = text::join(*options.brief, L". ");
+            if (!brief.empty()) ffpr::say(brief, false);
+        }
     }
 }
 void details() {
     if (!active()) return;
+    if (g_options.brief) {
+        const int row = g_buffer.index() - (g_options.include_headline && !g_headline.empty() ? 1 : 0) -
+            static_cast<int>(g_options.summary.size());
+        if (row < 0 || row >= static_cast<int>(g_options.row_details.size())) {
+            ffpr::say(g_lines[g_buffer.index()], false);
+            return;
+        }
+        auto brief = g_options.row_details[row];
+        if (brief.empty()) brief = T(L"No stat changes");
+        ffpr::say(g_headline + (g_headline.empty() ? L"" : L". ") + brief, false);
+        return;
+    }
     auto line = text::join(g_lines, L". ");
     if (!g_options.include_headline && !g_headline.empty()) line = g_headline + (line.empty() ? L"" : L". " + line);
     if (!line.empty()) ffpr::say(line, false);

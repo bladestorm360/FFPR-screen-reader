@@ -1,0 +1,2138 @@
+[
+  {
+    "game": 1,
+    "bundle": "key_battle_assets_all_1312346180c6e88413f178ee6f83ad87.bundle",
+    "tables": [
+      {
+        "path_id": 1898813470340948776,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Luck",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": 5599484489842778374,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Luck",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": 8282278743153181299,
+        "object": "status_up_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Luck",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      }
+    ],
+    "native_edges": "ff1_results_edges.tsv"
+  },
+  {
+    "game": 2,
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "tables": [
+      {
+        "path_id": -4199853130491685518,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Magic",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Spirit",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "EvasionRate",
+            "subtype": "EvasionCount",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "AbilityDefense",
+            "subtype": "MagicDefenseCount",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": -4147011164958985974,
+        "object": "status_up_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "EvasionRate",
+            "subtype": "EvasionCount",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "AbilityDefense",
+            "subtype": "MagicDefenseCount",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": -1456267164005175025,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Magic",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Spirit",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "EvasionRate",
+            "subtype": "EvasionCount",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "AbilityDefense",
+            "subtype": "MagicDefenseCount",
+            "view_fields": [
+              "afterMultipleSymbolText",
+              "afterPercentSymbolText",
+              "afterPercentValueText",
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "beforeMultipleSymbolText",
+              "beforePercentSymbolText",
+              "beforePercentValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      }
+    ],
+    "native_edges": "ff2_results_edges.tsv"
+  },
+  {
+    "game": 3,
+    "bundle": "key_battle_assets_all_72352c2c301f3f9ab0867ab4ec68956f.bundle",
+    "tables": [
+      {
+        "path_id": 1898813470340948776,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Luck",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": 5599484489842778374,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Spirit",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": 8282278743153181299,
+        "object": "status_up_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Luck",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      }
+    ],
+    "native_edges": "ff3_results_edges.tsv"
+  },
+  {
+    "game": 4,
+    "bundle": "key_battle_assets_all_958287951e14e2ae364bc23b5d2d8035.bundle",
+    "tables": [
+      {
+        "path_id": -4773227165019324784,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Spirit",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": -4147011164958985974,
+        "object": "status_up_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Spirit",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      },
+      {
+        "path_id": -1456267164005175025,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Power",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Agility",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Vitality",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Intelligence",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Spirit",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": []
+      }
+    ],
+    "native_edges": "ff4_results_edges.tsv"
+  },
+  {
+    "game": 5,
+    "bundle": "key_battle_assets_all_e61eafed92d7a2f73ec7b38da8a1d05e.bundle",
+    "tables": [
+      {
+        "path_id": -4773227165019324784,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "JobLevel",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "path_id": -4147011164958985974,
+        "object": "status_up_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "JobLevel",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "path_id": -1456267164005175025,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "JobLevel",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "native_edges": "ff5_results_edges.tsv"
+  },
+  {
+    "game": 6,
+    "bundle": "key_battle_assets_all_b4052038d54b7467b53a823737a89ee6.bundle",
+    "tables": [
+      {
+        "path_id": -4773227165019324784,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "path_id": -4147011164958985974,
+        "object": "status_up_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "path_id": -1456267164005175025,
+        "object": "levelup_view",
+        "rows": [
+          {
+            "type": "HP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "MP",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          },
+          {
+            "type": "Level",
+            "subtype": "Non",
+            "view_fields": [
+              "afterValueText",
+              "arrowImage",
+              "beforValueText",
+              "categoryText",
+              "jobLevelText",
+              "lowerJobMasterText",
+              "m_GameObject",
+              "m_Script",
+              "upperJobMasterText"
+            ]
+          }
+        ],
+        "other_rows": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "native_edges": "ff6_results_edges.tsv"
+  }
+]

@@ -1,7 +1,7 @@
 #pragma once
 namespace speech { void request_shutdown(); }
 
-// Tolk is loaded LAZILY, triggered by the first game hook that fires — never on a timer.
+// Prism is loaded LAZILY, triggered by the first game hook that fires.
 //
 // WHY: Tolk_Load() drags the screen reader's in-process stack into the game
 // (nvdaHelperRemote, IAccessible2Proxy, ISimpleDOM, OLEACC, UIAutomation), which creates
@@ -17,10 +17,10 @@ namespace speech { void request_shutdown(); }
 // no frame hitch either.
 //
 // SPEAKING IS ASYNCHRONOUS (2026-09-25). say() only copies the line into a fixed ring and
-// signals; the boot thread, which loaded Tolk, spends the rest of the process in pump()
-// making the actual Tolk_Output calls. A screen reader's RPC latency therefore never
+// signals; the boot thread, which loaded Prism, spends the rest of the process in pump()
+// making the actual combined speech/braille calls. A screen reader's RPC latency therefore never
 // reaches the game thread (it was the battle-menu and route-key lag). Lines spoken before
-// Tolk is up wait in the same ring and are spoken the moment it is.
+// Prism is up wait in the same ring and are spoken the moment it is.
 namespace speech {
 
 /// Boot thread, before any hook is installed: creates the ring's lock and event.
@@ -29,12 +29,12 @@ void init();
 /// Called from hooks / any thread. Idempotent, allocation-free, returns immediately.
 void request_load();
 
-/// Boot thread only: block until request_load() fires (or timeout), then load Tolk.
+/// Boot thread only: block until request_load() fires (or timeout), then load Prism.
 /// Returns true if speech became available.
 bool wait_and_load(int timeout_ms);
 
 /// Detached boot thread only: drain output and pending settings saves on the existing
-/// worker event. Remains alive even without Tolk, so persistence still works silently.
+/// worker event. Remains alive even without Prism, so persistence still works silently.
 void pump();
 
 /// Backend only (reader owns speech policy). Copies/splits UTF-16 at word boundaries;

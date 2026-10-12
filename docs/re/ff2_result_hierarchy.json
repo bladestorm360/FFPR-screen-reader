@@ -1,0 +1,84 @@
+[
+  {
+    "point": [
+      [
+        "point_root",
+        true
+      ],
+      [
+        "result_menu",
+        true
+      ]
+    ],
+    "gil": [
+      [
+        "last_text",
+        true
+      ],
+      [
+        "result_point_content",
+        true
+      ],
+      [
+        "contents",
+        true
+      ],
+      [
+        "point_view",
+        true
+      ],
+      [
+        "point_root",
+        true
+      ],
+      [
+        "result_menu",
+        true
+      ]
+    ],
+    "gil_enabled": 1,
+    "gil_color": {
+      "r": 0.9411764740943909,
+      "g": 0.9411764740943909,
+      "b": 0.9411764740943909,
+      "a": 1.0
+    }
+  },
+  {
+    "point": [
+      [
+        "point_root",
+        true
+      ]
+    ],
+    "gil": [
+      [
+        "last_text",
+        true
+      ],
+      [
+        "result_point_content",
+        true
+      ],
+      [
+        "contents",
+        true
+      ],
+      [
+        "point_view",
+        true
+      ],
+      [
+        "point_root",
+        true
+      ]
+    ],
+    "gil_enabled": 1,
+    "gil_color": {
+      "r": 0.9411764740943909,
+      "g": 0.9411764740943909,
+      "b": 0.9411764740943909,
+      "a": 1.0
+    }
+  }
+]

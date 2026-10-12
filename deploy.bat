@@ -19,7 +19,7 @@ call :one ff5 "FINAL FANTASY V PR" "FINAL FANTASY V.exe"
 call :one ff6 "FINAL FANTASY VI PR" "FINAL FANTASY VI.exe"
 if not "%FAILED%"=="0" ( echo Some copies FAILED. & exit /b 1 )
 echo.
-echo Installed hid.dll, Tolk.dll, nvdaControllerClient64.dll and SDL3.dll. MinHook is built into hid.dll.
+echo Installed hid.dll and SDL3.dll. Prism prerequisite was checked without changes.
 echo Log: ffpr_screen_reader.log in each game folder. Uninstall: uninstall.bat
 endlocal
 exit /b 0
@@ -31,10 +31,10 @@ if not exist "%GAME%\%~3" ( echo skip %~1: not installed & exit /b 0 )
 REM find.exe by full path: a Unix find earlier on PATH (Git Bash) makes this check silently pass.
 tasklist /FI "IMAGENAME eq %~3" 2>nul | "%SystemRoot%\System32\find.exe" /I "%~3" >nul
 if not errorlevel 1 ( echo ERROR: %~3 is running. Close the game first. & set FAILED=1 & exit /b 0 )
+REM Read-only dependency check. Never install, copy, repair or update Prism here.
+python tools\prism_dependency.py check %~1 --game-root "%STEAM%"
+if errorlevel 1 ( set FAILED=1 & exit /b 0 )
 copy /Y "out\hid.dll" "%GAME%\hid.dll" >nul || ( set FAILED=1 & exit /b 0 )
-copy /Y "third_party\runtime\Tolk.dll" "%GAME%\Tolk.dll" >nul || ( set FAILED=1 & exit /b 0 )
-copy /Y "third_party\runtime\nvdaControllerClient64.dll" "%GAME%\nvdaControllerClient64.dll" >nul || ( set FAILED=1 & exit /b 0 )
-if exist "third_party\runtime\SAAPI64.dll" copy /Y "third_party\runtime\SAAPI64.dll" "%GAME%\SAAPI64.dll" >nul
 copy /Y "third_party\runtime\SDL3.dll" "%GAME%\SDL3.dll" >nul || ( set FAILED=1 & exit /b 0 )
 echo installed %~1: %GAME%
 exit /b 0

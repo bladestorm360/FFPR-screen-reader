@@ -19,7 +19,7 @@
 namespace ffpr::battle {
 namespace {
 ref::Class kMenu{"Last.UI.KeyInput", "ResultMenuController"};
-ref::Method mShow{kMenu, "Show", 2}, mClose{kMenu, "Close", 0};
+ref::Method mShow{kMenu, "Show", 2}, mClose{kMenu, "Close", 0}, mUpdateMenu{kMenu, "UpdateController", 0};
 ref::Method mPoints{kMenu, "ShowPointsInit", 0}, mStatus{kMenu, "ShowStatusUpInit", 0},
             mItems{kMenu, "ShowGetItemsInit", 0}, mLearning{kMenu, "ShowGetAbilitysInit", 0},
             mAbilityLevels{kMenu, "ShowLevelUpAbilitysInit", 0}, mEnd{kMenu, "EndWaitInit", 0};
@@ -28,7 +28,7 @@ ref::Method mSkillPage{kSkills, "UpdateContentPage", 0};
 bool g_announced_points = false, g_announced_items = false;
 unsigned g_generation = 0;
 using Phase = void (*)(void*, const void*);
-Phase o_points, o_status, o_items, o_learning, o_ability, o_end, o_skill_page, o_close;
+Phase o_points, o_status, o_items, o_learning, o_ability, o_end, o_skill_page, o_close, o_update_menu;
 using Show = void (*)(void*, void*, bool, const void*); Show o_show;
 std::wstring g_skill_headline;
 void* g_menu = nullptr;
@@ -131,35 +131,60 @@ void start_exp_monitor(void* instance)
 std::vector<std::wstring> row_lines(void* controller, const char* list_field, bool compare = false)
 {
     std::vector<std::wstring> lines;
-    if (!displayed::visible(controller)) return lines;
+    if (!displayed::container_visible(controller)) return lines;
     void* list = displayed::field(controller, list_field);
     for (int i = 0; i < unity::list_count(list); ++i) {
         void* content = unity::list_at(list, i);
-        if (!displayed::visible(content)) continue;
+        if (!displayed::container_visible(content)) continue;
         auto line = compare ? displayed::comparison(displayed::field(content, "view")) : displayed::skill_row(content);
         if (!line.empty()) lines.push_back(std::move(line));
     }
     return lines;
 }
 using ReadLines = std::function<std::vector<std::wstring>()>;
-void later(void* owner, std::function<std::wstring()> title, ReadLines read, ReadLines summary = {})
+using Configure = std::function<void(ui::review::Options&)>;
+struct PendingPage {
+    void* owner;
+    std::function<std::wstring()> title;
+    ReadLines read, summary;
+    Configure configure;
+    unsigned generation;
+    uint64_t earliest_frame;
+};
+std::optional<PendingPage> g_pending_page;
+void read_pending_page()
+{
+    if (!g_pending_page) return;
+    if (g_pending_page->generation != g_generation || g_phase == ResultPhase::None ||
+        !unity::alive(g_pending_page->owner)) { g_pending_page.reset(); return; }
+    if (frame::count() < g_pending_page->earliest_frame ||
+        !displayed::container_visible(g_pending_page->owner)) return;
+    auto page = *g_pending_page;
+    auto lines = page.read();
+    auto summary = page.summary ? page.summary() : std::vector<std::wstring>{};
+    if (g_phase == ResultPhase::Points && summary.empty()) return;
+    if (g_phase == ResultPhase::Weapon && lines.empty()) return;
+    if (lines.empty() && summary.empty() && displayed::texts(page.owner).empty()) return;
+    ui::review::Options options;
+    options.include_headline = true;
+    options.defer_details = page.owner == g_point_owner && g_point_animation_pending;
+    options.summary = std::move(summary);
+    if (page.configure) page.configure(options);
+    const auto heading = page.title();
+    g_pending_page.reset();
+    ui::review::show(page.owner, heading, std::move(lines), std::move(options));
+}
+void later(void* owner, std::function<std::wstring()> title, ReadLines read,
+           ReadLines summary = {}, Configure configure = {})
 {
     const unsigned generation = ++g_generation;
     ui::review::clear();
     frame::cancel_label("BattleResult.Read");
-    frame::every_frame([owner, title, read, summary, generation] {
-        if (generation != g_generation || !in_battle() || !unity::alive(owner)) return false;
-        if (!displayed::visible(owner)) return true;
-        auto lines = read();
-        const auto heading = title();
-        if (lines.empty() && displayed::texts(owner).empty()) return true;
-        ui::review::Options options;
-        options.include_headline = true;
-        options.defer_details = owner == g_point_owner && g_point_animation_pending;
-        if (summary) options.summary = summary();
-        ui::review::show(owner, heading, std::move(lines), std::move(options));
-        return false;
-    }, "BattleResult.Read", 30);
+    g_pending_page = PendingPage{owner, std::move(title), std::move(read), std::move(summary),
+                                std::move(configure), generation, frame::count() + 1};
+    // One event deferral, then the native result controller's own update event
+    // supplies readiness. Fades do not exhaust an arbitrary 30-frame deadline.
+    frame::next_frame([generation] { if (generation == g_generation) read_pending_page(); }, "BattleResult.Read");
 }
 std::vector<std::wstring> point_totals(void* self)
 {
@@ -169,6 +194,8 @@ std::vector<std::wstring> point_totals(void* self)
                               std::pair{"getGilFixText", "getGilValueText"},
                               std::pair{"getABPFixText", "getABPValueText"},
                               std::pair{"getMpFixText", "getMpValueText"}}) {
+        // FF2 has gil, weapon/spell levels and use-based stats, never character EXP.
+        if (game::is(game::Id::FF2) && std::string(label) != "getGilFixText") continue;
         auto line = displayed::pair(view, label, value);
         if (!line.empty()) lines.push_back(std::move(line));
     }
@@ -185,13 +212,15 @@ void append_skill_details(std::vector<std::wstring>& lines)
 }
 std::vector<std::wstring> point_details(void* self)
 {
-    auto lines = row_lines(displayed::field(self, "characterListConteroller"), "contentList");
+    auto lines = game::is(game::Id::FF2) ? std::vector<std::wstring>{} :
+        row_lines(displayed::field(self, "characterListConteroller"), "contentList");
     append_skill_details(lines);
     return lines;
 }
 void begin_phase(void* menu, ResultPhase phase)
 {
     g_menu = menu; g_phase = phase;
+    g_pending_page.reset();
     ++g_generation;
     frame::cancel_label("BattleResult.Read");
     frame::cancel_label("BattleResult.FinalPoints");
@@ -220,19 +249,63 @@ void point_rows(void* self)
         }
     }
 }
+std::vector<std::wstring> growth_rows(void* self, bool changed_only, bool preserve_rows = false)
+{
+    std::vector<std::wstring> lines;
+    void* list = displayed::field(self, "contentList");
+    for (int i = 0; i < unity::list_count(list); ++i) {
+        void* content = unity::list_at(list, i);
+        if (!displayed::container_visible(content)) continue;
+        auto reading = displayed::comparison_reading(displayed::field(content, "view"));
+        if (reading.line.empty()) continue;
+        if (!changed_only || reading.changed) lines.push_back(std::move(reading.line));
+        else if (preserve_rows) lines.emplace_back();
+    }
+    return lines;
+}
 void status_rows(void* self)
 {
     g_status_owner = self;
     g_phase = ResultPhase::Status;
     stop_exp_counter_if_playing();
     later(self, [self] { return displayed::text_field(displayed::field(self, "view"), "nameText"); }, [self] {
-        auto lines = row_lines(self, "contentList", true);
-        // FF6's rendered magic-stone bonus belongs to the current member's details.
+        auto lines = growth_rows(self, false);
         auto bonus = displayed::pair(displayed::field(self, "view"), "magicStoneBonusText", "magicStoneBonusValueText");
         if (!bonus.empty()) lines.push_back(std::move(bonus));
         append_skill_details(lines);
         return lines;
+    }, {}, [self](ui::review::Options& options) {
+        options.brief = growth_rows(self, true);
+        options.row_details = growth_rows(self, true, true);
+        options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
     });
+}
+std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = false, bool preserve_rows = false)
+{
+    std::vector<std::wstring> lines;
+    if (!game::is(game::Id::FF2) || !displayed::container_visible(controller)) return lines;
+    void* characters = displayed::field(controller, "contentList");
+    for (int i = 0; i < unity::list_count(characters); ++i) {
+        void* character = unity::list_at(characters, i);
+        if (!displayed::container_visible(character)) continue;
+        const auto name = displayed::text_field(displayed::field(character, "view"), "nameText");
+        void* skills = displayed::field(character, "contentList");
+        for (int j = 0; j < unity::list_count(skills); ++j) {
+            void* skill = unity::list_at(skills, j);
+            if (!displayed::container_visible(skill)) continue;
+            const auto rendered = displayed::skill_row(skill);
+            if (rendered.empty()) continue;
+            auto line = changed_only ? displayed::skill_change(skill) : rendered;
+            // Native FF2 SetData populates slot 0 from right-hand equipment and
+            // slot 1 from left-hand equipment. Retain the displayed column labels.
+            const auto hand = displayed::text_field(displayed::field(controller, "view"),
+                j == 0 ? "fixedRightHandText" : j == 1 ? "fixedLeftHandText" : "");
+            if (!line.empty()) lines.push_back(name + (name.empty() ? L"" : L": ") +
+                hand + (hand.empty() ? L"" : L" ") + line);
+            else if (preserve_rows) lines.emplace_back();
+        }
+    }
+    return lines;
 }
 void skills(void* self)
 {
@@ -246,7 +319,7 @@ void skills(void* self)
 
 void points_finished(void* list)
 {
-    if (!g_point_animation_pending || !displayed::visible(g_point_owner) ||
+    if (!g_point_animation_pending || !displayed::container_visible(g_point_owner) ||
         displayed::field(g_point_owner, "characterListConteroller") != list) return;
     g_point_animation_pending = false;
     stop_exp_counter_if_playing();
@@ -255,7 +328,7 @@ void points_finished(void* list)
     // final details. Only an existing deferred page needs a completion announcement.
     const bool had_deferred_page = ui::review::owns(g_point_owner);
     frame::next_frame([generation, had_deferred_page] {
-        if (generation != g_generation || !ui::review::owns(g_point_owner) || !displayed::visible(g_point_owner)) return;
+        if (generation != g_generation || !ui::review::owns(g_point_owner) || !displayed::container_visible(g_point_owner)) return;
         auto lines = point_details(g_point_owner);
         const auto announcement = text::join(lines, L". ");
         ui::review::Options options;
@@ -279,6 +352,10 @@ void d_show(void* self, void* data, bool reverse, const void* mi) {
         result_reset_state(); begin_phase(self, ResultPhase::Points); result_clear_all_battle_states();
     });
     o_show(self, data, reverse, mi);
+}
+void d_update_menu(void* self, const void* mi) {
+    o_update_menu(self, mi);
+    hooks::guarded("Results.NativeReadiness", [self] { if (self == g_menu) read_pending_page(); });
 }
 void d_close(void* self, const void* mi) {
     hooks::guarded("Results.Close", [self] { if (self == g_menu) result_reset_state(); });
@@ -366,13 +443,19 @@ void d_skill_levels(void* self, const void* mi) {
         g_phase = ResultPhase::Weapon;
         stop_exp_counter_if_playing();
         void* controller = displayed::field(self, "skillLevelController");
-        later(controller, [] { return T(L"Skill gains"); }, [controller] { return row_lines(controller, "contentList"); });
+        later(controller, [] { return T(L"Skill gains"); }, [controller] { return ff2_weapon_rows(controller); },
+              [self] { return point_totals(self); }, [controller](ui::review::Options& options) {
+                  options.brief = ff2_weapon_rows(controller, true);
+                  options.row_details = ff2_weapon_rows(controller, true, true);
+                  options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
+                  options.announce_brief_with_details = true;
+              });
     });
 }
 int install() {
     int n = 0;
 #define ATTACH(M, D, O) n += hooks::attach(M, &D, &O) ? 1 : 0
-    ATTACH(mShow, d_show, o_show); ATTACH(mClose, d_close, o_close);
+    ATTACH(mShow, d_show, o_show); ATTACH(mClose, d_close, o_close); ATTACH(mUpdateMenu, d_update_menu, o_update_menu);
     ATTACH(mPoints, d_points, o_points); ATTACH(mStatus, d_status, o_status);
     ATTACH(mItems, d_items, o_items); ATTACH(mLearning, d_learning, o_learning);
     ATTACH(mAbilityLevels, d_ability, o_ability); ATTACH(mEnd, d_end, o_end);
@@ -394,6 +477,8 @@ void result_clear_all_battle_states() {
     command_reset_state(); magic_reset_state();
 }
 void result_reset_state() {
+    displayed::clear_skill_changes();
+    g_pending_page.reset();
     g_phase = ResultPhase::None; g_menu = nullptr; g_skill_headline.clear();
     g_announced_points = g_announced_items = false; ++g_generation;
     g_point_animation_pending = false; g_point_owner = nullptr; g_status_owner = nullptr;

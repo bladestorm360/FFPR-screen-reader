@@ -1,0 +1,5 @@
+1806FC630	SkillLevelProvider_SettingSkillLevel
+180382120	ExpUtility_GetExpLevel
+1803DABB0	ResultWeaponCharacter_SetData
+180382D30	ExpUtility_GetNextExp
+180381C40	ExpUtility_GetExpDifference

@@ -49,6 +49,7 @@ inline constexpr const char* kEnemyHPDisplay = "EnemyHPDisplay";            // E
 // Stored as "MultiHitDamage", not the obsolete "DamageDisplay" entry (FF1 moved everyone to the
 // new default once). 0 = Total only, 1 = With hit count ("14x1552 damage").
 inline constexpr const char* kMultiHitDamage = "MultiHitDamage";            // Multi-hit Damage
+inline constexpr const char* kAnnounceResultStatChanges = "AnnounceResultStatChanges";
 // FF5's entries (FF5 PreferencesManager), kept by their MelonPreferences names.
 inline constexpr const char* kLandingPings = "LandingPings";                // Landing Pings
 inline constexpr const char* kLandingPingVolume = "LandingPingVolume";      // Landing Ping Volume (0-100)
@@ -76,6 +77,7 @@ inline constexpr int kBeaconVolumeDefault = 50;
 inline constexpr int kExpCounterVolumeDefault = 50;
 inline constexpr int kEnemyHPDisplayDefault = 0;
 inline constexpr int kMultiHitDamageDefault = 1;
+inline constexpr bool kAnnounceResultStatChangesDefault = true;
 inline constexpr bool kLandingPingsDefault = false;
 inline constexpr int kLandingPingVolumeDefault = 50;
 inline constexpr bool kEnemyLettersDefault = false;
@@ -115,6 +117,7 @@ inline bool menu_position_announcements_enabled() { return settings::get_bool(kM
 inline bool exp_counter_enabled() { return settings::get_bool(kExpCounter, kExpCounterDefault); }
 inline bool landing_pings_enabled() { return settings::get_bool(kLandingPings, kLandingPingsDefault); }
 inline bool enemy_letters_enabled() { return settings::get_bool(kEnemyLetters, kEnemyLettersDefault); }
+inline bool announce_result_stat_changes_enabled() { return settings::get_bool(kAnnounceResultStatChanges, kAnnounceResultStatChangesDefault); }
 
 // --- value getters ------------------------------------------------------------------------
 inline int wall_bump_volume() { return settings::get_int(kWallBumpVolume, kWallBumpVolumeDefault); }

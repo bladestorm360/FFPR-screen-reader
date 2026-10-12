@@ -1,0 +1,2422 @@
+[
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -9091468857801937100,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 1756112698792263917
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -2043591752055822018
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 2984277408035444851
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1859420834050310143
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -3207881978822811322
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -809112864197226491
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -7225144853007527078
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -3943844865189036405
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7674596613646570038
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1328999410089257299
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5800300260822471590
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -679948078092209745
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1564467942606991196
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 8752605810480380531
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -8668949883902227174,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 710625557104183039
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -8415779085328663955
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -9089841964781255778
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 6207535718393490266
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 4810638651842507729
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -5055242044581526366
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -1343316001425351671
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1421263890128239324
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -8520164550372202630
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 5427931114892268655
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -3996350000202570275
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2705953488741223922
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3620667770727704140
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4556860124340517403
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -7754799687627535561,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 3769356991607106200
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 3534589159047070324
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 6226076496981792327
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -47043365954547700
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3278280359466753844
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -6557542178600775909
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 2771890564966686096
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -6442646797373318555
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4264152708490861141
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -5001727756510384688
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -4185881141708071840
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -5244348286918080349
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 5305215723499201712
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 8395874059987855379
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -6899422375274855869,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -3188245763832981616
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -6188069578276147024
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -2519902510549384450
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 8553979773142140450
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 5966106172288311623
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 3405386310532896062
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -7521069836547604455
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 6271984002769782407
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1637908561166009042
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1058008466910327856
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5635809789181281771
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1823461782702293419
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -8004918295260400964
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -5001070189083509562
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -6796403520530992309,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 5021318282803788104
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -993907651346509821
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -5631592382696690212
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2949219910637538847
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1028656094625265385
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -4549338391049109000
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 5294240278921357432
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1829296928522119317
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -741326444579436662
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -4466330638893272571
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 8501372300173260754
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4081244623135604366
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1654817752104082882
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2580397258110551551
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -6464760189437438450,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 4066465576432436502
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -6008026011995049992
+      },
+      "m_Name": "",
+      "getGilFixText": {
+        "m_FileID": 0,
+        "m_PathID": 5392329016740076020
+      },
+      "getGilValueText": {
+        "m_FileID": 0,
+        "m_PathID": 5836249220132122928
+      },
+      "getExpFixText": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      },
+      "getExpValueText": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -4955235083359246685,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -3205066637470598700
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 1506445350749024108
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -870846604906256534
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -4416905635826807378
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -84250511426605247
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 3919379893736917872
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -7370465264914142496
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -2714450028788545118
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -3661321432329183782
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -3627024133141166418
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 430968569276211593
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5197334358404382218
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -8685578094803441897
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -345927259151743269
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -4690809927748088756,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -517617361186424847
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 4587121550804799404
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -7413937798844133891
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -3904821161048075984
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 329053346614144614
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 3848963410790197708
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -6589629653829312057
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 5228369192581070356
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1259605932415312424
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 5369164976886484557
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1649025372079597144
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -5384259305900140409
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2792701548884508640
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 7498475203816449547
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -4657275969805490887,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 1562120352892930798
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 6529385257491379099
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -595486145552822461
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1098713118955684220
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 7891154746421421345
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -8000370848610624468
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 6406575763365964449
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 7669820283788087173
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -355900323929773032
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -628155076636853256
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -3320535801099695989
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -3646788697655264340
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -4567211602187487257
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 9008522732548611022
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -4588680676643561759,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 4250163162544399485
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 9182810670158748181
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -8371839600008375912
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -429673241862521055
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1057327595311053687
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -8652219226391298049
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -7495106967619784491
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -3311254892084608765
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 8123140738478102603
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 305748641906410943
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1041009241908488617
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -390865379811414500
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2708570734468376240
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1430837650179268068
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -4241620021725237264,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -431815588637654426
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -8141180944663467010
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 609908468644036295
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 8339471253293490966
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2780621626229011569
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 6395635345904469258
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 8001009470552953756
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1147269323558197856
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 758184501645204930
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3404371355864045193
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -3054055816543237581
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1873450387347514658
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2919230794247114232
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2565473787271931095
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -3699133003688950415,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 3395741276543788376
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -5091480015710583024
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -4306320852511676309
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -6330617416104152417
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3442973015892403699
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 608211834063169635
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -5736066403936296125
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -3675333062405445409
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2401929913862904239
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 4130564890557340876
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 892123497857099353
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 3267564432543958171
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2469907923904690620
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -550193139271878033
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -2597908326068653813,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 2528486338611039553
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 4009205211955109184
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -2948097110051823655
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 6067288619829728480
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -8299778020736646428
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 4039281593842546648
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -2771502834144860956
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -500396582825815403
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4721771103702223529
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1328696911407793255
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2422918214361348027
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1274337882427905576
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 7992396741693167676
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2817863408499947011
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -2346621841354071207,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -5220000526216417321
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 2422282748854194091
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -4221317672475884046
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2407172819856666453
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3656530313822988601
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 280243106432124652
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -5401920557112488027
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 2643016364028594568
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 7847971205463487400
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2307795654674637487
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4693586683275522967
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1596684839247482606
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -4536810414530281110
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -789632917994227181
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -1413955441176800250,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -6377086980029346334
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -7632358334891906466
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 1704443909510015558
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 7877724150122990133
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1808872416431978080
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 8820704446909726071
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -8333651358143405398
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 5101627210361623610
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2815106678990992097
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -8858295952708971060
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1759771938777728615
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -8016832947402156456
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -396190695414785093
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2837370809147181694
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -1373623788639196935,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -2179377868731883656
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 170692145287970523
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -2979871456408296433
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -7045290123293049920
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3706359649724882064
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -7200043837032620080
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1986669563029379142
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -6925854725681188045
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1059726785335241287
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 4199476566931174120
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -4896623213063230815
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1187178765720431461
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2406554955832306609
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 7225265539255065097
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": -873194635573996984,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -7243838337192379898
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 3306966639394837769
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -1877973439920196150
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1039493281891477448
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1030440860313985968
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -8322239848798241513
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1504139200778002218
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 6062520703226165977
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -5003955881487584248
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1087710680398302066
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -517837920901717695
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5902083749872454855
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 130096839262503219
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 6045745128376294651
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 50797928305527292,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -2046405337004597362
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -6008026011995049992
+      },
+      "m_Name": "",
+      "getGilFixText": {
+        "m_FileID": 0,
+        "m_PathID": -3475673566975774211
+      },
+      "getGilValueText": {
+        "m_FileID": 0,
+        "m_PathID": -4990241168662416402
+      },
+      "getExpFixText": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      },
+      "getExpValueText": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 445601429014291848,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 382599497005118946
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 8936963118612713518
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 5620580335230579668
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -9192649891441940830
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -8562159384074290060
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 7057032092491651836
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 5225754345718129573
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 9016591595598912953
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 8761037772256874686
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3797905430251304909
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -5853074251714697450
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7251690472823582119
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1643688339993000964
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -5493566827837083206
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 856744032976214015,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -2590946042753257212
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -8772844468960174594
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -1650967218633618968
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 596532591038423193
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1384879446629800638
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 2101225999622940584
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -1782662215091229638
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 2846654874147343541
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1218945185776218116
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 8627290581237047266
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1500796260352801396
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 191630642402269769
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1823901799825938498
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 7699457847013727810
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 1384100855434735298,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 529419819931635442
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -224835144042791167
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 7744140687523455452
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -6453479759661185331
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -466684504982036725
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 1786961982727967208
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1205279122481784027
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -1711556836930511279
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 6445728239895996458
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 7380311325872762460
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -5784177127915649490
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 6364905568491182257
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -6761727505113291304
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5586200412890490184
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 1571729302390260105,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 8286245848702241744
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -3462704260468510573
+      },
+      "m_Name": "",
+      "view": {
+        "m_FileID": 0,
+        "m_PathID": -5511105804297219817
+      },
+      "keyIconController": {
+        "m_FileID": 0,
+        "m_PathID": -6423407386321113178
+      },
+      "getPointController": {
+        "m_FileID": 0,
+        "m_PathID": -1243344439533856466
+      },
+      "characterListConteroller": {
+        "m_FileID": 0,
+        "m_PathID": -5630247892793415848
+      },
+      "statusUpController": {
+        "m_FileID": 0,
+        "m_PathID": -4199853130491685518
+      },
+      "skillLevelController": {
+        "m_FileID": 0,
+        "m_PathID": 6760746252554691377
+      },
+      "clickController": {
+        "m_FileID": 0,
+        "m_PathID": -4605705415776766554
+      },
+      "filter": {
+        "m_FileID": 0,
+        "m_PathID": 6714135799809572123
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 2445640378170769912,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 8910496904883405660
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -4662892381131326248
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -5315787229100310859
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -4611789428067495422
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2862323569469988161
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 3930161622937374606
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -9116242122840034361
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 3561046906621881217
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 9094104330425086244
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3688658630722622873
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4394706325961460270
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1302821835182804902
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -5170019453265488564
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2685684397756924430
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 3615320486967652944,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 7065056238784179185
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -7263983071566723118
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -7485761217787699073
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3205543127979338680
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -348917400685743837
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -4496225433105667840
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1933205036136979450
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -5612561073167507968
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -8260873714477201499
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -400923532304090557
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -4518684806702215007
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 715485633814716186
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 1463057124984044185
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 6432303368105869240
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 3723751952796829506,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -2044725129071028887
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 233755792308512277
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 4574827105846133427
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 57316143523786272
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 8583530296498056540
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -7052131519828848274
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -1915796176046524603
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 7215961581745037262
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -8615688070581576517
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 8520893696518704777
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 8657243166744122794
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -3056522218418398485
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 4203425736783564894
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 6211039485266696727
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 4322995052374162995,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -40758153744257250
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -6008026011995049992
+      },
+      "m_Name": "",
+      "getGilFixText": {
+        "m_FileID": 0,
+        "m_PathID": 8775095013446673029
+      },
+      "getGilValueText": {
+        "m_FileID": 0,
+        "m_PathID": 8087969605213515031
+      },
+      "getExpFixText": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      },
+      "getExpValueText": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 4923796677616238623,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 582412630342238222
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -2566790852305088831
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 2359677877836263423
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2373695117847087982
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 8699890010202829082
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 8222659468389098290
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 3879887836185129383
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -4048675279667945625
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 3973119541874712108
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -6917282612673852971
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2286541367443511863
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4233173730716380579
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2802114822014159569
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -6254895172816745580
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 5415489008635956290,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 3526160848124602415
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -987964317220798033
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -669763027058323435
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2512761326808224201
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -3860317700350808241
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 5146773796831798673
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -4616003848073409485
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -8076688121240303556
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7139469443129744398
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -7017508857134658015
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2513576786632420257
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2431093286198169087
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -6130348239077589929
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 7889642295627871650
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 5583351786604553581,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -6326292848986905422
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -3462704260468510573
+      },
+      "m_Name": "",
+      "view": {
+        "m_FileID": 0,
+        "m_PathID": 2241683741161556934
+      },
+      "keyIconController": {
+        "m_FileID": 0,
+        "m_PathID": -7036500059574455333
+      },
+      "getPointController": {
+        "m_FileID": 0,
+        "m_PathID": 668498058581084074
+      },
+      "characterListConteroller": {
+        "m_FileID": 0,
+        "m_PathID": -1548702136849779355
+      },
+      "statusUpController": {
+        "m_FileID": 0,
+        "m_PathID": -1456267164005175025
+      },
+      "skillLevelController": {
+        "m_FileID": 0,
+        "m_PathID": 3469185846585424426
+      },
+      "clickController": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      },
+      "filter": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 5805852807652883263,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -6855856568752592509
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 8568173389286156963
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -1826471211361357131
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -386057906852651618
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2636704816180569793
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -7641438860554863461
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -7452233109368073792
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 9161707096652522895
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 1076448954170076465
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 7499372282485772841
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7957630653342588890
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2658647014814805630
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3301870633531314093
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -6079409190166211165
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 5990651753340782764,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -1011602498172426685
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -6870829749687504370
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 3639853933478204228
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 7970404793108949850
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -406604934749766901
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 3064383971576784337
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 6004079304144754517
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -2137455489869097567
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 522560862190844477
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3688764319681916504
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 7361436357371657365
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -4138251178500546232
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 3715512849747174302
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7561263901530992774
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 6178451650481000015,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -7286098237583233920
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 6263832255099520021
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 1206445347284965584
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 6319467300242376512
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 5860430176446533155
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 5704762483992705289
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 1093465652154140773
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -2294608068379329918
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5336503386775182312
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 6630509856526818128
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1067046785064876242
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7382007219034911370
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": 5226528693534747050
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4687002082100666649
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 6256100279416272477,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 4286695644370763386
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -9195537062101830349
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 8001130395209307449
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 4860003238888757277
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2841061783974891253
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": -1616126148023516374
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 4338883181468424750
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -6490128776274831422
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 7934374070831971189
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -872351326259686192
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 2066176902368157160
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7122865109671297555
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -3332563942206603550
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5226307980197371567
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 7289476321469731078,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -6445396280912510423
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 6130468372607758171
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": -651161369759483895
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -8059246781233490451
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": 4703537103757524469
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 5595826445253609225
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -4786217394552014573
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -7429838089125176544
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -3297469385705537888
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -3479914385594309581
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -8360990136347926811
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2239977394484147598
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2399914658559873511
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 4401926512237402141
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 7439460486212076679,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -4101315604822212606
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": 8293867593155723703
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 3271277158279473026
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": 2000158283860443106
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -1400355040892052379
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 563135039009965446
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 3501441732258450285
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 6561187297745752383
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 8052734149397203376
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2076406318196678916
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -6343964892808881970
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -7733676178796863531
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -7087588197312683490
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": 5788121595363112751
+      }
+    }
+  },
+  {
+    "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+    "path_id": 8626276657187367163,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -268051516358520713
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -1532503492691998932
+      },
+      "m_Name": "",
+      "categoryText": {
+        "m_FileID": 0,
+        "m_PathID": -1759547813365324393
+      },
+      "jobLevelText": {
+        "m_FileID": 0,
+        "m_PathID": 1364703594583818795
+      },
+      "beforValueText": {
+        "m_FileID": 0,
+        "m_PathID": -5815583795178652132
+      },
+      "afterValueText": {
+        "m_FileID": 0,
+        "m_PathID": -2981150956501949784
+      },
+      "arrowImage": {
+        "m_FileID": 0,
+        "m_PathID": 4354037247757611791
+      },
+      "upperJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": 270695571812483689
+      },
+      "lowerJobMasterText": {
+        "m_FileID": 0,
+        "m_PathID": -2832582651355437322
+      },
+      "beforeMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -2252930246966796307
+      },
+      "beforePercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -4029297989088729947
+      },
+      "beforePercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -4331420579056401047
+      },
+      "afterMultipleSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -1975807425598601080
+      },
+      "afterPercentValueText": {
+        "m_FileID": 0,
+        "m_PathID": -6880219349784943930
+      },
+      "afterPercentSymbolText": {
+        "m_FileID": 0,
+        "m_PathID": -6885580478450989148
+      }
+    }
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": -8287120483772352988,
+    "sprite": "Battle_Common_DamageNumber_4"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": -7198144454272576231,
+    "sprite": "Battle_Common_DamageNumber_3"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": -7050262037720671419,
+    "sprite": "Battle_Common_DamageNumber_9"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": -2342970653401535362,
+    "sprite": "Battle_Common_DamageNumber_6"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": -1898604722431107047,
+    "data": {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": -7561222298408653462
+      },
+      "m_Enabled": 1,
+      "m_Script": {
+        "m_FileID": 0,
+        "m_PathID": -2072365328504530122
+      },
+      "m_Name": "",
+      "parent": {
+        "m_FileID": 0,
+        "m_PathID": 3266789119453347705
+      },
+      "sprites": [
+        {
+          "m_FileID": 0,
+          "m_PathID": 8431304031246476927
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": 41879197454712652
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": 4001855827005695980
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": -7198144454272576231
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": -8287120483772352988
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": 8304392995545904624
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": -2342970653401535362
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": 281743406202481834
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": 8469430947706459155
+        },
+        {
+          "m_FileID": 0,
+          "m_PathID": -7050262037720671419
+        }
+      ],
+      "prefab": {
+        "m_FileID": 0,
+        "m_PathID": 8938089718115667001
+      },
+      "material": {
+        "m_FileID": 0,
+        "m_PathID": 5955824083490894225
+      }
+    }
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": 41879197454712652,
+    "sprite": "Battle_Common_DamageNumber_1"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": 281743406202481834,
+    "sprite": "Battle_Common_DamageNumber_7"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": 4001855827005695980,
+    "sprite": "Battle_Common_DamageNumber_2"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": 8304392995545904624,
+    "sprite": "Battle_Common_DamageNumber_5"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": 8431304031246476927,
+    "sprite": "Battle_Common_DamageNumber_0"
+  },
+  {
+    "bundle": "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+    "path_id": 8469430947706459155,
+    "sprite": "Battle_Common_DamageNumber_8"
+  }
+]

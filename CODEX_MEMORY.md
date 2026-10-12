@@ -1,5 +1,25 @@
 # Native FFPR durable memory
 
+- 2026-10-12 FF2 retest/results deltas: first-phase pending reads now follow native result
+  updates rather than a 30-frame expiry. FF2 has gil and nested displayed weapon rows;
+  other games retain member EXP. All six growth tables support Battle's changed-stats toggle
+  (default on); I/controller West reads only the selected growth/weapon row's change. Full
+  displayed tables remain in arrows/Autodetail; weapon summaries require the toggle even
+  with Autodetail on. Native integer gauge operands stay exact until ceil formatting,
+  including rollover/cap; FF2 has 16 levels, intervals 20..100, minimum positive gain 1%,
+  so sub-1% accumulation cannot occur in this scale. Hit/damage speech decodes drawn digit
+  sprites, without mod hit/evasion arithmetic or sound-count assumptions.
+  [Source, scoped weapon-comparison request, evidence and delegation](docs/re/RESULTS.md#ff2-retest-growth-deltas-and-rendered-digits-october-12).
+- Prism migration completed in source/offline checks and installed separately in all six
+  games; [migration/installer/package record](docs/PRISM_MIGRATION.md), [source lock](prism.lock.json).
+  Central worker retains combined speech/braille, UTF-8, queue and shutdown policy. Ordinary
+  build/deploy never installs/copies/repairs/upgrades Prism; separate install is idempotent.
+  All six mod DLLs verified: `7339C5113508C6B5830401F771A867F47BB70FECA4D38729DE2AE6C6A3C978F6`.
+  User-requested game-root Tolk.dll removal completed after deployment, with verified workspace
+  recovery copies. Build, 7,047 native-name checks (zero missing), zero undefined wiring,
+  real results/input/gauge checks, fake Prism API, package/dependency checks and isolated host
+  passed. Supersedes all hashes below. Gameplay/actual screen-reader confirmation pending.
+
 - 2026-10-12 results follow-up: all six native phases now use current-screen review buffers;
   the L log is removed. Displayed EXP/gil totals and headings are automatic; member EXP,
   individual item/gil drops and growth/status tables follow Autodetail. Both native input

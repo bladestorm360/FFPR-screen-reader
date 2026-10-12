@@ -3,6 +3,16 @@
 Active source for all six games is this repository, on `master`. FF1–FF5 belong to bladestorm360; FF6 retains ZKline/BlindGuyNW attribution and inclusion permission recorded in `../OPEN_ISSUES.md`. The older managed repositories are paused references. Preserve existing uncommitted work. User explicitly authorized 2026-10-11: after the full audit, deploy all six games, commit/push everything to the public user-owned `FFPR-screen-reader` remote (create if absent), and make the user-owned FF1–FF5 remotes private. Preserve old history and existing named remotes.
 
 Read `CODEX_MEMORY.md`, the shared `../../../AGENTS.md`, and `../../../codex/MODEL_POLICY.md`. Sol owns research, implementation, review and verification. Use Luna only for an economical bounded mechanical handoff; Astra only for the documented emergency criteria. Summarize any delegation, including outcome and remaining issues.
+
+Prism 0.18.3 x64 is the required current speech backend. Keep every reader behind say/speech
+and preserve speech/braille, queue/event identity, interruption, native readiness and worker
+ownership. No new Tolk call sites or speech deduplication. Use the committed prism.lock.json
+and matching SDK. Install dependencies only through separate `install_prism.bat [ffN]`;
+normal builds/deploys must never download, install, copy, repair or upgrade Prism. Deployment
+checks are read-only; an unchanged verified prerequisite install performs zero writes.
+Detailed contract/evidence: `docs/PRISM_MIGRATION.md`. The user explicitly requested removal
+of game-root Tolk.dll after successful migration deployment; retain recovery copies outside
+the games, without deleting other dependencies or the preserved historical source.
 Luna eligibility requires known behavior/correctness criteria and a verified pattern with
 clear scope/checks. Sol retains discovery, design, unfamiliar lifetimes/pointers/callbacks
 and game-state judgment. A conceptual misunderstanding in the first Luna result means Sol
@@ -15,6 +25,17 @@ Use name-resolved IL2CPP references and `hooks::attach`; verify signatures and f
 Speak game information only when displayed, or under an explicit scoped user approval. Read active rendered fields, labels, comparison arrows and bar values rather than every parameter in a shared data class. Do not infer approval from old implementation. Results follow native phases and current displayed details; no early disclosure of later rewards. Keep Autodetail persistent, default off, and manual details/review available.
 
 Scoped user approval, 2026-10-11: retain the optional Enemy HP Display modes and saved/default preferences in every game, despite HP not being rendered in native target panels. Numbers adds `HP current/maximum`; Percentage adds `remaining%`; Hidden adds nothing and must not query parameters. This exception covers enemy HP only, not hidden enemy conditions or other statistics. F5 cycles these modes during battle; the Battle submenu explains the disclosure. Scan/Libra follows the ordinary displayed-message reader.
+
+Results follow-up, 2026-10-12: all six growth tables support Battle's changed-stats toggle
+(default on) and row-specific I/controller West deltas. FF2 alone has nested weapon rows;
+keep its full displayed weapon/level/gauge buffer independent from delta summaries and
+Autodetail. User explicitly requests current displayed weapon progress comparisons using
+the native before/after battle data. Scope that access to matching visible weapon icons,
+levels and gauges; no unused/unequipped skill disclosure. Use native ExpUtility integer
+operands and ceil only at speech formatting; FF2's verified minimum gain is 1% (16 levels,
+20..100 point intervals). Native result updates own pending readiness; no 30-frame page
+deadline. Read hit/damage digit sprites, without attack-sound or status-capacity arithmetic.
+See `docs/re/RESULTS.md` for evidence, controls, validation and remaining gameplay checks.
 
 Settings use exactly Speech, Navigation audio, Battle submenus, followed by Close Menu;
 volumes sit beside their audio setting and battle results settings belong to Battle (user,

@@ -1,0 +1,170 @@
+[
+  {
+    "game": 1,
+    "bundles": [
+      "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+      "hit_count_assets_all_bbd51f95a14468def7afd967252cb3fb.bundle"
+    ],
+    "glyphs": [
+      "Battle_Common_DamageNumber_0",
+      "Battle_Common_DamageNumber_1",
+      "Battle_Common_DamageNumber_2",
+      "Battle_Common_DamageNumber_3",
+      "Battle_Common_DamageNumber_4",
+      "Battle_Common_DamageNumber_5",
+      "Battle_Common_DamageNumber_6",
+      "Battle_Common_DamageNumber_7",
+      "Battle_Common_DamageNumber_8",
+      "Battle_Common_DamageNumber_9"
+    ],
+    "damage_palettes": [
+      10
+    ],
+    "hit_palettes": [
+      {
+        "glyphs": 10,
+        "slots": 2
+      }
+    ]
+  },
+  {
+    "game": 2,
+    "bundles": [
+      "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+      "hit_count_assets_all_bbd51f95a14468def7afd967252cb3fb.bundle"
+    ],
+    "glyphs": [
+      "Battle_Common_DamageNumber_0",
+      "Battle_Common_DamageNumber_1",
+      "Battle_Common_DamageNumber_2",
+      "Battle_Common_DamageNumber_3",
+      "Battle_Common_DamageNumber_4",
+      "Battle_Common_DamageNumber_5",
+      "Battle_Common_DamageNumber_6",
+      "Battle_Common_DamageNumber_7",
+      "Battle_Common_DamageNumber_8",
+      "Battle_Common_DamageNumber_9"
+    ],
+    "damage_palettes": [
+      10
+    ],
+    "hit_palettes": [
+      {
+        "glyphs": 10,
+        "slots": 2
+      }
+    ]
+  },
+  {
+    "game": 3,
+    "bundles": [
+      "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+      "hit_count_assets_all_bbd51f95a14468def7afd967252cb3fb.bundle"
+    ],
+    "glyphs": [
+      "Battle_Common_DamageNumber_0",
+      "Battle_Common_DamageNumber_1",
+      "Battle_Common_DamageNumber_2",
+      "Battle_Common_DamageNumber_3",
+      "Battle_Common_DamageNumber_4",
+      "Battle_Common_DamageNumber_5",
+      "Battle_Common_DamageNumber_6",
+      "Battle_Common_DamageNumber_7",
+      "Battle_Common_DamageNumber_8",
+      "Battle_Common_DamageNumber_9"
+    ],
+    "damage_palettes": [
+      10
+    ],
+    "hit_palettes": [
+      {
+        "glyphs": 10,
+        "slots": 2
+      }
+    ]
+  },
+  {
+    "game": 4,
+    "bundles": [
+      "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+      "hit_count_assets_all_bbd51f95a14468def7afd967252cb3fb.bundle"
+    ],
+    "glyphs": [
+      "Battle_Common_DamageNumber_0",
+      "Battle_Common_DamageNumber_1",
+      "Battle_Common_DamageNumber_2",
+      "Battle_Common_DamageNumber_3",
+      "Battle_Common_DamageNumber_4",
+      "Battle_Common_DamageNumber_5",
+      "Battle_Common_DamageNumber_6",
+      "Battle_Common_DamageNumber_7",
+      "Battle_Common_DamageNumber_8",
+      "Battle_Common_DamageNumber_9"
+    ],
+    "damage_palettes": [
+      10
+    ],
+    "hit_palettes": [
+      {
+        "glyphs": 10,
+        "slots": 2
+      }
+    ]
+  },
+  {
+    "game": 5,
+    "bundles": [
+      "view_damage_assets_all_83d38d7a8167f9ef549c7670526747cf.bundle",
+      "hit_count_assets_all_bbd51f95a14468def7afd967252cb3fb.bundle"
+    ],
+    "glyphs": [
+      "Battle_Common_DamageNumber_0",
+      "Battle_Common_DamageNumber_1",
+      "Battle_Common_DamageNumber_2",
+      "Battle_Common_DamageNumber_3",
+      "Battle_Common_DamageNumber_4",
+      "Battle_Common_DamageNumber_5",
+      "Battle_Common_DamageNumber_6",
+      "Battle_Common_DamageNumber_7",
+      "Battle_Common_DamageNumber_8",
+      "Battle_Common_DamageNumber_9"
+    ],
+    "damage_palettes": [
+      10
+    ],
+    "hit_palettes": [
+      {
+        "glyphs": 10,
+        "slots": 2
+      }
+    ]
+  },
+  {
+    "game": 6,
+    "bundles": [
+      "view_damage_assets_all_e97fbd5d25864a8e85d0b6054aa8ca10.bundle",
+      "hit_count_assets_all_bbd51f95a14468def7afd967252cb3fb.bundle"
+    ],
+    "glyphs": [
+      "Battle_Common_DamageNumber_0",
+      "Battle_Common_DamageNumber_1",
+      "Battle_Common_DamageNumber_2",
+      "Battle_Common_DamageNumber_3",
+      "Battle_Common_DamageNumber_4",
+      "Battle_Common_DamageNumber_5",
+      "Battle_Common_DamageNumber_6",
+      "Battle_Common_DamageNumber_7",
+      "Battle_Common_DamageNumber_8",
+      "Battle_Common_DamageNumber_9"
+    ],
+    "damage_palettes": [
+      10
+    ],
+    "hit_palettes": [
+      {
+        "glyphs": 10,
+        "slots": 2
+      }
+    ]
+  }
+]

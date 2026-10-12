@@ -3,11 +3,12 @@
 #include <atomic>
 #include "speech.h"
 #include "speech_queue.h"
+#include "prism_backend.h"
 #include "settings.h"
 #include "log.h"
 
 // ---------------------------------------------------------------------------
-// Tolk lives on ONE thread of ours: the boot thread, which loads it (wait_and_load) and then
+// Prism lives on ONE thread of ours: the boot thread, which loads it (wait_and_load) and then
 // spends the rest of the process's life in pump(), speaking whatever the queue holds.
 //
 // WHY A QUEUE (2026-09-25). Tolk_Output was called straight from the game's hooks, on the
@@ -22,35 +23,33 @@
 // queued, each with its own interrupt flag, exactly as they were sent before. The one
 // deliberate difference: a line queued with interrupt=true DROPS whatever is still waiting
 // in the ring - those lines were about to be cancelled by it anyway, so this only saves
-// the RPCs (and Tolk_Output with interrupt already silences first). That is an EVENT
+// the RPCs (the backend receives the same interrupt flag). That is an EVENT
 // decision (a newer interrupting line arrived), not a text comparison: two identical lines
 // queued one after the other are both spoken (CLAUDE.md rule 13).
 //
-// The same ring also holds anything spoken BEFORE Tolk is up (it replaces the old one-slot
+// The same ring also holds anything spoken BEFORE Prism is up (it replaces the old one-slot
 // pending buffer): the pump starts draining the moment the load completes, so the first
 // lines are never lost.
 // ---------------------------------------------------------------------------
 
 namespace {
 
-HMODULE g_tolk = nullptr;
-
-using fn_load    = void (*)();
-using fn_unload  = void (*)();
-using fn_output  = bool (*)(const wchar_t*, bool);
-using fn_silence = bool (*)();
-using fn_detect  = const wchar_t* (*)();
-
-fn_load    p_load    = nullptr;
-fn_unload  p_unload  = nullptr;
-fn_output  p_output  = nullptr;
-fn_silence p_silence = nullptr;
-fn_detect  p_detect  = nullptr;
-using fn_braille=bool(*)(const wchar_t*);
-using fn_has_braille=bool(*)();
-fn_braille p_braille=nullptr;
-fn_has_braille p_has_braille=nullptr;
+HMODULE g_prism = nullptr;
+speech::prism::Backend g_backend;
 std::atomic<bool> g_braille_available{false},g_stopping{false};
+
+std::wstring runtime_path() {
+    HMODULE self = nullptr;
+    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            reinterpret_cast<LPCWSTR>(&runtime_path), &self)) return {};
+    wchar_t path[32768]{};
+    const DWORD length = GetModuleFileNameW(self, path, 32768);
+    if (!length || length >= 32768) return {};
+    std::wstring result(path, length);
+    const auto slash = result.find_last_of(L"\\/");
+    if (slash == std::wstring::npos) return {};
+    return result.substr(0, slash + 1) + L".ffpr-deps\\prism\\prism.dll";
+}
 
 volatile LONG g_requested = 0;
 volatile LONG g_ready     = 0;
@@ -119,29 +118,26 @@ bool wait_and_load(int timeout_ms)
     }
 
     if(g_stopping.load()) return false;
-    g_tolk = LoadLibraryW(L"Tolk.dll");
-    if (!g_tolk) {
-        LOGF("speech: Tolk.dll not found (err=%lu) — running silent", GetLastError());
+    const auto path = runtime_path();
+    g_prism = path.empty() ? nullptr : LoadLibraryExW(path.c_str(), nullptr,
+        LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+    if (!g_prism) {
+        LOGF("speech: Prism prerequisite unavailable (err=%lu); run install_prism.bat", GetLastError());
         return false;
     }
-    p_load    = reinterpret_cast<fn_load>   (GetProcAddress(g_tolk, "Tolk_Load"));
-    p_unload  = reinterpret_cast<fn_unload> (GetProcAddress(g_tolk, "Tolk_Unload"));
-    p_output  = reinterpret_cast<fn_output> (GetProcAddress(g_tolk, "Tolk_Output"));
-    p_silence = reinterpret_cast<fn_silence>(GetProcAddress(g_tolk, "Tolk_Silence"));
-    p_detect  = reinterpret_cast<fn_detect> (GetProcAddress(g_tolk, "Tolk_DetectScreenReader"));
-    if (!p_load || !p_output) {
-        LOGF("speech: Tolk exports missing — running silent");
-        FreeLibrary(g_tolk);
-        g_tolk = nullptr;
+    prism::Api api;
+#define FFPR_PRISM_RESOLVE(n) api.n = reinterpret_cast<decltype(api.n)>(GetProcAddress(g_prism, "prism_" #n));
+    FFPR_PRISM_API(FFPR_PRISM_RESOLVE)
+#undef FFPR_PRISM_RESOLVE
+    if (!g_backend.load(api)) {
+        LOGF("speech: Prism initialization/version/backend failed; required version " PRISM_VERSION_STRING);
+        FreeLibrary(g_prism);
+        g_prism = nullptr;
         return false;
     }
-    p_braille=reinterpret_cast<fn_braille>(GetProcAddress(g_tolk,"Tolk_Braille"));
-    p_has_braille=reinterpret_cast<fn_has_braille>(GetProcAddress(g_tolk,"Tolk_HasBraille"));
-    p_load();
-    g_braille_available=p_braille && p_has_braille && p_has_braille();
+    g_braille_available = g_backend.has_braille();
     InterlockedExchange(&g_ready, 1);
-    const wchar_t* sr = p_detect ? p_detect() : nullptr;
-    LOGF("speech: Tolk ready, screen reader = %ls", sr ? sr : L"(none detected)");
+    LOGF("speech: Prism " PRISM_VERSION_STRING " ready, backend = %s", g_backend.name());
     // Whatever the first hooks wanted to say while we were loading is in the ring; the pump
     // (this thread, a moment from now) speaks it.
     AcquireSRWLockShared(&g_ring_lock);
@@ -166,7 +162,7 @@ void silence()
 
 void pump()
 {
-    // Even without Tolk this detached worker saves settings and parks on the event.
+    // Even without Prism this detached worker saves settings and parks on the event.
     if(!g_ring_event) return;
     LOGF("speech: pump running on thread %lu", GetCurrentThreadId());
     Line l;
@@ -178,14 +174,15 @@ void pump()
         }
         settings::save_pending();
         if(g_stopping.load()) { shutdown(); LOGF("shutdown: speech backend unloaded"); return; }
-        if(p_has_braille) g_braille_available=p_has_braille();
+        g_braille_available = g_backend.has_braille();
         while (dequeue(&l)) {
-            if (l.silence) { if (p_silence) p_silence(); }
+            if (l.silence) { (void)g_backend.stop(); }
             else if (l.text[0]) {
                 // Logging and screen-reader RPCs belong to this worker, never a UI hook.
                 LOGW(l.interrupt ? L"say: " : L"say (queued): ",l.text);
-                if(l.kind==Kind::Braille) { if(p_braille) p_braille(l.text); }
-                else if(p_output) p_output(l.text,l.interrupt);
+                const auto error = g_backend.output(l.text, l.interrupt, l.kind == Kind::Braille);
+                if (error != PRISM_OK && error != PRISM_ERROR_NOT_INITIALIZED)
+                    LOGF("speech: Prism output failed: %s", g_backend.error(error));
             }
         }
     }
@@ -204,10 +201,10 @@ void braille(const wchar_t* text) {
 void request_shutdown() { g_stopping=true; if(g_event) SetEvent(g_event); wake_worker(); }
 void shutdown()
 {
-    if (!g_tolk) return;
-    if (p_unload) p_unload();
-    FreeLibrary(g_tolk);
-    g_tolk = nullptr;
+    g_backend.close();
+    if (g_prism) FreeLibrary(g_prism);
+    g_prism = nullptr;
+    g_braille_available = false;
     InterlockedExchange(&g_ready, 0);
 }
 
