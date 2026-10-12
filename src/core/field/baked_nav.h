@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <functional>
 #include "field_api.h"
 #include "baked_router.h"
 #include "route_progress.h"
@@ -9,8 +10,8 @@ namespace field::map_state { class Resolver; }
 // The game-side glue of the baked-map router (baked_router.h): the live map, the player's
 // cell and layer, the current vehicle, the owned auto-vehicles, the live blockers and the
 // counter rule, turned into a request; the answer turned into the spoken route. Called by
-// field::find_path_to / find_path_to_quick (navigation.cpp) before the game's own searcher,
-// which stays the fallback for a map the baked data does not know.
+// field::find_path_to_quick (navigation.cpp) and the asynchronous request_route service.
+// Missing map data is a bake bug; there is no native route-search fallback.
 //
 // Modes (FF5's PathSearchMode, kept): Full = an explicit player action: live blockers, the
 // hidden-passage retry, and on a world map boarding a parked ship or airship when walking
@@ -25,7 +26,7 @@ bool prepared();
 /// True when the baked data knows the current map (and its size agrees with the live map).
 bool available(void* map_handle);
 
-/// The route for the current map, or false (then the caller may try the game's searcher).
+/// The route for the current map, or false when required baked map data is unavailable.
 /// `kind` says where the route ends (field_api.h TargetKind). Full mode keeps the planned
 /// route: asked again for the same target from a cell on it, it speaks the rest from there;
 /// a target cut off on this floor is reached through another floor ("take the exit to ...");
@@ -77,6 +78,14 @@ struct MapGoal {
     bool examine = false;   // the target is examined from a neighbouring cell (a switch, a clock)
     std::vector<baked_route::Cell> cells;   // explicit goal cells (baked_router goals_for), else from cell/examine
 };
+
+/// Capture bounded native state on its owner, then plan/format on an owned worker.
+/// Publication returns to the native owner only for the current map/request.
+void request_route(MapGoal goal, TargetKind kind, std::wstring name,
+                   std::function<void(PathInfo)> publish, bool keep_destination = true);
+void cancel_requests();
+bool request_pending();
+void request_reachability(bool with_vehicles, std::function<void()> ready);
 
 /// The first leg of the shortest way from the player to `goal`, possibly on another map: the
 /// route across the current map to the exit or warp to take (Dijkstra over the sub-map graph of

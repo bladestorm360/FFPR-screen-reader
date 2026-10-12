@@ -125,13 +125,14 @@ void announce_step(bool interrupt)
     goal.map_id = s.map_id;
     goal.cell = s.cell;
     goal.examine = s.examine;
-    baked_nav::CrossLeg leg = baked_nav::find_across(map_handle(), player(), goal);
-    if (leg.found) {
-        if (!leg.description.empty() && leg.description != T(L"No movement needed")) line += L". " + leg.description;
-    } else {
-        line += L". " + T(L"No path to the next step");
-    }
-    ffpr::say(line, interrupt);
+    const int step = g_step;
+    baked_nav::request_route(goal, TargetKind::Infer, L"", [p, step, line = std::move(line), interrupt](PathInfo info) mutable {
+        if (active() != p || g_step != step) return;
+        if (info.success) {
+            if (!info.description.empty() && info.description != T(L"No movement needed")) line += L". " + info.description;
+        } else line += L". " + (!info.reason.empty() ? info.reason : T(L"No path to the next step"));
+        ffpr::say(line, interrupt);
+    }, false);
 }
 
 void start_or_repeat()

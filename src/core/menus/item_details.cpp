@@ -11,9 +11,12 @@
 #include "../say.h"
 #include "../text.h"
 #include "../unity.h"
+#include "../field/object_cache.h"
+#include "../displayed_ui.h"
 
 namespace ffpr::menus {
 namespace {
+ref::Class kItemWindowOwner{"Last.UI.KeyInput", "ItemWindowController"};
 
 ref::Class  kWeapon{"Last.Data.Master", "Weapon"};
 ref::Method mWeaponEquipJobGroupId{kWeapon, "get_EquipJobGroupId", 0};
@@ -172,7 +175,7 @@ void announce_equip_requirements()
 void announce_current_description()
 {
     std::wstring description;
-    if (void* view = unity::find_object(kItemWindowView))
+    if (void* view = displayed::field(field::cache::get(kItemWindowOwner), "view"))
         if (void* text_component = ref::rd<void*>(view, fItemWindowViewDescriptionText))
             description = unity::ui_text(text_component);
     if (detail::blank(description)) {

@@ -71,9 +71,6 @@ ref::Method mSwitchInputEnable{kAirshipController, "SwitchInputEnable", 1};
 ref::Class  kMapUIManager{"Last.Map", "MapUIManager", k6};
 ref::Method mSwitchLandable{kMapUIManager, "SwitchLandable", 1};
 
-// The airship-controller search when nothing valid is cached, at most this often outside a key
-// press (the setters run every frame while the view turns).
-constexpr uint64_t kSearchIntervalFrames = 30;
 // MapUIManager_SwitchLandable_Patch: a line within this time of "Can land" does not interrupt it.
 constexpr double kRecentLandingSeconds = 0.5;
 
@@ -81,8 +78,6 @@ int g_last_direction = -1;   // compass sector last spoken (C# lastDirection; -1
 int g_last_altitude = -1;    // altitude level last spoken (C# lastAltitudeLevel; -1 = "")
 
 void* g_airship = nullptr;   // the FieldPlayerKeyAirshipController (re-checked on every use)
-bool g_searched = false;
-uint64_t g_search_frame = 0;
 
 bool g_last_landable = false;
 double g_last_landing_time = -1.0e9;
@@ -147,21 +142,12 @@ bool in_control(void* controller)
 }
 
 /// The C#'s test: an active FieldPlayerKeyAirshipController whose InputEnable is set, or null.
-/// `on_demand` (a key press) searches at once; the hooks search at most every 30 frames.
-void* airship_in_control(bool on_demand)
+/// SwitchInputEnable supplies the current native controller; never scan while loading.
+void* airship_in_control()
 {
     if (g_airship && !(unity::alive(g_airship) && kAirshipController.is(g_airship))) g_airship = nullptr;
     if (g_airship && in_control(g_airship)) return g_airship;
-    const uint64_t f = frame::count();
-    if (!on_demand && g_searched && f - g_search_frame < kSearchIntervalFrames) return nullptr;
-    g_searched = true;
-    g_search_frame = f;
-    for (void* c : unity::find_objects(kAirshipController)) {
-        if (in_control(c)) {
-            g_airship = c;
-            return c;
-        }
-    }
+
     return nullptr;
 }
 
@@ -181,7 +167,7 @@ bool check_heading(void* fc, bool interrupt)
 {
     int sector = compass_sector(ref::call<float>(mGetZAxisRotateBirdCamera, fc));
     if (sector == g_last_direction) return false;
-    if (!airship_in_control(false)) return false;
+    if (!airship_in_control()) return false;
     g_last_direction = sector;
     std::wstring name = compass_name(sector);
     LOGF("[Airship] Facing: %ls", name.c_str());
@@ -195,7 +181,7 @@ bool check_altitude(void* fc)
 {
     int level = altitude_level(ref::call<float>(mGetFlightAltitudeFieldOfViewRatio, fc, true));
     if (level == g_last_altitude) return false;
-    if (!airship_in_control(false)) return false;
+    if (!airship_in_control()) return false;
     std::wstring change;
     if (g_last_altitude >= 0) {
         if (level > g_last_altitude) change = T(L"Rising. ");
@@ -270,7 +256,7 @@ void announce_airship_status()
             ffpr::say(T(L"Airship status not available"));
             return true;
         }
-        void* controller = airship_in_control(true);
+        void* controller = airship_in_control();
         if (!controller || !ref::rd<void*>(controller, fFieldPlayer)) {
             ffpr::say(T(L"Not on airship"));
             return true;
@@ -292,7 +278,7 @@ void announce_airship_status()
 void announce_airship_or_character_status()
 {
     bool flying = hooks::guarded_r("FF6.Airship.AirshipInControl", false,
-                                   [] { return airship_in_control(true) != nullptr; });
+                                   [] { return airship_in_control() != nullptr; });
     if (flying) announce_airship_status();
     else actions::run("Mod.AnnounceCharacterStatus");
 }
@@ -306,11 +292,6 @@ int install()
     if (hooks::attach(mSwitchLandable, &d_SwitchLandable, &o_SwitchLandable)) ++n;
     if (n < 4) LOGF("[Airship] %d of 4 airship hooks installed", n);
     actions::define("Mod.AnnounceAirshipOrCharacterStatus", [] { announce_airship_or_character_status(); });
-    // The landing state is not reset here: it mirrors the core's, which keeps it across maps.
-    events::on(events::Kind::SceneLoaded, [] {
-        g_airship = nullptr;
-        g_searched = false;
-    });
     return n;
 }
 

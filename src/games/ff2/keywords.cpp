@@ -35,6 +35,7 @@
 #include "../../core/unity.h"
 #include "../../core/system/cursor_event.h"
 #include "../../core/ui/preferences.h"
+#include "../../core/field/object_cache.h"
 
 namespace ffpr::ff2 {
 namespace {
@@ -115,7 +116,7 @@ int keyword_state(void* controller) { return ui::state_tag(controller, fSwStateM
 bool keyword_should_suppress()
 {
     if (!keyword_active()) return false;
-    void* controller = unity::find_object(kSecretWord);
+    void* controller = field::cache::get(kSecretWord);
     if (!controller || !unity::active_in_hierarchy(controller)) {
         keyword_clear();
         return false;
@@ -283,6 +284,7 @@ Void_t o_Close;
 
 void d_SelectCommand(void* self, int32_t index, const void* mi)
 {
+    if (kSecretWord.is(self)) field::cache::register_object(kSecretWord, self);
     o_SelectCommand(self, index, mi);
     hooks::guarded("Keyword.SelectCommand", [&] {
         // Only on the command bar: a cursor reset during term select or close stays silent.
@@ -299,6 +301,7 @@ void d_SelectCommand(void* self, int32_t index, const void* mi)
 
 void d_CommandSelectingInit(void* self, const void* mi)
 {
+    if (kSecretWord.is(self)) field::cache::register_object(kSecretWord, self);
     o_CommandSelectingInit(self, mi);
     // Ownership only (suppresses the generic reader); SelectCommand is the sole speaker.
     hooks::guarded("Keyword.CommandSelectingInit", [&] { keyword_set_active(); });
@@ -306,6 +309,7 @@ void d_CommandSelectingInit(void* self, const void* mi)
 
 void d_SelectContentByWord(void* self, int32_t index, int32_t scroll_type, const void* mi)
 {
+    if (kSecretWord.is(self)) field::cache::register_object(kSecretWord, self);
     o_SelectContentByWord(self, index, scroll_type, mi);
     hooks::guarded("Keyword.SelectContentByWord", [&] {
         if (index < 0) return;
@@ -319,6 +323,7 @@ void d_SelectContentByWord(void* self, int32_t index, int32_t scroll_type, const
 
 void d_SelectContentByItem(void* self, int32_t index, int32_t scroll_type, const void* mi)
 {
+    if (kSecretWord.is(self)) field::cache::register_object(kSecretWord, self);
     o_SelectContentByItem(self, index, scroll_type, mi);
     hooks::guarded("Keyword.SelectContentByItem", [&] {
         if (index < 0) return;
@@ -339,7 +344,11 @@ void d_NoneInit(void* self, const void* mi)
 void d_Close(void* self, const void* mi)
 {
     o_Close(self, mi);
-    hooks::guarded("Keyword.Close", [&] { keyword_clear(); });
+    hooks::guarded("Keyword.Close", [&] {
+        if (!kSecretWord.is(self)) return;
+        if (field::cache::get(kSecretWord) == self) field::cache::clear(kSecretWord);
+        keyword_clear();
+    });
 }
 
 // --- KeyInput Words menu ---------------------------------------------------------------------

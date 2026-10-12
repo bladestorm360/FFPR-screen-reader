@@ -27,6 +27,8 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../displayed_ui.h"
+#include "../field/object_cache.h"
 
 namespace ffpr::battle {
 namespace {
@@ -130,21 +132,14 @@ bool check_and_update_target_selection_active()
     if (!state_active(menu_state::BATTLE_TARGET)) return false;
 
     if (!g_cached_target_controller || !unity::alive(g_cached_target_controller))
-        g_cached_target_controller = unity::find_object(kTargetSelect);
+        g_cached_target_controller = field::cache::get(kTargetSelect);
     if (!g_cached_target_controller) {
         set_target_selection_active(false);
         return false;
     }
 
     // Active children (the view is shown)?
-    bool actually_active = false;
-    void* self_go = unity::game_object(g_cached_target_controller);
-    for (void* t : unity::components_in_children(g_cached_target_controller, kTransform, false)) {
-        if (t && unity::game_object(t) != self_go) {
-            actually_active = true;
-            break;
-        }
-    }
+    const bool actually_active = displayed::visible(displayed::field(g_cached_target_controller, "view"));
     if (!actually_active) set_target_selection_active(false);
     return state_active(menu_state::BATTLE_TARGET);
 }
@@ -220,7 +215,7 @@ bool try_read_initial_target(void* instance, bool is_enemy)
     // Attack's targeting path presents an INACTIVE controller (magic/item an active one), so
     // activeInHierarchy is not required; prefer an active instance when this one is inactive.
     if (!unity::active_in_hierarchy(controller)) {
-        void* active = unity::find_object(kTargetSelect);
+        void* active = field::cache::get(kTargetSelect);
         if (active && unity::active_in_hierarchy(active)) controller = active;
     }
 
@@ -247,6 +242,10 @@ bool try_read_initial_target(void* instance, bool is_enemy)
 /// cursor/list are not ready yet a bounded retry (started from this event) waits for them.
 void begin_initial_target_read(void* instance, bool is_enemy)
 {
+    if (kTargetSelect.is(instance)) {
+        g_cached_target_controller = instance;
+        field::cache::register_object(kTargetSelect, instance);
+    }
     int gen = ++g_target_read_gen;
     if (try_read_initial_target(instance, is_enemy)) return;
     frame::every_frame(
@@ -273,6 +272,7 @@ void d_SetCommandData(void* self, void* data, void* targets, void* items, const 
     });
     o_SetCommandData(self, data, targets, items, mi);
     hooks::guarded("BattleCommandSelectController.SetCommandData", [&] {
+        if (kCmdSelect.is(self)) field::cache::register_object(kCmdSelect, self);
         if (!data) return;
         // Open the window before any early return: a same-character re-entry (cancel from target
         // back to the command menu) is still that actor's input turn.
@@ -353,6 +353,7 @@ void d_SelectPlayer(void* self, void* list, int32_t index, const void* mi)
 {
     o_SelectPlayer(self, list, index, mi);
     hooks::guarded("BattleTargetSelectController.SelectContent(Player)", [&] {
+        if (kTargetSelect.is(self)) { g_cached_target_controller = self; field::cache::register_object(kTargetSelect, self); }
         set_target_selection_active(true);
         announce_player_target(is_list(list) ? list : nullptr, index);
     });
@@ -362,6 +363,7 @@ void d_SelectEnemy(void* self, void* list, int32_t index, const void* mi)
 {
     o_SelectEnemy(self, list, index, mi);
     hooks::guarded("BattleTargetSelectController.SelectContent(Enemy)", [&] {
+        if (kTargetSelect.is(self)) { g_cached_target_controller = self; field::cache::register_object(kTargetSelect, self); }
         set_target_selection_active(true);
         if (announce_enemy_target(is_list(list) ? list : nullptr, index)) ++g_enemy_spoken_seq;
     });
@@ -375,6 +377,7 @@ void d_ShowWindow(void* self, bool is_show, const void* mi)
 {
     hooks::guarded("BattleTargetSelectController.ShowWindow", [&] {
         if (!kTargetSelect.is(self)) return;
+        if (is_show) { g_cached_target_controller = self; field::cache::register_object(kTargetSelect, self); }
         set_target_selection_active(is_show);
         if (!is_show) {
             // Hide = the actor committed / target torn down: close the command-announce window and

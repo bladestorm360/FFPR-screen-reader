@@ -9,7 +9,8 @@
 // are copied in, and the import is logged. MelonPreferences.cfg itself is never written.
 //
 // Writes only mark the store dirty and wake the speech worker, which saves off the game
-// thread (speech.cpp's pump calls save_pending()). Thread safe.
+// thread (speech.cpp's pump calls save_pending()). Runtime getters/setters belong
+// to the native owner; workers receive immutable snapshots, never the live map.
 namespace settings {
 
 /// Boot thread, after game::detect() and before anything reads a setting.
@@ -28,7 +29,7 @@ void set_str(const char* key, const std::wstring& v);
 /// Flip a bool, store it and return the new value.
 bool toggle(const char* key, bool def);
 
-/// Write the file if anything changed. Called by the speech worker; safe from any thread.
+/// Save an owned pending preference snapshot. Single speech-worker consumer.
 void save_pending();
 
 /// True when this start imported the old MelonPreferences category.

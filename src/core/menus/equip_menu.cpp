@@ -14,7 +14,9 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../field/object_cache.h"
 #include "../ui/review_buffer.h"
+#include "../displayed_ui.h"
 
 namespace ffpr::menus {
 namespace {
@@ -124,7 +126,7 @@ bool should_suppress()
 {
     if (!detail::equip_menu_active()) return false;
 
-    if (void* equipment = unity::find_object(kEquipmentWindowController)) {
+    if (void* equipment = field::cache::get(kEquipmentWindowController)) {
         int state = ui::state_tag(equipment, fEquipWindowStateMachine);
         // Command bar: let the generic reader handle it. None: the menu is closing.
         if (state == STATE_COMMAND || state == STATE_NONE) {
@@ -133,8 +135,9 @@ bool should_suppress()
         }
     }
 
-    void* info = unity::find_object(kEquipmentInfoWindowController);
-    void* select = unity::find_object(kEquipmentSelectWindowController);
+    void* window = field::cache::get(kEquipmentWindowController);
+    void* info = displayed::field(window, "infoWindowController");
+    void* select = displayed::field(window, "selectWindowController");
     bool info_active = info && unity::active_in_hierarchy(info);
     bool select_active = select && unity::active_in_hierarchy(select);
     if (!info_active && !select_active) {
@@ -265,6 +268,9 @@ void d_EquipWindowSetActive(void* self, bool is_active, const void* mi)
 {
     o_EquipWindowSetActive(self, is_active, mi);
     hooks::guarded("EquipmentWindowController.SetActive", [&] {
+        if (!kEquipmentWindowController.is(self)) return;
+        if (is_active) field::cache::register_object(kEquipmentWindowController, self);
+        else if (field::cache::get(kEquipmentWindowController) == self) field::cache::clear(kEquipmentWindowController);
         if (is_active) return;
         ++g_comparison_generation;
         frame::cancel_label("Equipment.Comparison");
@@ -373,7 +379,7 @@ bool equip_menu_active() { return menu_state::is_active(menu_state::EQUIP_MENU);
 std::wstring equip_description_from_ui()
 {
     // EquipmentDescriptionWindowController -> view -> descriptionText -> text.
-    void* controller = unity::find_object(kEquipmentDescriptionWindowController);
+    void* controller = displayed::field(field::cache::get(kEquipmentWindowController), "descriptionController");
     if (!controller) return {};
     void* view = ref::rd<void*>(controller, fEquipDescWindowView);
     if (!view) return {};

@@ -20,6 +20,7 @@
 #include "say.h"
 #include "ui_util.h"
 #include "unity.h"
+#include "field/object_cache.h"
 #include "system/system.h"
 
 namespace ffpr::system {
@@ -83,21 +84,17 @@ int g_item_gen = 0;
 int g_equip_gen = 0;
 int g_magic_gen = 0;
 
-// Cached window controllers, re-found when destroyed or INACTIVE (FindObjectOfType returns only
-// active objects, so a cached-but-inactive window after a back-out must count as a miss).
-void* g_item_win = nullptr;
-void* g_equip_win = nullptr;
-void* g_magic_win = nullptr;
-
-void* cached_window(void*& cache, ref::Class& cls)
+// Lifecycle observers supply these controllers; preserve FindObjectOfType's active-window
+// behavior while validating lifetime through the central native-owner cache.
+void* cached_window(ref::Class& cls)
 {
-    if (!unity::alive(cache) || !unity::active_in_hierarchy(cache)) cache = unity::find_object(cls);
-    return cache;
+    void* window = field::cache::get(cls);
+    return window && unity::active_in_hierarchy(window) ? window : nullptr;
 }
 
-void* item_win() { return cached_window(g_item_win, kItemWindow); }
-void* equip_win() { return cached_window(g_equip_win, kEquipWindow); }
-void* magic_win() { return kMagicWindow.applies() ? cached_window(g_magic_win, kMagicWindow) : nullptr; }
+void* item_win() { return cached_window(kItemWindow); }
+void* equip_win() { return cached_window(kEquipWindow); }
+void* magic_win() { return kMagicWindow.applies() ? cached_window(kMagicWindow) : nullptr; }
 
 // ReadRoutine: one frame after the event, retry (bounded) only while "not ready"; stop early if
 // a newer event for the same bar superseded it.
@@ -241,12 +238,20 @@ void d_MagicSetCursor(void* self, const void* mi)
 void d_ItemWindowSetActive(void* self, bool active, const void* mi)
 {
     o_ItemWindowSetActive(self, active, mi);
+    if (kItemWindow.is(self)) {
+        if (active) field::cache::register_object(kItemWindow, self);
+        else if (field::cache::get(kItemWindow) == self) field::cache::clear(kItemWindow);
+    }
     if (!active) dedup::reset(kCtxItem);
 }
 
 void d_EquipWindowSetActive(void* self, bool active, const void* mi)
 {
     o_EquipWindowSetActive(self, active, mi);
+    if (kEquipWindow.is(self)) {
+        if (active) field::cache::register_object(kEquipWindow, self);
+        else if (field::cache::get(kEquipWindow) == self) field::cache::clear(kEquipWindow);
+    }
     if (!active) dedup::reset(kCtxEquip);
 }
 
@@ -258,6 +263,7 @@ void d_MagicCommandInit(void* self, const void* mi)
     hooks::guarded("CommandBar.MagicCommandInit", [&] {
         dedup::reset(kCtxMagic);
         if (!kMagicWindow.is(self)) return;
+        field::cache::register_object(kMagicWindow, self);
         if (void* cmd = ref::rd<void*>(self, fMagicWindowCommand)) schedule_magic_read(cmd);
     });
 }
@@ -268,6 +274,7 @@ void d_ItemCommandSelectInit(void* self, const void* mi)
     hooks::guarded("CommandBar.ItemCommandSelectInit", [&] {
         dedup::reset(kCtxItem);
         if (!kItemWindow.is(self)) return;
+        field::cache::register_object(kItemWindow, self);
         if (void* cmd = ref::rd<void*>(self, fItemWindowCommand)) schedule_item_read(cmd);
     });
 }
@@ -278,6 +285,7 @@ void d_EquipCommandInit(void* self, const void* mi)
     hooks::guarded("CommandBar.EquipCommandInit", [&] {
         dedup::reset(kCtxEquip);
         if (!kEquipWindow.is(self)) return;
+        field::cache::register_object(kEquipWindow, self);
         if (void* cmd = ref::rd<void*>(self, fEquipWindowCommand)) schedule_equip_read(cmd);
     });
 }

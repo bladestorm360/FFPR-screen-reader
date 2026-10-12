@@ -20,6 +20,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../displayed_ui.h"
 
 namespace ffpr::battle {
 namespace {
@@ -101,7 +102,9 @@ std::wstring item_announcement(void* controller, int index, int& count)
     }
 
     // 3: the focused content controller.
-    for (void* cc : unity::find_objects(kItemContent)) {
+    void* contents = displayed::field(controller, "contentList");
+    for (int i = 0; i < unity::list_count(contents); ++i) {
+        void* cc = unity::list_at(contents, i);
         if (!cc || !unity::active_in_hierarchy(cc)) continue;
         void* data = ref::rd<void*>(cc, fContentData);
         if (data && ref::rd<bool>(data, fIlcdIsFocus)) return format_item(data);

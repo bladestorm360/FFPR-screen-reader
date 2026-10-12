@@ -43,10 +43,9 @@ ref::Method mMainMenuClose{kMainMenuController, "Close", 0};
 /// scene scan, for key handlers only.
 bool is_battle_controller_alive()
 {
-    // Unknown: treat as alive so a lookup failure never clears a real battle.
-    if (!kBattleController) return true;
-    void* controller = unity::find_object(kBattleController);
-    return controller && ref::call<bool>(mIsActiveAndEnabled, controller);
+    // The native transition owns combat/results state. A key handler must not
+    // scan the scene or wait for a controller while loading or returning to field.
+    return g_main_state == 13 || (g_main_state < 0 && g_in_battle);
 }
 
 /// BattleStateHelper.ForceClearBattleState: the Tab key's fallback, only after

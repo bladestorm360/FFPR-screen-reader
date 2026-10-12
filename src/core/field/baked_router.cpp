@@ -179,6 +179,7 @@ Route find(const Request& r)
     int goal_state = -1;
 
     while (!frontier.empty()) {
+        if (r.cancelled && r.cancelled()) return out;
         Item top = frontier.top();
         frontier.pop();
         const int st = top.second;
@@ -240,6 +241,7 @@ Reach flood(const Request& r)
     std::queue<Cell> q;
     q.push(start);
     while (!q.empty()) {
+        if (r.cancelled && r.cancelled()) return Reach{};
         Cell cur = q.front();
         q.pop();
         const uint16_t dc = out.dist[cur.layer][static_cast<size_t>(cur.y) * g.width + cur.x];

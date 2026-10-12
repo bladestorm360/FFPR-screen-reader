@@ -144,9 +144,7 @@ void announce_current_entity(bool walking = false)
         return;
     }
     const TargetKind kind = target_kind_of(*e);
-    PathInfo p;
     baked_nav::MapGoal walk_goal;
-    bool have_walk_goal = false;
     if (e->remote()) {
         // Another floor (user, 2026-10-11): the first leg, and the destination is remembered so
         // that the next leg follows the transition (baked_nav::continue_pending).
@@ -154,33 +152,25 @@ void announce_current_entity(bool walking = false)
         goal.map_id = e->remote_map_id;
         goal.cell = baked_route::Cell{e->cell_layer, e->cell_x, e->cell_y};
         walk_goal = goal;
-        have_walk_goal = true;
-        baked_nav::route_to_goal(ctx.map_handle, ctx.field_player, goal, kind, e->display_name() + L" (" + e->floor_name + L")", p);
     } else {
-        p = find_path_to(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player, kind);
         baked_route::Cell walk_cell;
         if (baked_nav::cell_at(ctx.map_handle, e->position(), walk_cell)) {
             walk_goal.map_id = current_map_id();
             walk_goal.cell = walk_cell;
-            have_walk_goal = true;
-        }
-        // Cut off on this floor and routed through another one: remembered the same way.
-        baked_route::Cell c;
-        if (p.success && p.next_map_id > 0 && baked_nav::cell_at(ctx.map_handle, e->position(), c)) {
-            baked_nav::MapGoal goal;
-            goal.map_id = current_map_id();
-            goal.cell = c;
-            baked_nav::remember_destination(goal, kind, e->display_name());
         } else {
-            baked_nav::clear_pending();
+            speak(T(L"Navigation map data unavailable")); return;
         }
     }
     // No route: the reason when the router knows it ("Story gated", "Blocked by an NPC",
     // "Requires Ship"; user, 2026-10-11), else "No path".
     if (walking) {
-        ffpr::fieldnav::autowalk::start(p, have_walk_goal ? &walk_goal : nullptr, kind, e->display_name());
+        ffpr::fieldnav::autowalk::request(walk_goal, kind, e->display_name());
     } else {
-        speak(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")));
+        const auto name = e->display_name() + (e->remote() ? L" (" + e->floor_name + L")" : std::wstring());
+        baked_nav::request_route(walk_goal, kind, name, [e](PathInfo p) {
+            if (scanner::current_entity() != e || !e->is_alive()) return;
+            speak(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")));
+        });
     }
 }
 
@@ -219,16 +209,13 @@ void cycle(bool next)
 {
     if (!ensure_field_context()) return;
     refresh_entities_if_needed();
-    if (next) scanner::next_entity();
-    else scanner::previous_entity();
-    baked_nav::clear_pending();   // a new target: a route that was going on to another floor is dropped
-
-    if (scanner::no_reachable_entities()) {
-        speak(T(L"No reachable entities"));
-        return;
-    }
-    mark_entity();
-    announce_entity_only();
+    scanner::when_filter_ready([next] {
+        if (!queries::is("GameStatePatches.IsFieldNavigationReady") || menu_state::any_active()) return;
+        if (next) scanner::next_entity(); else scanner::previous_entity();
+        baked_nav::clear_pending();
+        if (scanner::no_reachable_entities()) { speak(T(L"No reachable entities")); return; }
+        mark_entity(); announce_entity_only();
+    });
 }
 
 // =========================================================================================
@@ -243,6 +230,9 @@ void announce_category_change()
 
     // Refresh so the new category's nearest entity is the current selection.
     refresh_entities_if_needed();
+    const Category requested = g_current_category;
+    scanner::when_filter_ready([requested, category_text = std::move(category_text)] {
+    if (requested != g_current_category || !queries::is("GameStatePatches.IsFieldNavigationReady") || menu_state::any_active()) return;
 
     // Obey the pathfinding filter: select the nearest reachable entity. None reachable (or an
     // empty category): the category name only ("No reachable entities" is for cycling).
@@ -258,6 +248,7 @@ void announce_category_change()
     // The category and its first entity, which becomes the navigation target.
     mark_entity();
     speak(category_text + L", " + description);
+    });
 }
 
 void category_next()
@@ -327,8 +318,16 @@ void d_SceneLoaded(int32_t scene, int32_t mode, const void* mi)
         g_previous_scene_name = g_scene_name;
         g_scene_name = name;
 
-        // Clear the old component cache
-        cache::clear_all();
+        // Additive UI loading does not destroy the live field. Preserve valid
+        // entries instead of forcing scene-wide lookups during every UI preload.
+        // Every cache read still rejects destroyed Unity objects.
+        // Lifecycle producers may register the incoming object before this native
+        // scene event. Keep validated entries; get() retires destroyed objects and
+        // new Init/StateInit observations replace them. Title ends the field session.
+        if (name == L"Title") {
+            cache::clear(r::kFieldMap);
+            cache::clear(r::kFieldPlayerController);
+        }
 
         // Everything else of FF1's OnSceneLoaded runs in the areas that own it, from this
         // event (fieldnav: audio stop and location tracker reset).

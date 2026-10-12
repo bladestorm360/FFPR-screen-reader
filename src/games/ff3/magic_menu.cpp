@@ -48,6 +48,7 @@
 #include "../../core/status/status.h"
 #include "../../core/system/cursor_event.h"
 #include "../../core/system/system.h"
+#include "../../core/field/object_cache.h"
 
 namespace ffpr::ff3 {
 namespace {
@@ -129,7 +130,7 @@ int window_state(void* window)
     return window ? ui::state_tag(window, fWindowState) : -1;
 }
 
-void* find_window() { return unity::find_object(kWindow); }
+void* find_window() { return field::cache::get(kWindow); }
 
 void reset_state() { menu_state::set_active(menu_state::MAGIC_MENU, false); }
 
@@ -314,7 +315,7 @@ Bool_t o_WindowSetActive;
 ListCursor_t o_ListSetCursor;
 Cursor_t o_UseSetCursor;
 
-void list_init(void* self) { hooks::guarded("FF3.Magic.ListInit", [&] { on_spell_list_init(self); }); }
+void list_init(void* self) { if (kWindow.is(self)) field::cache::register_object(kWindow, self); hooks::guarded("FF3.Magic.ListInit", [&] { on_spell_list_init(self); }); }
 void d_UseListInit(void* self, const void* mi) { o_UseListInit(self, mi); list_init(self); }
 void d_MemorizeListInit(void* self, const void* mi) { o_MemorizeListInit(self, mi); list_init(self); }
 void d_RemoveListInit(void* self, const void* mi) { o_RemoveListInit(self, mi); list_init(self); }
@@ -323,6 +324,7 @@ void d_ExchangeInit(void* self, const void* mi) { o_ExchangeInit(self, mi); list
 
 void d_CommandInit(void* self, const void* mi)
 {
+    if (kWindow.is(self)) field::cache::register_object(kWindow, self);
     o_CommandInit(self, mi);
     hooks::guarded("FF3.Magic.CommandInit", [&] {
         dedup::reset(kCtxCommand);
@@ -345,7 +347,12 @@ void d_SetNextState(void* self, int32_t state, const void* mi)
 void d_WindowSetActive(void* self, bool active, const void* mi)
 {
     o_WindowSetActive(self, active, mi);
-    if (!active) hooks::guarded("FF3.Magic.SetActive", [] { reset_state(); });
+    hooks::guarded("FF3.Magic.SetActive", [&] {
+        if (!kWindow.is(self)) return;
+        if (active) field::cache::register_object(kWindow, self);
+        else if (field::cache::get(kWindow) == self) field::cache::clear(kWindow);
+        if (!active) reset_state();
+    });
 }
 
 void d_ListSetCursor(void* self, void* cursor, bool is_scroll, int32_t range_type, const void* mi)

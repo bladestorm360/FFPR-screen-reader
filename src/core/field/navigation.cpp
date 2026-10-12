@@ -3,10 +3,8 @@
 // FF3 Field/HiddenPassageRouting.cs (FF3, FF4, FF5: game::flags().has_hidden_passages), and
 // FFI_ScreenReaderMod.GetFieldPlayer / GetCurrentMapId.
 //
-// From FF5 Field/FieldNavigationHelper.cs (all five games): PathSearchMode (find_path_to = Full,
-// find_path_to_quick = Quick, path_search.h), the breadcrumb fallback after a failed search
-// (breadcrumb_chain.cpp) and DescribeRoute's six-leg cap with "and N more" for chained routes.
-// A route the game's own search finds is described as FF1 described it (every leg).
+// Routing and walkability use the baked map exclusively. A missing bake is reported as a data
+// error; MapRouteSearcher is never used as a fallback.
 //
 // Per-game differences kept from each game's own mod: Transportation.ModelList skips types 0
 // and 1 in FF1 (the canoe, type 5, is skipped by the vehicle detector), and 0, 1, 4 (Symbol)
@@ -34,29 +32,15 @@
 namespace field {
 namespace {
 
-struct VehicleInfo { int type; int id; std::wstring message_id; };
+struct VehicleInfo { int type; int id; std::wstring message_id; int map_id; };
 /// FieldNavigationHelper.VehicleTypeMap. Entries for objects no longer on the map are dropped
 /// at each scan, so a reused address can never be taken for a vehicle. Since 2026-10-10 every
 /// game keeps the master id and message id too (field::vehicle_display_name).
 std::unordered_map<void*, VehicleInfo> g_vehicle_types;
+std::vector<int> g_auto_groups;
+int g_auto_map = 0;
 
 using Vec3 = unity::Vec3;
-
-int floor_to_int(float v) { return static_cast<int>(std::floor(v)); }
-
-Vec3 cell_of(int map_width, int map_height, Vec3 world, float z)
-{
-    return Vec3{static_cast<float>(floor_to_int(map_width * 0.5f + world.x * 0.0625f)),
-                static_cast<float>(floor_to_int(map_height * 0.5f - world.y * 0.0625f)), z};
-}
-
-/// MapRouteSearcher.Search(mapHandle, start, dest, collisionEnabled): the path list or null.
-void* route_search(void* map_handle, Vec3 start, Vec3 dest, bool collision)
-{
-    return ref::call_static<void*>(r::mSearch, map_handle, start, dest, collision);
-}
-
-bool has_points(void* list) { return list && unity::list_count(list) > 0; }
 
 bool skip_transport_type(int type)
 {
@@ -64,169 +48,6 @@ bool skip_transport_type(int type)
     // FF2-FF5's mods also skip Symbol (4) and Content (5), internal markers there.
     if (!game::is(game::Id::FF1) && (type == 4 || type == 5)) return true;
     return false;
-}
-
-Vec3 normalized(Vec3 v)
-{
-    float mag = static_cast<float>(std::sqrt(static_cast<double>(v.x * v.x + v.y * v.y + v.z * v.z)));
-    if (mag > 1e-5f) return Vec3{v.x / mag, v.y / mag, v.z / mag};
-    return Vec3{0, 0, 0};
-}
-
-/// GetCardinalDirectionName: the direction of one path segment.
-std::wstring cardinal_direction_name(Vec3 dir)
-{
-    if (std::fabs(dir.x) > 0.4f && std::fabs(dir.y) > 0.4f) {
-        if (dir.y > 0 && dir.x > 0) return T(L"Northeast");
-        if (dir.y > 0 && dir.x < 0) return T(L"Northwest");
-        if (dir.y < 0 && dir.x > 0) return T(L"Southeast");
-        if (dir.y < 0 && dir.x < 0) return T(L"Southwest");
-    }
-    if (std::fabs(dir.y) > std::fabs(dir.x)) return dir.y > 0 ? T(L"North") : T(L"South");
-    if (std::fabs(dir.x) > 0.1f) return dir.x > 0 ? T(L"East") : T(L"West");
-    return T(L"Unknown");
-}
-
-/// The path as straight runs, "North 3": consecutive steps in the same direction merge (FF1
-/// DescribePath's loop = FF5 BuildLegs). On a breadcrumb route this also merges the runs across
-/// the seams between chained searches ("North 89", not "North 24, North 30, North 35").
-std::vector<std::wstring> route_legs(const std::vector<Vec3>& path)
-{
-    std::vector<std::wstring> segments;
-    Vec3 current{0, 0, 0};
-    int steps = 0;
-    for (size_t i = 1; i < path.size(); ++i) {
-        Vec3 dir = normalized(Vec3{path[i].x - path[i - 1].x, path[i].y - path[i - 1].y, path[i].z - path[i - 1].z});
-        if (vec_distance(dir, current) < 0.1f) {
-            steps++;
-        } else {
-            if (steps > 0) segments.push_back(text::num(steps) + L" " + cardinal_direction_name(current));
-            current = dir;
-            steps = 1;
-        }
-    }
-    if (steps > 0) segments.push_back(text::num(steps) + L" " + cardinal_direction_name(current));
-    return segments;
-}
-
-std::wstring join_legs(const std::vector<std::wstring>& segments, size_t count)
-{
-    std::wstring out;
-    for (size_t i = 0; i < count && i < segments.size(); ++i) {
-        if (i) out += L", ";
-        out += segments[i];
-    }
-    return out;
-}
-
-/// DescribePath: "North 3, East 2".
-std::wstring describe_path(const std::vector<Vec3>& path)
-{
-    if (path.size() < 2) return T(L"No movement needed");
-    std::vector<std::wstring> segments = route_legs(path);
-    return join_legs(segments, segments.size());
-}
-
-/// FF5 FieldNavigationHelper.MAX_SPOKEN_LEGS: legs spoken before a chained route is summarised.
-/// A long route hugs terrain and runs to dozens of short legs; the player walks what they heard
-/// and asks again, and the search re-runs from the new position.
-constexpr size_t kMaxSpokenLegs = 6;
-
-void fill_native_walk(PathInfo& info, int width, int height)
-{
-    route_progress::Phase phase;
-    for (const Vec3& point : info.world_path) {
-        const Vec3 c = cell_of(width, height, point, 0);
-        const baked_route::Cell tile{-1, static_cast<int>(c.x), static_cast<int>(c.y)};
-        phase.cells.push_back(tile);
-    }
-    info.walk_phases = {std::move(phase)};
-    info.map_width = width;
-    info.map_height = height;
-    info.full_description = describe_path(info.world_path);
-}
-
-/// FF5 DescribeRoute, for breadcrumb routes: at most six legs, then "and N more".
-std::wstring describe_chained_route(const std::vector<Vec3>& path)
-{
-    std::vector<std::wstring> legs = path.size() < 2 ? std::vector<std::wstring>{} : route_legs(path);
-    if (legs.empty()) return T(L"No movement needed");
-    size_t spoken = std::min(kMaxSpokenLegs, legs.size());
-    std::wstring out = join_legs(legs, spoken);
-    size_t remaining = legs.size() - spoken;
-    if (remaining > 0)
-        out += L", " + TF(L"and {0} more", {text::num(static_cast<long long>(remaining))});
-    return out;
-}
-
-/// The target cell on each destination layer (2, 1, 0), then each of its eight neighbours
-/// (FF3 SearchTargetAndNeighbours = FF1 FindPathTo's search loop).
-void* search_target_and_neighbours(void* map_handle, Vec3 start_cell, Vec3 dest_cell, Vec3 target_world,
-                                   int map_width, int map_height, bool collision, bool interact = false)
-{
-    void* path = nullptr;
-    for (int z = 2; !interact && z >= 0; --z) {
-        dest_cell.z = static_cast<float>(z);
-        path = route_search(map_handle, start_cell, dest_cell, collision);
-        if (has_points(path)) return path;
-    }
-    static const Vec3 kAdjacent[] = {
-        {0, 16, 0},     // north
-        {16, 0, 0},     // east
-        {0, -16, 0},    // south
-        {-16, 0, 0},    // west
-    };
-    for (const Vec3& off : kAdjacent) {
-        Vec3 adjacent{target_world.x + off.x, target_world.y + off.y, target_world.z + off.z};
-        Vec3 cell = cell_of(map_width, map_height, adjacent, 0);
-        for (int z = 2; z >= 0; --z) {
-            cell.z = static_cast<float>(z);
-            path = route_search(map_handle, start_cell, cell, collision);
-            if (has_points(path)) return path;
-        }
-    }
-    return path;
-}
-
-// --- HiddenPassageRouting (FF3 Field/HiddenPassageRouting.cs) -------------------------------
-//
-// The game routes on MapModel.CurrentMappingData, which FieldController.SetupCurrentMappingData
-// builds as CollisionMappingData AND HiddenPassageMappingData, so every hidden-passage cell is
-// closed to MapRouteSearcher although the player walks it (movement uses the collision layer
-// alone). When the normal search finds nothing, FindPathTo runs it once more with the route
-// grid swapped for the collision grid, then puts it back. Maps without passages are untouched.
-
-bool g_passage_logged = false;
-
-void* map_model(void* map_handle)
-{
-    if (!r::kFieldController.is(map_handle)) {
-        if (!g_passage_logged) {
-            g_passage_logged = true;
-            LOGF("[Routing] Hidden-passage routing unavailable (map handle is not a FieldController); "
-                 "targets behind secret passages will report no path");
-        }
-        return nullptr;
-    }
-    void* manager = ref::rd<void*>(map_handle, r::fMapManager);
-    return manager ? ref::rd<void*>(manager, r::fCurrentMapModel) : nullptr;
-}
-
-template <typename F>
-void* search_with_passages_open(void* map_handle, F&& search)
-{
-    void* model = map_model(map_handle);
-    if (!model) return nullptr;
-    void* passages = ref::rd<void*>(model, r::fHiddenPassageMappingData);
-    void* collision = ref::rd<void*>(model, r::fCollisionMappingData);
-    void* current = ref::rd<void*>(model, r::fCurrentMappingData);
-    if (!passages || !collision || !current) return nullptr;
-
-    ref::call_void(r::mSetCurrentMappingData, model, collision);
-    void* result = hooks::guarded_r("Field.SearchWithPassagesOpen", static_cast<void*>(nullptr),
-                                    [&] { return search(); });
-    ref::call_void(r::mSetCurrentMappingData, model, current);
-    return result;
 }
 
 /// IsAdjacentTileBlocked: no route from the player's cell to the next cell = a wall.
@@ -237,18 +58,12 @@ bool adjacent_tile_blocked(void* player, Vec3 player_pos, Vec3 direction)
         if (!controller) return false;
         void* map_handle = ref::rd<void*>(controller, r::fMapHandle);
         if (!map_handle) return false;
-
-        int width = call_virtual_int(r::mGetCollisionLayerWidth, map_handle);
-        int height = call_virtual_int(r::mGetCollisionLayerHeight, map_handle);
-        if (width <= 0 || height <= 0 || width > 10000 || height > 10000) return false;
-
-        Vec3 start = cell_of(width, height, player_pos, static_cast<float>(game_object_layer(player) - 9));
-        Vec3 target{player_pos.x + direction.x, player_pos.y + direction.y, player_pos.z + direction.z};
-        Vec3 dest = cell_of(width, height, target, start.z);
-
-        bool collision = ref::rd<bool>(player, r::fIsOnCollision);
-        void* path = route_search(map_handle, start, dest, collision);
-        return !has_points(path);
+        baked_route::Cell start, target;
+        if (!baked_nav::player_cell(map_handle, player, start)) return false;
+        Vec3 target_pos{player_pos.x + direction.x, player_pos.y + direction.y, player_pos.z + direction.z};
+        if (!baked_nav::cell_at(map_handle, target_pos, target)) return false;
+        target.layer = start.layer;
+        return !baked_nav::walk_edge(map_handle, player, start, target, false);
     });
 }
 
@@ -271,7 +86,7 @@ void* field_map() { return cache::get_or_refresh(r::kFieldMap); }
 bool vehicle_type_of(void* fe, int& type, int& transportation_id, std::wstring& message_id)
 {
     auto it = g_vehicle_types.find(fe);
-    if (it == g_vehicle_types.end()) return false;
+    if (it == g_vehicle_types.end() || it->second.map_id != current_map_id()) return false;
     type = it->second.type;
     transportation_id = it->second.id;
     message_id = it->second.message_id;
@@ -282,7 +97,7 @@ std::vector<VehicleOnMap> vehicles_on_map()
 {
     std::vector<VehicleOnMap> out;
     for (const auto& [fe, info] : g_vehicle_types) {
-        if (!live_entity(fe)) continue;
+        if (info.map_id != current_map_id() || !live_entity(fe)) continue;
         void* tr = unity::transform(fe);
         if (!tr) continue;
         VehicleOnMap v;
@@ -298,28 +113,7 @@ std::vector<VehicleOnMap> vehicles_on_map()
 
 std::vector<int> owned_auto_vehicle_groups()
 {
-    std::vector<int> groups;
-    hooks::guarded("FieldNavigationHelper.AutoVehicles", [&] {
-        void* map = field_map();
-        void* fc = map ? ref::rd<void*>(map, r::fFieldController) : nullptr;
-        void* transportation = fc ? ref::rd<void*>(fc, r::fTransportation) : nullptr;
-        void* info_data = transportation ? ref::rd<void*>(transportation, r::fInfoData) : nullptr;
-        void* model_list = info_data ? ref::rd<void*>(info_data, r::fModelList) : nullptr;
-        if (!model_list) return;
-        std::vector<void*> infos;
-        unity::dict_for_each(model_list, [](uint64_t, uint64_t v, void* s) {
-            static_cast<std::vector<void*>*>(s)->push_back(reinterpret_cast<void*>(v));
-        }, &infos, 4, 8);
-        for (void* info : infos) {
-            if (!info || !ref::call<bool>(r::mInfoGetEnable, info)) continue;
-            if (ref::call<int32_t>(r::mInfoGetType, info) != 5) continue;   // Content: auto-ridden
-            const int id = ref::call<int32_t>(r::mInfoGetId, info);
-            if (const baked::TransportRow* row = baked::transport(id))
-                if (row->group > 0 && std::find(groups.begin(), groups.end(), row->group) == groups.end())
-                    groups.push_back(row->group);
-        }
-    });
-    return groups;
+    return g_auto_map == current_map_id() ? g_auto_groups : std::vector<int>();
 }
 
 // --- field_api.h vehicles --------------------------------------------------------------------
@@ -374,82 +168,64 @@ int current_map_id()
     return info ? ref::rd<int32_t>(info, r::fProvisionCurrentMapId) : -1;
 }
 
-std::vector<void*> all_field_entities()
+bool native_position_walkable(void* pl, Vec3 position) { return position_walkable(pl, position); }
+
+bool EntityCursor::next(void*& entity)
 {
-    std::vector<void*> results;
-    std::unordered_set<void*> seen;
-    auto add = [&](void* fe) {
-        if (fe && seen.insert(fe).second) results.push_back(fe);
-    };
-
-    hooks::guarded("FieldNavigationHelper.GetAllFieldEntities", [&] {
-        void* map = field_map();
-        if (!map) return;
-        void* fc = ref::rd<void*>(map, r::fFieldController);
-        if (!fc) return;
-
-        void* entity_list = ref::rd<void*>(fc, r::fEntityList);
-        int n = unity::list_count(entity_list);
-        for (int i = 0; i < n; ++i) add(unity::list_at(entity_list, i));
-        // Collision-only gates have their own native list and are absent from entityList.
-        void* colliders = ref::rd<void*>(fc, r::fColliderEntityList);
-        for (int i = 0; i < unity::list_count(colliders); ++i) add(unity::list_at(colliders, i));
-
-        // Transportation entities (NeedInteractiveList) and Transportation.ModelList
-        if (void* transportation = ref::rd<void*>(fc, r::fTransportation)) {
-            hooks::guarded("FieldNavigationHelper.NeedInteractiveList", [&] {
-                void* list = ref::call<void*>(r::mNeedInteractiveList, transportation);
-                int count = unity::list_count(list);
-                for (int i = 0; i < count; ++i) {
-                    void* item = unity::list_at(list, i);
-                    if (item && r::kFieldEntity.is(item)) add(item);
-                }
-            });
-
-            hooks::guarded("FieldNavigationHelper.ModelList", [&] {
-                void* info_data = ref::rd<void*>(transportation, r::fInfoData);
-                void* model_list = info_data ? ref::rd<void*>(info_data, r::fModelList) : nullptr;
-                if (!model_list) return;
-                std::vector<void*> infos;
-                unity::dict_for_each(model_list, [](uint64_t, uint64_t v, void* s) {
-                    static_cast<std::vector<void*>*>(s)->push_back(reinterpret_cast<void*>(v));
-                }, &infos, 4, 8);
-                for (void* info : infos) {
-                    if (!info) continue;
-                    bool enabled = ref::call<bool>(r::mInfoGetEnable, info);
-                    int type = ref::call<int32_t>(r::mInfoGetType, info);
-                    if (skip_transport_type(type) || !enabled) continue;
-                    void* map_object = ref::call<void*>(r::mInfoGetMapObject, info);
-                    if (map_object && !seen.count(map_object)) {
-                        add(map_object);
-                        VehicleInfo vi{type, ref::call<int32_t>(r::mInfoGetId, info),
-                                       ref::call_str(r::mInfoGetMessageId, info)};
-                        g_vehicle_types[map_object] = vi;
+    entity = nullptr;
+    void* map = field_map();
+    void* fc = map ? ref::rd<void*>(map, r::fFieldController) : nullptr;
+    if (!fc) return false;
+    void* transportation = ref::rd<void*>(fc, r::fTransportation);
+    void* info_data = transportation ? ref::rd<void*>(transportation, r::fInfoData) : nullptr;
+    if (stage < 2) {
+        void* list = ref::rd<void*>(fc, stage == 0 ? r::fEntityList : r::fColliderEntityList);
+        if (index < unity::list_count(list)) entity = unity::list_at(list, index++);
+        else { ++stage; index = 0; }
+    } else if (stage == 2) {
+        void* dict = info_data ? ref::rd<void*>(info_data, r::fModelList) : nullptr;
+        if (index < unity::dict_count(dict)) {
+            uint64_t key = 0, value = 0;
+            if (unity::dict_entry(dict, index++, key, value, 4, 8)) {
+                void* info = reinterpret_cast<void*>(value);
+                if (info) {
+                    void* object = ref::call<void*>(r::mInfoGetMapObject, info);
+                    // NeedInteractiveList is only this model dictionary filtered by
+                    // CheckNeedInteractive(id,true). Avoid allocating/walking its list.
+                    if (object && ref::call<bool>(r::mCheckNeedInteractive, info_data, static_cast<int32_t>(key), true)
+                        && r::kFieldEntity.is(object)) entity = object;
+                    const int type = ref::call<int32_t>(r::mInfoGetType, info);
+                    if (object && !skip_transport_type(type) && ref::call<bool>(r::mInfoGetEnable, info)) {
+                        entity = object;
+                        g_vehicle_types[object] = VehicleInfo{type, ref::call<int32_t>(r::mInfoGetId, info),
+                            ref::call_str(r::mInfoGetMessageId, info), current_map_id()};
+                    } else if (object) g_vehicle_types.erase(object);
+                    if (type == 5 && ref::call<bool>(r::mInfoGetEnable, info)) {
+                        if (const auto* row = baked::transport(ref::call<int32_t>(r::mInfoGetId, info)))
+                            if (row->group > 0 && std::find(auto_groups.begin(), auto_groups.end(), row->group) == auto_groups.end())
+                                auto_groups.push_back(row->group);
                     }
                 }
-            });
-        }
-
-        // FootEvent.stepOnTriggerList: step-on triggers kept apart from the entity list
-        // (e.g. the airship-raising tile)
-        hooks::guarded("FieldNavigationHelper.FootEvent", [&] {
-            void* foot = ref::rd<void*>(fc, r::fFootEvent);
-            void* dict = foot ? ref::rd<void*>(foot, r::fStepOnTriggerList) : nullptr;
-            if (!dict) return;
-            std::vector<void*> triggers;
-            unity::dict_for_each(dict, [](uint64_t, uint64_t v, void* s) {
-                static_cast<std::vector<void*>*>(s)->push_back(reinterpret_cast<void*>(v));
-            }, &triggers, 4, 8);
-            for (void* t : triggers)
-                if (t && r::kFieldEntity.is(t)) add(t);
-        });
-    });
-
-    for (auto it = g_vehicle_types.begin(); it != g_vehicle_types.end();) {
-        if (!seen.count(it->first)) it = g_vehicle_types.erase(it);
-        else ++it;
+            }
+        } else { g_auto_map = current_map_id(); g_auto_groups = auto_groups; ++stage; index = 0; }
+    } else if (stage == 3) {
+        void* foot = ref::rd<void*>(fc, r::fFootEvent);
+        void* dict = foot ? ref::rd<void*>(foot, r::fStepOnTriggerList) : nullptr;
+        if (index < unity::dict_count(dict)) {
+            uint64_t key = 0, value = 0;
+            if (unity::dict_entry(dict, index++, key, value, 4, 8)) {
+                void* item = reinterpret_cast<void*>(value);
+                if (item && r::kFieldEntity.is(item)) entity = item;
+            }
+        } else { ++stage; index = 0; }
+    } else {
+        for (auto it = g_vehicle_types.begin(); it != g_vehicle_types.end();)
+            if (!seen.count(it->first)) it = g_vehicle_types.erase(it); else ++it;
+        return false;
     }
-    return results;
+    // Retain the established cross-list inclusion guard, not speech deduplication.
+    if (entity && !seen.insert(entity).second) entity = nullptr;
+    return true;
 }
 
 bool is_direction_near_map_exit(unity::Vec3 player_pos, unity::Vec3 dir, const std::vector<unity::Vec3>& exits)
@@ -501,8 +277,8 @@ WallDistances nearby_walls(void* player_obj)
 
 namespace {
 
-/// FindPathTo(..., mode). `allow_chain` = PathSearchMode.Full (FF5).
-PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj, bool allow_chain, TargetKind kind,
+/// FindPathTo(..., mode), using baked map data exclusively.
+PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj, bool full, TargetKind kind,
                    bool with_vehicles)
 {
     PathInfo info;
@@ -511,80 +287,13 @@ PathInfo find_path(unity::Vec3 from, unity::Vec3 to, void* map, void* player_obj
         return info;
     }
 
-    // The baked maps first (user decision, 2026-10-10): the whole sub-map, layers, hidden
-    // passages, counters, vehicles; no 31-tile window. The game's searcher below stays the
-    // fallback for a map the baked data does not know.
-    if (baked_nav::find(from, to, map, player_obj, allow_chain, kind, with_vehicles, info)) {
-        if (!info.success && info.error.empty()) info.error = L"No path found";
-        return info;
+    if (!baked_nav::find(from, to, map, player_obj, full, kind, with_vehicles, info)) {
+        info.success = false;
+        info.error = T(L"Navigation map data unavailable");
+        info.reason = info.error;
+    } else if (!info.success && info.error.empty()) {
+        info.error = T(L"No path found");
     }
-
-    bool ok = hooks::guarded_r("FieldNavigationHelper.FindPathTo", false, [&] {
-        int width = call_virtual_int(r::mGetCollisionLayerWidth, map);
-        int height = call_virtual_int(r::mGetCollisionLayerHeight, map);
-
-        // Unreasonable dimensions: likely a stale map handle
-        if (width <= 0 || height <= 0 || width > 10000 || height > 10000) {
-            LOGF("[Pathfinding] Invalid map dimensions: %dx%d - mapHandle may be stale", width, height);
-            info.error = L"Invalid map dimensions - try rescanning";
-            return false;
-        }
-
-        Vec3 start = cell_of(width, height, from, 0);
-        Vec3 dest = cell_of(width, height, to, 0);
-        if (player_obj) start.z = static_cast<float>(game_object_layer(player_obj) - 9);
-
-        void* path = nullptr;
-        if (player_obj) {
-            bool collision = ref::rd<bool>(player_obj, r::fIsOnCollision);
-            path = search_target_and_neighbours(map, start, dest, to, width, height, collision, kind == TargetKind::Interact);
-
-            // Secret passages are closed on the game's route grid but open to the player:
-            // retry once with them open (FF3-FF5; no-op on maps without hidden passages).
-            if (!has_points(path) && collision && game::flags().has_hidden_passages) {
-                path = search_with_passages_open(map, [&] {
-                    return search_target_and_neighbours(map, start, dest, to, width, height, collision, kind == TargetKind::Interact);
-                });
-            }
-        } else {
-            path = ref::call_static<void*>(r::mSearchSimple, map, start, dest);
-        }
-
-        if (!has_points(path)) {
-            // FF5: the plain search came up empty. Only now, and only for an explicit player
-            // action (Full), chain several searches to reach past the game's ~31.5-tile window.
-            // The chainer stays dormant for a target inside the window or without a player.
-            std::vector<Vec3> chained;
-            if (allow_chain && player_obj && try_breadcrumb_chain(from, to, map, player_obj, chained)) {
-                info.world_path = std::move(chained);
-                info.step_count = info.world_path.empty() ? 0 : static_cast<int>(info.world_path.size()) - 1;
-                info.description = describe_chained_route(info.world_path);
-                fill_native_walk(info, width, height);
-                return true;
-            }
-            info.error = L"No path found";
-            return false;
-        }
-
-        int n = unity::list_count(path);
-        info.world_path.reserve(static_cast<size_t>(n));
-        for (int i = 0; i < n; ++i) info.world_path.push_back(unity::list_value<Vec3>(path, i));
-        info.step_count = n > 0 ? n - 1 : 0;
-        info.description = kind == TargetKind::Interact && info.world_path.size() <= 1
-            ? TF(L"face {0}", {direction_name(from, to)}) : describe_path(info.world_path);
-        fill_native_walk(info, width, height);
-        if (kind == TargetKind::Interact) {
-            info.walk_phases.back().arrival_facing = TF(L"face {0}", {direction_name(info.world_path.back(), to)});
-            const Vec3 target = cell_of(width, height, to, 0);
-            const auto& arrival = info.walk_phases.back().cells.back();
-            info.walk_phases.back().arrival_direction = baked_route::direction_towards(arrival,
-                baked_route::Cell{-1, static_cast<int>(target.x), static_cast<int>(target.y)});
-        }
-        return true;
-    });
-
-    info.success = ok;
-    if (!ok && info.error.empty()) info.error = L"Pathfinding error";
     return info;
 }
 

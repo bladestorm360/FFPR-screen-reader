@@ -23,6 +23,8 @@
 #include "waypoints.h"
 #include "../game.h"
 #include "../json.h"
+#include "../background.h"
+#include "../worker_job.h"
 #include "../log.h"
 #include "../modtext.h"
 #include "../text.h"
@@ -475,8 +477,6 @@ void ensure_path()
 {
     if (!g_path.empty()) return;
     std::wstring dir = std::wstring(game::dir()) + L"UserData";
-    if (GetFileAttributesW(dir.c_str()) == INVALID_FILE_ATTRIBUTES)
-        CreateDirectoryW(dir.c_str(), nullptr);
     // FF6's C# mod named its file ffvi_waypoints.json; keep it so saved waypoints carry over.
     g_path = dir + (game::is(game::Id::FF6) ? L"\\ffvi_waypoints.json" : L"\\waypoints.json");
 }
@@ -511,8 +511,19 @@ void load()
 void save()
 {
     ensure_path();
-    if (!write_file(g_path, serialize(g_file)))
-        LOGF("[Waypoints] Error saving (err=%lu)", GetLastError());
+    static worker_job::Owner saves;
+    saves.cancel(); // a newer complete snapshot supersedes an unstarted save
+    // Copy mod-owned values only. Serialization/directory creation/file I/O never
+    // run in the settings/input callback; the I/O worker preserves write order.
+    struct Save { std::wstring path; FileData data; };
+    worker_job::start(saves, Save{g_path, g_file}, [](Save& snapshot) {
+        const auto slash = snapshot.path.find_last_of(L"\\/");
+        if (slash != std::wstring::npos) CreateDirectoryW(snapshot.path.substr(0, slash).c_str(), nullptr);
+        const bool saved = write_file(snapshot.path, serialize(snapshot.data));
+        if (!saved)
+            LOGF("[Waypoints] Error saving (err=%lu)", GetLastError());
+        return saved;
+    }, [](bool) {}, background::Lane::Io);
 }
 
 std::vector<EntityPtr> for_map(const std::wstring& map_id)

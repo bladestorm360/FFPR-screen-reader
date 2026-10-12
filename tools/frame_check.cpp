@@ -1,6 +1,8 @@
 // Offline scheduler lifetime/concurrency regression; no game or IL2CPP runtime.
 #include "../src/core/frame.cpp"
+namespace sound { void initialize() {} }
 #include "../src/core/background.cpp"
+#include "../src/core/worker_job.h"
 #include <atomic>
 #include <cstdio>
 #include <memory>
@@ -16,9 +18,11 @@ void note_fault(const char*) { std::abort(); }
 }
 namespace speech { void request_load() {} }
 namespace log_ { void write(const char*, ...) {} }
+namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
 
 int main()
 {
+    background::prepare();
     int failures = 0;
     auto expect = [&](bool ok, const char* message) { if (!ok) { ++failures; std::printf("FAIL %s\n", message); } };
     auto lifetime = std::make_shared<int>(17);
@@ -91,12 +95,36 @@ int main()
     for (int i = 0; i < 100; ++i) frame::run_tick();
     expect(frame::count() == before + 100 && published == 0,
            "main dispatcher keeps running while background preparation is blocked");
+    HANDLE independent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    expect(background::post([&] { SetEvent(independent); }, background::Lane::Compute), "compute lane starts independently");
+    expect(WaitForSingleObject(independent, 5000) == WAIT_OBJECT_0, "blocked data work cannot hold up compute jobs");
+    CloseHandle(independent);
     SetEvent(release);
     expect(WaitForSingleObject(completed, 5000) == WAIT_OBJECT_0, "worker completion is bounded");
     frame::run_tick();
     expect(published == 1 && !wrong_thread && worker_priority == THREAD_PRIORITY_BELOW_NORMAL,
            "data worker has lower priority and publishes once through the main dispatcher");
     CloseHandle(release); CloseHandle(completed);
+    worker_job::Owner owner;
+    int result = 0;
+    HANDLE returned = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    expect(worker_job::start(owner, 7, [returned](int input) { SetEvent(returned); return input * 2; },
+        [&](int output) { if (std::this_thread::get_id() != main_id) wrong_thread = true; result = output; }), "owned snapshot job is accepted");
+    expect(WaitForSingleObject(returned, 5000) == WAIT_OBJECT_0, "snapshot computation finishes on the worker");
+    // Wait for the posted result using dispatcher ticks, never a game-thread worker join.
+    const double publish_by = frame::now() + 5;
+    while (!result && frame::now() < publish_by) { frame::run_tick(); std::this_thread::yield(); }
+    expect(result == 14 && !wrong_thread, "publication remains on the native owner");
+    HANDLE entered = CreateEventW(nullptr, TRUE, FALSE, nullptr), unblock = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    ResetEvent(returned);
+    expect(worker_job::start(owner, 9, [=](int input) {
+        SetEvent(entered); WaitForSingleObject(unblock, 5000); SetEvent(returned); return input;
+    }, [&](int) { result = -1; }), "cancellable snapshot job is accepted");
+    expect(WaitForSingleObject(entered, 5000) == WAIT_OBJECT_0, "worker captures the old context");
+    owner.cancel(); SetEvent(unblock); WaitForSingleObject(returned, 5000);
+    for (int i = 0; i < 100; ++i) { frame::run_tick(); std::this_thread::yield(); }
+    expect(result == 14, "phase cancellation cannot publish an obsolete job");
+    CloseHandle(entered); CloseHandle(unblock); CloseHandle(returned);
     std::printf("%s: scheduler state/lifetime, 1000 posts, nonblocking data worker; %d failures\n", failures ? "FAIL" : "PASS", failures);
     return failures ? 1 : 0;
 }

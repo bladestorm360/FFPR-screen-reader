@@ -16,6 +16,7 @@
 #include "ui_util.h"
 #include "unity.h"
 #include "system/system.h"
+#include "field/object_cache.h"
 
 namespace ffpr::system {
 namespace {
@@ -24,6 +25,15 @@ ref::Class kKeyHelpController{"Last.UI.KeyInput", "KeyHelpController"};
 ref::Class kKeyHelpView{"Last.UI.KeyInput", "KeyHelpView"};
 ref::Field fKeyHelpView{kKeyHelpController, "view"};                        // private, no accessor
 ref::Field fKeyHelpContentsParent{kKeyHelpView, "keyHelpContentsParent"};    // KeyHelpView.ContentsParent
+ref::Method mInitialize{kKeyHelpController, "Initialize", 0};
+using Initialize = void (*)(void*, const void*);
+Initialize o_initialize;
+void d_initialize(void* self, const void* mi) {
+    o_initialize(self, mi);
+    hooks::guarded("KeyHelp.Owner", [self] {
+        if (kKeyHelpController.is(self)) field::cache::register_object(kKeyHelpController, self);
+    });
+}
 
 // NavigationBuffer over pre-rendered entries.
 struct Buffer {
@@ -96,7 +106,7 @@ void jump_to_bottom()
 void* key_help_controller()
 {
     if (unity::alive(g_controller_cache)) return g_controller_cache;
-    g_controller_cache = unity::find_object(kKeyHelpController);
+    g_controller_cache = field::cache::get(kKeyHelpController);
     return g_controller_cache;
 }
 
@@ -163,7 +173,7 @@ int install()
         g_controller_cache = nullptr;
         close_controls_help();
     });
-    return 0;
+    return hooks::attach(mInitialize, &d_initialize, &o_initialize) ? 1 : 0;
 }
 
 core::Install s_install{"KeyHelpReader", &install, 100};

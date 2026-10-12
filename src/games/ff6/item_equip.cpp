@@ -30,6 +30,8 @@
 #include "../../core/say.h"
 #include "../../core/text.h"
 #include "../../core/unity.h"
+#include "../../core/field/object_cache.h"
+#include "../../core/displayed_ui.h"
 #include "../../core/menus/menus_internal.h"
 
 namespace ffpr::ff6 {
@@ -39,6 +41,7 @@ namespace md = ffpr::menus::detail;
 
 constexpr uint8_t k6 = game::kFF6;
 
+ref::Class kItemWindowOwner{"Last.UI.KeyInput", "ItemWindowController", k6};
 ref::Class  kItemListController{"Last.UI.KeyInput", "ItemListController", k6};
 
 ref::Class  kWeapon{"Last.Data.Master", "Weapon", k6};
@@ -108,7 +111,7 @@ bool try_announce_equip_requirements()
     if (item_type != CONTENT_TYPE_WEAPON && item_type != CONTENT_TYPE_ARMOR) return false;
 
     // Only while the item list itself is shown.
-    void* list_controller = unity::find_object(kItemListController);
+    void* list_controller = displayed::field(field::cache::get(kItemWindowOwner), "itemListController");
     if (!list_controller || !unity::active_in_hierarchy(list_controller)) return false;
 
     void* job_group = equip_job_group(item_type, item_id);

@@ -22,6 +22,22 @@ Build with `build.bat`, then `smoketest.bat`; deployment is separate (`deploy.ba
 
 Use name-resolved IL2CPP references and `hooks::attach`; verify signatures and folded native bodies against matching dumps/analysis. Preserve the custom MinHook coexistence changes. Hooks own UI timing; bounded deferrals start from native events. Game pointers need lifetime checks. Centralize services and use them at call sites; no new deduplication without explicit permission.
 
+Replacement persistent preference, October 12: game-thread hooks may only detect state
+or copy bounded ready native data and immediately continue the original operation.
+Substantial speech/audio/logging/I/O/text/scanning/extraction/pathfinding work belongs
+on workers or genuinely nonblocking snapshot coroutines. The game thread never waits
+for workers/queues/locks/I/O/RPC/sleeps/joins, including startup/loading/shutdown.
+Keep thread-affine APIs and native pointer lifetimes on their owner. Approved input/
+movement actions remain isolated. Record ownership/evidence in docs/re/THREADING.md;
+modded/unmodded runtime measurements remain user-side unless explicitly authorized.
+
+All navigable maps must have baked data. Missing bakes are extraction/data bugs;
+never restore the deprecated native MapRouteSearcher, its distance cap, breadcrumb
+fallback or temporary game-grid writes. Use the cancellable owned-snapshot baked
+worker service for routes, floods and cross-floor planning. Current native instances
+come from lifecycle/parent observations, never whole-scene searches on callbacks.
+See docs/re/THREADING.md for ownership, capture budgets, evidence and validation.
+
 Speak game information only when displayed, or under an explicit scoped user approval. Read active rendered fields, labels, comparison arrows and bar values rather than every parameter in a shared data class. Do not infer approval from old implementation. Results follow native phases and current displayed details; no early disclosure of later rewards. Keep Autodetail persistent, default off, and manual details/review available.
 
 Scoped user approval, 2026-10-11: retain the optional Enemy HP Display modes and saved/default preferences in every game, despite HP not being rendered in native target panels. Numbers adds `HP current/maximum`; Percentage adds `remaining%`; Hidden adds nothing and must not query parameters. This exception covers enemy HP only, not hidden enemy conditions or other statistics. F5 cycles these modes during battle; the Battle submenu explains the disclosure. Scan/Libra follows the ordinary displayed-message reader.

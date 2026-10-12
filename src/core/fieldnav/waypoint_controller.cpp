@@ -111,20 +111,18 @@ void pathfind_to_current_waypoint()
         return;
     }
 
-    ::field::PathInfo path_info = ::field::find_path_to(player_pos, waypoint->position,
-                                                        ::field::map_handle(), ::field::player(),
-                                                        ::field::TargetKind::Spot);
-
-    std::wstring announcement = (path_info.success && !path_info.description.empty())
-        ? path_info.description
-        : (!path_info.reason.empty() ? path_info.reason : T(L"No path"));
-
-    if (ui::prefs::autowalk_enabled()) {
-        ::field::baked_nav::MapGoal goal;
-        goal.map_id = ::field::current_map_id();
-        const bool have_goal = ::field::baked_nav::cell_at(::field::map_handle(), waypoint->position, goal.cell);
-        autowalk::start(path_info, have_goal ? &goal : nullptr, ::field::TargetKind::Spot, waypoint->name);
-    } else ffpr::say(announcement);
+    ::field::baked_nav::MapGoal goal;
+    goal.map_id = ::field::current_map_id();
+    if (!::field::baked_nav::cell_at(::field::map_handle(), waypoint->position, goal.cell)) {
+        ffpr::say(T(L"Navigation map data unavailable")); return;
+    }
+    if (ui::prefs::autowalk_enabled()) autowalk::request(goal, ::field::TargetKind::Spot, waypoint->name);
+    else ::field::baked_nav::request_route(goal, ::field::TargetKind::Spot, waypoint->name,
+        [waypoint](::field::PathInfo path_info) {
+            if (nav::selected() != waypoint) return;
+            ffpr::say((path_info.success && !path_info.description.empty()) ? path_info.description
+                : (!path_info.reason.empty() ? path_info.reason : T(L"No path")));
+        });
 }
 
 void add_new_waypoint_with_naming()

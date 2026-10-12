@@ -1,4 +1,7 @@
 #pragma once
+#include <memory>
+#include <string>
+#include <vector>
 namespace speech { void request_shutdown(); }
 
 // Prism is loaded LAZILY, triggered by the first game hook that fires.
@@ -23,7 +26,7 @@ namespace speech { void request_shutdown(); }
 // Prism is up wait in the same ring and are spoken the moment it is.
 namespace speech {
 
-/// Boot thread, before any hook is installed: creates the ring's lock and event.
+/// Boot thread, before any hook is installed: prepares events and ingress.
 void init();
 
 /// Called from hooks / any thread. Idempotent, allocation-free, returns immediately.
@@ -37,9 +40,11 @@ bool wait_and_load(int timeout_ms);
 /// worker event. Remains alive even without Prism, so persistence still works silently.
 void pump();
 
-/// Backend only (reader owns speech policy). Copies/splits UTF-16 at word boundaries;
-/// only the first chunk interrupts. Allocation-free; no backend calls on the producer.
+/// Copy an owned UTF-16 message through bounded nonblocking ingress. Cleaning/
+/// word-boundary splitting and backend calls remain on the speech worker.
 void say(const wchar_t* text, bool interrupt = true);
+using Parts = std::vector<std::wstring>;
+void say_parts(std::shared_ptr<const Parts> parts, bool interrupt = true);
 void silence();
 void braille(const wchar_t* text);
 bool has_braille();

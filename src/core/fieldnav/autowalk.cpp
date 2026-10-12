@@ -26,6 +26,7 @@ ref::Method mIsMoving{kEntity, "get_IsMoving", 0};
 using AxisFn = unity::Vec2 (*)(void*, const void*);
 AxisFn o_InputAxis = nullptr;
 bool g_hooked = false, g_active = false, g_has_goal = false;
+bool g_planning = false;
 bool g_exit_approach = false;
 Transition g_transition;
 int g_map = 0, g_next_map = 0, g_width = 0, g_height = 0;
@@ -186,12 +187,15 @@ int install()
             // MapChanged means construction finished; native input/fading can still be
             // unavailable. An event-bound readiness wait replaces the old one-shot timer.
             if (!g_transition.can_resume(context_ok() && controller_ok(field::player()))) return true;
-            field::PathInfo path;
-            if (!field::baked_nav::route_to_goal(field::map_handle(), field::player(),
-                    *g_goal, g_kind, *g_name, path) || !path.success || path.walk_phases.empty()) {
-                cancel(); ffpr::say(T(L"Autowalk stopped. Route changed.")); return false;
-            }
-            begin(path);
+            g_planning = true;
+            field::baked_nav::request_route(*g_goal, g_kind, *g_name, [](field::PathInfo path) {
+                if (!g_planning || !g_active || !context_ok()) return;
+                g_planning = false;
+                if (!path.success || path.walk_phases.empty()) {
+                    cancel(); ffpr::say(T(L"Autowalk stopped. Route changed.")); return;
+                }
+                begin(path);
+            });
             return false;
         }, "Autowalk.Continue", 3600);
     });
@@ -200,10 +204,12 @@ int install()
 core::Install s_install{"Autowalk", &install, 120};
 }
 
-bool active() { return g_active; }
+bool active() { return g_active || g_planning; }
 void cancel(bool announce)
 {
-    const bool was_active = g_active;
+    const bool was_active = active();
+    if (g_planning) field::baked_nav::cancel_requests();
+    g_planning = false;
     g_active = false;
     g_transition.clear();
     frame::cancel_label("Autowalk.");
@@ -217,6 +223,20 @@ bool stop_requested()
 {
     if (!active()) return false;
     cancel(true); return true;
+}
+void request(field::baked_nav::MapGoal goal, field::TargetKind kind, std::wstring name)
+{
+    cancel();
+    if (!context_ok()) return;
+    g_planning = true;
+    // Separate copies avoid unspecified argument evaluation moving the goal/name
+    // before request_route receives them.
+    auto completion = [goal, kind, name](field::PathInfo path) {
+        if (!g_planning || !context_ok()) return;
+        g_planning = false;
+        start(path, &goal, kind, name);
+    };
+    field::baked_nav::request_route(std::move(goal), kind, std::move(name), std::move(completion));
 }
 void start(const field::PathInfo& path, const field::baked_nav::MapGoal* goal, field::TargetKind kind,
            const std::wstring& name)
@@ -250,7 +270,7 @@ void input_updated()
     const bool lt_held = input::left_trigger() > .5f;
     const bool lt_pressed = lt_held && !g_lt_was_held;
     g_lt_was_held = lt_held;
-    if (!g_active) return;
+    if (!active()) return;
     if (!input::game_window_focused() || !ui::prefs::autowalk_enabled() || input::suppress_game_input()) {
         cancel(); return;
     }
@@ -270,6 +290,7 @@ void input_updated()
         || queries::is("MessageWindowPatches.IsInDialogue") || queries::is("PuzzleGameState.IsActive")) {
         cancel(); return;
     }
+    if (g_planning && !g_active) return; // no native movement while worker plans
     if (g_transition.waiting()) {
         if (g_transition.expired(frame::now())) { cancel(); ffpr::say(T(L"Autowalk stopped. Route changed.")); }
     } else if (!context_ok() || !controller_ok(field::player())) {

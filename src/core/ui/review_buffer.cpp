@@ -1,6 +1,9 @@
 #include <algorithm>
+#include <deque>
+#include <climits>
 #include "review_buffer.h"
 #include "navigation_buffer.h"
+#include "../frame.h"
 #include "preferences.h"
 #include "../core.h"
 #include "../displayed_ui.h"
@@ -9,6 +12,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../input/input.h"
+#include "../worker_job.h"
 
 namespace ui::review {
 namespace {
@@ -17,6 +21,14 @@ NavigationBuffer g_buffer;
 std::vector<std::wstring> g_lines;
 std::wstring g_headline;
 Options g_options;
+worker_job::Owner g_work;
+bool g_build_pending = false;
+bool g_replaying = false;
+bool g_executing_action = false;
+uint64_t g_generation = 0;
+std::wstring g_full_details;
+using Action = void (*)();
+std::deque<Action> g_pending_actions;
 Domain g_domain = Domain::Results;
 void speak(std::wstring line) {
     if (!active() || line.empty()) return;
@@ -40,48 +52,117 @@ int install() {
     return 0;
 }
 core::Install s_install{"UI.ReviewBuffer", &install, 90};
+
+void begin_replay(uint64_t generation) {
+    if (g_pending_actions.empty()) { g_replaying = false; return; }
+    g_replaying = true;
+    frame::every_frame([generation]() {
+        if (generation != g_generation || !active()) {
+            if (generation == g_generation) {
+                g_pending_actions.clear();
+                g_replaying = false;
+            }
+            return false;
+        }
+        for (int i = 0; i < 4 && !g_pending_actions.empty(); ++i) {
+            const auto action = g_pending_actions.front();
+            g_pending_actions.pop_front();
+            g_executing_action = true;
+            action();
+            g_executing_action = false;
+        }
+        if (g_pending_actions.empty()) {
+            g_replaying = false;
+            return false;
+        }
+        return true;
+    }, "ReviewBuffer.Replay", INT_MAX);
 }
-bool active() { return displayed::container_visible(g_owner) && !g_buffer.empty(); }
-bool owns(void* owner) { return owner && owner == g_owner; }
-Domain domain() { return g_domain; }
-int index() { return g_buffer.index(); }
-void clear() { g_owner = nullptr; g_buffer = {}; g_lines.clear(); g_headline.clear(); g_options = {}; }
-void replace_lines(std::vector<std::wstring> lines, int restore_index) {
-    const auto headline = g_headline;
-    Options options = g_options;
-    options.announce = false; options.restore_index = restore_index;
-    show(g_owner, headline, std::move(lines), options);
-}
-void show(void* owner, const std::wstring& headline, std::vector<std::wstring> lines, Options options) {
+
+void show_impl(void* owner, const std::wstring& headline, std::vector<std::wstring> lines,
+               Options options, bool preserve_actions) {
+    std::deque<Action> saved_actions;
+    if (preserve_actions && g_owner == owner) saved_actions = std::move(g_pending_actions);
     clear();
     if (!displayed::container_visible(owner)) return;
+    if (preserve_actions) g_pending_actions = std::move(saved_actions);
     g_owner = owner;
     g_domain = options.domain;
     g_headline = headline;
-    g_options = options;
-    const auto details = text::join(lines, L". ");
-    if (options.include_headline && !headline.empty()) g_lines.push_back(headline);
-    for (const auto& line : options.summary) if (!line.empty()) g_lines.push_back(line);
-    for (auto& line : lines) if (!line.empty()) g_lines.push_back(std::move(line));
-    std::vector<NavigationBuffer::Entry> entries;
-    for (const auto& line : g_lines) entries.push_back([line] { return line; });
-    g_buffer = NavigationBuffer(std::move(entries), std::move(options.groups));
-    if (!g_lines.empty()) g_buffer.set_index(std::max(0, std::min(options.restore_index, static_cast<int>(g_lines.size()) - 1)));
-    if (options.announce) {
-        auto announcement = headline;
-        const auto summary = text::join(options.summary, L". ");
-        if (!summary.empty()) announcement += (announcement.empty() ? L"" : L". ") + summary;
-        if (!announcement.empty()) ffpr::say(announcement, true);
-        if (prefs::auto_detail_enabled() && !options.defer_details && !details.empty()) ffpr::say(details, false);
-        if ((!prefs::auto_detail_enabled() || options.announce_brief_with_details) &&
-            options.announce_brief && options.brief && !options.defer_details) {
-            const auto brief = text::join(*options.brief, L". ");
-            if (!brief.empty()) ffpr::say(brief, false);
-        }
+    g_options = options; // available to same-page replacements while this build is pending
+    g_build_pending = true; // this displayed context owns review input immediately
+    const auto generation = g_generation;
+    // Essential ready text goes straight to the speech worker. It must not wait
+    // behind route computation or full-table assembly on the compute lane.
+    if (options.announce && !preserve_actions) {
+        std::vector<std::wstring> ready;
+        if (!headline.empty()) ready.push_back(headline);
+        for (const auto& total : options.summary) if (!total.empty()) ready.push_back(total);
+        if (!ready.empty()) ffpr::say_parts(std::move(ready), true);
     }
+    struct Input { std::wstring headline; std::vector<std::wstring> lines; Options options; bool autodetail; };
+    struct Built {
+        NavigationBuffer buffer;
+        std::vector<std::wstring> lines;
+        Options options;
+        std::wstring full, headline, details, brief;
+        bool autodetail = false;
+    };
+    worker_job::start(g_work, Input{headline, std::move(lines), std::move(options), prefs::auto_detail_enabled()},
+        [](Input& input) {
+            Built built; auto& options = input.options;
+            built.details = text::join(input.lines, L". ");
+            built.headline = std::move(input.headline);
+            if (options.include_headline && !built.headline.empty()) built.lines.push_back(built.headline);
+            for (const auto& line : options.summary) if (!line.empty()) built.lines.push_back(line);
+            for (auto& line : input.lines) if (!line.empty()) built.lines.push_back(std::move(line));
+            std::vector<NavigationBuffer::Entry> entries;
+            for (const auto& line : built.lines) entries.push_back([line] { return line; });
+            built.buffer = NavigationBuffer(std::move(entries), options.groups);
+            if (!built.lines.empty()) built.buffer.set_index(std::max(0, std::min(options.restore_index, static_cast<int>(built.lines.size()) - 1)));
+            built.full = text::join(built.lines, L". ");
+            if (!options.include_headline && !built.headline.empty())
+                built.full = built.headline + (built.full.empty() ? L"" : L". " + built.full);
+            if (options.brief) built.brief = text::join(*options.brief, L". ");
+            built.options = std::move(options); built.autodetail = input.autodetail;
+            return built;
+        }, [owner, generation](Built built) {
+            if (generation != g_generation || g_owner != owner || !displayed::container_visible(owner)) return;
+            g_build_pending = false;
+            g_options = std::move(built.options); g_lines = std::move(built.lines);
+            g_buffer = std::move(built.buffer); g_full_details = std::move(built.full);
+            if (g_options.announce) {
+                if (built.autodetail && !g_options.defer_details && !built.details.empty()) ffpr::say(built.details, false);
+                if ((!built.autodetail || g_options.announce_brief_with_details) &&
+                    g_options.announce_brief && !g_options.defer_details && !built.brief.empty()) ffpr::say(built.brief, false);
+            }
+            begin_replay(generation);
+        });
+}
+}
+bool active() { return displayed::container_visible(g_owner) && (g_build_pending || !g_buffer.empty()); }
+bool owns(void* owner) { return owner && owner == g_owner; }
+Domain domain() { return g_domain; }
+int index() { return g_buffer.index(); }
+void clear() {
+    g_work.cancel(); frame::cancel_label("ReviewBuffer.Replay"); ++g_generation;
+    g_build_pending = false; g_replaying = false; g_executing_action = false; g_pending_actions.clear();
+    g_owner = nullptr; g_buffer = {}; g_lines.clear(); g_headline.clear(); g_options = {}; g_full_details.clear();
+}
+void replace_lines(std::vector<std::wstring> lines, int restore_index) {
+    const auto headline = g_headline;
+    Options options = g_options;
+    options.announce = g_build_pending && g_options.announce;
+    options.restore_index = restore_index;
+    show_impl(g_owner, headline, std::move(lines), options, true);
+}
+bool pending_action(void (*action)());
+void show(void* owner, const std::wstring& headline, std::vector<std::wstring> lines, Options options) {
+    show_impl(owner, headline, std::move(lines), std::move(options), false);
 }
 void details() {
     if (!active()) return;
+    if (pending_action(&details)) return;
     if (g_options.brief) {
         const int row = g_buffer.index() - (g_options.include_headline && !g_headline.empty() ? 1 : 0) -
             static_cast<int>(g_options.summary.size());
@@ -94,15 +175,18 @@ void details() {
         ffpr::say(g_headline + (g_headline.empty() ? L"" : L". ") + brief, false);
         return;
     }
-    auto line = text::join(g_lines, L". ");
-    if (!g_options.include_headline && !g_headline.empty()) line = g_headline + (line.empty() ? L"" : L". " + line);
-    if (!line.empty()) ffpr::say(line, false);
+    if (!g_full_details.empty()) ffpr::say(g_full_details, false);
 }
-void next() { if (active()) speak(g_buffer.next()); }
-void previous() { if (active()) speak(g_buffer.previous()); }
-void first() { if (active()) speak(g_buffer.jump_top()); }
-void last() { if (active()) speak(g_buffer.jump_bottom()); }
-void current() { if (active()) speak(g_buffer.current()); }
-void next_group() { if (active()) speak(g_buffer.next_group()); }
-void previous_group() { if (active()) speak(g_buffer.previous_group()); }
+bool pending_action(void (*action)()) {
+    if (g_executing_action || (!g_build_pending && !g_replaying)) return false;
+    g_pending_actions.push_back(action);
+    return true;
+}
+void next() { if (active() && !pending_action(&next)) speak(g_buffer.next()); }
+void previous() { if (active() && !pending_action(&previous)) speak(g_buffer.previous()); }
+void first() { if (active() && !pending_action(&first)) speak(g_buffer.jump_top()); }
+void last() { if (active() && !pending_action(&last)) speak(g_buffer.jump_bottom()); }
+void current() { if (active() && !pending_action(&current)) speak(g_buffer.current()); }
+void next_group() { if (active() && !pending_action(&next_group)) speak(g_buffer.next_group()); }
+void previous_group() { if (active() && !pending_action(&previous_group)) speak(g_buffer.previous_group()); }
 }

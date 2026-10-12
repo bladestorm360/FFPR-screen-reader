@@ -8,6 +8,7 @@
 #include "../text.h"
 #include "../unity.h"
 #include "../input/input.h"
+#include "../field/object_cache.h"
 
 namespace ffpr::battle {
 namespace {
@@ -17,6 +18,15 @@ ref::Field fTargets{kParty, "targetSelectContentList"};
 ref::Class kCommands{"Last.UI.KeyInput", "BattleCommandSelectController"};
 ref::Field fActor{kCommands, "targetData"};
 void* g_party = nullptr;
+ref::Method mInitialize{kParty, "Initalize", 0};
+using Initialize = void (*)(void*, const void*);
+Initialize o_initialize;
+void d_initialize(void* self, const void* mi) {
+    o_initialize(self, mi);
+    hooks::guarded("Battle.PartyOwner", [self] {
+        if (kParty.is(self)) field::cache::register_object(kParty, self);
+    });
+}
 int g_review_slot = 0;
 void* g_execution_player = nullptr;
 std::wstring g_execution_name;
@@ -25,7 +35,7 @@ std::vector<void*> rows()
 {
     std::vector<void*> out;
     if (!in_battle()) return out;
-    if (!displayed::visible(g_party)) g_party = unity::find_object(kParty);
+    if (!displayed::visible(g_party)) g_party = field::cache::get(kParty);
     if (!displayed::visible(g_party)) return out;
     // The game swaps its ordinary and target-select panels. Read whichever it displays.
     for (void* list : {ref::rd<void*>(g_party, fContents), ref::rd<void*>(g_party, fTargets)}) {
@@ -55,7 +65,7 @@ void* active_row(const std::vector<void*>& content)
     for (void* row : content)
         if (g_execution_player && displayed::field(row, "<TargetData>k__BackingField") == g_execution_player) return row;
     // Read rooted native command data afresh; opening Magic/Items must not clear its owner.
-    void* command = unity::find_object(kCommands);
+    void* command = field::cache::get(kCommands);
     const bool choosing = menu_state::is_active(menu_state::BATTLE_COMMAND) || menu_state::is_active(menu_state::BATTLE_ITEM) ||
                           menu_state::is_active(menu_state::BATTLE_MAGIC) || menu_state::is_active(menu_state::BATTLE_TARGET);
     void* actor = choosing && unity::alive(command) ? ref::rd<void*>(command, fActor) : nullptr;
@@ -110,7 +120,7 @@ int install()
     actions::define("BattleParty.Previous", [] { cycle_party(-1); });
     events::on(events::Kind::BattleStart, [] { g_party = nullptr; g_review_slot = -1; action_actor_finished(); });
     events::on(events::Kind::BattleEnd, [] { g_party = nullptr; g_review_slot = -1; action_actor_finished(); });
-    return 0;
+    return hooks::attach(mInitialize, &d_initialize, &o_initialize) ? 1 : 0;
 }
 core::Install s_install{"Battle.Party", &install, 110};
 }

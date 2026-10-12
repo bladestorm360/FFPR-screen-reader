@@ -41,6 +41,7 @@
 #include "../../core/menus/menus.h"
 #include "../../core/system/system.h"
 #include "../../core/ui/preferences.h"
+#include "../../core/field/object_cache.h"
 
 namespace ffpr::ff2 {
 namespace {
@@ -196,7 +197,7 @@ bool should_suppress()
 {
     sync();
     if (!magic_active()) return false;
-    void* window = unity::find_object(kWindow);
+    void* window = field::cache::get(kWindow);
     if (!window || !unity::active_in_hierarchy(window)) {
         reset_state();
         return false;
@@ -370,6 +371,7 @@ UseSetCursor_t o_UseSetCursor;
 
 void d_CommandInit(void* self, const void* mi)
 {
+    if (kWindow.is(self)) field::cache::register_object(kWindow, self);
     hooks::guarded("FF2.Magic.CommandInit.pre", [&] { on_command_menu_active(); });
     g_command_init_in_progress = true;
     o_CommandInit(self, mi);
@@ -381,6 +383,7 @@ void d_CommandInit(void* self, const void* mi)
 
 void list_init(Void_t original, void* self, const void* mi)
 {
+    if (kWindow.is(self)) field::cache::register_object(kWindow, self);
     hooks::guarded("FF2.Magic.ListInit.pre", [&] { on_spell_list_focused(); });
     g_list_init_in_progress = true;
     original(self, mi);
@@ -415,7 +418,12 @@ void d_SelfOrderlyTarget(void* self, const void* mi)
 void d_WindowSetActive(void* self, bool is_active, const void* mi)
 {
     o_WindowSetActive(self, is_active, mi);
-    hooks::guarded("FF2.Magic.SetActive", [&] { if (!is_active) reset_state(); });
+    hooks::guarded("FF2.Magic.SetActive", [&] {
+        if (!kWindow.is(self)) return;
+        if (is_active) field::cache::register_object(kWindow, self);
+        else if (field::cache::get(kWindow) == self) field::cache::clear(kWindow);
+        if (!is_active) reset_state();
+    });
 }
 
 void d_SetCommandSelectCursor(void* self, const void* mi)
@@ -424,7 +432,7 @@ void d_SetCommandSelectCursor(void* self, const void* mi)
     hooks::guarded("FF2.Magic.SetCommandSelectCursor", [&] {
         if (g_command_init_in_progress || !self || !unity::active_in_hierarchy(self)) return;
         if (ffpr::system::is_field_state()) return;   // UI pre-load on the field
-        void* window = unity::find_object(kWindow);
+        void* window = field::cache::get(kWindow);
         if (!window || window_state(window) != STATE_COMMAND) return;
         sync();
         // Cursor MOVES only. The bar's first command is the entry read's (CommandInit): the game
@@ -448,7 +456,7 @@ void d_ListSetCursor(void* self, void* cursor, bool is_scroll, int32_t type, con
         if (g_list_init_in_progress) return;   // the entry read speaks the initial focus
         if (!unity::active_in_hierarchy(self)) return;
         // The state machine first: never read spells on the command bar.
-        if (void* window = unity::find_object(kWindow)) {
+        if (void* window = field::cache::get(kWindow)) {
             const int state = window_state(window);
             if (state != STATE_USE_LIST && state != STATE_FORGET) return;
         }
@@ -470,7 +478,7 @@ void d_UseSetCursor(void* self, void* cursor, const void* mi)
     o_UseSetCursor(self, cursor, mi);
     hooks::guarded("FF2.Magic.TargetSetCursor", [&] {
         if (!self || !cursor || !unity::active_in_hierarchy(self)) return;
-        if (void* window = unity::find_object(kWindow)) {
+        if (void* window = field::cache::get(kWindow)) {
             const int state = window_state(window);
             if (state != STATE_USE_TARGET && state != STATE_SELF_ORDERLY_TARGET) return;
         }

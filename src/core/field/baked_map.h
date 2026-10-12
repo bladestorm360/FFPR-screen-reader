@@ -10,8 +10,8 @@
 // documented in bake_maps.py; this reader and that writer change together.
 //
 // Pure data: no game pointers, no IL2CPP. Usable in offline checks (tools/route_check.cpp).
-// Loaded once per process from the embedded resource (navigation.cpp) or from a file
-// (the check). Main thread only.
+// Prepared once on the exclusive data worker, then published as immutable data to
+// compute workers; offline checks may load from a file without any engine access.
 namespace field::baked {
 
 /// MapConstants.ObjectType values that are baked (bake_maps.py BAKED_TYPES).

@@ -13,6 +13,8 @@
 #include "bestiary.h"
 #include "../core.h"
 #include "../dedup.h"
+#include "../displayed_ui.h"
+#include "../field/object_cache.h"
 #include "../frame.h"
 #include "../game.h"
 #include "../hooks.h"
@@ -135,7 +137,7 @@ void reset_update_controller_state()
 void list_open_entry()
 {
     hooks::guarded("Bestiary.ListOpenEntry", [] {
-        void* list_controller = unity::find_object(kLibList);
+        void* list_controller = field::cache::get(kLibList);
         if (!list_controller) return;
         void* data = ref::call<void*>(mLibListCurrentContent, list_controller);
         if (!data) return;
@@ -206,7 +208,7 @@ void announce_formation()
     frame::next_frame([] {
         hooks::guarded("Bestiary.Formation", [] {
             if (!g_formation_announce_pending || !is_in_formation()) return;
-            void* controller = unity::find_object(kArBattleTop);
+            void* controller = field::cache::get(kArBattleTop);
             if (!controller) return;   // not created yet: InitMonsterPartyList will read
             if (unity::list_count(ref::rd<void*>(controller, fMonsterPartyList)) > 0) {
                 g_formation_announce_pending = false;
@@ -219,7 +221,7 @@ void announce_formation()
 void reannounce_formation()
 {
     if (!is_in_formation()) return;
-    if (void* controller = unity::find_object(kArBattleTop)) read_current_formation(controller);
+    if (void* controller = field::cache::get(kArBattleTop)) read_current_formation(controller);
 }
 
 // --- Patch 1: SubSceneManagerExtraLibrary.ChangeState ---------------------------------------
@@ -308,6 +310,10 @@ void d_LibMenuShow(void* self, void* select_data, bool is_init, bool is_in_game,
 {
     o_LibMenuShow(self, select_data, is_init, is_in_game, mi);
     hooks::guarded("LibraryMenuController.Show", [&] {
+        if (self && kLibMenu.is(self)) {
+            void* list = displayed::field(displayed::field(self, "view"), "listController");
+            if (list) field::cache::register_object(kLibList, list);
+        }
         if (!select_data) return;
         tracker().current_monster_data = select_data;
         if (!is_in_list() || g_suppress_next_list_entry) return;
@@ -341,12 +347,19 @@ void d_LibMenuOnContentSelected(void* self, int32_t index, void* monster_data, c
 // buffer and is read on entry.
 void build_and_initialize_stat_buffer()
 {
-    void* content = unity::find_object(kInfoContent);
-    if (!content) {
-        LOGF("[Bestiary] LibraryInfoContent not found");
+    Tracker& t = tracker();
+    void* controller = t.active_controller;
+    if (!controller || !unity::alive(controller)) {
+        LOGF("[Bestiary] LibraryInfoController is no longer alive");
         return;
     }
-    Tracker& t = tracker();
+    void* window = displayed::field(displayed::field(controller, "view"), "windowController");
+    void* content_controller = displayed::field(window, "contentController");
+    void* content = displayed::field(content_controller, "view");
+    if (!content || !kInfoContent.is(content)) {
+        LOGF("[Bestiary] LibraryInfoContent not available");
+        return;
+    }
     std::vector<StatEntry> entries = build_stat_buffer(content, t.current_monster_data);
 
     void* pbd = picture_book(t.current_monster_data);
@@ -465,6 +478,7 @@ void d_InitMonsterPartyList(void* self, const void* mi)
 {
     o_InitMonsterPartyList(self, mi);
     hooks::guarded("ArBattleTopController.InitMonsterPartyList", [&] {
+        if (self && kArBattleTop.is(self)) field::cache::register_object(kArBattleTop, self);
         if (!g_formation_announce_pending || !is_in_formation() || !self) return;
         g_formation_announce_pending = false;
         read_current_formation(self);   // an empty list says "No formations available"
@@ -475,7 +489,8 @@ Void_t o_ChangeMonsterParty;
 void d_ChangeMonsterParty(void* self, const void* mi)
 {
     o_ChangeMonsterParty(self, mi);
-    hooks::guarded("ArBattleTopController.ChangeMonsterParty", [] {
+    hooks::guarded("ArBattleTopController.ChangeMonsterParty", [self] {
+        if (self && kArBattleTop.is(self)) field::cache::register_object(kArBattleTop, self);
         if (!is_in_formation()) return;
         frame::next_frame([] { hooks::guarded("Bestiary.FormationChange", [] { reannounce_formation(); }); },
                           "Bestiary.FormationChange");
@@ -630,7 +645,7 @@ void config_handle_library_state(bool list)
         announce_list_open();
     } else if (previous_bestiary_state == kStateInfo) {
         tracker().reset();
-        void* list_controller = unity::find_object(kLibList);
+        void* list_controller = field::cache::get(kLibList);
         if (!list_controller) return;
         void* data = ref::call<void*>(mLibListCurrentContent, list_controller);
         if (!data) return;

@@ -2,6 +2,7 @@
 #include <initializer_list>
 #include <string>
 #include <string_view>
+#include <optional>
 #include "json.h"
 
 // Mod UI text (shared by all five games) and access to each game's embedded data.
@@ -13,6 +14,15 @@
 // The language is the game's own (MessageManager.currentLanguage), read on the main thread
 // and cached; refresh_language() runs at each title/config change.
 namespace modtext {
+/// Immutable localization selection for a copied worker job. Never reads native language.
+class LocaleScope {
+public:
+    explicit LocaleScope(std::wstring language);
+    ~LocaleScope();
+    LocaleScope(const LocaleScope&) = delete;
+private:
+    std::optional<std::wstring> previous_;
+};
 
 /// Boot thread: parse the embedded files for the running game.
 void init();

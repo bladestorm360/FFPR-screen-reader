@@ -2,18 +2,22 @@
 #include <cstdlib>
 #include <map>
 #include <string>
+#include <atomic>
+#include <memory>
 #include "settings.h"
 #include "game.h"
 #include "log.h"
 #include "speech.h"
 #include "text.h"
+#include "background.h"
 
 namespace settings {
 namespace {
 
-SRWLOCK g_lock = SRWLOCK_INIT;
 std::map<std::string, std::string>* g_values = nullptr;   // raw UTF-8 values
-bool g_dirty = false;
+struct SaveSnapshot { std::map<std::string, std::string> values; std::wstring path; };
+std::atomic<SaveSnapshot*> g_pending{nullptr};
+std::atomic<bool> g_writing{false};
 bool g_imported = false;
 std::wstring g_path;
 
@@ -75,31 +79,30 @@ void parse(const std::string& textbuf, const std::string& section, std::map<std:
 
 void mark_dirty()
 {
-    g_dirty = true;
+    // Runtime values are owner-thread only. The worker receives a separate
+    // bounded preference snapshot, so it never locks or reads the live map.
+    auto* snapshot = new SaveSnapshot{values(), g_path};
+    delete g_pending.exchange(snapshot, std::memory_order_acq_rel);
     speech::wake_worker();
 }
 
 std::string get_raw(const char* key, bool& found)
 {
-    AcquireSRWLockShared(&g_lock);
     auto& v = values();
     auto it = v.find(key);
     found = it != v.end();
     std::string out = found ? it->second : std::string();
-    ReleaseSRWLockShared(&g_lock);
     return out;
 }
 
 void set_raw(const char* key, const std::string& val)
 {
-    AcquireSRWLockExclusive(&g_lock);
     auto& v = values();
     auto it = v.find(key);
     if (it == v.end() || it->second != val) {
         v[key] = val;
         mark_dirty();
     }
-    ReleaseSRWLockExclusive(&g_lock);
 }
 
 } // namespace
@@ -109,9 +112,7 @@ void init()
     g_path = std::wstring(game::dir()) + L"ffpr_screen_reader.ini";
     std::string buf;
     if (read_file(g_path, buf)) {
-        AcquireSRWLockExclusive(&g_lock);
         parse(buf, std::string(), values());
-        ReleaseSRWLockExclusive(&g_lock);
         LOGF("settings: loaded %zu entries", values().size());
         return;
     }
@@ -120,7 +121,6 @@ void init()
     if (m && m->settings_category) {
         std::wstring melon = std::wstring(game::dir()) + L"UserData\\MelonPreferences.cfg";
         if (read_file(melon, buf)) {
-            AcquireSRWLockExclusive(&g_lock);
             parse(buf, m->settings_category, values());
             // FF2-FF4 named FF1's "AutoDetail" entry "AutoDetailOnFocus".
             auto& v = values();
@@ -129,7 +129,6 @@ void init()
                 if (!v.count("AutoDetail")) v["AutoDetail"] = old->second;
                 v.erase(old);
             }
-            ReleaseSRWLockExclusive(&g_lock);
             g_imported = !values().empty();
             LOGF("settings: imported %zu entries from MelonPreferences [%s]", values().size(), m->settings_category);
         } else {
@@ -190,23 +189,47 @@ bool toggle(const char* key, bool def)
     return v;
 }
 
+namespace {
+bool write_snapshot(const SaveSnapshot& snapshot)
+{
+    if (snapshot.path.empty()) return true;
+    std::string out = "# FFPR screen reader settings. Written by the mod; safe to edit while the game is closed.\r\n";
+    for (const auto& kv : snapshot.values) out += kv.first + " = " + kv.second + "\r\n";
+
+    std::wstring tmp = snapshot.path + L".tmp";
+    HANDLE h = CreateFileW(tmp.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) { LOGF("settings: cannot write (err=%lu)", GetLastError()); return false; }
+    DWORD wrote = 0;
+    const BOOL ok = WriteFile(h, out.data(), static_cast<DWORD>(out.size()), &wrote, nullptr);
+    CloseHandle(h);
+    if (!ok || wrote != out.size()) { DeleteFileW(tmp.c_str()); return false; }
+    if (!MoveFileExW(tmp.c_str(), snapshot.path.c_str(), MOVEFILE_REPLACE_EXISTING)) {
+        LOGF("settings: replace failed (err=%lu)", GetLastError());
+        return false;
+    }
+    return true;
+}
+}
+
 void save_pending()
 {
-    if (!g_dirty || g_path.empty()) return;
-    std::string out = "# FFPR screen reader settings. Written by the mod; safe to edit while the game is closed.\r\n";
-    AcquireSRWLockShared(&g_lock);
-    for (const auto& kv : values()) out += kv.first + " = " + kv.second + "\r\n";
-    g_dirty = false;
-    ReleaseSRWLockShared(&g_lock);
-
-    std::wstring tmp = g_path + L".tmp";
-    HANDLE h = CreateFileW(tmp.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (h == INVALID_HANDLE_VALUE) { LOGF("settings: cannot write (err=%lu)", GetLastError()); return; }
-    DWORD wrote = 0;
-    WriteFile(h, out.data(), static_cast<DWORD>(out.size()), &wrote, nullptr);
-    CloseHandle(h);
-    if (!MoveFileExW(tmp.c_str(), g_path.c_str(), MOVEFILE_REPLACE_EXISTING))
-        LOGF("settings: replace failed (err=%lu)", GetLastError());
+    if (!g_pending.load(std::memory_order_acquire) || g_writing.exchange(true)) return;
+    // The speech owner only posts this job; blocked disk I/O cannot stall RPC.
+    if (!background::post([] {
+        bool failed = false;
+        while (std::unique_ptr<SaveSnapshot> snapshot{g_pending.exchange(nullptr, std::memory_order_acq_rel)}) {
+            if (write_snapshot(*snapshot)) continue;
+            SaveSnapshot* empty = nullptr;
+            if (g_pending.compare_exchange_strong(empty, snapshot.get())) snapshot.release();
+            failed = true;
+            break; // preserve the latest snapshot for the worker's timed retry
+        }
+        g_writing.store(false, std::memory_order_release);
+        if (!failed && g_pending.load(std::memory_order_acquire)) speech::wake_worker();
+    }, background::Lane::Io)) {
+        g_writing.store(false, std::memory_order_release);
+        // Retain for the worker's timed retry; do not spin on a busy/full lane.
+    }
 }
 
 bool imported() { return g_imported; }

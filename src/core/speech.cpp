@@ -6,6 +6,8 @@
 #include "prism_backend.h"
 #include "settings.h"
 #include "log.h"
+#include "text.h"
+#include "nonblocking_queue.h"
 
 // ---------------------------------------------------------------------------
 // Prism lives on ONE thread of ours: the boot thread, which loads it (wait_and_load) and then
@@ -55,8 +57,11 @@ volatile LONG g_requested = 0;
 volatile LONG g_ready     = 0;
 HANDLE g_event = nullptr, g_ring_event = nullptr;
 INIT_ONCE g_events_once = INIT_ONCE_STATIC_INIT;
-SRWLOCK g_ring_lock = SRWLOCK_INIT;
-speech::Queue g_ring;
+speech::Queue g_ring; // chunking queue: speech worker only
+struct Message { std::wstring text; bool interrupt = false, silence = false; speech::Kind kind = speech::Kind::Speech; uint64_t generation = 0; std::shared_ptr<const speech::Parts> parts; };
+NonblockingQueue<Message, 1024> g_ingress;
+std::atomic<uint64_t> g_output_generation{0};
+std::atomic<bool> g_carry_interrupt{false};
 
 BOOL CALLBACK create_events(PINIT_ONCE, PVOID, PVOID*) {
     g_event = CreateEventW(nullptr,TRUE,FALSE,nullptr);
@@ -67,21 +72,36 @@ BOOL CALLBACK create_events(PINIT_ONCE, PVOID, PVOID*) {
 }
 void ensure_ring() { InitOnceExecuteOnce(&g_events_once,create_events,nullptr,nullptr); }
 
-void enqueue(const wchar_t* text, bool interrupt, bool silence) {
+void enqueue_owned(Message message) {
     if(g_stopping.load()) return;
-    ensure_ring();
     if (!g_ring_event) return;
-    AcquireSRWLockExclusive(&g_ring_lock);
-    if (silence) g_ring.silence();
-    else g_ring.say(text,interrupt);
-    ReleaseSRWLockExclusive(&g_ring_lock);
+    message.generation = message.interrupt || message.silence ? ++g_output_generation : g_output_generation.load();
+    if (!g_ingress.push(std::move(message))) {
+        // Preserve the established oldest-output overflow policy. No text
+        // comparison, deduplication, producer lock or waiting for a reader RPC.
+        Message dropped;
+        if (g_ingress.pop(dropped) && dropped.interrupt) g_carry_interrupt = true;
+        if (!g_ingress.push(std::move(message))) return;
+    }
     SetEvent(g_ring_event);
 }
+void enqueue(const wchar_t* text, bool interrupt, bool silence, speech::Kind kind = speech::Kind::Speech) {
+    enqueue_owned(Message{text ? text : L"", interrupt, silence, kind});
+}
 bool dequeue(speech::Line* out) {
-    AcquireSRWLockExclusive(&g_ring_lock);
-    const bool have = g_ring.pop(*out);
-    ReleaseSRWLockExclusive(&g_ring_lock);
-    return have;
+    for (;;) {
+        // Incoming interruptions must cancel pending chunks before the next RPC.
+        Message message;
+        while (g_ingress.pop(message)) {
+            if (message.generation < g_output_generation.load()) continue;
+            const auto clean = text::clean(message.parts ? text::join(*message.parts, L". ") : message.text);
+            if (message.silence) g_ring.silence(message.generation);
+            else if (message.kind == speech::Kind::Braille) g_ring.braille(clean.c_str(), message.generation);
+            else g_ring.say(clean.c_str(), message.interrupt || g_carry_interrupt.exchange(false), message.generation);
+        }
+        if (!g_ring.pop(*out)) return false;
+        if (out->generation >= g_output_generation.load()) return true;
+    }
 }
 
 } // namespace
@@ -97,7 +117,6 @@ void request_load()
 {
     // First caller wins; every subsequent hook call is a single interlocked read.
     if (InterlockedCompareExchange(&g_requested, 1, 0) != 0) return;
-    ensure_ring();
     if (g_event) SetEvent(g_event);
 }
 
@@ -140,9 +159,7 @@ bool wait_and_load(int timeout_ms)
     LOGF("speech: Prism " PRISM_VERSION_STRING " ready, backend = %s", g_backend.name());
     // Whatever the first hooks wanted to say while we were loading is in the ring; the pump
     // (this thread, a moment from now) speaks it.
-    AcquireSRWLockShared(&g_ring_lock);
-    const int queued = g_ring.size();
-    ReleaseSRWLockShared(&g_ring_lock);
+    const int queued = static_cast<int>(g_ingress.size());
     if (queued > 0) LOGF("speech: %d line(s) queued during load",queued);
     return true;
 }
@@ -153,6 +170,11 @@ void say(const wchar_t* text, bool interrupt)
 {
     if (!text || !*text) return;
     enqueue(text, interrupt, false);
+}
+void say_parts(std::shared_ptr<const Parts> parts, bool interrupt) {
+    if (!parts || parts->empty()) return;
+    Message message; message.interrupt = interrupt; message.parts = std::move(parts);
+    enqueue_owned(std::move(message));
 }
 
 void silence()
@@ -167,7 +189,9 @@ void pump()
     LOGF("speech: pump running on thread %lu", GetCurrentThreadId());
     Line l;
     for (;;) {
-        if (WaitForSingleObject(g_ring_event,INFINITE) != WAIT_OBJECT_0) {
+        const DWORD wake = WaitForSingleObject(g_ring_event, 250);
+        if (wake == WAIT_TIMEOUT) { settings::save_pending(); continue; } // persistence retry, no game/SDK polling
+        if (wake != WAIT_OBJECT_0) {
             LOGF("speech: queue wait failed (err=%lu); running silent",GetLastError());
             InterlockedExchange(&g_ready,0);
             return;
@@ -188,14 +212,12 @@ void pump()
     }
 }
 
-void wake_worker() { ensure_ring(); if(g_ring_event) SetEvent(g_ring_event); }
+void wake_worker() { if(g_ring_event) SetEvent(g_ring_event); }
 bool has_braille() { return g_braille_available.load(); }
 void braille(const wchar_t* text) {
     if(!text || !*text) return;
     if(g_stopping.load()) return;
-    ensure_ring(); if(!g_ring_event) return;
-    AcquireSRWLockExclusive(&g_ring_lock); g_ring.braille(text); ReleaseSRWLockExclusive(&g_ring_lock);
-    SetEvent(g_ring_event);
+    enqueue(text, false, false, Kind::Braille);
 }
 
 void request_shutdown() { g_stopping=true; if(g_event) SetEvent(g_event); wake_worker(); }

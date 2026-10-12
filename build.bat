@@ -49,6 +49,11 @@ if errorlevel 1 (
     echo Route check FAILED - see build_check\route_report.txt
     exit /b 1
 )
+"out\checks\route_worker_check.exe" > build_check\route_worker_report.txt 2>&1
+if errorlevel 1 (
+    echo Route worker check FAILED - see build_check\route_worker_report.txt
+    exit /b 1
+)
 
 echo Checking every game-code name against each game's dump.cs...
 "out\checks\autowalk_check.exe" > build_check\autowalk_report.txt 2>&1
@@ -66,6 +71,31 @@ if errorlevel 1 (
     echo Scheduler check FAILED - see build_check\frame_report.txt
     exit /b 1
 )
+"out\checks\log_worker_check.exe" > build_check\log_worker_report.txt 2>&1
+if errorlevel 1 (
+    echo Logger worker check FAILED - see build_check\log_worker_report.txt
+    exit /b 1
+)
+"out\checks\audio_worker_check.exe" > build_check\audio_worker_report.txt 2>&1
+if errorlevel 1 (
+    echo Audio worker check FAILED - see build_check\audio_worker_report.txt
+    exit /b 1
+)
+"out\checks\controller_worker_check.exe" > build_check\controller_worker_report.txt 2>&1
+if errorlevel 1 (
+    echo Controller worker check FAILED - see build_check\controller_worker_report.txt
+    exit /b 1
+)
+"out\checks\controller_worker_check.exe" failure >> build_check\controller_worker_report.txt 2>&1
+if errorlevel 1 (
+    echo Controller failure check FAILED - see build_check\controller_worker_report.txt
+    exit /b 1
+)
+"out\checks\battle_context_check.exe" > build_check\battle_context_report.txt 2>&1
+if errorlevel 1 (
+    echo Battle context check FAILED - see build_check\battle_context_report.txt
+    exit /b 1
+)
 "out\checks\battle_results_check.exe" > build_check\battle_results_report.txt 2>&1
 if errorlevel 1 (
     echo Battle results check FAILED - see build_check\battle_results_report.txt
@@ -74,6 +104,26 @@ if errorlevel 1 (
 "out\checks\prism_check.exe" > build_check\prism_report.txt 2>&1
 if errorlevel 1 (
     echo Prism check FAILED - see build_check\prism_report.txt
+    exit /b 1
+)
+"out\checks\speech_worker_check.exe" > build_check\speech_worker_report.txt 2>&1
+if errorlevel 1 (
+    echo Speech worker check FAILED - see build_check\speech_worker_report.txt
+    exit /b 1
+)
+"out\checks\settings_worker_check.exe" > build_check\settings_worker_report.txt 2>&1
+if errorlevel 1 (
+    echo Settings worker check FAILED - see build_check\settings_worker_report.txt
+    exit /b 1
+)
+"out\checks\entity_filter_check.exe" > build_check\entity_filter_report.txt 2>&1
+if errorlevel 1 (
+    echo Entity filter check FAILED - see build_check\entity_filter_report.txt
+    exit /b 1
+)
+"out\checks\component_cache_check.exe" > build_check\component_cache_report.txt 2>&1
+if errorlevel 1 (
+    echo Component cache check FAILED - see build_check\component_cache_report.txt
     exit /b 1
 )
 python tools\prism_package_check.py > build_check\prism_package_report.txt 2>&1

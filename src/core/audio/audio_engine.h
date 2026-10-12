@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <functional>
 
 // The audio area's additions to sound.h (sound.h itself is the fixed contract).
 //
@@ -11,10 +12,11 @@
 //    stream per sound kind bound to it; SDL mixes the bound streams on its own audio thread.
 //    The mod queues raw S16LE stereo 22050 Hz PCM (src == dst spec, no resampling) and sets a
 //    per-stream gain. Looping sounds (wall tones, EXP counter) are kept fed by their caller's
-//    ~100 ms tick topping up the queue; nothing here runs a timer or an audio callback.
+//    ~100 ms tick topping up the queue. The audio worker refreshes byte snapshots;
+//    no SDL device/stream call runs on a game hook.
 //
-// Lifetime: the device opens lazily, on the first sound request made on the main thread once
-// the frame tick is live (never under the loader lock, never on the boot thread). Before
+// Lifetime: the first live frame initializes the SDL audio subsystem on its required
+// owner thread and requests device construction on the worker, without waiting. Before
 // that, and when SDL3.dll or the device is unavailable, every call does nothing.
 namespace sound {
 
@@ -49,29 +51,27 @@ enum class Stream : int {
 };
 
 /// Open the device and create and bind every stream. False (logged) when SDL3.dll or the
-/// device is unavailable; audio then stays off and the mod keeps running. Main thread.
+/// device is unavailable; audio then stays off and the mod keeps running. Main thread
+/// requests construction; return is current readiness, not a blocking result.
 bool initialize();
-/// Destroy the streams, close the device and quit ONLY the audio subsystem.
+/// Request worker teardown without waiting; SDL subsystem remains process-owned.
 void shutdown();
 bool initialized();
 
 /// Stream gain (1.0 = unity, 0.0 = silence).
 void set_gain(Stream id, float gain);
-/// Bytes queued on a stream (0 when unavailable).
+/// Worker snapshot plus pending PCM bytes (0 when unavailable), without SDL calls.
 int queued_bytes(Stream id);
-/// Drop everything queued on a stream (immediate stop).
+/// Publish cancellation immediately; the worker clears without a caller wait.
 void clear(Stream id);
-/// Append PCM to a stream's queue (SDL copies it).
+/// Copy PCM into a bounded command slot; the worker submits it to SDL.
 void submit(Stream id, const int16_t* pcm, int bytes);
 void submit(Stream id, const std::vector<int16_t>& pcm);
 /// One-shot: set the gain, drop what is queued, queue this buffer.
 void play_one_shot(Stream id, const std::vector<int16_t>& pcm, float gain);
 
-/// Beacon path: `fill` writes `length` bytes of PCM into the reusable scratch buffer, which
-/// then replaces the Beacon stream's queue. No allocation per ping. Volume is baked into the
-/// samples, so the Beacon stream keeps unity gain.
-using Fill = void (*)(int16_t* buffer, void* context);
-void play_beacon_direct(int length, Fill fill, void* context);
+/// Copied, game-pointer-free synthesis closure, executed only on the audio worker.
+void play_generated(Stream id, int bytes, std::function<void(int16_t*)> generate, float gain = 1);
 
 } // namespace engine
 } // namespace sound

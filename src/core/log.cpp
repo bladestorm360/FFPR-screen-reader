@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <cstdarg>
 #include <locale.h>
+#include <array>
+#include <atomic>
 #include "log.h"
 
 // ---------------------------------------------------------------------------
@@ -26,8 +28,14 @@ namespace {
 _locale_t g_utf8 = nullptr;   // see init()
 
 HANDLE           g_file  = INVALID_HANDLE_VALUE;
-CRITICAL_SECTION g_lock;
-bool             g_ready = false;
+SRWLOCK          g_lock = SRWLOCK_INIT;
+std::atomic<bool> g_ready{false}, g_stopping{false};
+HANDLE           g_wake = nullptr, g_worker = nullptr;
+struct Line { DWORD size = 0; char bytes[2048]{}; };
+constexpr size_t kQueueSize = 2048;
+std::array<Line, kQueueSize> g_queue;
+size_t g_head = 0, g_count = 0;
+std::atomic<unsigned> g_dropped{0};
 size_t           g_bytes = 0;
 wchar_t          g_base[MAX_PATH]{};
 
@@ -91,14 +99,56 @@ void write_bytes(const char* data, int len)
     }
 }
 
-/// Prefix every line with a timestamp and emit it as UTF-8. Caller holds the lock.
+// Producers never take a disk/rotation lock, wait for the writer, or perform I/O.
+// A full/contended diagnostic queue drops logs, never game input or speech.
 void emit_utf8(const char* utf8_line)
 {
     char out[2048];
     DWORD ms = GetTickCount();
     int n = _snprintf_s(out, sizeof(out), _TRUNCATE, "[%7u.%03u] %s\r\n",
                         ms / 1000, ms % 1000, utf8_line);
-    if (n > 0) write_bytes(out, n);
+    if (n <= 0 || !g_ready.load(std::memory_order_acquire)) return;
+    if (!TryAcquireSRWLockExclusive(&g_lock)) { ++g_dropped; return; }
+    if (g_count < kQueueSize) {
+        auto& line = g_queue[(g_head + g_count++) % kQueueSize];
+        line.size = static_cast<DWORD>(n);
+        memcpy(line.bytes, out, n);
+    } else ++g_dropped;
+    ReleaseSRWLockExclusive(&g_lock);
+    SetEvent(g_wake);
+}
+
+DWORD WINAPI writer(void*)
+{
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+    rotate();
+    open_current();
+    for (;;) {
+        WaitForSingleObject(g_wake, INFINITE);
+        for (;;) {
+            Line line;
+            AcquireSRWLockExclusive(&g_lock);
+            const bool have = g_count != 0;
+            if (have) {
+                line = g_queue[g_head];
+                g_head = (g_head + 1) % kQueueSize;
+                --g_count;
+            }
+            ReleaseSRWLockExclusive(&g_lock);
+            if (!have) break;
+            write_bytes(line.bytes, static_cast<int>(line.size));
+        }
+        const unsigned lost = g_dropped.exchange(0);
+        if (lost) {
+            char line[128];
+            const int n = _snprintf_s(line, sizeof(line), _TRUNCATE,
+                "[log] %u diagnostic lines dropped; producer never waits for disk\r\n", lost);
+            if (n > 0) write_bytes(line, n);
+        }
+        if (g_stopping.load(std::memory_order_acquire)) break;
+    }
+    if (g_file != INVALID_HANDLE_VALUE) { CloseHandle(g_file); g_file = INVALID_HANDLE_VALUE; }
+    return 0;
 }
 
 } // namespace
@@ -108,21 +158,22 @@ namespace log_ {
 void init()
 {
     if (g_ready) return;
-    InitializeCriticalSection(&g_lock);
 
     GetModuleFileNameW(nullptr, g_base, MAX_PATH);
     if (wchar_t* slash = wcsrchr(g_base, L'\\')) *(slash + 1) = 0;
     text_util::append(g_base, MAX_PATH, L"ffpr_screen_reader", _TRUNCATE);
 
-    rotate();
-    open_current();
     // %ls / %S in a NARROW printf converts through the C locale, and a wide character the
     // locale cannot represent (the en dash in "Kingdom of Caldisla – Town") makes the whole
     // call fail: the line came out EMPTY, and every route diagnostic on the world map was a
     // blank line (2026-09-22). Formatting through a UTF-8 locale keeps them. The CRT is
     // static (/MT), so this locale object is ours alone and never touches the game's.
     g_utf8 = _create_locale(LC_ALL, ".UTF8");
-    g_ready = true;
+    g_wake = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+    if (!g_wake) return;
+    g_worker = CreateThread(nullptr, 0, writer, nullptr, 0, nullptr);
+    if (!g_worker) { CloseHandle(g_wake); g_wake = nullptr; return; }
+    g_ready.store(true, std::memory_order_release);
 
     // Name the host process in the header. Only the game boots the mod now (see
     // host_is_game in dllmain.cpp), but if a log ever turns up that was written by something
@@ -144,8 +195,6 @@ void init()
 void write(const char* fmt, ...)
 {
     if (!g_ready) return;
-    EnterCriticalSection(&g_lock);
-
     char buf[1024];
     va_list ap;
     va_start(ap, fmt);
@@ -155,14 +204,11 @@ void write(const char* fmt, ...)
     va_end(ap);
     emit_utf8(buf);
 
-    LeaveCriticalSection(&g_lock);
 }
 
 void writeW(const wchar_t* prefix, const wchar_t* text)
 {
     if (!g_ready) return;
-    EnterCriticalSection(&g_lock);
-
     wchar_t combined[1024];
     _snwprintf_s(combined, sizeof(combined) / sizeof(combined[0]), _TRUNCATE, L"%s%s",
                  prefix ? prefix : L"", text ? text : L"");
@@ -171,17 +217,17 @@ void writeW(const wchar_t* prefix, const wchar_t* text)
     int n = WideCharToMultiByte(CP_UTF8, 0, combined, -1, utf8, sizeof(utf8), nullptr, nullptr);
     if (n > 0) emit_utf8(utf8);   // n includes the terminator; emit_utf8 uses strlen semantics
 
-    LeaveCriticalSection(&g_lock);
 }
 
 void shutdown()
 {
-    if (!g_ready) return;
-    EnterCriticalSection(&g_lock);
-    if (g_file != INVALID_HANDLE_VALUE) { CloseHandle(g_file); g_file = INVALID_HANDLE_VALUE; }
-    LeaveCriticalSection(&g_lock);
-    DeleteCriticalSection(&g_lock);
-    g_ready = false;
+    // Explicit offline-host teardown only. DllMain intentionally does not call this.
+    // Keep immutable locale/event storage alive for any producer already formatting.
+    if (!g_ready.exchange(false)) return;
+    g_stopping.store(true, std::memory_order_release);
+    SetEvent(g_wake);
+    WaitForSingleObject(g_worker, INFINITE);
+    CloseHandle(g_worker); g_worker = nullptr;
 }
 
 } // namespace log_

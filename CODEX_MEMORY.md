@@ -1,5 +1,40 @@
 # Native FFPR durable memory
 
+- October 12 final worker/results follow-up deployed and hash-verified in all six
+  games: `DA45D46CA76664B2E722D20AA898B7AD10389642F97E009D4D41D2B7B818C95F`.
+  Supersedes all earlier DLLs below. Canonical build (7,061 names, zero missing;
+  zero undefined wiring), actual-source worker/results/route/input/cache checks and
+  isolated DLL smoke pass. Prism prerequisites unchanged; game-root Tolk remains
+  absent. No game launched. FF2 first-page speech and actual loading/frame timing
+  await user confirmation. [Ownership/evidence/Luna tracking](docs/re/THREADING.md),
+  [short runtime checks](docs/TESTING.md#workerbaked-only-and-ff2-first-page-follow-up-october-12).
+
+- October 12 routing clarification: every map must be baked; missing data is a bug
+  to extract/bake. The deprecated native searcher/breadcrumb fallback and temporary
+  game-grid writes are removed. Baked A*/flood/boarding/cross-floor planning and beacon
+  remainder/corners use owned cancellable workers; [threading evidence](docs/re/THREADING.md).
+
+- Reusable Windows SDL3 dedicated-owner research is now in the canonical
+  [template lesson](../../../codex/templates/accessibility-mod/references/sdl-worker-ownership.md)
+  and persistent guidance. Reuse matching version/platform/host evidence; never
+  initialize/pump SDL on game callbacks or steal existing ownership. FFPR source,
+  ownership, validation and user-side runtime checks are tracked in [threading](docs/re/THREADING.md).
+
+- Active October 12 follow-up: the user confirms FF2's first results page remains silent
+  in deployed 46b52d6 and requests a full worker/coroutine audit, including battle-state
+  handoff. New source fixes combined gil/weapons/optional spells, native-update-only
+  readiness and skipped/per-character growth phases; local exact gauge math, asynchronous
+  logger/audio device commands and fade-gated scans. The complete worker/capture audit
+  and canonical offline checks now pass; isolated DLL smoke passes. Baked routes,
+  entity sorting/naming, remote formatting, UI buffer assembly and persistence are
+  asynchronous; lifecycle caches replace every active whole-scene object search.
+  Deployed to all six; user first-page/timing confirmation remains pending.
+  [Current results evidence](docs/re/RESULTS.md#ff2-first-page-retest-and-loading-follow-up-october-12).
+  [Subsystem ownership, native evidence, validation and Luna tracking](docs/re/THREADING.md).
+  Never move live Unity/IL2CPP pointers to workers. User wants pure computation/formatting/
+  I/O on workers and only necessary bounded owner-thread snapshots; coroutines do not
+  make an expensive synchronous call nonblocking. No new game launch/probe permission.
+
 - 2026-10-12 FF2 retest/results deltas: first-phase pending reads now follow native result
   updates rather than a 30-frame expiry. FF2 has gil and nested displayed weapon rows;
   other games retain member EXP. All six growth tables support Battle's changed-stats toggle

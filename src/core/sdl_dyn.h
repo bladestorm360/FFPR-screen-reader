@@ -10,7 +10,7 @@
 #include <SDL3/SDL_keyboard.h>
 // Header types only. Every call is through GetProcAddress; no SDL import library.
 #define SDL_DYNAMIC_FUNCTIONS(X) \
-    X(SDL_SetMainReady) X(SDL_GetVersion) X(SDL_GetError) X(SDL_SetHint) \
+    X(SDL_SetMainReady) X(SDL_IsMainThread) X(SDL_GetVersion) X(SDL_GetError) X(SDL_SetHint) \
     X(SDL_InitSubSystem) X(SDL_QuitSubSystem) X(SDL_PumpEvents) X(SDL_PeepEvents) X(SDL_UpdateGamepads) \
     X(SDL_GetGamepads) X(SDL_free) X(SDL_OpenGamepad) X(SDL_CloseGamepad) \
     X(SDL_GetGamepadName) X(SDL_GetGamepadType) X(SDL_GetGamepadButton) X(SDL_GetGamepadAxis) \
@@ -26,5 +26,5 @@ namespace sdl {
 #define DECLARE_SDL(name) extern decltype(&name) name;
 SDL_DYNAMIC_FUNCTIONS(DECLARE_SDL)
 #undef DECLARE_SDL
-bool load(); // First call from the game's native input callback, never DllMain.
+bool load(); // Dedicated Windows SDL owner only, never a game callback or DllMain.
 }

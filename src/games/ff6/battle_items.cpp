@@ -28,6 +28,7 @@
 #include "../../core/text.h"
 #include "../../core/ui_util.h"
 #include "../../core/unity.h"
+#include "../../core/displayed_ui.h"
 #include "../../core/battle/battle_util.h"
 #include "../../core/system/system.h"
 #include "../../core/ui/preferences.h"
@@ -115,7 +116,9 @@ std::wstring item_announcement(void* controller, int index, int& count)
         }
     }
 
-    for (void* cc : unity::find_objects(kItemContent)) {
+    void* contents = displayed::field(controller, "contentList");
+    for (int i = 0; i < unity::list_count(contents); ++i) {
+        void* cc = unity::list_at(contents, i);
         if (!cc || !unity::active_in_hierarchy(cc)) continue;
         void* data = ref::rd<void*>(cc, fContentData);
         if (data && ref::rd<bool>(data, fIlcdIsFocus)) return format_item(data);

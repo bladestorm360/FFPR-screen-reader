@@ -50,6 +50,7 @@ int main(int argc, char** argv)
     if (!json::parse(read_file("data/" + game + "/translation.json"), fixture::dictionary)) {
         std::puts("FAIL dictionary load"); return 1;
     }
+    field::prepare_entity_translations();
     std::ifstream objects("../tools/mapdump/" + game + "_objects.jsonl", std::ios::binary);
     if (!objects) { std::puts("FAIL object data load"); return 1; }
     std::vector<Record> records;

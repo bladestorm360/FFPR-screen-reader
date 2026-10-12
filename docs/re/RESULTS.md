@@ -20,7 +20,8 @@ in `ffN_results_schema.json` and `ffN_results_views.json`.
   points initialization and each member's rendered growth page. FF4 uses
   `Serial.FF0.UI.KeyInput`; the other five use their game's numbered namespace.
 - FF2 additionally enters `SkilllLevelsInit` (native spelling, three l's) and
-  `SkillLevelsUpdate`; the former populates the displayed weapon/spell panel.
+  `SkillLevelsUpdate`; the former populates weapons. The outer
+  `ShowLevelUpAbilitysInit` combines gil/weapons and optional spell-level rows.
   Its outer hooks were disabled by stale FF1-port rules, despite the unified
   implementation now handling FF2 correctly. Remove those obsolete disables.
 - Total fields belong to `ResultGetPointView` below `getPointController.view`:
@@ -240,3 +241,79 @@ rendered hit/damage digits, native completion and all ten input prefixes. Canoni
 passes with zero native-name/wiring failures. Final deployment and the added Prism migration
 are recorded separately below/in `docs/PRISM_MIGRATION.md`. Runtime timing, actual on-screen
 digit agreement and user speech output remain gameplay-unconfirmed; no game/probe was run.
+
+## FF2 first-page retest and loading follow-up, October 12
+
+The preceding build still failed the user's first-page retest: its log has no gil/weapon
+announcement, although Maria's growth page and items speak. Title/load speech reaches
+Prism's NVDA backend. This is an unresolved first-page defect in that deployed build,
+not evidence of a Prism outage. The correction is deployed to all six games;
+the user's first-page retest remains pending.
+
+Native ResultMenuController.Show (FF2 5B9800) reads BattleResultData.IsSkillLevel at
++0x10 and selects state 6, ShowLevelUpAbilitys. Its init (5B9020) calls virtual slot 7
+(+0x1A0), ShowSkillLevels (3D9E50), and optionally SetLevelUpList on the spell panel.
+Inner SkilllLevelsInit (3DA130) fills gil and equipped weapon rows. These are one combined
+outer page. The old outer handler could overwrite its reader with a spell-only buffer;
+with no spell gains, that optional owner stays inactive. FF2 now owns this page through
+the point controller: gil summary, full displayed weapons, then any visible spell rows.
+Autodetail/manual arrows retain full rows; weapon deltas require the toggle or row I.
+
+Only native ResultMenuController post-update may build a pending page. The removed
+global next-frame callback could run before its queued inner state populated new views.
+During fades, a small rendered total is checked before full-table traversal; recursive
+text scans no longer repeat. Points/member SetData require an active matching native
+phase. Skipped phases/UI initialization build nothing; every actual character SetData
+replaces only that character's growth screen. Phase diagnostics use the async logger.
+`tools/re/results_calls.py` checks FF2's first-phase dispatch/combination explicitly.
+
+### Blocking work and context ownership
+
+Automatic battle detection uses native main-game transition and a cached mod boolean,
+with one mod-memory cancellation per entry/exit. It does not poll shutdown completion,
+scan scenes, write game battle/loading state or call the on-demand Tab fallback during
+transitions. However, BattleStart.stop_all could synchronously call SDL stream clear.
+Device/stream/gain/queue/clear/close work now belongs to a dedicated below-normal worker.
+Game callbacks copy bounded PCM commands and publish gains/cancellation generations.
+Old pending PCM is rejected; a full ring cannot drop cancellation. No game pointers or
+stack callbacks enter the worker, and driver stalls never cause producer waits.
+The researched Windows SDL 3.4.4 dedicated owner loads/initializes/pumps the SDK;
+the native callback only publishes readiness. Permitted device/stream operations
+use the separate audio worker. Shutdown only signals teardown; SDK lifetime is the
+process, and DllMain performs no wait. [Ownership evidence](THREADING.md#windows-sdl-ownership-and-reusable-template).
+
+Logger WriteFile/rotation formerly ran under a shared producer critical section. Its
+new below-normal worker owns I/O; producers only format/attempt bounded enqueue. A
+full/contended queue records diagnostic loss, never speech/input loss or deduplication.
+FF2 gauges no longer repeat allocating/cache-building native EXP utility calls: local
+integer math uses the exact extracted threshold table, checked against exp_table. The
+original native provider still runs once unchanged. Cache keys clear at session/scene
+boundaries, without probing every old gauge on each setting call.
+
+Native lifecycle/parent observations now supply all current UI/field instances;
+no active callback calls a whole-scene object search. Additive loading preserves
+valid observations; Title clears field roots only, retaining incoming UI owners.
+Entity/native-name capture waits for fade completion and uses four-entry / 0.5 ms
+owner batches. Remote formatting, entity sorting/naming, baked routing/floods/corners
+and buffer assembly use owned workers. Queue pressure retries without an inline
+fallback or game wait. Coroutines spread only necessary owner reads; native pointers
+remain in owner registries. [Full audit and native provenance](THREADING.md).
+
+### Validation and remaining work
+
+Real-reader checks cover no-spell FF2 outer entry/nested callbacks, skipped growth phases,
+per-character screens, Autodetail/deltas, all-six input/native paths and every FF2 gauge
+point. Logger/audio checks block fake disk/driver calls while producers finish, including
+full queues and cancellation/copied PCM. Battle-context check uses the real ChangeState
+detour/state code to verify continuation, single cleanup and no automatic game query/scan.
+These are offline ownership/nonblocking tests, not game load/frame measurements. The
+mod necessarily performs small owner-thread reads/input work; literal zero instruction
+overhead is not established. Canonical worker/route/buffer/persistence/native-reference
+checks and isolated DLL smoke pass. Gameplay first-page speech and modded/unmodded
+load/frame timing remain unconfirmed; no game/probe was launched.
+
+Final follow-up DLL, deployed/hash-verified in all six games:
+`DA45D46CA76664B2E722D20AA898B7AD10389642F97E009D4D41D2B7B818C95F`.
+Canonical build: 7,061 native-name checks, zero missing/undefined wiring; all
+results/worker/route/input/cache checks and isolated DLL host pass. Prism prerequisites
+were checked without changes and all six game-root Tolk.dll files remain absent.

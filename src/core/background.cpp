@@ -1,8 +1,10 @@
 #include "background.h"
 #include "hooks.h"
+#include "core.h"
 #include <windows.h>
 #include <deque>
 #include <mutex>
+#include <array>
 
 namespace background {
 namespace {
@@ -12,12 +14,12 @@ struct Queue {
     HANDLE wake = nullptr;
     bool started = false;
 };
-Queue& queue()
+Queue& queue(Lane lane)
 {
     // The proxy and worker live until process exit. Avoid CRT teardown destroying
     // a mutex/queue while the native worker is still unwinding its last task.
-    static auto* q = new Queue;
-    return *q;
+    static auto* queues = new std::array<Queue, 3>;
+    return (*queues)[static_cast<size_t>(lane)];
 }
 
 DWORD WINAPI worker(void* context)
@@ -38,19 +40,26 @@ DWORD WINAPI worker(void* context)
         }
     }
 }
+bool start(Queue& q) {
+    if (q.started) return true;
+    q.wake = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+    if (!q.wake) return false;
+    HANDLE thread = CreateThread(nullptr, 0, worker, &q, 0, nullptr);
+    if (!thread) { CloseHandle(q.wake); q.wake = nullptr; return false; }
+    CloseHandle(thread); q.started = true; return true;
 }
-bool post(std::function<void()> work)
+int install() { prepare(); return 0; }
+core::Install s_install{"Workers", &install, 9};
+}
+void prepare() { for (Lane lane : {Lane::Data, Lane::Compute, Lane::Io}) (void)start(queue(lane)); }
+bool post(std::function<void()> work, Lane lane)
 {
-    auto& q = queue();
-    std::lock_guard lock(q.lock);
-    if (!q.started) {
-        q.wake = CreateEventW(nullptr, FALSE, FALSE, nullptr);
-        if (!q.wake) return false;
-        HANDLE thread = CreateThread(nullptr, 0, worker, &q, 0, nullptr);
-        if (!thread) { CloseHandle(q.wake); q.wake = nullptr; return false; }
-        CloseHandle(thread);
-        q.started = true;
-    }
+    auto& q = queue(lane);
+    // Owner-side requests never wait for a worker queue. A busy/full lane fails
+    // explicitly; callers retain context/error handling, never run work inline.
+    std::unique_lock lock(q.lock, std::try_to_lock);
+    if (!lock.owns_lock() || q.work.size() >= 256) return false;
+    if (!q.started) return false; // never create threads inside a game callback
     q.work.push_back(std::move(work));
     SetEvent(q.wake);
     return true;

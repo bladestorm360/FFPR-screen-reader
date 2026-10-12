@@ -27,6 +27,7 @@
 #include "../../core/unity.h"
 #include "../../core/menus/menus.h"
 #include "../../core/system/system.h"
+#include "../../core/field/object_cache.h"
 
 namespace ffpr::ff4 {
 namespace {
@@ -185,11 +186,12 @@ using Void_t = void (*)(void* self, const void* mi);
 Void_t o_CommandInit;
 void d_CommandInit(void* self, const void* mi)
 {
+    if (kAbilityWindow.is(self)) field::cache::register_object(kAbilityWindow, self);
     dedup::reset(kCtxCommand);
     o_CommandInit(self, mi);
     hooks::guarded("FF4 AbilityWindowController.CommandInit", [&] {
         frame::next_frame([] {
-            void* window = unity::find_object(kAbilityWindow);
+            void* window = field::cache::get(kAbilityWindow);
             if (!window || !unity::active_in_hierarchy(window)) return;
             void* controller = ref::rd<void*>(window, fWindowCommandController);
             void* cursor = controller ? ref::rd<void*>(controller, fCommandSelectCursor) : nullptr;
@@ -201,6 +203,7 @@ void d_CommandInit(void* self, const void* mi)
 Void_t o_UseListInit;
 void d_UseListInit(void* self, const void* mi)
 {
+    if (kAbilityWindow.is(self)) field::cache::register_object(kAbilityWindow, self);
     dedup::reset(kCtxContent);
     o_UseListInit(self, mi);
 }
@@ -208,6 +211,7 @@ void d_UseListInit(void* self, const void* mi)
 Void_t o_UseTargetInit;
 void d_UseTargetInit(void* self, const void* mi)
 {
+    if (kAbilityWindow.is(self)) field::cache::register_object(kAbilityWindow, self);
     dedup::reset(kCtxUseTarget);
     o_UseTargetInit(self, mi);
 }
@@ -219,6 +223,9 @@ void d_WindowSetActive(void* self, bool active, const void* mi)
 {
     o_WindowSetActive(self, active, mi);
     hooks::guarded("FF4 AbilityWindowController.SetActive", [&] {
+        if (!kAbilityWindow.is(self)) return;
+        if (active) field::cache::register_object(kAbilityWindow, self);
+        else if (field::cache::get(kAbilityWindow) == self) field::cache::clear(kAbilityWindow);
         if (!active && is_active(ABILITY)) reset(ABILITY);
     });
 }

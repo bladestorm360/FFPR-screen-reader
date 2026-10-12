@@ -20,10 +20,16 @@ bool load() {
 #define BIND_SDL(name) name=reinterpret_cast<decltype(name)>(GetProcAddress(module,#name)); valid=valid && name;
     SDL_DYNAMIC_FUNCTIONS(BIND_SDL)
 #undef BIND_SDL
-    if(!valid || SDL_GetVersion()<SDL_VERSIONNUM(3,2,0) || SDL_GetVersion()>=SDL_VERSIONNUM(4,0,0)) {
+    // This designated-owner design is verified against the packaged 3.4.4 source.
+    // Do not silently extend its platform/lifetime assumptions to an unreviewed SDK.
+    if(!valid || SDL_GetVersion()!=SDL_VERSIONNUM(3,4,4)) {
         LOGF("SDL: unsupported library or missing required export"); FreeLibrary(module); return false;
     }
-    SDL_SetMainReady();
+    if (!SDL_IsMainThread()) {
+        LOGF("SDL: already owned by another thread; native controller input retained");
+        return false;
+    }
+    SDL_SetMainReady(); // assigns this dedicated owner if SDL has not been initialized
     LOGF("SDL: dynamic version %d",SDL_GetVersion());
     available=true; return true; // Process lifetime: audio callbacks must never outlive this module.
 }

@@ -4,9 +4,12 @@
 #include <map>
 #include <cstdio>
 #include <cstdlib>
+#include <thread>
 #include "../src/core/frame.cpp"
+#include "../src/core/background.cpp"
 #include "../src/core/displayed_skill_progress.cpp"
 #include "../src/core/ui/review_buffer.cpp"
+#include "../src/core/bestiary/bestiary_navigation.cpp"
 #include "../src/core/battle/battle_result.cpp"
 #include "../src/core/input/input_passthrough.cpp"
 #include "../src/core/battle/rendered_feedback.h"
@@ -53,8 +56,19 @@ bool buttons[input::kButtonCount]{}, released[input::kButtonCount]{};
 game::Id game_id = game::Id::FF2;
 int native_calls = 0;
 bool native_result = true;
+int utility_calls = 0;
 Node point, status;
-void tick() { frame::run_tick(); }
+void settle_buffer() {
+    const DWORD deadline = GetTickCount() + 5000;
+    while (ui::review::g_build_pending && GetTickCount() < deadline) {
+        std::this_thread::yield(); frame::run_tick();
+    }
+}
+void tick() {
+    frame::run_tick();
+    if (ffpr::battle::g_menu) ffpr::battle::d_update_menu(ffpr::battle::g_menu, nullptr);
+    settle_buffer();
+}
 bool contains(std::wstring_view value) {
     for (auto& s : spoken) if (s.find(value) != std::wstring::npos) return true;
     return false;
@@ -62,6 +76,10 @@ bool contains(std::wstring_view value) {
 void phase(void*, const void*) {}
 void points_phase(void*, const void*) { ffpr::battle::point_rows(&point); }
 void status_phase(void*, const void*) { ffpr::battle::status_rows(&status); }
+void combined_phase(void* menu, const void*) {
+    ffpr::battle::d_skill_levels(&point, nullptr);
+    ffpr::battle::d_skill_page(displayed::field(menu, "skillController"), nullptr);
+}
 void completion_step(void* s, const void*) { ++static_cast<Node*>(s)->end_count; }
 bool native_key(void*, int32_t, const void*) { ++native_calls; return native_result; }
 bool native_any(void*, const void*) { ++native_calls; return native_result; }
@@ -77,6 +95,7 @@ Field::Field(Class& c, const char* n, const char* a) : cls(c), name(n), alt(a) {
 int32_t Field::get() { return std::string(name) == "weaponType" ? offsetof(fixture::Node, weapon_type) : -1; }
 il2cpp::Method* Method::get() { return reinterpret_cast<il2cpp::Method*>(ptr()); }
 void* Method::ptr() {
+    if (std::string(name).starts_with("GetExp") || std::string(name) == "GetNextExp") ++fixture::utility_calls;
     if (std::string(name) == "GetExpLevel") return reinterpret_cast<void*>(&fixture::skill_level);
     if (std::string(name) == "GetNextExp") return reinterpret_cast<void*>(&fixture::skill_remaining);
     if (std::string(name) == "GetExpDifference") return reinterpret_cast<void*>(&fixture::skill_interval);
@@ -100,6 +119,7 @@ namespace game { Id current() { return fixture::game_id; } }
 namespace settings { int get_int(const char*, int def) { return def; } bool get_bool(const char* key, bool def) { return std::string(key) == "AnnounceResultStatChanges" ? fixture::changed_stats : std::string(key) == "AutoDetail" ? fixture::detail : std::string(key) == "ExpCounter" ? false : def; } }
 namespace ffpr {
 void say(std::wstring_view s, bool) { fixture::spoken.emplace_back(s); }
+void say_parts(std::vector<std::wstring> parts, bool) { fixture::spoken.emplace_back(text::join(parts, L". ")); }
 namespace battle {
 bool in_battle() { return true; }
 bool dict_int_int(void* dict, int key, int& out) {
@@ -113,9 +133,12 @@ void magic_reset_state() {}
 }
 }
 namespace modtext { std::wstring T(std::wstring_view s) { return std::wstring(s); }
-std::wstring TF(std::wstring_view s, std::initializer_list<std::wstring> args) { return text::format(s, args); } }
+std::wstring TF(std::wstring_view s, std::initializer_list<std::wstring> args) { return text::format(s, args); }
+const std::wstring& lang() { static const std::wstring value = L"en"; return value; }
+LocaleScope::LocaleScope(std::wstring) {} LocaleScope::~LocaleScope() {} }
+namespace ffpr::bestiary { Tracker& tracker() { static Tracker value; return value; } }
 namespace ui { std::wstring menu_position(const std::wstring& s, int, int) { return s; } }
-namespace sound { void play_exp_counter() {} void stop_exp_counter() {} void top_up_exp_counter() {} }
+namespace sound { void initialize() {} void play_exp_counter() {} void stop_exp_counter() {} void top_up_exp_counter() {} }
 namespace speech { void request_load() {} }
 namespace log_ { void write(const char*, ...) {} }
 namespace il2cpp {
@@ -174,6 +197,7 @@ bool lstick_left_held() { return false; } bool lstick_right_held() { return fals
 
 int main()
 {
+    background::prepare();
     using namespace fixture;
     using namespace ffpr::battle;
     int failures = 0;
@@ -181,6 +205,7 @@ int main()
     ui::review::install(); ffpr::battle::install();
     expect(std::find(bound.begin(), bound.end(), input::Key::L) == bound.end(), "L log binding removed");
     Node menu, totals, get_points, members, member, skill, learned, level, status_view, stat, stat_view, item, drop, weapon;
+    menu.fields["pointController"] = &point;
     List member_list{&member}, learned_list{&learned}, level_list{&level}, stat_list{&stat}, drop_list{&drop};
     member.row = L"Firion EXP 60 of 120"; learned.row = L"Cure learned"; level.row = L"Job level 2";
     stat_view.text = {{"categoryText", L"Strength"}, {"beforValueText", L"10"}, {"afterValueText", L"11"}}; stat.fields["view"] = &stat_view;
@@ -193,7 +218,7 @@ int main()
     List performances{&member, &member}; // two completion callbacks
     members.fields["performanceList"] = &performances;
     skill.fields = {{"contentList", &learned_list}, {"levelUpContentList", &level_list}};
-    menu.fields = {{"skillController", &skill}, {"itemControlle", &item}};
+    menu.fields = {{"skillController", &skill}, {"itemControlle", &item}, {"pointController", &point}};
     point.fields = {{"getPointController", &get_points}, {"characterListConteroller", &members}, {"skillLevelController", &weapon}};
     point.texts = {L"Battle results"}; item.texts = {L"Items obtained"}; skill.texts = {L"Learned abilities"}; weapon.texts = {L"Skill gains"};
     item.fields["itemContentList"] = &drop_list; drop.row = L"Gil 10. Potion 1";
@@ -231,8 +256,8 @@ int main()
         spoken.clear(); d_learning(&menu, nullptr); tick();
         expect(spoken.front() == L"Learned abilities" && contains(L"Cure") == automatic, "learning phase honors Autodetail");
         spoken.clear(); d_ability(&menu, nullptr); tick();
-        expect(spoken.front() == L"Ability and job level gains" && contains(L"Job level 2") == automatic, "ability/job phase honors Autodetail");
-        if (n == 2) { spoken.clear(); d_skill_levels(&point, nullptr); tick(); expect(spoken.front() == L"Skill gains. Gil obtained 50" && contains(L"Cure") == automatic, "FF2 weapon phase follows native entry"); }
+        expect(spoken.front() == (n == 2 ? L"Battle results. Gil obtained 50" : L"Ability and job level gains") && contains(L"Job level 2") == automatic, "ability/job phase honors Autodetail and FF2 combines gil/weapons");
+        if (n == 2) { spoken.clear(); d_skill_levels(&point, nullptr); tick(); expect(spoken.front() == L"Battle results. Gil obtained 50" && contains(L"Cure") == automatic, "FF2 weapon phase follows native entry"); }
         d_close(&menu, nullptr);
         expect(!queries::is("ReviewBuffer.IsResults") && !ui::review::active(), "close releases context and page");
     }
@@ -259,6 +284,7 @@ int main()
     result_reset_state(); spoken.clear(); d_points(&menu, nullptr); d_items(&menu, nullptr); tick();
     expect(!contains(L"EXP obtained"), "phase changes cancel obsolete reads");
     // Full growth rows stay navigable; I and the new toggle use only changed rows.
+    begin_phase(&menu, ResultPhase::Status);
     Node unchanged, rate, unchanged_view, rate_view;
     unchanged.fields["view"] = &unchanged_view; rate.fields["view"] = &rate_view;
     unchanged_view.text = {{"categoryText", L"Agility"}, {"beforValueText", L"8"}, {"afterValueText", L"8"}};
@@ -305,6 +331,16 @@ int main()
     }
     status.fields["contentList"] = &full_stats;
 
+    // Native skipped phases and UI initialization cannot create speculative buffers.
+    result_reset_state(); spoken.clear(); status_rows(&status); point_rows(&point); d_skill_levels(&point, nullptr); tick();
+    expect(!g_pending_page && !ui::review::active() && spoken.empty(), "UI initialization outside a native results phase builds no buffer");
+    d_items(&menu, nullptr); tick(); spoken.clear(); status_rows(&status); tick();
+    expect(spoken.empty() && ui::review::owns(&item), "a skipped growth phase cannot replace the current items page");
+    d_status(&menu, nullptr); tick();
+    status_view.text["nameText"] = L"Maria"; spoken.clear(); status_rows(&status); tick();
+    expect(spoken.front() == L"Maria", "each displayed character growth screen has its own buffer entry");
+    status_view.text["nameText"] = L"Firion level 2";
+
     // Real FF2 native-gauge hooks and integer math: every reachable gauge point.
     game_id = game::Id::FF2;
     displayed::o_setting = &setting; displayed::o_color = &color;
@@ -316,6 +352,8 @@ int main()
     skill_view.fields["gauge"] = &gauge;
     for (int points = 0; points <= 860; ++points) {
         auto value = displayed::native_progress(points);
+        expect(value.level == skill_level(1, points, 1, nullptr) && value.remaining == skill_remaining(1, points, 1, nullptr) &&
+            (value.capped() || value.interval == skill_interval(1, points, 1, nullptr)), "local progress reproduces every verified native interval");
         expect(value.valid(), "native FF2 gauge operands are valid at every point and the cap");
         gauge.fill = value.fill(); skill_view.text["levelText"] = text::num(value.level);
         displayed::d_setting(points, nullptr, &gauge, nullptr);
@@ -335,12 +373,24 @@ int main()
     weapon_view.text["fixedRightHandText"] = L"Right hand";
     weapon.fields = {{"contentList", &weapon_characters}, {"view", &weapon_view}}; skill_content.row = L"Sword level 1, 10%";
     for (bool auto_detail : {false, true}) for (bool announce_changes : {false, true}) {
-        detail = auto_detail; changed_stats = announce_changes; spoken.clear(); d_skill_levels(&point, nullptr); tick();
+        detail = auto_detail; changed_stats = announce_changes; spoken.clear(); d_ability(&menu, nullptr); tick();
         expect(contains(L"gained 5%") == announce_changes, "weapon delta auto-announces only with the toggle in both Autodetail states");
         expect(contains(L"Sword level 1, 10%") == auto_detail, "Autodetail reads the displayed weapon table");
         ui::review::first(); ui::review::next(); ui::review::next(); spoken.clear(); ui::review::details();
         expect(contains(L"Guy: Right hand Sword") && contains(L"gained 5%"), "I reads the selected weapon row delta with either toggle state");
     }
+    // Actual FF2 first-screen outer entry, with no spell levels. Check both native
+    // callback orders and outer entry alone (a wrapper may be inlined).
+    skill.visible = false; detail = false; changed_stats = false;
+    for (auto phase_entry : {&phase, &combined_phase}) {
+        result_reset_state(); spoken.clear(); o_ability = phase_entry;
+        d_ability(&menu, nullptr); tick();
+        expect(contains(L"Gil obtained 50") && ui::review::owns(&point), "FF2 first gil/weapon page cannot be replaced by an absent spell panel");
+        ui::review::last(); expect(contains(L"Guy: Right hand Sword level 1, 10%"), "first-screen weapon rows remain in its current buffer");
+        expect(!contains(L"Job level") && !contains(L"EXP"), "FF2 first page exposes no absent spell or EXP rows");
+    }
+    o_ability = &phase; skill.visible = true;
+    expect(utility_calls == 0, "gauge hooks never invoke the game's EXP/cache utilities");
     before_points[0] = 859; after_points[0] = 860; gauge.fill = 1; skill_view.text["levelText"] = L"16";
     displayed::d_setting(860, nullptr, &gauge, nullptr); displayed::d_color(&skill_content, &before_data, &after_data, nullptr);
     expect(displayed::skill_change(&skill_content).find(L"gained 1%") != std::wstring::npos, "cap fill is not an extra hundred percent gain");
@@ -373,9 +423,51 @@ int main()
     ui::review::Options status_options; status_options.domain = ui::review::Domain::Status;
     for (bool automatic : {false, true}) {
         detail = automatic; spoken.clear(); ui::review::show(&status, L"Maria level 3", {L"Strength 20", L"Agility 30"}, status_options);
+        settle_buffer();
         expect(spoken.front() == L"Maria level 3" && contains(L"Strength") == automatic, "regular status table follows Autodetail");
         spoken.clear(); ui::review::details(); expect(contains(L"Agility"), "regular status manual details works in both states");
     }
+
+    // A blocked compute lane must neither delay ready totals nor lose review input.
+    HANDLE computing = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    HANDLE release_compute = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    while (!background::post([=] { SetEvent(computing); WaitForSingleObject(release_compute, 5000); }, background::Lane::Compute))
+        std::this_thread::yield(); // offline host only
+    expect(WaitForSingleObject(computing, 5000) == WAIT_OBJECT_0, "compute fixture blocks before buffer assembly");
+    std::vector<std::wstring> review_rows;
+    for (int i = 0; i < 80; ++i) review_rows.push_back(L"Row " + std::to_wstring(i));
+    ui::review::Options queued_options; queued_options.include_headline = false;
+    queued_options.summary = {L"100 gil"};
+    detail = true; spoken.clear();
+    ui::review::show(&status, L"Queued results", review_rows, queued_options);
+    for (int i = 0; i < 50; ++i) ui::review::next();
+    ui::review::details();
+    ui::review::replace_lines(review_rows, 0);
+    expect(ui::review::active() && ui::review::g_pending_actions.size() == 51 && contains(L"100 gil"),
+        "current context owns input and retains every action during busy worker/same-page update");
+    using namespace ffpr::bestiary;
+    tracker().is_navigation_active = true;
+    std::vector<StatEntry> stats;
+    for (int i = 0; i < 80; ++i) stats.push_back({L"Stat " + std::to_wstring(i), L"value", i < 40 ? StatGroup::Status : StatGroup::Items});
+    nav_initialize(stats);
+    for (int i = 0; i < 50; ++i) navigate_next();
+    expect(nav_is_active() && g_pending_ops.size() == 50, "bestiary keeps more than32 accepted operations while preparing");
+    SetEvent(release_compute);
+    settle_buffer();
+    expect(ui::review::index() <= 4 && ui::review::g_pending_actions.size() >= 47, "publication replays at most4 review actions/frame");
+    expect(contains(L"Row 79"), "same-page update retains initial Autodetail without repeating title");
+    const DWORD buffer_deadline = GetTickCount() + 5000;
+    while ((ui::review::g_replaying || g_build_pending || g_replaying) && GetTickCount() < buffer_deadline) {
+        std::this_thread::yield(); frame::run_tick();
+    }
+    expect(ui::review::index() == 50 && g_buffer && g_buffer->index() == 50,
+        "review and bestiary replay every accepted operation in order");
+    spoken.clear(); jump_to_top(); jump_to_next_group(); expect(contains(L"Items"), "bestiary preserves worker-built group names");
+    nav_initialize(stats); navigate_next(); nav_reset();
+    for (int i = 0; i < 20; ++i) { std::this_thread::yield(); frame::run_tick(); }
+    expect(!nav_is_active() && g_pending_ops.empty(), "bestiary reset retires obsolete page/actions");
+    ui::review::clear();
+    CloseHandle(computing); CloseHandle(release_compute);
 
     input::o_GetKeyDown = input::o_GetKey = input::o_GetKeyUp = &native_key; input::o_GetAnyKey = &native_any;
     input::o_listener_down = &listener_down; input::o_listener_held = input::o_listener_up = &listener_key;

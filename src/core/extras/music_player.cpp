@@ -20,6 +20,7 @@
 #include "../say.h"
 #include "../text.h"
 #include "../unity.h"
+#include "../field/object_cache.h"
 
 namespace ffpr::extras {
 namespace {
@@ -38,6 +39,15 @@ ref::Field  fBgmId{kContentInfo, "bgmId"};
 ref::Field  fPlayTime{kContentInfo, "playTime"};
 
 ref::Class  kSoundController{"Last.UI.KeyInput", "ExtraSoundController"};
+ref::Method mInitialize{kSoundController, "Initialize", 0};
+using Initialize = void (*)(void*, const void*);
+Initialize o_initialize;
+void d_initialize(void* self, const void* mi) {
+    hooks::guarded("Music.Owner", [self] {
+        if (kSoundController.is(self)) field::cache::register_object(kSoundController, self);
+    });
+    o_initialize(self, mi);
+}
 ref::Method mChangeKeyHelpPlaybackIcon{kSoundController, "ChangeKeyHelpPlaybackIcon", 1};
 ref::Field  fPlayerList{kSoundController, "<PlayerList>k__BackingField"};
 
@@ -101,32 +111,16 @@ bool read_content(void* content, Song& out)
     return !out.name.empty();
 }
 
-struct DurationMatch {
-    int32_t key;
-    void* value;
-    bool found;
-};
-
-void match_bgm(uint64_t key, uint64_t value, void* state)
-{
-    auto* s = static_cast<DurationMatch*>(state);
-    if (s->found || static_cast<int32_t>(static_cast<uint32_t>(key)) != s->key) return;
-    s->value = reinterpret_cast<void*>(value);
-    s->found = true;
-}
-
 /// LookupDuration: SoundPlayerList.Time from ExtraSoundController.PlayerList, or 0.
 int lookup_duration(int bgm_id)
 {
     return hooks::guarded_r("MusicPlayerReader.LookupDuration", 0, [&] {
-        void* controller = unity::find_object(kSoundController);
+        void* controller = field::cache::get(kSoundController);
         if (!controller) return 0;
         void* dict = ref::rd<void*>(controller, fPlayerList);
         if (!dict) return 0;
-        DurationMatch m{bgm_id, nullptr, false};
-        unity::dict_for_each(dict, &match_bgm, &m, 4, 8);
-        if (!m.found || !m.value) return 0;
-        return static_cast<int>(ref::call<int32_t>(mGetTime, m.value));
+        void* value = unity::dict_reference(dict, bgm_id);
+        return value ? static_cast<int>(ref::call<int32_t>(mGetTime, value)) : 0;
     });
 }
 
@@ -294,6 +288,7 @@ int install()
     queries::define("MusicPlayerStateTracker.IsInMusicPlayer", [] { return g_in_music_player; });
 
     int n = 0;
+    n += hooks::attach(mInitialize, &d_initialize, &o_initialize) ? 1 : 0;
     n += hooks::attach(mChangeState, &d_ChangeState, &o_ChangeState) ? 1 : 0;
     n += hooks::attach(mSetFocus, &d_SetFocus, &o_SetFocus) ? 1 : 0;
     n += hooks::attach(mChangeKeyHelpPlaybackIcon, &d_PlaybackIcon, &o_PlaybackIcon) ? 1 : 0;

@@ -25,6 +25,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../field/object_cache.h"
 #include "../input/input.h"
 #include "../system/system.h"
 
@@ -199,6 +200,7 @@ void d_SelectCommand(void* self, void* cursor, int32_t type, const void* mi)
         // Gate: only inside a real config menu (ConfigController / title OptionController drive
         // the flag); other screens share this base class.
         if (!is_active()) return;
+        if (kDetailsKI.is(self)) field::cache::register_object(kDetailsKI, self);
         announce_selected_config_command(self);
     });
 }
@@ -214,7 +216,8 @@ void initial_focus()
     // The active page's configActualDetailsController has its SelectedCommand at init; a blind
     // FindObjectOfType could return the always-present language section, so it is the fallback.
     void* ctrl = ref::rd<void*>(inst, fOptionDetails);
-    if (!ctrl) ctrl = unity::find_object(kDetailsKI);
+    if (!ctrl) ctrl = field::cache::get(kDetailsKI);
+    if (ctrl && kDetailsKI.is(ctrl)) field::cache::register_object(kDetailsKI, ctrl);
     std::wstring announced = announce_selected_config_command(ctrl);
     if (!announced.empty())
         LOGF("[Config Menu] Initial focus announced via %s: %ls", g_initial_focus_source, announced.c_str());
@@ -257,7 +260,7 @@ void d_SetSliderValue(void* self, float value, const void* mi)
     hooks::guarded("ConfigCommandController.SetSliderValue", [&] {
         if (!self || !is_active()) return;
         // Skip per-slider initialization fires for non-focused sliders.
-        void* details = unity::find_object(kDetailsKI);
+        void* details = field::cache::get(kDetailsKI);
         if (!details) return;
         void* selected = ref::rd<void*>(details, fDetailsSelected);
         if (!selected || selected != self) return;
@@ -290,6 +293,7 @@ void d_TouchSwitchArrow(void* self, void* controller, int32_t value, const void*
 {
     o_TouchSwitchArrow(self, controller, value, mi);
     hooks::guarded("ConfigActualDetailsTouch.SwitchArrowTypeProcess", [&] {
+        if (kDetailsTouch.is(self)) field::cache::register_object(kDetailsTouch, self);
         void* view = controller ? ref::rd<void*>(controller, fCmdTouchView) : nullptr;
         if (!view) return;
         void* root = ref::rd<void*>(view, fTouchArrowRoot);
@@ -306,6 +310,7 @@ void d_TouchSwitchSlider(void* self, void* controller, float value, const void* 
 {
     o_TouchSwitchSlider(self, controller, value, mi);
     hooks::guarded("ConfigActualDetailsTouch.SwitchSliderTypeProcess", [&] {
+        if (kDetailsTouch.is(self)) field::cache::register_object(kDetailsTouch, self);
         void* view = controller ? ref::rd<void*>(controller, fCmdTouchView) : nullptr;
         if (!view) return;
         void* root = ref::rd<void*>(view, fTouchSliderRoot);
@@ -327,6 +332,7 @@ bool try_announce_focused_row(void* controller)
 {
     if (!controller) return false;
     void* details = ref::rd<void*>(controller, fConfigDetails);
+    if (details && kDetailsKI.is(details)) field::cache::register_object(kDetailsKI, details);
     if (!details) return false;   // not ready yet
     return !announce_selected_config_command(details).empty();
 }
@@ -340,7 +346,7 @@ void start_reannounce()
         if (gen != g_reannounce_gen) return false;   // superseded, or the config menu closed
         // One lookup per try: the config menu has a single KeyInput ConfigController.
         bool done = hooks::guarded_r("Config.Reannounce", false, [] {
-            return try_announce_focused_row(unity::find_object(kConfigController));
+            return try_announce_focused_row(field::cache::get(kConfigController));
         });
         if (done) return false;
         return ++*tries < kReannounceMaxFrames;
@@ -353,6 +359,10 @@ void d_ConfigSetActive(void* self, bool active, const void* mi)
 {
     o_ConfigSetActive(self, active, mi);
     hooks::guarded("ConfigController.SetActive", [&] {
+        if (active && kConfigController.is(self)) {
+            field::cache::register_object(kConfigController, self);
+            if (void* details = ref::rd<void*>(self, fConfigDetails)) field::cache::register_object(kDetailsKI, details);
+        }
         if (active) {
             // The config menu's lifecycle drives IsActive, so SelectCommand announces only inside
             // it. No initial-focus read: ConfigController fires SelectCommand for the first row.
@@ -393,6 +403,8 @@ void d_OptionShowConfig(void* self, const void* mi)
 {
     o_OptionShowConfig(self, mi);
     hooks::guarded("OptionController.ShowConfig", [&] {
+        if (kOption.is(self))
+            if (void* details = ref::rd<void*>(self, fOptionDetails)) field::cache::register_object(kDetailsKI, details);
         announce_initial_focus_delayed(self, "OptionController.ShowConfig");
     });
 }
@@ -695,6 +707,7 @@ void d_KeysSelectContent(void* self, int32_t index, void* scroll_view, void* cur
 {
     o_KeysSelectContent(self, index, scroll_view, cursor, content_list, type, mi);
     hooks::guarded("ConfigKeysSettingController.SelectContent", [&] {
+        if (kKeys.is(self)) field::cache::register_object(kKeys, self);
         if (!self || !content_list) return;
         // contentList.TryCast<List<T>>() + SelectContentHelper.TryGetItem.
         void* command = is_list(content_list) ? ui::list_item(content_list, index) : nullptr;
@@ -745,6 +758,7 @@ std::vector<std::wstring> build_help_entries(void* owner, void* list)
 void open_controls_help(void* inst, bool gamepad)
 {
     if (!inst) return;
+    if (kKeys.is(inst)) field::cache::register_object(kKeys, inst);
     frame::next_frame([inst, gamepad] {
         std::vector<std::wstring> entries;
         hooks::guarded("Config.OpenControlsHelp", [&] {
@@ -778,21 +792,30 @@ Void_t o_GamePadSelectInit;
 void d_GamePadSelectInit(void* self, const void* mi)
 {
     o_GamePadSelectInit(self, mi);
-    hooks::guarded("ConfigKeysSettingController.GamePadSelectInit", [] { ffpr::system::close_controls_help(); });
+    hooks::guarded("ConfigKeysSettingController.GamePadSelectInit", [self] {
+        if (kKeys.is(self)) field::cache::register_object(kKeys, self);
+        ffpr::system::close_controls_help();
+    });
 }
 
 Void_t o_KeyboardSelectInit;
 void d_KeyboardSelectInit(void* self, const void* mi)
 {
     o_KeyboardSelectInit(self, mi);
-    hooks::guarded("ConfigKeysSettingController.KeyboardSelectInit", [] { ffpr::system::close_controls_help(); });
+    hooks::guarded("ConfigKeysSettingController.KeyboardSelectInit", [self] {
+        if (kKeys.is(self)) field::cache::register_object(kKeys, self);
+        ffpr::system::close_controls_help();
+    });
 }
 
 Void_t o_KeysClose;
 void d_KeysClose(void* self, const void* mi)
 {
     o_KeysClose(self, mi);
-    hooks::guarded("ConfigKeysSettingController.Close", [] { ffpr::system::close_controls_help(); });
+    hooks::guarded("ConfigKeysSettingController.Close", [self] {
+        if (field::cache::get(kKeys) == self) field::cache::clear(kKeys);
+        ffpr::system::close_controls_help();
+    });
 }
 
 // ChangeKeySetting (both overloads): a binding was applied; read the edited command again.
@@ -887,13 +910,13 @@ bool should_suppress()
         // The keyboard/gamepad remap sub-screen is its own controller, announced by the
         // SelectContent / SettingInit / ChangeKeySetting postfixes: suppress the generic reader
         // whenever it is up, even with a stale IsActive.
-        void* keys = unity::find_object(kKeys);
+        void* keys = field::cache::get(kKeys);
         if (keys && unity::active_in_hierarchy(keys)) return true;
 
         if (!is_active()) return false;
 
         // Validate the base config controller is still active (auto-resets a stuck flag).
-        void* controller = unity::find_object(kDetailsKI);
+        void* controller = field::cache::get(kDetailsKI);
         if (!controller || !unity::active_in_hierarchy(controller)) {
             reset_state();
             return false;

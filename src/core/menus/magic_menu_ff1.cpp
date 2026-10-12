@@ -26,6 +26,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../field/object_cache.h"
 
 namespace ffpr::menus {
 namespace {
@@ -83,7 +84,7 @@ bool should_suppress()
     if (detail::magic_target_selection_active()) return true;
     if (!detail::magic_spell_list_active()) return false;
 
-    if (void* window = unity::find_object(kFF1AbilityWindowController)) {
+    if (void* window = field::cache::get(kFF1AbilityWindowController)) {
         int state = ui::state_tag(window, fFF1AbilityWindowStateMachine);
         if (state == STATE_COMMAND || state == STATE_NONE) {
             detail::magic_reset_state();
@@ -262,6 +263,9 @@ void d_WindowSetActive(void* self, bool is_active, const void* mi)
 {
     o_WindowSetActive(self, is_active, mi);
     hooks::guarded("AbilityWindowController.SetActive", [&] {
+        if (!kFF1AbilityWindowController.is(self)) return;
+        if (is_active) field::cache::register_object(kFF1AbilityWindowController, self);
+        else if (field::cache::get(kFF1AbilityWindowController) == self) field::cache::clear(kFF1AbilityWindowController);
         if (!is_active) detail::magic_reset_state();
     });
 }

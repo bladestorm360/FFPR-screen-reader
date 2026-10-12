@@ -26,6 +26,12 @@ constants = {row['key_name']: row['value1'] for row in
              csv.DictReader((MASTER / 'game_constant_int.txt').read_text(encoding='utf-8-sig').splitlines())}
 assert int(constants['MAX_WEAPON_LEVEL']) == int(constants['MAX_MAGICAL_LEVEL']) == 16
 thresholds = [int(row['total_exp']) for row in table]
+header = (ROOT / 'src/core/skill_progress.h').read_text(encoding='utf-8')
+import re
+local = re.search(r'thresholds\{([^}]+)\}', header)
+assert local and [int(value) for value in local[1].split(',')] == thresholds, 'local gauge scale differs from the extracted native table'
+reader = (ROOT / 'src/core/displayed_skill_progress.cpp').read_text(encoding='utf-8')
+assert 'call_static' not in reader and 'ExpUtility' not in reader, 'gauge reader must not call native cache-building utilities'
 widths = [b - a for a, b in zip(thresholds, thresholds[1:])]
 assert min(widths) == 20 and max(widths) == 100
 record = {'native_sha256': hashlib.sha256(DLL.read_bytes()).hexdigest(),

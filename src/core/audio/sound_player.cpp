@@ -3,11 +3,13 @@
 //
 // High-level playback: tones come from tone_generator (ToneGenerator.cs), output and mixing
 // from engine (AudioEngine.cs). The device opens lazily on the first sound requested on the
-// main thread once the frame tick is live; the Install below only builds the tone tables.
+// first live frame. The dedicated SDL owner initializes subsystems, the audio
+// worker owns device/stream calls, and the Install below builds the tone tables.
 #include "sound.h"
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <cstring>
 #include <mutex>
 #include "audio_engine.h"
 #include "sound_constants.h"
@@ -17,6 +19,7 @@
 #include "../hooks.h"
 #include "../log.h"
 #include "../settings.h"
+#include "../input/physical_gamepad.h"
 
 namespace sound {
 namespace {
@@ -46,7 +49,6 @@ bool g_exp_counter_active = false;
 // --- lazy device open -------------------------------------------------------------------------
 std::atomic<bool> g_open_tried{false};    // AudioEngine.Initialize runs once per initialize()
 std::atomic<bool> g_shut_down{false};     // shutdown() stops lazy reopening
-std::atomic<bool> g_deferral_logged{false};
 
 void build_tables()
 {
@@ -76,7 +78,7 @@ void build_tables()
                                        C::ExpCounter::BEEP_MS, C::ExpCounter::VOLUME, 0.5f);   // centre pan
 }
 
-/// Open the device on the first sound request (main thread, frame tick live). True when open.
+/// Request device preparation without waiting. True only after worker publication.
 bool ensure_open()
 {
     if (engine::initialized()) return true;
@@ -220,17 +222,11 @@ void prepare_tables()
 
 void initialize()
 {
-    prepare_tables();
     g_shut_down = false;
     if (engine::initialized() || g_open_tried.load()) return;
-    if (!frame::live() || !frame::on_main_thread()) {
-        // Never under the loader lock or on the boot thread: the first sound opens it.
-        if (!g_deferral_logged.exchange(true))
-            LOGF("[SoundPlayer] audio device open deferred to the first sound on the main thread");
-        return;
-    }
+    if (!frame::live() || !frame::on_main_thread()) return;
     g_open_tried = true;
-    engine::initialize();
+    input::physical::request(); // owned flag/event only; no SDK call or waiting
 }
 
 void shutdown()
@@ -311,7 +307,9 @@ void play_beacon(bool is_south, float pan, float volume_scale, bool low_pitch)
         double pan_angle = pan_to_unit(pan) * kPi / 2;
         BeaconFill fill{samples, frequency, vol * static_cast<float>(std::cos(pan_angle)),
                         vol * static_cast<float>(std::sin(pan_angle))};
-        engine::play_beacon_direct(data_length, &fill_beacon, &fill);
+        engine::play_generated(Stream::Beacon, data_length, [fill](int16_t* pcm) mutable {
+            fill_beacon(pcm, &fill);
+        });
     });
 }
 
@@ -351,9 +349,15 @@ void play_landing_ping(float pan, float volume_scale, int frequency)
     hooks::guarded("SoundPlayer.PlayLandingPing", [&] {
         if (!ensure_open()) return;
         float scale = std::clamp(volume_scale, 0.0f, 1.0f);
-        tone::Pcm ping = tone::landing_ping(frequency > 0 ? frequency : C::LandingPing::FREQUENCY, C::LandingPing::TOTAL_MS, C::LandingPing::PING_MS,
-                                            C::LandingPing::BASE_VOLUME * scale, pan_to_unit(pan));
-        engine::play_one_shot(Stream::Landing, ping, volume(Volume::LandingPing) / 50.0f);
+        const int pitch = frequency > 0 ? frequency : C::LandingPing::FREQUENCY;
+        const float position = pan_to_unit(pan);
+        const int bytes = (C::SAMPLE_RATE * C::LandingPing::TOTAL_MS / 1000) * 4;
+        engine::play_generated(Stream::Landing, bytes, [pitch, scale, position, bytes](int16_t* pcm) {
+            auto ping = tone::landing_ping(pitch, C::LandingPing::TOTAL_MS, C::LandingPing::PING_MS,
+                C::LandingPing::BASE_VOLUME * scale, position);
+            if (ping.size() * sizeof(int16_t) == static_cast<size_t>(bytes)) memcpy(pcm, ping.data(), bytes);
+            else memset(pcm, 0, bytes);
+        }, volume(Volume::LandingPing) / 50.0f);
     });
 }
 

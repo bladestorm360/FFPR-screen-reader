@@ -11,6 +11,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../displayed_ui.h"
 
 namespace ffpr::shop {
 namespace {
@@ -101,9 +102,7 @@ void* cached_or_find_controller()
 {
     if (live(g_cached_controller, kShopController)) return g_cached_controller;
     g_cached_controller = nullptr;
-    void* found = unity::find_object(kShopController);
-    if (found) g_cached_controller = found;
-    return found;
+    return nullptr; // native Show owns this instance; never search the whole scene
 }
 
 int current_state(void* controller)
@@ -141,7 +140,7 @@ bool validate_state()
 std::wstring description_from_ui()
 {
     return hooks::guarded_r("ShopMenuTracker.GetDescriptionFromUI", std::wstring(), [] {
-        void* info = unity::find_object(kShopInfoController);
+        void* info = displayed::field(cached_or_find_controller(), "infoController");
         if (!info) return std::wstring();
         void* view = ref::rd<void*>(info, fInfoView);
         if (!view) return std::wstring();

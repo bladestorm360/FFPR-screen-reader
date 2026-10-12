@@ -12,9 +12,9 @@ constexpr int kSouth = 0, kEast = 1, kWest = 2, kNorth = 3, kBack = 4, kGuide = 
               kDpadUp = 11, kDpadDown = 12, kDpadLeft = 13, kDpadRight = 14;
 
 namespace gamepad {
-/// GamepadManager.Initialize (first frame: loads SDL3 and opens the first pad).
+/// First frame: signals the prepared SDL owner without waiting or loading inline.
 void initialize();
-/// GamepadManager.Update: keyboard poll, SDL events, pad poll, Unity gamepad guard.
+/// Keyboard poll, copied physical snapshot, native-owner Unity gamepad guard.
 void update();
 void shutdown();
 

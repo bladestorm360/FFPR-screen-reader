@@ -17,6 +17,7 @@ namespace field {
 /// FieldNavigationHelper.PathInfo
 struct PathInfo {
     bool success = false;
+    bool pending = false; // owned worker preparation; distinct from no route
     std::wstring error;
     std::wstring reason;          // spoken when there is no route and the router knows why:
                                   // "Requires Ship", "Story gated", "Blocked by an NPC"
@@ -81,7 +82,6 @@ float distance(unity::Vec3 from, unity::Vec3 to);
 float distance_to_steps(float distance);
 std::wstring simple_path_description(unity::Vec3 from, unity::Vec3 to);
 /// Every FieldEntity on the map (FieldNavigationHelper.GetAllFieldEntities).
-std::vector<void*> all_field_entities();
 
 // --- vehicles ----------------------------------------------------------------------------
 /// TransportationController.CurrentTransportation: the vehicle the player is in (or the

@@ -377,7 +377,7 @@ versions use the same labels. [Source evidence](MAP_LABELS.md#tutorial-room-cont
 
 ## Results and Prism deployment, October 12
 
-All six games have the verified current-phase buffer update, SHA-256
+The preceding results/Prism deployment used SHA-256
 `7339C5113508C6B5830401F771A867F47BB70FECA4D38729DE2AE6C6A3C978F6`.
 Canonical build, shared reader/input regressions, native PE phase/input assertions,
 7,047 native-name checks (zero missing), wiring checks and isolated DLL smoke passed.
@@ -386,3 +386,29 @@ after successful deployment. Fake API, package/SDK, dependency idempotence/rollb
 actual mod-only deployment and scratch archive checks passed. [Migration record](PRISM_MIGRATION.md).
 Gameplay confirmation is pending. Use item 6 above to check Autodetail both ways,
 arrow hold/release and normal confirm; also check ordinary status entry and title/menu speech.
+
+## Worker/baked-only and FF2 first-page follow-up, October 12
+
+Offline implementation/evidence: [thread ownership](re/THREADING.md) and
+[native FF2 result phase](re/RESULTS.md#ff2-first-page-retest-and-loading-follow-up-october-12).
+The canonical build and isolated DLL host pass. Runtime confirmation remains user-side.
+The follow-up is deployed/hash-verified in all six games:
+`DA45D46CA76664B2E722D20AA898B7AD10389642F97E009D4D41D2B7B818C95F`.
+
+1. Win an FF2 battle without spell gains. The first page must announce gil; arrows
+   review every displayed equipped weapon/level/progress row. With Autodetail off,
+   it must not automatically read the full table. I on a weapon/stat row reads its
+   change; Battle's changed-stats toggle alone enables automatic change summaries.
+2. Hold/release arrows on every results page. They must never advance the native
+   screen, including while the buffer is preparing. Confirm advances normally.
+   Only actual stat-change pages get buffers; each character's page is separate.
+3. Request a long baked route or one through another floor. Cancel pending autowalk
+   with ordinary manual input; no movement should start afterward. Verify the same
+   destination remains selected after a planned transition. Missing map data is a
+   reported bake bug, with no native route fallback.
+4. Check title/save/shop/config/item/equipment/ability/bestiary screens and return
+   navigation, then controller focus/hotplug/Alt+Tab. Native lifecycle caches replaced
+   scene searches, so any screen-specific missing read should identify that screen.
+5. Compare the same save with the mod and without it: game loading, a map transition
+   and battle entry. Report a repeatable slowdown and where it occurs. Offline stall
+   tests do not measure actual game loading or frame responsiveness.

@@ -17,6 +17,7 @@
 #include <vector>
 #include "input_internal.h"
 #include "../fieldnav/autowalk.h"
+#include "../field/object_cache.h"
 #include "../core.h"
 #include "../frame.h"
 #include "../refs.h"
@@ -240,24 +241,10 @@ void initialize_bindings()
 // --- context ---------------------------------------------------------------------------------------
 // Per-frame scene-scan throttle: where no FieldPlayerController exists (title, battle intro,
 // loading) the per-frame caller would otherwise run FindObjectOfType every frame.
-constexpr uint64_t kFieldScanIntervalFrames = 30;
-uint64_t g_last_field_scan_frame = 0;
-bool g_field_scanned = false;
-void* g_field_player_controller = nullptr;   // GameObjectCache entry; re-checked with alive()
-
 bool is_on_valid_map(bool on_demand)
 {
-    void* pc = unity::alive(g_field_player_controller) ? g_field_player_controller : nullptr;
-    if (!pc) {
-        // A cache miss scans the scene. A key press scans at once; the per-frame caller at
-        // most once every kFieldScanIntervalFrames frames.
-        const uint64_t f = frame::count();
-        if (!on_demand && g_field_scanned && f - g_last_field_scan_frame < kFieldScanIntervalFrames) return false;
-        g_last_field_scan_frame = f;
-        g_field_scanned = true;
-        pc = unity::find_object(kFieldPlayerController);
-        g_field_player_controller = pc;
-    }
+    (void)on_demand;
+    void* pc = field::cache::get(kFieldPlayerController);
     return pc && ref::rd<void*>(pc, fFieldPlayer) != nullptr;
 }
 

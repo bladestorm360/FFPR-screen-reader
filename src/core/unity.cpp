@@ -2,6 +2,7 @@
 #include "unity.h"
 #include "log.h"
 #include <cstring>
+#include <map>
 
 namespace unity {
 namespace {
@@ -334,11 +335,46 @@ DictLayout dict_layout(void* dict)
 }
 }
 
+void* dict_reference(void* dict, int32_t key)
+{
+    if (!dict) return nullptr;
+    auto* cls = il2cpp::object_class(dict);
+    static std::map<il2cpp::Class*, il2cpp::Method*> methods; // native owner only
+    auto found = methods.find(cls);
+    if (found == methods.end()) found = methods.emplace(cls, il2cpp::find_method(cls, "TryGetValue", 2)).first;
+    auto* method = found->second;
+    auto* pointer = method ? il2cpp::method_pointer(method) : nullptr;
+    if (!pointer) return nullptr;
+    void* value = nullptr;
+    using Lookup = bool (*)(void*, int32_t, void**, const il2cpp::Method*);
+    return reinterpret_cast<Lookup>(pointer)(dict, key, &value, method) ? value : nullptr;
+}
+
 int dict_count(void* dict)
 {
     if (!dict) return 0;
     DictLayout l = dict_layout(dict);
     return l.count >= 0 ? il2cpp::read_field<int32_t>(dict, l.count) : 0;
+}
+
+bool dict_entry(void* dict, int index, uint64_t& key, uint64_t& value, int key_size, int value_size)
+{
+    key = value = 0;
+    if (!dict || index < 0) return false;
+    const auto l = dict_layout(dict);
+    if (l.entries < 0 || l.count < 0) return false;
+    void* arr = il2cpp::read_field<void*>(dict, l.entries);
+    if (index >= il2cpp::read_field<int32_t>(dict, l.count) || index >= array_length(arr)) return false;
+    auto align = [](int off, int a) { return (off + a - 1) / a * a; };
+    const int key_off = align(8, key_size), value_off = align(key_off + key_size, value_size);
+    const int stride = align(value_off + value_size, std::max(4, std::max(key_size, value_size)));
+    const int base = kArrayDataOff + index * stride;
+    if (il2cpp::read_field<int32_t>(arr, base) < 0) return false;
+    key = key_size == 8 ? il2cpp::read_field<uint64_t>(arr, base + key_off)
+                        : static_cast<uint32_t>(il2cpp::read_field<int32_t>(arr, base + key_off));
+    value = value_size == 8 ? il2cpp::read_field<uint64_t>(arr, base + value_off)
+                          : static_cast<uint32_t>(il2cpp::read_field<int32_t>(arr, base + value_off));
+    return true;
 }
 
 void dict_for_each(void* dict, void (*fn)(uint64_t, uint64_t, void*), void* state, int key_size, int value_size)

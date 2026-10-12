@@ -7,6 +7,7 @@
 #include "../refs.h"
 #include "../say.h"
 #include "../field/field_api.h"
+#include "../field/object_cache.h"
 
 namespace ffpr::fieldnav {
 namespace {
@@ -45,7 +46,7 @@ bool ensure_field_context()
     if (menu_state::any_active())
         return false;
 
-    void* field_map = unity::find_object(kFieldMap);
+    void* field_map = field::cache::get(kFieldMap);
     if (!field_map || !unity::active_in_hierarchy(field_map)) {
         ffpr::say(T(L"Not on map"));
         return false;

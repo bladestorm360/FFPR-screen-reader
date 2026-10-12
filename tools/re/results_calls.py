@@ -58,6 +58,15 @@ for n, folder in enumerate(GAMES, 1):
                 'Last.UI.KeyInput.ResultMenuController.Show', 'Last.UI.KeyInput.ResultMenuController.Close',
                 'Last.UI.KeyInput.ResultMenuController.ShowGetItemsInit']
     assert all(name in targets for name in required), 'FF%d result producer hook missing' % n
+    if n == 2:
+        def native_block(name):
+            position = output.index(next(line for line in output if line.startswith('\n' + name + ' RVA')))
+            following = next((i for i in range(position + 1, len(output)) if output[i].startswith('\n')), len(output))
+            return '\n'.join(output[position:following])
+        show = native_block('Last.UI.KeyInput.ResultMenuController.Show')
+        combined = native_block('Last.UI.KeyInput.ResultMenuController.ShowLevelUpAbilitysInit')
+        assert '[rcx + 0x10], 0' in show and 'mov eax, 6' in show, 'FF2 skill-level first-phase dispatch changed'
+        assert '[r10 + 0x1a0]' in combined and '.ResultSkillController.SetLevelUpList' in combined, 'FF2 weapons and spell levels no longer share the native phase'
     def edge(source, destination):
         return any(line.split('\t')[0] == source and destination in line.split('\t')[2] for line in calls)
     assert edge(ns + '.ResultPointController.PointsUpdate', 'System.Input.InputListener.AnyKey'), 'FF%d points input producer changed' % n

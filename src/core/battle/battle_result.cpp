@@ -160,11 +160,11 @@ void read_pending_page()
     if (frame::count() < g_pending_page->earliest_frame ||
         !displayed::container_visible(g_pending_page->owner)) return;
     auto page = *g_pending_page;
-    auto lines = page.read();
     auto summary = page.summary ? page.summary() : std::vector<std::wstring>{};
-    if (g_phase == ResultPhase::Points && summary.empty()) return;
-    if (g_phase == ResultPhase::Weapon && lines.empty()) return;
-    if (lines.empty() && summary.empty() && displayed::texts(page.owner).empty()) return;
+    // Read a small rendered total first while a reward panel is fading. Do not
+    // traverse its full table (or all descendant text) on every native update.
+    if ((g_phase == ResultPhase::Points || g_phase == ResultPhase::Weapon) && summary.empty()) return;
+    auto lines = page.read();
     ui::review::Options options;
     options.include_headline = true;
     options.defer_details = page.owner == g_point_owner && g_point_animation_pending;
@@ -172,6 +172,8 @@ void read_pending_page()
     if (page.configure) page.configure(options);
     const auto heading = page.title();
     g_pending_page.reset();
+    LOGF("[Battle Result] displayed phase %d: %zu detail rows, %zu totals",
+         static_cast<int>(g_phase), lines.size(), options.summary.size());
     ui::review::show(page.owner, heading, std::move(lines), std::move(options));
 }
 void later(void* owner, std::function<std::wstring()> title, ReadLines read,
@@ -182,9 +184,10 @@ void later(void* owner, std::function<std::wstring()> title, ReadLines read,
     frame::cancel_label("BattleResult.Read");
     g_pending_page = PendingPage{owner, std::move(title), std::move(read), std::move(summary),
                                 std::move(configure), generation, frame::count() + 1};
-    // One event deferral, then the native result controller's own update event
-    // supplies readiness. Fades do not exhaust an arbitrary 30-frame deadline.
-    frame::next_frame([generation] { if (generation == g_generation) read_pending_page(); }, "BattleResult.Read");
+    // Only the result controller's post-update event can read this page. Its
+    // outer init queues an inner state transition: a global next-frame callback
+    // can run before that transition has populated the new views.
+    // Fades never exhaust an arbitrary page deadline.
 }
 std::vector<std::wstring> point_totals(void* self)
 {
@@ -220,6 +223,7 @@ std::vector<std::wstring> point_details(void* self)
 void begin_phase(void* menu, ResultPhase phase)
 {
     g_menu = menu; g_phase = phase;
+    LOGF("[Battle Result] native phase entry %d", static_cast<int>(phase));
     g_pending_page.reset();
     ++g_generation;
     frame::cancel_label("BattleResult.Read");
@@ -232,7 +236,7 @@ void begin_phase(void* menu, ResultPhase phase)
 void point_rows(void* self)
 {
     // Called by the inner PointsInit, after the native controller fills its visible views.
-    if (g_announced_points) return;
+    if (!unity::alive(g_menu) || g_phase != ResultPhase::Points || g_announced_points) return;
     g_announced_points = true;
     g_point_owner = self;
     g_phase = ResultPhase::Points;
@@ -265,6 +269,9 @@ std::vector<std::wstring> growth_rows(void* self, bool changed_only, bool preser
 }
 void status_rows(void* self)
 {
+    // SetData also runs during native UI construction. Only the game's actual
+    // growth phase owns per-character tables; skipped phases build nothing.
+    if (!unity::alive(g_menu) || g_phase != ResultPhase::Status) return;
     g_status_owner = self;
     g_phase = ResultPhase::Status;
     stop_exp_counter_if_playing();
@@ -314,6 +321,31 @@ void skills(void* self)
         auto levels = row_lines(self, "levelUpContentList");
         lines.insert(lines.end(), levels.begin(), levels.end());
         return lines;
+    });
+}
+void weapon_page(void* point)
+{
+    // FF2's outer ShowLevelUpAbilitys phase combines gil, equipped weapon gauges
+    // and any spell-level rows. The spell panel can legitimately be absent.
+    // Own the page through the point controller, never through that optional panel.
+    g_point_owner = point;
+    g_phase = ResultPhase::Weapon;
+    stop_exp_counter_if_playing();
+    later(point, [] { return T(L"Battle results"); }, [point] {
+        auto lines = ff2_weapon_rows(displayed::field(point, "skillLevelController"));
+        append_skill_details(lines);
+        return lines;
+    }, [point] {
+        // This is the actual native weapon phase, not the preceding member panel.
+        if (!displayed::container_visible(displayed::field(point, "skillLevelController")))
+            return std::vector<std::wstring>{};
+        return point_totals(point);
+    }, [point](ui::review::Options& options) {
+        void* controller = displayed::field(point, "skillLevelController");
+        options.brief = ff2_weapon_rows(controller, true);
+        options.row_details = ff2_weapon_rows(controller, true, true);
+        options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
+        options.announce_brief_with_details = true;
     });
 }
 
@@ -388,17 +420,20 @@ void d_learning(void* self, const void* mi) {
     });
 }
 void d_ability(void* self, const void* mi) {
-    hooks::guarded("Results.AbilityPhase", [self] { begin_phase(self, ResultPhase::Ability); });
+    hooks::guarded("Results.AbilityPhase", [self] {
+        begin_phase(self, game::is(game::Id::FF2) ? ResultPhase::Weapon : ResultPhase::Ability);
+    });
     o_ability(self, mi);
     hooks::guarded("Results.AbilityLevels", [self] {
         stop_exp_counter_if_playing(); g_skill_headline = T(L"Ability and job level gains");
-        skills(displayed::field(self, "skillController"));
+        if (game::is(game::Id::FF2)) weapon_page(displayed::field(self, "pointController"));
+        else skills(displayed::field(self, "skillController"));
     });
 }
 void d_skill_page(void* self, const void* mi) {
     o_skill_page(self, mi);
     hooks::guarded("Results.AbilityPage", [self] {
-        if (!in_battle()) return;
+        if (!unity::alive(g_menu)) return;
         if (g_phase == ResultPhase::Learning || g_phase == ResultPhase::Ability) skills(self);
         // A combined points/learning panel must keep the native points page's buffer.
         // Initialization is covered by point_rows; this branch handles later page changes.
@@ -406,6 +441,8 @@ void d_skill_page(void* self, const void* mi) {
             void* owner = g_point_owner;
             later(owner, [] { return T(L"Battle results"); }, [owner] { return point_details(owner); },
                   [owner] { return point_totals(owner); });
+        } else if (g_phase == ResultPhase::Weapon && game::is(game::Id::FF2)) {
+            weapon_page(g_point_owner);
         } else if (g_phase == ResultPhase::Status && ui::review::owns(g_status_owner)) {
             status_rows(g_status_owner);
         }
@@ -440,16 +477,7 @@ ref::Method mSkillLevels{kFF2Point, "SkilllLevelsInit", 0}; Phase o_skill_levels
 void d_skill_levels(void* self, const void* mi) {
     o_skill_levels(self, mi);
     hooks::guarded("Results.WeaponSkills", [self] {
-        g_phase = ResultPhase::Weapon;
-        stop_exp_counter_if_playing();
-        void* controller = displayed::field(self, "skillLevelController");
-        later(controller, [] { return T(L"Skill gains"); }, [controller] { return ff2_weapon_rows(controller); },
-              [self] { return point_totals(self); }, [controller](ui::review::Options& options) {
-                  options.brief = ff2_weapon_rows(controller, true);
-                  options.row_details = ff2_weapon_rows(controller, true, true);
-                  options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
-                  options.announce_brief_with_details = true;
-              });
+        if (unity::alive(g_menu) && g_phase == ResultPhase::Weapon) weapon_page(self);
     });
 }
 int install() {

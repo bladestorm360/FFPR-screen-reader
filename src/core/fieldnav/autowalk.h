@@ -5,6 +5,7 @@ namespace ffpr::fieldnav::autowalk {
 bool active();
 /// All input devices use this start/stop contract. A second request stops the walk.
 bool stop_requested();
+void request(field::baked_nav::MapGoal goal, field::TargetKind kind, std::wstring name);
 void start(const field::PathInfo& path, const field::baked_nav::MapGoal* goal = nullptr,
            field::TargetKind kind = field::TargetKind::Spot, const std::wstring& name = L"");
 void cancel(bool announce = false);

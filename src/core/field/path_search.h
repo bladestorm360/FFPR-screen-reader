@@ -1,16 +1,10 @@
 #pragma once
 #include "field_api.h"
 
-// FF5 FieldNavigationHelper.PathSearchMode, without changing field_api.h.
+// Baked-map route modes, without changing field_api.h.
 //
-//   field::find_path_to        = PathSearchMode.Full: the game's search, the hidden-passage
-//                                retry, then breadcrumb chaining past the game's ~31-tile window
-//                                (FF5's addition, all five games). For explicit player actions:
-//                                announce the selected entity, pathfind to a waypoint.
-//   field::find_path_to_quick  = PathSearchMode.Quick: the same without chaining. For callers
-//                                that run per tick or per entity (the beacon loop, the
-//                                pathfinding filter), which must never pay for chaining (up to
-//                                400 ms per target).
+//   field::find_path_to        = Full baked routing for explicit player actions.
+//   field::find_path_to_quick  = Quick baked routing for per-tick or per-entity callers.
 namespace field {
 
 /// `with_vehicles`: on a world map the target also counts as reachable when a vehicle the party

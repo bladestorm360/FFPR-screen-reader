@@ -6,13 +6,11 @@
 //    and gated only the hotkeys). While the window is in the background every key reads "up";
 //    the first focused frame takes the keys as they are, without press edges, so the key that
 //    switched back to the game (Alt+Tab) never fires a hotkey.
-//  * SDL3 is loaded and the gamepad subsystem started on the first frame tick (sdl::load must
-//    run from a game callback), not at mod initialisation.
+//  * Physical controller snapshots are provided by the dedicated SDL owner.
 #include <windows.h>
 #include <cstring>
-#include <vector>
 #include "input_internal.h"
-#include "../sdl_dyn.h"
+#include "physical_gamepad.h"
 #include "../refs.h"
 #include "../unity.h"
 #include "../log.h"
@@ -37,26 +35,18 @@ struct DeviceArray {
     int32_t length;
 };
 
-// --- SDL state ----------------------------------------------------------------------------------
-bool g_sdl_initialized = false;
-SDL_Gamepad* g_pad = nullptr;
-int g_pad_type = SDL_GAMEPAD_TYPE_UNKNOWN;
-bool g_init_tried = false;
+// --- copied physical controller state -----------------------------------------------------------
+bool g_physical_ready = false;
+bool g_pad_available = false;
+int g_pad_type = 0;
 bool g_unity_gamepad_disabled = false;
-
-bool g_btn_cur[kButtonCount]{};
-bool g_btn_prev[kButtonCount]{};
-
+uint32_t g_btn_held = 0, g_btn_down = 0, g_btn_up = 0;
 float g_lx = 0, g_ly = 0, g_rx = 0, g_ry = 0, g_lt = 0, g_rt = 0;
-
-constexpr int16_t kAxisDeadzone = 8000;
-constexpr int16_t kRStickThreshold = 16000;
-constexpr int16_t kRStickDominance = 8000;
-constexpr int16_t kLStickDirThreshold = 16000;
 constexpr int kDirUp = 0, kDirDown = 1, kDirLeft = 2, kDirRight = 3;
-
-bool g_rs_cur[4]{}, g_rs_prev[4]{};
-bool g_ls_cur[4]{}, g_ls_prev[4]{};
+constexpr uint8_t kDirBits[4] = {1u, 2u, 4u, 8u};
+uint8_t g_rs_held = 0, g_rs_down = 0, g_ls_held = 0, g_ls_down = 0;
+bool g_pad_focus_was = false;
+bool g_focus_seed = true;
 
 // --- keyboard -----------------------------------------------------------------------------------
 constexpr int kVkMax = 256;
@@ -115,15 +105,6 @@ BOOL CALLBACK find_window_proc(HWND h, LPARAM lp)
 }
 
 // --- helpers --------------------------------------------------------------------------------------
-float apply_deadzone(int16_t raw)
-{
-    if (raw > -kAxisDeadzone && raw < kAxisDeadzone) return 0.f;
-    const float max = 32767.f;
-    const float dz = kAxisDeadzone;
-    if (raw > 0) return (raw - dz) / (max - dz);
-    return (raw + dz) / (max - dz);
-}
-
 bool in_range(int b) { return b >= 0 && b < kButtonCount; }
 
 bool is_gamepad_like(void* device)
@@ -165,7 +146,7 @@ void call_enable_device(void* device)
 }
 
 /// Disables every Unity InputSystem gamepad/joystick so the game cannot read the controller
-/// through Unity's stack: SDL is the only source. Every device is checked, not only
+/// through Unity's stack: copied physical snapshots are the source. Every device is checked, not only
 /// Gamepad.current, because a reconnect creates a fresh device object.
 void disable_unity_gamepad()
 {
@@ -198,7 +179,7 @@ void enable_unity_gamepad()
 }
 
 /// Re-disable when Unity has re-enabled a pad (scene change, hotplug). Every frame while a
-/// pad is open, so devices Unity registers after SDL's ADDED event are caught.
+/// physical pad is available, so newly registered devices are caught.
 void ensure_unity_gamepad_disabled()
 {
     if (!gamepad_available()) return;
@@ -211,62 +192,6 @@ void ensure_unity_gamepad_disabled()
             return;
         }
     }
-}
-
-void open_gamepad(SDL_JoystickID id)
-{
-    g_pad = sdl::SDL_OpenGamepad(id);
-    if (g_pad) {
-        g_pad_type = static_cast<int>(sdl::SDL_GetGamepadType(g_pad));
-        const char* name = sdl::SDL_GetGamepadName(g_pad);
-        std::wstring type = controller_type_name(g_pad_type);
-        LOGF("[GamepadManager] Opened gamepad id=%u, name=%s, type=%ls", static_cast<unsigned>(id),
-             name ? name : "Unknown", type.c_str());
-    } else {
-        LOGF("[GamepadManager] SDL_OpenGamepad(%u) returned null", static_cast<unsigned>(id));
-    }
-}
-
-void open_first_gamepad()
-{
-    int count = 0;
-    SDL_JoystickID* ids = sdl::SDL_GetGamepads(&count);
-    if (!ids) return;
-    if (count > 0) open_gamepad(ids[0]);
-    sdl::SDL_free(ids);
-}
-
-/// Close the handle and wipe the cached state so a reconnect never sees a stale edge.
-void close_and_clear_gamepad_state()
-{
-    if (g_pad) sdl::SDL_CloseGamepad(g_pad);
-    g_pad = nullptr;
-    g_pad_type = SDL_GAMEPAD_TYPE_UNKNOWN;
-    std::memset(g_btn_cur, 0, sizeof g_btn_cur);
-    std::memset(g_btn_prev, 0, sizeof g_btn_prev);
-    std::memset(g_rs_cur, 0, sizeof g_rs_cur);
-    std::memset(g_rs_prev, 0, sizeof g_rs_prev);
-    std::memset(g_ls_cur, 0, sizeof g_ls_cur);
-    std::memset(g_ls_prev, 0, sizeof g_ls_prev);
-    g_lx = g_ly = g_rx = g_ry = 0.f;
-    g_lt = g_rt = 0.f;
-}
-
-void handle_gamepad_removed(SDL_JoystickID id)
-{
-    if (!g_pad) return;
-    // Only the removal of the pad we own matters.
-    if (sdl::SDL_GetGamepadID(g_pad) != id) return;
-    close_and_clear_gamepad_state();
-    LOGF("[GamepadManager] Controller disconnected");
-}
-
-void handle_gamepad_added(SDL_JoystickID id)
-{
-    // Hot swap without a REMOVED in between: drop the old handle first.
-    if (g_pad) close_and_clear_gamepad_state();
-    open_gamepad(id);
-    if (g_pad) disable_unity_gamepad();
 }
 
 void poll_keyboard()
@@ -291,49 +216,8 @@ void poll_keyboard()
     }
 }
 
-void poll_gamepad()
-{
-    for (int i = 0; i < kButtonCount; ++i) {
-        g_btn_prev[i] = g_btn_cur[i];
-        g_btn_cur[i] = sdl::SDL_GetGamepadButton(g_pad, static_cast<SDL_GamepadButton>(i));
-    }
-
-    const int16_t raw_lx = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_LEFTX);
-    const int16_t raw_ly = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_LEFTY);
-    g_lx = apply_deadzone(raw_lx);
-    g_ly = -apply_deadzone(raw_ly);   // SDL Y positive = down, Unity positive = up
-
-    const int16_t raw_rx = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_RIGHTX);
-    const int16_t raw_ry = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_RIGHTY);
-    g_rx = apply_deadzone(raw_rx);
-    g_ry = -apply_deadzone(raw_ry);
-
-    const int16_t raw_lt = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
-    const int16_t raw_rt = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_RIGHT_TRIGGER);
-    g_lt = (raw_lt > 0 ? static_cast<int>(raw_lt) : 0) / 32767.f;
-    g_rt = (raw_rt > 0 ? static_cast<int>(raw_rt) : 0) / 32767.f;
-
-    // Right stick: cardinal isolation.
-    for (int i = 0; i < 4; ++i) g_rs_prev[i] = g_rs_cur[i];
-    const int abs_rx = raw_rx < 0 ? -static_cast<int>(raw_rx) : raw_rx;
-    const int abs_ry = raw_ry < 0 ? -static_cast<int>(raw_ry) : raw_ry;
-    const bool y_dom = abs_ry > kRStickThreshold && abs_ry > abs_rx + kRStickDominance;
-    const bool x_dom = abs_rx > kRStickThreshold && abs_rx > abs_ry + kRStickDominance;
-    g_rs_cur[kDirUp] = y_dom && raw_ry < 0;
-    g_rs_cur[kDirDown] = y_dom && raw_ry > 0;
-    g_rs_cur[kDirLeft] = x_dom && raw_rx < 0;
-    g_rs_cur[kDirRight] = x_dom && raw_rx > 0;
-
-    // Left stick: directions for menu navigation edges.
-    for (int i = 0; i < 4; ++i) g_ls_prev[i] = g_ls_cur[i];
-    g_ls_cur[kDirUp] = raw_ly < -kLStickDirThreshold;
-    g_ls_cur[kDirDown] = raw_ly > kLStickDirThreshold;
-    g_ls_cur[kDirLeft] = raw_lx < -kLStickDirThreshold;
-    g_ls_cur[kDirRight] = raw_lx > kLStickDirThreshold;
-}
-
-bool rs_pressed(int d) { return g_rs_cur[d] && !g_rs_prev[d]; }
-bool ls_pressed(int d) { return g_ls_cur[d] && !g_ls_prev[d]; }
+bool rs_pressed(int d) { return (g_rs_down & kDirBits[d]) != 0; }
+bool ls_pressed(int d) { return (g_ls_down & kDirBits[d]) != 0; }
 
 } // namespace
 
@@ -395,13 +279,13 @@ bool game_window_focused()
 }
 
 // --- gamepad API ----------------------------------------------------------------------------------
-bool gamepad_available() { return g_sdl_initialized && g_pad != nullptr; }
-bool sdl_ready() { return g_sdl_initialized; }
+bool gamepad_available() { return g_pad_available; }
+bool sdl_ready() { return g_physical_ready; }
 int gamepad_type() { return g_pad_type; }
 
-bool button_pressed(int b) { return in_range(b) && g_btn_cur[b] && !g_btn_prev[b]; }
-bool button_held(int b) { return in_range(b) && g_btn_cur[b]; }
-bool button_released(int b) { return in_range(b) && !g_btn_cur[b] && g_btn_prev[b]; }
+bool button_pressed(int b) { return in_range(b) && (g_btn_down & (1u << b)) != 0; }
+bool button_held(int b) { return in_range(b) && (g_btn_held & (1u << b)) != 0; }
+bool button_released(int b) { return in_range(b) && (g_btn_up & (1u << b)) != 0; }
 float left_stick_x() { return g_lx; }
 float left_stick_y() { return g_ly; }
 float right_stick_x() { return g_rx; }
@@ -423,30 +307,14 @@ bool lstick_up_pressed() { return ls_pressed(kDirUp); }
 bool lstick_down_pressed() { return ls_pressed(kDirDown); }
 bool lstick_left_pressed() { return ls_pressed(kDirLeft); }
 bool lstick_right_pressed() { return ls_pressed(kDirRight); }
-bool lstick_up_held() { return g_ls_cur[kDirUp]; }
-bool lstick_down_held() { return g_ls_cur[kDirDown]; }
-bool lstick_left_held() { return g_ls_cur[kDirLeft]; }
-bool lstick_right_held() { return g_ls_cur[kDirRight]; }
+bool lstick_up_held() { return (g_ls_held & kDirBits[kDirUp]) != 0; }
+bool lstick_down_held() { return (g_ls_held & kDirBits[kDirDown]) != 0; }
+bool lstick_left_held() { return (g_ls_held & kDirBits[kDirLeft]) != 0; }
+bool lstick_right_held() { return (g_ls_held & kDirBits[kDirRight]) != 0; }
 
 void initialize()
 {
-    if (g_init_tried) return;
-    g_init_tried = true;
-    if (!sdl::load()) {
-        LOGF("[GamepadManager] SDL3.dll not available - gamepad features disabled");
-        return;
-    }
-    // Subsystem-scoped init (not SDL_Init): the audio engine starts SDL_INIT_AUDIO on its own
-    // and neither teardown takes the other down.
-    if (!sdl::SDL_InitSubSystem(SDL_INIT_GAMEPAD)) {
-        const char* err = sdl::SDL_GetError();
-        LOGF("[GamepadManager] SDL_InitSubSystem(GAMEPAD) failed: %s", err ? err : "");
-        return;
-    }
-    g_sdl_initialized = true;
-    open_first_gamepad();
-    if (g_pad) disable_unity_gamepad();
-    else LOGF("[GamepadManager] SDL3 initialized but no gamepad found");
+    physical::request();
 }
 
 void update()
@@ -455,34 +323,53 @@ void update()
     poll_keyboard();
 
     initialize();
-    if (!g_sdl_initialized) return;
+    const physical::Pad pad = physical::take();
+    const bool connected = pad.available;
+    const bool focused = game_window_focused();
+    if (connected && !g_pad_available) disable_unity_gamepad();
+    if (!connected) enable_unity_gamepad();
 
-    sdl::SDL_PumpEvents();
-    // Drain the queue and pick out gamepad add/remove so an unplugged and replugged
-    // controller recovers. The keyboard does not use SDL events.
-    SDL_Event evt;
-    while (sdl::SDL_PollEvent(&evt)) {
-        if (evt.type == SDL_EVENT_GAMEPAD_REMOVED) handle_gamepad_removed(evt.gdevice.which);
-        else if (evt.type == SDL_EVENT_GAMEPAD_ADDED) handle_gamepad_added(evt.gdevice.which);
-    }
+    const bool seed = connected && (!g_pad_available || !g_pad_focus_was || g_focus_seed);
+    g_physical_ready = pad.ready;
+    g_pad_available = pad.available;
+    g_pad_type = connected ? pad.type : 0;
+    g_btn_held = g_rs_held = g_ls_held = 0;
+    g_btn_down = g_btn_up = 0;
+    g_rs_down = g_ls_down = 0;
+    g_lx = g_ly = g_rx = g_ry = g_lt = g_rt = 0.f;
 
-    if (g_pad) {
-        poll_gamepad();
+    if (!focused) {
+        g_pad_focus_was = false;
+        g_focus_seed = true;
+    } else if (connected) {
+        g_btn_held = pad.held;
+        g_rs_held = pad.right;
+        g_ls_held = pad.left;
+        if (!seed) {
+            g_btn_down = pad.down;
+            g_btn_up = pad.up;
+            g_rs_down = pad.right_down;
+            g_ls_down = pad.left_down;
+        }
+        g_lx = pad.lx; g_ly = pad.ly; g_rx = pad.rx; g_ry = pad.ry;
+        g_lt = !seed && pad.trigger_down && pad.lt <= .5f ? 1.f : pad.lt;
+        g_rt = pad.rt;
+        g_pad_focus_was = true;
+        g_focus_seed = false;
         ensure_unity_gamepad_disabled();
+    } else {
+        g_pad_focus_was = focused;
     }
 }
 
 void shutdown()
 {
-    if (g_pad) {
-        sdl::SDL_CloseGamepad(g_pad);
-        g_pad = nullptr;
-    }
-    if (g_sdl_initialized) {
-        // Only the gamepad subsystem: never SDL_Quit, which would close the audio device.
-        sdl::SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
-        g_sdl_initialized = false;
-    }
+    physical::shutdown();
+    g_physical_ready = g_pad_available = false;
+    g_pad_type = 0;
+    g_btn_held = g_btn_down = g_btn_up = 0;
+    g_rs_held = g_rs_down = g_ls_held = g_ls_down = 0;
+    g_lx = g_ly = g_rx = g_ry = g_lt = g_rt = 0.f;
     enable_unity_gamepad();
 }
 

@@ -21,6 +21,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../field/object_cache.h"
 
 namespace ffpr::battle {
 namespace {
@@ -69,7 +70,7 @@ std::pair<int, int> charges_for_level(int level)
 {
     void* player = g_current_player;
     if (!player) {
-        if (void* controller = unity::find_object(kFreqCtl)) {
+        if (void* controller = field::cache::get(kFreqCtl)) {
             if (void* p = ref::rd<void*>(controller, fSelectedPlayer)) {
                 player = p;
                 g_current_player = p;
@@ -218,6 +219,7 @@ void d_SetCursor(void* self, void* cursor, bool is_scroll, int32_t type, const v
 {
     o_SetCursor(self, cursor, is_scroll, type, mi);
     hooks::guarded("BattleFrequencyAbilityInfomationController.SetCursor", [&] {
+        if (kFreqCtl.is(self)) field::cache::register_object(kFreqCtl, self);
         if (!cursor || !self) return;
         // Drop stale cross-menu callbacks while the context is still correct.
         if (!in_magic_context(self)) return;

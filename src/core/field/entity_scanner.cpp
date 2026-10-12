@@ -14,6 +14,7 @@
 #include <unordered_set>
 #include "entity_translator.h"
 #include "npc_names.h"
+#include "entity_filter.h"
 #include "event_labels.h"
 #include "field_api.h"
 #include "field_internal.h"
@@ -23,8 +24,11 @@
 #include "baked_nav.h"
 #include "../game.h"
 #include "../background.h"
+#include "../worker_job.h"
 #include "../frame.h"
 #include "../system/system.h"
+#include "../say.h"
+#include "../fieldnav/map_transition.h"
 #include "map_state.h"
 #include "../hooks.h"
 #include "../il2cpp.h"
@@ -83,9 +87,7 @@ bool pathfinding_passes(const EntityPtr& e, const FilterContext& ctx)
     // reached by boarding its vehicle, so the walking path test does not apply.
     if (e->game && entity_is_hidden_by_vehicle(e->game)) return true;
     if (!ctx.player_controller) return false;
-    // FF5 PathSearchMode.Quick: the filter runs once per entity and never pays for breadcrumb
-    // chaining, so a target past the game's search window can be filtered out yet still be
-    // routable with the announce key.
+    // Read the completed baked reachability flood; no native search/window limit.
     PathInfo p = find_path_to_quick(ctx.player_position, e->position(), ctx.map_handle, ctx.field_player,
                                     TargetKind::Infer, pathfinding_mode() == ui::prefs::kFilterCurrentMapWithVehicles);
     return p.success;
@@ -399,9 +401,13 @@ EntityPtr convert(void* fe)
 std::vector<std::pair<void*, EntityPtr>> g_entity_map;   // FieldEntity -> conversion, in insertion order
 std::vector<EntityPtr> g_entities;
 std::vector<EntityPtr> g_filtered;
+std::vector<Vec3> g_exit_positions; // worker-compiled unfiltered live exits, for wall tones
 int g_index = 0;
 Category g_category = Category::All;
 int g_last_scanned_map_id = -1;
+worker_job::Owner g_filter_work;
+bool g_filter_pending = false;
+uint64_t g_filter_generation = 0;
 
 // The other floors' entries (baked data), built once per map while the filter is "Current
 // map" (user, 2026-10-11); appended after the live entities.
@@ -437,38 +443,6 @@ std::wstring vehicle_pad_name(const EntityPtr& e)
     return ref::rd_str(prop, r::fPropName);
 }
 
-/// FF2 EntityScanner.DeduplicateVehiclePads: the nearest tile of each pad (list sorted by
-/// distance). A TransportationEventAction covers a pad of tiles, each its own map object with
-/// the same name; in the map data each such name is one place per map.
-void dedupe_vehicle_pads(std::vector<EntityPtr>& list)
-{
-    std::vector<EntityPtr> out;
-    out.reserve(list.size());
-    std::unordered_set<std::wstring> seen;
-    for (auto& e : list) {
-        std::wstring pad = vehicle_pad_name(e);
-        if (!pad.empty() && !seen.insert(pad).second) continue;
-        out.push_back(e);
-    }
-    list.swap(out);
-}
-
-/// DeduplicateMapExits: the closest exit per destination (list sorted by distance); exits with
-/// an unresolved destination (<= 0) are kept individually. This is also FF5's
-/// MapExitGroupingStrategy (same key, same "MapExitFilter" setting, nearest member as the
-/// representative); FF5 only added "(N exits)" to the grouped name, which FF1 does not say.
-void dedupe_map_exits(std::vector<EntityPtr>& list)
-{
-    std::vector<EntityPtr> out;
-    out.reserve(list.size());
-    std::unordered_set<int> seen;
-    for (auto& e : list) {
-        if (e->kind == Kind::MapExit && e->dest_map_id > 0 && !seen.insert(e->dest_map_id).second) continue;
-        out.push_back(e);
-    }
-    list.swap(out);
-}
-
 // Preserve the existing remote story-variant identity guard exactly. Naming cleanup is
 // independent of entity inclusion: no new/broader deduplication is authorized here.
 std::wstring remote_guard_base(const std::wstring& name)
@@ -481,18 +455,6 @@ std::wstring remote_guard_base(const std::wstring& name)
     return base_end == 0 ? name : name.substr(0, base_end);
 }
 
-// Assign names before distance/category/reachability filters. Conversion positions are
-// snapshots, not player-relative order; the same pure service numbers other floors below.
-void renumber_npcs(std::vector<EntityPtr>& list)
-{
-    std::vector<npc_names::Entry> entries;
-    for (auto& e : list) {
-        if (e->kind != Kind::NPC || e->remote()) continue;
-        entries.push_back({&e->name, npc_display_label(e->converted_name), 0, 0, e->pos.x, -e->pos.y});
-    }
-    npc_names::renumber(entries);
-}
-
 /// The entries of the other floors (user, 2026-10-11: "destinations from other floors need to
 /// be visible ... current map should include all dungeon floors, town floors etc"): the talk
 /// targets, chests, save points and outward exits of every sub-map connected to this one by
@@ -501,155 +463,158 @@ void renumber_npcs(std::vector<EntityPtr>& list)
 /// the name ("Potion (Kashuan Keep 2F)"); NPCs are numbered within their floor as on this one.
 /// Story groups and collected chests are projected from a copied native flag snapshot.
 /// Formatting reads native names on the main thread in bounded batches.
+struct RemoteRow { baked_nav::RemoteObject object; std::wstring floor, name, destination; };
+struct RemoteInput { std::vector<RemoteRow> rows; std::wstring locale; };
 struct RemoteBuilder {
-    std::vector<baked_nav::RemoteObject> objs;
+    std::vector<baked_nav::RemoteObject> objects;
+    RemoteInput input;
     size_t next = 0;
-    std::vector<npc_names::Entry> npc_entries;
-    std::unordered_set<std::wstring> seen;
     bool (*placeholder_fn)(const wchar_t*) = game::flags().placeholder_entity;
-    explicit RemoteBuilder(std::vector<baked_nav::RemoteObject> objects) : objs(std::move(objects)) { g_remote.clear(); }
+    explicit RemoteBuilder(std::vector<baked_nav::RemoteObject> values) : objects(std::move(values)) {
+        input.locale = modtext::lang();
+    }
     bool step() {
-        const double until = frame::now() + 0.002;
-        int count = 0;
-        for (; next < objs.size() && count++ < 16 && frame::now() < until; ++next) {
-            const auto& r = objs[next];
-            auto e = std::make_shared<Entity>();
-            e->remote_map_id = r.map_id;
-            e->cell_layer = r.cell.layer;
-            e->cell_x = r.cell.x;
-            e->cell_y = r.cell.y;
-            e->floor_name = resolve_map_name(r.map_id);
-            std::wstring base;
-            switch (r.type) {
+        const double until = frame::now() + 0.0005;
+        for (int captured = 0; next < objects.size() && captured < 4 && frame::now() < until; ++captured, ++next) {
+            const auto& object = objects[next];
+            RemoteRow row; row.object = object; row.floor = resolve_map_name(object.map_id);
+            switch (object.type) {
             case baked::ObjType::NPC:
-            case baked::ObjType::ShopNPC: {
-                if (placeholder_fn && placeholder_fn(r.raw_name.c_str())) continue;
-                std::wstring name = r.raw_name.empty() ? std::wstring() : translate_entity_name(r.raw_name);
-                if (name.empty() || name == L"NPC") name = T(L"NPC");
-                e->kind = Kind::NPC;
-                e->name = name;
-                e->shop = r.shop;
-                base = remote_guard_base(name);
+            case baked::ObjType::ShopNPC:
+                if (placeholder_fn && placeholder_fn(object.raw_name.c_str())) continue;
+                row.name = object.raw_name.empty() ? std::wstring() : translate_entity_name(object.raw_name);
                 break;
-            }
-            case baked::ObjType::TreasureBox: {
-                std::wstring item = r.content_id > 0 ? resolve_item_name(r.content_id) : std::wstring();
-                e->kind = Kind::TreasureChest;
-                e->name = item.empty() ? T(L"Treasure Chest") : item;
+            case baked::ObjType::TreasureBox:
+                if (object.content_id > 0) row.name = resolve_item_name(object.content_id);
                 break;
+            case baked::ObjType::GotoMap: row.destination = resolve_map_name(object.dest_map_id); break;
+            case baked::ObjType::SavePoint: break;
+            default: continue;
             }
-            case baked::ObjType::SavePoint:
-                e->kind = Kind::SavePoint;
-                e->name = T(L"Save Point");
-                break;
-            case baked::ObjType::GotoMap: {
-                std::wstring dest_name = resolve_map_name(r.dest_map_id);
-                e->kind = Kind::MapExit;
-                e->dest_map_id = r.dest_map_id;
-                e->dest_name = dest_name;
-                e->name = !dest_name.empty() ? TF(L"Exit to {0}", {dest_name}) : T(L"Exit");
-                break;
-            }
-            default:
-                continue;
-            }
-            e->converted_name = e->name;
-            // One entry per name and cell (a floor's story variants repeat its people), one exit per
-            // destination per floor.
-            const std::wstring where = e->kind == Kind::MapExit ? std::to_wstring(r.dest_map_id)
-                                                                : std::to_wstring(r.cell.x) + L"," + std::to_wstring(r.cell.y);
-            const std::wstring key = e->floor_name + L"\n" + std::to_wstring(static_cast<int>(e->kind)) + L"\n" +
-                                     (e->kind == Kind::NPC ? base : e->name) + L"\n" + where;
-            if (!seen.insert(key).second) continue;
-            if (e->kind == Kind::NPC)
-                npc_entries.push_back({&e->name, npc_display_label(e->converted_name), r.map_id,
-                                       0, static_cast<float>(r.cell.x), static_cast<float>(r.cell.y)});
-            g_remote.push_back(e);
+            input.rows.push_back(std::move(row));
         }
-        if (next < objs.size()) return true;
-        npc_names::renumber(npc_entries);
-        LOGF("[EntityScanner] other floors: %zu entries from %zu baked objects", g_remote.size(), objs.size());
-        return false;
+        return next < objects.size();
     }
 };
-void build_remote(void* map_handle)
-{
-    RemoteBuilder builder(baked_nav::connected_objects(map_handle));
-    while (builder.step()) {} // explicit manual refresh; automatic transitions use bounded steps
+std::vector<EntityPtr> build_remote(RemoteInput& input) {
+    modtext::LocaleScope locale(input.locale);
+    std::vector<EntityPtr> result;
+    std::unordered_set<std::wstring> seen;
+    for (auto& row : input.rows) {
+        const auto& object = row.object;
+        auto entity = std::make_shared<Entity>(); // new owned mod data; no engine pointers
+        entity->remote_map_id = object.map_id; entity->cell_layer = object.cell.layer;
+        entity->cell_x = object.cell.x; entity->cell_y = object.cell.y; entity->floor_name = std::move(row.floor);
+        std::wstring base;
+        switch (object.type) {
+        case baked::ObjType::NPC:
+        case baked::ObjType::ShopNPC:
+            entity->kind = Kind::NPC; entity->shop = object.shop;
+            entity->name = row.name.empty() || row.name == L"NPC" ? T(L"NPC") : std::move(row.name);
+            base = remote_guard_base(entity->name); break;
+        case baked::ObjType::TreasureBox:
+            entity->kind = Kind::TreasureChest; entity->name = row.name.empty() ? T(L"Treasure Chest") : std::move(row.name); break;
+        case baked::ObjType::SavePoint: entity->kind = Kind::SavePoint; entity->name = T(L"Save Point"); break;
+        case baked::ObjType::GotoMap:
+            entity->kind = Kind::MapExit; entity->dest_map_id = object.dest_map_id; entity->dest_name = std::move(row.destination);
+            entity->name = entity->dest_name.empty() ? T(L"Exit") : TF(L"Exit to {0}", {entity->dest_name}); break;
+        default: continue;
+        }
+        entity->converted_name = entity->name;
+        const std::wstring where = entity->kind == Kind::MapExit ? std::to_wstring(object.dest_map_id)
+            : std::to_wstring(object.cell.x) + L"," + std::to_wstring(object.cell.y);
+        const std::wstring key = entity->floor_name + L"\n" + std::to_wstring(static_cast<int>(entity->kind)) + L"\n" +
+            (entity->kind == Kind::NPC ? base : entity->name) + L"\n" + where;
+        if (!seen.insert(key).second) continue; // unchanged story-variant inclusion guard
+        result.push_back(std::move(entity));
+    }
+    return result;
 }
 
-int find_entity_by_identifier()
-{
-    // Reference match: the same entity object persists across scans, so the cursor stays on
-    // the selected entity even when it moves. Position/name recover a replaced object.
-    if (g_sel) {
-        for (size_t i = 0; i < g_filtered.size(); ++i)
-            if (g_filtered[i] == g_sel) return static_cast<int>(i);
-    }
-    if (!g_sel_has) return -1;
-    if (g_sel_remote > 0) {
-        // Another floor's entry: the same floor and cell (a rebuilt list has new addresses).
-        for (size_t i = 0; i < g_filtered.size(); ++i) {
-            const auto& e = g_filtered[i];
-            if (e->remote_map_id == g_sel_remote && e->cell_x == g_sel_cx && e->cell_y == g_sel_cy) return static_cast<int>(i);
-        }
-        return -1;
-    }
-    for (size_t i = 0; i < g_filtered.size(); ++i) {
-        const auto& e = g_filtered[i];
-        if (!e->remote() && e->category() == g_sel_category && vec_distance(e->position(), g_sel_pos) < 0.5f)
-            return static_cast<int>(i);
-    }
-    if (!g_sel_name.empty()) {
-        for (size_t i = 0; i < g_filtered.size(); ++i) {
-            const auto& e = g_filtered[i];
-            if (!e->remote() && e->category() == g_sel_category && e->name == g_sel_name) return static_cast<int>(i);
-        }
-    }
-    return -1;
+// Owned row snapshots: native positions/pad labels are copied in bounded batches.
+// No EntityPtr, engine object or owner callback is sent to the compute worker.
+using namespace filter_worker;
+
+void cancel_filter() {
+    g_filter_work.cancel(); ++g_filter_generation; g_filter_pending = false;
+    frame::cancel_label("EntityScanner.Filter");
 }
-
-/// ApplyFilter: category, distance sort, (vehicle pads), map exits, layer transitions, then
-/// the selection restored.
-void apply_filter()
-{
-    if (g_category == Category::All) {
-        g_filtered = g_entities;
-    } else {
-        g_filtered.clear();
-        for (auto& e : g_entities)
-            if (e->category() == g_category) g_filtered.push_back(e);
-    }
-
-    Vec3 player_pos{};
-    if (player_local_position(player_pos)) {
-        std::vector<std::pair<float, EntityPtr>> keyed;
-        keyed.reserve(g_filtered.size());
-        // The other floors' entries have no position here: they follow the live ones, floor by
-        // floor in the order they were built (the nearest floor first).
-        for (size_t i = 0; i < g_filtered.size(); ++i) {
-            const auto& e = g_filtered[i];
-            keyed.emplace_back(e->remote() ? 1.0e9f + static_cast<float>(i) : vec_distance(e->position(), player_pos), e);
+void save_selected_identifier();
+void apply_filter() {
+    cancel_filter();
+    g_filter_pending = true;
+    const auto generation = g_filter_generation;
+    const auto map_id = current_map_id_or_user_data();
+    auto entities = std::make_shared<std::vector<EntityPtr>>(g_entities); // owner registry only
+    auto input = std::make_shared<FilterInput>();
+    input->category = g_category; input->sort = player_local_position(input->player);
+    input->pads = game::flags().has_vehicle_pads; input->exits = settings::get_bool("MapExitFilter", false);
+    input->layer = to_layer_enabled(); input->selected_has = g_sel_has;
+    input->selected_position = g_sel_pos; input->selected_category = g_sel_category; input->selected_name = g_sel_name;
+    input->selected_remote = g_sel_remote; input->selected_x = g_sel_cx; input->selected_y = g_sel_cy;
+    baked_nav::MapGoal continued;
+    TargetKind continued_kind;
+    std::wstring continued_name;
+    input->continued_goal = baked_nav::pending_goal(continued, continued_kind, continued_name);
+    input->current_map = map_id; input->continued_map = continued.map_id;
+    input->continued_x = continued.cell.x; input->continued_y = continued.cell.y;
+    const int continued_map = input->continued_map, continued_x = input->continued_x, continued_y = input->continued_y;
+    frame::every_frame([entities, input, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y]() mutable {
+        if (generation != g_filter_generation) return false;
+        if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) { cancel_filter(); return false; }
+        const double started = frame::now();
+        for (int captured = 0; next < entities->size() && captured < 4; ++captured, ++next) {
+            if (captured && frame::now() - started >= 0.0005) break;
+            const auto& entity = (*entities)[next];
+            FilterRow row;
+            row.index = next; row.kind = entity->kind; row.category = entity->category();
+            row.position = entity->position(); row.numbering_position = entity->pos;
+            row.remote_map = entity->remote_map_id; row.cell_x = entity->cell_x; row.cell_y = entity->cell_y;
+            if (input->continued_goal && !row.remote_map && map_id == continued_map) {
+                baked_route::Cell cell;
+                row.cell_valid = baked_nav::cell_at(field::map_handle(), row.position, cell);
+                if (row.cell_valid) { row.cell_x = cell.x; row.cell_y = cell.y; }
+            }
+            row.destination = entity->dest_map_id; row.name = entity->name; row.event_type = entity->event_type;
+            if (input->pads) row.pad = vehicle_pad_name(entity);
+            if (row.kind == Kind::NPC) row.label = npc_display_label(entity->converted_name);
+            row.selected = entity == g_sel;
+            input->rows.push_back(std::move(row));
         }
-        std::stable_sort(keyed.begin(), keyed.end(),
-                         [](const auto& a, const auto& b) { return a.first < b.first; });
-        for (size_t i = 0; i < keyed.size(); ++i) g_filtered[i] = keyed[i].second;
-    }
-
-    // One entry per vehicle trigger pad (FF2, FF4, FF5; user 2026-10-03)
-    if (game::flags().has_vehicle_pads) dedupe_vehicle_pads(g_filtered);
-
-    if (settings::get_bool("MapExitFilter", false)) dedupe_map_exits(g_filtered);
-
-    if (to_layer_enabled()) {
-        std::vector<EntityPtr> kept;
-        for (auto& e : g_filtered)
-            if (to_layer_passes(e)) kept.push_back(e);
-        g_filtered.swap(kept);
-    }
-
-    int restored = find_entity_by_identifier();
-    if (restored >= 0) g_index = restored;
+        if (next < entities->size()) return true;
+        worker_job::start(g_filter_work, std::move(*input), &filter_worker::build,
+            [entities, generation, map_id, continued_map, continued_x, continued_y](Filtered filtered) {
+                if (generation != g_filter_generation || map_id != current_map_id_or_user_data()) return;
+                auto result = std::make_shared<Filtered>(std::move(filtered));
+                auto handles = std::make_shared<std::vector<EntityPtr>>(); // native owner registry only
+                frame::every_frame([entities, result, handles, named = size_t(0), ordered = size_t(0),
+                                    generation, map_id, continued_map, continued_x, continued_y]() mutable {
+                    if (generation != g_filter_generation) return false;
+                    if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) {
+                        cancel_filter(); return false;
+                    }
+                    for (int count = 0; named < result->names.size() && count < 4; ++named, ++count)
+                        (*entities)[named]->name = std::move(result->names[named]);
+                    for (int count = 0; ordered < result->order.size() && count < 4; ++ordered, ++count)
+                        handles->push_back((*entities)[result->order[ordered]]);
+                    if (named < result->names.size() || ordered < result->order.size()) return true;
+                    g_filtered.swap(*handles); g_exit_positions.swap(result->exits);
+                    if (result->restored >= 0) g_index = result->restored;
+                    baked_nav::MapGoal goal; TargetKind kind; std::wstring name;
+                    const bool continued_current = result->continued >= 0 && baked_nav::pending_goal(goal, kind, name)
+                        && goal.map_id == continued_map && goal.cell.x == continued_x && goal.cell.y == continued_y;
+                    if (continued_current) g_index = result->continued;
+                    if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
+                    g_filter_pending = false;
+                    if (continued_current) {
+                        save_selected_identifier();
+                        LOGF("[EntityScanner] destination kept through the transition: %ls", name.c_str());
+                    }
+                    return false;
+                }, "EntityScanner.FilterPublish", INT_MAX);
+            });
+        return false;
+    }, "EntityScanner.FilterCapture", INT_MAX);
 }
 
 void clear_selected_identifier()
@@ -674,34 +639,6 @@ void save_selected_identifier()
     g_sel_cy = e->cell_y;
 }
 
-/// A route that went on through the transition (baked_nav::pending_goal): its destination is
-/// selected on the new floor (a live entity now, or still another floor's entry), so the
-/// directions key and the beacon keep leading to it (user, 2026-10-11: the destination was
-/// lost after "take the exit to ...").
-void select_pending_destination(int map_id)
-{
-    baked_nav::MapGoal goal;
-    TargetKind kind = TargetKind::Infer;
-    std::wstring name;
-    if (!baked_nav::pending_goal(goal, kind, name)) return;
-    FilterContext ctx;
-    for (size_t i = 0; i < g_filtered.size(); ++i) {
-        const auto& e = g_filtered[i];
-        bool hit = false;
-        if (e->remote()) {
-            hit = e->remote_map_id == goal.map_id && e->cell_x == goal.cell.x && e->cell_y == goal.cell.y;
-        } else if (goal.map_id == map_id) {
-            baked_route::Cell c;
-            hit = baked_nav::cell_at(ctx.map_handle, e->position(), c) && c.x == goal.cell.x && c.y == goal.cell.y;
-        }
-        if (!hit) continue;
-        g_index = static_cast<int>(i);
-        save_selected_identifier();
-        LOGF("[EntityScanner] destination kept through the transition: %ls", e->name.c_str());
-        return;
-    }
-}
-
 void ensure_correct_map()
 {
     int id = current_map_id_or_user_data();
@@ -714,22 +651,30 @@ void ensure_correct_map()
 // scanner API
 // =========================================================================================
 namespace scanner {
+namespace { bool scan_pending(); }
+void when_filter_ready(std::function<void()> ready) {
+    ensure_correct_map();
+    const int map_id = current_map_id_or_user_data();
+    frame::every_frame([map_id, ready = std::move(ready)]() mutable {
+        if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) return false;
+        if (scan_pending() || g_filter_pending) return true;
+        if (!pathfinding_enabled()) { ready(); return false; }
+        if (!baked_nav::available(field::map_handle())) { ffpr::say(T(L"Navigation map data unavailable")); return false; }
+        baked_nav::request_reachability(pathfinding_mode() == ui::prefs::kFilterCurrentMapWithVehicles, std::move(ready));
+        return false;
+    }, "EntityScanner.Ready", INT_MAX);
+}
 
 namespace {
 std::atomic<uint64_t> g_scan_generation{0};
 bool g_scan_running = false;
+worker_job::Owner g_scan_work;
+bool scan_pending() { return g_scan_running; }
 void finish_scan(int map_id, bool remote_ready = false)
 {
-    const bool map_changed = map_id != g_last_scanned_map_id;
     g_entities.clear();
     for (auto& kv : g_entity_map) g_entities.push_back(kv.second);
-    renumber_npcs(g_entities);
     if (pathfinding_mode() == ui::prefs::kFilterCurrentMap) {
-        if (g_remote_map_id != map_id && !remote_ready) {
-            FilterContext ctx;
-            build_remote(ctx.map_handle);
-            g_remote_map_id = map_id;
-        }
         g_entities.insert(g_entities.end(), g_remote.begin(), g_remote.end());
     } else if (g_remote_map_id != -1) {
         g_remote.clear();
@@ -738,24 +683,28 @@ void finish_scan(int map_id, bool remote_ready = false)
     g_last_scanned_map_id = map_id;
     apply_filter();
     if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
-    if (map_changed) select_pending_destination(map_id);
+    // Selection is restored by the asynchronous filter publication.
 }
 }
 
 void cancel_scan()
 {
     ++g_scan_generation;
+    g_scan_work.cancel();
     g_scan_running = false;
     frame::cancel_label("EntityScanner.Scan");
+    frame::cancel_label("EntityScanner.ScanRemote");
 }
 void invalidate_map()
 {
     cancel_scan();
+    cancel_filter();
     g_entity_map.clear();
     g_remote_map_id = -1;
     g_remote.clear();
     g_entities.clear();
     g_filtered.clear();
+    g_exit_positions.clear();
     g_index = 0;
     g_last_scanned_map_id = -1;
 }
@@ -768,117 +717,100 @@ void schedule_scan()
     g_scan_running = true;
     struct Scan {
         int map_id = 0;
-        size_t next = 0;
+        EntityCursor cursor;
         std::wstring asset;
-        std::vector<void*> entities;
+        bool captured = false;
+        size_t prune = 0;
         double started = 0;
     };
     auto scan = std::make_shared<Scan>();
-    frame::every_frame([scan, generation, frames = 0]() mutable {
+    frame::every_frame([scan, generation]() mutable {
         if (generation != g_scan_generation) return false;
-        if (++frames >= 300) { g_scan_running = false; LOGF("[EntityScanner] preparation not ready within frame budget"); return false; }
         if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return false; }
+        if (ffpr::fieldnav::map_transition::is_screen_fading()) return true;
         if (!baked_nav::prepared()) return true; // atomic readiness only, never parse/wait
         if (!scan->map_id) {
             scan->map_id = current_map_id_or_user_data();
             if (scan->map_id <= 0) { g_scan_running = false; return false; }
             scan->started = frame::now();
             scan->asset = current_map_asset_name();
-            scan->entities = all_field_entities();
-            std::unordered_set<void*> current(scan->entities.begin(), scan->entities.end());
-            g_entity_map.erase(std::remove_if(g_entity_map.begin(), g_entity_map.end(), [&](const auto& kv) {
-                return !current.count(kv.first) || !kv.second->is_alive();
-            }), g_entity_map.end());
         }
         if (scan->map_id != current_map_id_or_user_data()) { g_scan_running = false; return false; }
-        // Unity/IL2CPP reads must remain on their owner thread. Spread conversions
-        // across frames, capped at 16 entities or 2 ms of work per dispatch.
-        const double until = frame::now() + 0.002;
-        int count = 0;
-        while (scan->next < scan->entities.size() && count++ < 16 && frame::now() < until) {
-            void* fe = scan->entities[scan->next++];
-            if (std::any_of(g_entity_map.begin(), g_entity_map.end(), [fe](const auto& kv) { return kv.first == fe; })) continue;
+        // Read one current native collection slot at a time. No eager list copy,
+        // deferred stale list pointer or full native allocation precedes the batch.
+        bool more = !scan->captured;
+        const double until = frame::now() + 0.0005;
+        for (int count = 0; more && count < 4 && frame::now() < until; ++count) {
+            void* fe = nullptr;
+            if (!(more = scan->cursor.next(fe))) break;
+            if (!fe) continue;
+            auto known = std::find_if(g_entity_map.begin(), g_entity_map.end(), [fe](const auto& kv) { return kv.first == fe; });
+            if (known != g_entity_map.end() && known->second->is_alive()) continue;
             if (!scan->asset.empty() && !entity_on_current_map(fe, scan->asset)) continue;
             auto entity = hooks::guarded_r("EntityScanner.Convert", EntityPtr(), [fe] { return convert(fe); });
-            if (entity) g_entity_map.emplace_back(fe, std::move(entity));
+            if (entity) {
+                if (known != g_entity_map.end()) known->second = std::move(entity);
+                else g_entity_map.emplace_back(fe, std::move(entity));
+            }
         }
-        if (scan->next < scan->entities.size()) return true;
+        if (more) return true;
+        scan->captured = true;
+        for (int checked = 0; scan->prune < g_entity_map.size() && checked < 4; ++checked, ++scan->prune) {
+            auto& entry = g_entity_map[scan->prune];
+            if (!scan->cursor.seen.count(entry.first) || !entry.second->is_alive()) entry.second.reset();
+        }
+        if (scan->prune < g_entity_map.size()) return true;
+        g_entity_map.erase(std::remove_if(g_entity_map.begin(), g_entity_map.end(), [](const auto& entry) {
+            return !entry.second;
+        }), g_entity_map.end());
         if (pathfinding_mode() == ui::prefs::kFilterCurrentMap && g_remote_map_id != scan->map_id) {
             map_state::Resolver state; // Copy live flags here; worker receives no game pointers.
             const int map_id = scan->map_id;
             const double started = scan->started;
-            if (background::post([map_id, started, generation, state = std::move(state)]() mutable {
-                if (generation != g_scan_generation) return; // obsolete queued work owns no live objects
-                auto objects = baked_nav::connected_objects_snapshot(map_id, state);
-                frame::post([map_id, started, generation, objects = std::move(objects)]() mutable {
+            struct Projection { int map_id; map_state::Resolver state; };
+            worker_job::start(g_scan_work, Projection{map_id, std::move(state)},
+                [](Projection& input) { return baked_nav::connected_objects_snapshot(input.map_id, input.state); },
+                [map_id, started, generation](std::vector<baked_nav::RemoteObject> objects) mutable {
                     if (generation != g_scan_generation) return;
                     if (map_id != current_map_id_or_user_data()) { g_scan_running = false; return; }
                     if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return; }
                     auto builder = std::make_shared<RemoteBuilder>(std::move(objects));
-                    frame::every_frame([map_id, started, generation, builder, frames = 0]() mutable {
+                    frame::every_frame([map_id, started, generation, builder]() mutable {
                         if (generation != g_scan_generation) return false;
-                        if (++frames >= 1800 || map_id != current_map_id_or_user_data()) { g_scan_running = false; return false; }
+                        if (map_id != current_map_id_or_user_data()) { g_scan_running = false; return false; }
                         if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return false; }
+                        if (ffpr::fieldnav::map_transition::is_screen_fading()) return true;
                         bool failed = true;
                         const bool more = hooks::guarded_r("EntityScanner.FormatRemote", false, [&] {
                             const bool result = builder->step(); failed = false; return result;
                         });
                         if (failed) { g_scan_running = false; return false; }
                         if (more) return true;
-                        g_remote_map_id = map_id;
-                        finish_scan(map_id, true);
-                        g_scan_running = false;
-                        LOGF("[EntityScanner] ready map %d: %zu live, %zu remote; %.1f ms elapsed across frames",
-                             map_id, g_entity_map.size(), g_remote.size(), (frame::now() - started) * 1000);
+                        worker_job::start(g_scan_work, std::move(builder->input), &build_remote,
+                            [map_id, started, generation](std::vector<EntityPtr> remote) {
+                                if (generation != g_scan_generation || map_id != current_map_id_or_user_data()) return;
+                                g_remote = std::move(remote); g_remote_map_id = map_id;
+                                finish_scan(map_id, true); g_scan_running = false;
+                                LOGF("[EntityScanner] ready map %d: %zu live, %zu remote; %.1f ms elapsed across frames",
+                                    map_id, g_entity_map.size(), g_remote.size(), (frame::now() - started) * 1000);
+                            });
                         return false;
-                    }, "EntityScanner.ScanRemote", 1800);
+                    }, "EntityScanner.ScanRemote", INT_MAX);
                 });
-            })) return false;
+            return false;
         }
-        // Worker creation failure must not put projection back on the game thread.
+        // No remote projection is needed for this current filter.
         finish_scan(scan->map_id, true);
         g_scan_running = false;
         LOGF("[EntityScanner] ready map %d: %zu live; %.1f ms elapsed across frames",
              scan->map_id, g_entity_map.size(), (frame::now() - scan->started) * 1000);
         return false;
-    }, "EntityScanner.Scan", 300);
+    }, "EntityScanner.Scan", INT_MAX);
 }
 
 void scan_entities()
 {
-    if (g_scan_running) return;
-    if (!baked_nav::prepared()) { schedule_scan(); return; }
-    hooks::guarded("EntityScanner.ScanEntities", [&] {
-        int map_id = current_map_id_or_user_data();
-        std::wstring asset = current_map_asset_name();
-
-        std::vector<void*> field_entities = all_field_entities();
-        std::unordered_set<void*> current(field_entities.begin(), field_entities.end());
-
-        // Entities no longer in the game's lists, then ones deactivated/destroyed in the scene
-        g_entity_map.erase(std::remove_if(g_entity_map.begin(), g_entity_map.end(),
-                                          [&](const auto& kv) { return !current.count(kv.first); }),
-                           g_entity_map.end());
-        g_entity_map.erase(std::remove_if(g_entity_map.begin(), g_entity_map.end(),
-                                          [](const auto& kv) { return !kv.second->is_alive(); }),
-                           g_entity_map.end());
-
-        std::unordered_set<void*> known;
-        for (auto& kv : g_entity_map) known.insert(kv.first);
-
-        // Only NEW entities are converted
-        for (void* fe : field_entities) {
-            if (!asset.empty() && !entity_on_current_map(fe, asset)) continue;
-            if (known.count(fe)) continue;
-            EntityPtr e = hooks::guarded_r("EntityScanner.Convert", EntityPtr(), [&] { return convert(fe); });
-            if (e) {
-                g_entity_map.emplace_back(fe, e);
-                known.insert(fe);
-            }
-        }
-
-        finish_scan(map_id);
-    });
+    if (!g_scan_running) schedule_scan();
 }
 
 void force_rescan()
@@ -1000,10 +932,7 @@ int count() { return static_cast<int>(g_filtered.size()); }
 std::vector<unity::Vec3> map_exit_positions()
 {
     // GetMapExitPositions: every MapExitEntity of the unfiltered list (wall-tone suppression)
-    std::vector<unity::Vec3> out;
-    for (auto& e : g_entities)
-        if (e->kind == Kind::MapExit && !e->remote()) out.push_back(e->pos);
-    return out;
+    return g_exit_positions;
 }
 
 } // namespace scanner

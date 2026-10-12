@@ -19,12 +19,22 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../displayed_ui.h"
 
 namespace ffpr::shop {
 namespace {
 
 ref::Class  kShopController{"Last.UI.KeyInput", "ShopController"};
 ref::Method mShopClose{kShopController, "Close", 0};
+ref::Method mShopShow{kShopController, "Show", 2};
+using ShopShow = void (*)(void*, void*, void*, const void*);
+ShopShow o_shop_show;
+void d_shop_show(void* self, void* name, void* products, const void* mi) {
+    // Nested description/cursor producers run inside Show, so retain the native
+    // owner before continuing. No scan, wait or substantial work runs here.
+    hooks::guarded("Shop.Owner", [self] { if (kShopController.is(self)) set_cached_controller(self); });
+    o_shop_show(self, name, products, mi);
+}
 
 ref::Class  kShopInfoController{"Last.UI.KeyInput", "ShopInfoController"};
 ref::Method mSetDescription{kShopInfoController, "SetDescription", 1};
@@ -85,12 +95,8 @@ void* find_active_main_content_controller()
             return g_cached_main_list;
         if (!live(g_cached_main_list, kListMain)) g_cached_main_list = nullptr;
     }
-    for (void* candidate : unity::find_objects(kListMain)) {
-        if (candidate && unity::active_in_hierarchy(candidate)) {
-            g_cached_main_list = candidate;
-            return candidate;
-        }
-    }
+    void* candidate = displayed::field(displayed::field(cached_or_find_controller(), "listController"), "listController");
+    if (candidate && unity::active_in_hierarchy(candidate)) { g_cached_main_list = candidate; return candidate; }
     return nullptr;
 }
 
@@ -256,10 +262,6 @@ void d_CommandSetCursor(void* self, int32_t index, const void* mi)
         g_last_command_frame = frame_now;
 
         clear_other_menu_states_for_shop();
-        if (!is_shop_menu_active()) {
-            if (void* controller = unity::find_object(kShopController))
-                set_cached_controller(controller);
-        }
         set_shop_menu_active(true);
 
         void* content_list = ref::rd<void*>(self, fCommandContentList);
@@ -356,6 +358,7 @@ void d_ShopClose(void* self, const void* mi)
 int install()
 {
     int n = 0;
+    n += hooks::attach(mShopShow, &d_shop_show, &o_shop_show) ? 1 : 0;
     n += hooks::attach(mSetDescription, &d_SetDescription, &o_SetDescription) ? 1 : 0;
     n += hooks::attach(mCommandSetCursor, &d_CommandSetCursor, &o_CommandSetCursor) ? 1 : 0;
     n += hooks::attach(mTradeShow, &d_TradeShow, &o_TradeShow) ? 1 : 0;

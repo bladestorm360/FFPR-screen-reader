@@ -11,6 +11,7 @@
 #include "text.h"
 #include "ui_util.h"
 #include "unity.h"
+#include "field/object_cache.h"
 #include "displayed_ui.h"
 #include "dialogue/dialogue.h"
 #include "system/system.h"
@@ -44,6 +45,15 @@ ref::Field fSavePopupCommands{kSavePopup, "commandList"};
 ref::Field fSaveListCursor{kSaveList, "selectCursor"};
 
 ref::Method mTitleLoadSetPopupActive{kTitleLoad, "SetPopupActive", 1};
+ref::Method mTitleLoadSetActive{kTitleLoad, "SetActive", 1};
+using TitleActive = void (*)(void*, bool, const void*);
+TitleActive o_title_active;
+void d_title_active(void* self, bool active, const void* mi) {
+    hooks::guarded("SaveLoad.TitleActiveOwner", [self, active] {
+        if (active && kTitleLoad.is(self)) field::cache::register_object(kTitleLoad, self);
+    });
+    o_title_active(self, active, mi);
+}
 ref::Method mMenuLoadSetPopupActive{kMenuLoad, "SetPopupActive", 1};
 ref::Method mMenuSaveSetPopupActive{kMenuSave, "SetPopupActive", 1};
 ref::Method mInterruptionSetEnablePopup{kInterruption, "SetEnablePopup", 1};
@@ -267,6 +277,7 @@ SetPopup_t o_InterruptionSetEnablePopup;
 
 void d_TitleLoadSetPopupActive(void* self, bool is_enable, const void* mi)
 {
+    hooks::guarded("SaveLoad.TitleOwner", [self] { if (kTitleLoad.is(self)) field::cache::register_object(kTitleLoad, self); });
     o_TitleLoadSetPopupActive(self, is_enable, mi);
     hooks::guarded("SaveLoad.TitleLoad", [&] {
         if (is_enable) {
@@ -365,6 +376,7 @@ void d_SaveListSetActive(void* self, bool is_active, bool is_reset, bool is_load
 int install()
 {
     int n = 0;
+    if (hooks::attach(mTitleLoadSetActive, &d_title_active, &o_title_active)) ++n;
     if (hooks::attach(mTitleLoadSetPopupActive, &d_TitleLoadSetPopupActive, &o_TitleLoadSetPopupActive)) ++n;
     if (hooks::attach(mMenuLoadSetPopupActive, &d_MenuLoadSetPopupActive, &o_MenuLoadSetPopupActive)) ++n;
     if (hooks::attach(mMenuSaveSetPopupActive, &d_MenuSaveSetPopupActive, &o_MenuSaveSetPopupActive)) ++n;
@@ -393,7 +405,7 @@ bool should_read_save_slot()
     return hooks::guarded_r("SaveList.ShouldReadSaveSlot", false, [] {
         if (void* mm = ref::instance(kMenuManager))
             if (ref::call<bool>(mMenuIsOpen, mm)) return true;
-        void* title_load = unity::find_object(kTitleLoad);
+        void* title_load = field::cache::get(kTitleLoad);
         return title_load && unity::active_in_hierarchy(title_load);
     });
 }

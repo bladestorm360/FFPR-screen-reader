@@ -1,5 +1,5 @@
 #pragma once
-// Rotating file logger (DQ7R model).
+// Rotating file logger: formatting/nonblocking enqueue on producers, I/O on its worker.
 //
 // On startup the previous run's log is preserved: ffpr_screen_reader.log becomes .1, .1 becomes
 // .2, and so on up to kKeep, with the oldest discarded. During a run the file also rotates

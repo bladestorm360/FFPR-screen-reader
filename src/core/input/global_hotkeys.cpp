@@ -11,6 +11,7 @@
 #include "../modtext.h"
 #include "../text.h"
 #include "../log.h"
+#include "../field/object_cache.h"
 
 namespace input {
 namespace {
@@ -25,12 +26,12 @@ ref::Field fDescriptionTextTouch{kConfigDetailsTouch, "descriptionText"};
 void* active_config_controller(bool& key_input)
 {
     key_input = false;
-    void* c = unity::find_object(kConfigDetailsKeyInput);
+    void* c = field::cache::get(kConfigDetailsKeyInput);
     if (c && unity::active_in_hierarchy(c)) {
         key_input = true;
         return c;
     }
-    c = unity::find_object(kConfigDetailsTouch);
+    c = field::cache::get(kConfigDetailsTouch);
     if (c && unity::active_in_hierarchy(c)) return c;
     return nullptr;
 }

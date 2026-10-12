@@ -81,6 +81,7 @@ json::Value g_common;
 json::Value g_game;
 std::wstring g_lang = L"en";
 bool g_lang_known = false;
+thread_local std::optional<std::wstring> g_worker_language;
 
 ref::Class kMessageManager{"Last.Management", "MessageManager"};
 ref::Field fCurrentLanguage{kMessageManager, "currentLanguage"};
@@ -96,9 +97,10 @@ const std::wstring* pick(const json::Value& file, const std::wstring& key)
 {
     const json::Value* entry = file.get(key);
     if (!entry || !entry->is_object()) return nullptr;
-    const json::Value* v = entry->get(g_lang);
+    const auto& language = g_worker_language ? *g_worker_language : g_lang;
+    const json::Value* v = entry->get(language);
     if (v && v->is_string() && !v->s.empty()) return &v->s;
-    if (g_lang != L"en") {
+    if (language != L"en") {
         v = entry->get(L"en");
         if (v && v->is_string() && !v->s.empty()) return &v->s;
     }
@@ -118,10 +120,14 @@ void init()
         LOGF("modtext: %s overrides malformed: %s", game::key(), err.c_str());
     LOGF("modtext: %zu common keys, %zu %s overrides", g_common.obj.size(), g_game.obj.size(), game::key());
 }
+LocaleScope::LocaleScope(std::wstring language) : previous_(std::move(g_worker_language)) {
+    g_worker_language = std::move(language);
+}
+LocaleScope::~LocaleScope() { g_worker_language = std::move(previous_); }
 
 std::wstring T(std::wstring_view key)
 {
-    if (!g_lang_known && frame::on_main_thread()) refresh_language();
+    if (!g_worker_language && !g_lang_known && frame::on_main_thread()) refresh_language();
     std::wstring k(key);
     if (const std::wstring* s = pick(g_game, k)) return *s;
     if (const std::wstring* s = pick(g_common, k)) return *s;
@@ -139,7 +145,7 @@ bool has(std::wstring_view key)
     return g_game.get(k) || g_common.get(k);
 }
 
-const std::wstring& lang() { return g_lang; }
+const std::wstring& lang() { return g_worker_language ? *g_worker_language : g_lang; }
 
 void refresh_language()
 {

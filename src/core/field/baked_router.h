@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <functional>
 #include "baked_map.h"
 
 // The baked-map router: A* over one sub-map's baked grids, the mod-side replacement for the
@@ -39,6 +40,7 @@ inline bool crosses_event(const std::vector<Cell>& path, const std::vector<Cell>
 }
 
 struct Request {
+    std::function<bool()> cancelled; // owned context only; never reads native state
     const baked::Submap* submap = nullptr;
     Cell start;
     std::vector<Cell> goals;          // reaching any one ends the search

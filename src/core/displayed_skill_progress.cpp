@@ -14,8 +14,6 @@ namespace displayed {
 namespace {
 ref::Class kProvider{"Last.UI", "SkillLevelProvider", game::kFF2};
 ref::Method mSetting{kProvider, "SettingSkillLevel", 3};
-ref::Class kExp{"Last.Systems", "ExpUtility", game::kFF2};
-ref::Method mLevel{kExp, "GetExpLevel", 3}, mRemaining{kExp, "GetNextExp", 3}, mInterval{kExp, "GetExpDifference", 3};
 ref::Class kSkill{"Serial.FF2.UI", "SkillLevelContentController", game::kFF2};
 ref::Method mColor{kSkill, "SetSkillLevelUpColor", 2};
 ref::Field fType{kSkill, "weaponType"};
@@ -25,16 +23,7 @@ std::map<void*, Value> g_gauges;
 std::map<void*, Change> g_changes;
 Value native_progress(int points)
 {
-    if (points < 0 || !mLevel || !mRemaining || !mInterval) return {};
-    // Exactly the group/type and integer operands used by SettingSkillLevel.
-    return {ref::call_static<int>(mLevel, 1, points, 1),
-            ref::call_static<int>(mRemaining, 1, points, 1),
-            ref::call_static<int>(mInterval, 1, points, 1)};
-}
-template<class Map> void prune(Map& values)
-{
-    for (auto it = values.begin(); it != values.end();)
-        if (!unity::alive(it->first)) it = values.erase(it); else ++it;
+    return skill_progress::from_points(points);
 }
 using Setting = void (*)(int, void*, void*, const void*);
 Setting o_setting;
@@ -42,7 +31,8 @@ void d_setting(int points, void* level, void* gauge, const void* mi)
 {
     o_setting(points, level, gauge, mi);
     hooks::guarded("Displayed.SkillGauge", [=] {
-        prune(g_gauges);
+        // Values contain no managed references. Session/scene reset clears keys;
+        // reads validate the current content, level and rendered gauge.
         const auto value = native_progress(points);
         if (gauge && value.valid()) g_gauges[gauge] = value;
         else g_gauges.erase(gauge);
@@ -54,7 +44,6 @@ void d_color(void* self, void* before, void* after, const void* mi)
 {
     o_color(self, before, after, mi);
     hooks::guarded("Displayed.SkillChange", [=] {
-        prune(g_changes);
         g_changes.erase(self);
         const int type = ref::rd<int>(self, fType);
         if (type < 0 || type >= 8) return;
@@ -77,6 +66,7 @@ bool matches(void* content, Value value)
 }
 int install()
 {
+    events::on(events::Kind::SceneLoaded, [] { clear_skill_changes(); });
     return (hooks::attach(mSetting, &d_setting, &o_setting) ? 1 : 0) +
            (hooks::attach(mColor, &d_color, &o_color) ? 1 : 0);
 }
@@ -101,5 +91,5 @@ std::wstring skill_change(void* content)
         {name, text::num(it->second.before.level), text::num(it->second.before.percent()),
          text::num(it->second.after.level), text::num(it->second.after.percent()), text::num(*gain)});
 }
-void clear_skill_changes() { g_changes.clear(); }
+void clear_skill_changes() { g_changes.clear(); g_gauges.clear(); }
 }

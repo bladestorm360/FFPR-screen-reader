@@ -105,3 +105,8 @@ the first phase. Arrows review weapon/stat rows without advancing; I on a select
 reads its change. Battle's changed-stats toggle controls automatic summaries. Check braille
 if used and compare a spoken hit count with the actual displayed count if a mismatch is
 reported. These are confirmation steps, not already-confirmed runtime behavior.
+
+Subsequent worker/first-page follow-up is deployed in all six games, DLL SHA-256
+`DA45D46CA76664B2E722D20AA898B7AD10389642F97E009D4D41D2B7B818C95F`.
+Normal deployment verified the existing Prism prerequisite without changing it;
+Tolk remains absent. [Current ownership/results evidence](re/THREADING.md).

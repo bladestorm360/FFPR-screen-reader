@@ -12,6 +12,7 @@
 #include "log.h"
 #include "refs.h"
 #include "unity.h"
+#include "field/object_cache.h"
 #include "system/system.h"
 
 namespace ffpr::system {
@@ -49,8 +50,10 @@ void announce_focus(void* inst)
         void* cur = nullptr;
         hooks::guarded("FieldMenu.DelayedAnnounce", [&] {
             if (unity::alive(inst) && unity::active_in_hierarchy(inst) && is_field_menu_open()) {
-                if (void* cmd = ref::rd<void*>(inst, fCommandMenuController))
+                if (void* cmd = ref::rd<void*>(inst, fCommandMenuController)) {
+                    field::cache::register_object(kCommandMenu, cmd);
                     cur = ref::rd<void*>(cmd, fCommandMenuCursor);
+                }
             }
         });
         if (cur) wait_and_read_cursor(cur);
@@ -93,7 +96,7 @@ int field_command_count(void* cursor)
 {
     return hooks::guarded_r("FieldMenu.CommandCount", -1, [&]() -> int {
         if (!cursor) return -1;
-        void* cmd = unity::find_object(kCommandMenu);
+        void* cmd = field::cache::get(kCommandMenu);
         if (!cmd || !unity::active_in_hierarchy(cmd)) return -1;
         void* field_cursor = ref::rd<void*>(cmd, fCommandMenuCursor);
         if (!field_cursor || field_cursor != cursor) return -1;

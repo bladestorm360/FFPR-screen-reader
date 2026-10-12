@@ -15,6 +15,7 @@
 #include "displayed_ui.h"
 #include "dialogue/dialogue.h"
 #include "field/scene_events.h"
+#include "field/object_cache.h"
 #include "system/system.h"
 
 namespace ffpr::dialogue {
@@ -56,6 +57,8 @@ void announce_focus(void* inst, const char* source)
     if (!unity::alive(inst) || !unity::active_in_hierarchy(inst)) return;
     void* cmd = ref::rd<void*>(inst, fTitleCommandController);
     if (!cmd) return;
+    field::cache::register_object(kTitleWindow, inst);
+    field::cache::register_object(kTitleCommand, cmd);
     void* cur = ref::rd<void*>(cmd, fTitleCursor);
     if (!cur) return;
     LOGF("[Title] Announcing initial title-menu focus via %s", source);
@@ -131,6 +134,10 @@ void speak_press_prompt_if_shown(void* ctrl)
 
 void arm_for_controller(void* ctrl)
 {
+    if (ctrl && kTitleWindow.is(ctrl)) {
+        field::cache::register_object(kTitleWindow, ctrl);
+        if (void* cmd = ref::rd<void*>(ctrl, fTitleCommandController)) field::cache::register_object(kTitleCommand, cmd);
+    }
     frame::cancel_label("Title.PressPrompt");
     g_press_prompt_armed = true;
     g_title_main_menu_shown = false;
@@ -163,7 +170,7 @@ void d_IndicatorHide(void* self, const void* mi)
         if (scene != L"Title" && scene != L"TitleScreen") return;
         // UpdateNone enables the prompt immediately after this call returns.
         // One contextual lookup per native Hide; none during field loading.
-        speak_press_prompt_if_shown(unity::find_object(kTitleWindow));
+        speak_press_prompt_if_shown(field::cache::get(kTitleWindow));
     });
 }
 
@@ -222,7 +229,7 @@ core::Install s_install{"TitleScreen", &install, 100};
 void arm_press_prompt()
 {
     // One scene-entry recovery lookup; the native activation event owns readiness.
-    arm_for_controller(unity::find_object(kTitleWindow));
+    arm_for_controller(field::cache::get(kTitleWindow));
 }
 
 // TitleMenuReader.TryGetActiveCommandCount: visible title commands (activeContents, so disabled
@@ -231,7 +238,7 @@ int title_active_command_count(void* cursor)
 {
     return hooks::guarded_r("Title.CommandCount", -1, [&]() -> int {
         if (!cursor) return -1;
-        void* cmd = unity::find_object(kTitleCommand);
+        void* cmd = field::cache::get(kTitleCommand);
         if (!cmd || !unity::active_in_hierarchy(cmd)) return -1;
         void* title_cursor = ref::rd<void*>(cmd, fTitleCursor);
         if (!title_cursor || title_cursor != cursor) return -1;

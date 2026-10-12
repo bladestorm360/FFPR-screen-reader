@@ -16,6 +16,7 @@
 #include "../text.h"
 #include "../ui_util.h"
 #include "../unity.h"
+#include "../field/object_cache.h"
 
 namespace ffpr::menus {
 namespace {
@@ -94,7 +95,7 @@ bool should_suppress()
 {
     if (!detail::item_menu_active()) return false;
 
-    if (void* window = unity::find_object(kItemWindowController)) {
+    if (void* window = field::cache::get(kItemWindowController)) {
         int state = ui::state_tag(window, fItemWindowStateMachine);
         // Command bar or nothing: let the generic reader handle it.
         if (state == STATE_COMMAND_SELECT || state == STATE_NONE) {
@@ -167,6 +168,9 @@ void d_ItemWindowSetActive(void* self, bool is_active, const void* mi)
 {
     o_ItemWindowSetActive(self, is_active, mi);
     hooks::guarded("ItemWindowController.SetActive", [&] {
+        if (!kItemWindowController.is(self)) return;
+        if (is_active) field::cache::register_object(kItemWindowController, self);
+        else if (field::cache::get(kItemWindowController) == self) field::cache::clear(kItemWindowController);
         if (!is_active) clear_state();
     });
 }

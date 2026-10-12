@@ -4,6 +4,7 @@
 // implements. Language detection is modtext::lang() (the same Language-enum map FF1 used).
 #include <map>
 #include <set>
+#include <atomic>
 #include "entity_translator.h"
 #include "field_internal.h"
 #include "map_names.h"
@@ -14,7 +15,7 @@
 namespace field {
 namespace {
 
-bool g_initialized = false;
+std::atomic<bool> g_initialized{false};
 const json::Value* g_translations = nullptr;   // object: japanese -> { lang: text }
 int g_count = 0;
 std::map<std::wstring, std::set<std::wstring>> g_untranslated_by_map;
@@ -22,10 +23,10 @@ std::map<std::wstring, std::set<std::wstring>> g_untranslated_by_map;
 void initialize()
 {
     if (g_initialized || !data::game_data_ready()) return;
-    g_initialized = true;
     const json::Value& v = data::game_json("translation");
     if (!v.is_object()) {
         LOGF("[EntityTranslator] Embedded translation resource not found");
+        g_initialized.store(true, std::memory_order_release);
         return;
     }
     g_translations = &v;
@@ -35,6 +36,7 @@ void initialize()
             if (lang.second.is_string() && !lang.second.s.empty()) { ++g_count; break; }
     }
     LOGF("[EntityTranslator] Loaded %d translations from embedded resource", g_count);
+    g_initialized.store(true, std::memory_order_release);
 }
 
 bool circled(wchar_t c) { return c >= 0x2460 && c <= 0x2473; }   // ① .. ⑳
@@ -231,17 +233,17 @@ bool contains_japanese(const std::wstring& s)
 
 void clear_untranslated_tracking() { g_untranslated_by_map.clear(); }
 
+void prepare_entity_translations() { initialize(); }
+
 int translation_count()
 {
-    initialize();
-    return g_count;
+    return g_initialized.load(std::memory_order_acquire) ? g_count : 0;
 }
 
 std::wstring translate_entity_name(const std::wstring& japanese_name)
 {
     if (japanese_name.empty()) return japanese_name;
-    initialize();
-    if (g_count == 0) return japanese_name;
+    if (!g_initialized.load(std::memory_order_acquire) || g_count == 0) return japanese_name;
 
     // When the game is in Japanese, entity names are already Japanese.
     if (modtext::lang() == L"ja") return japanese_name;

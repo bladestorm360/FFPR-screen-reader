@@ -21,6 +21,7 @@
 #include "../../core/say.h"
 #include "../../core/text.h"
 #include "../../core/unity.h"
+#include "../../core/field/object_cache.h"
 #include "../../core/input/input.h"
 
 namespace ffpr::ff6 {
@@ -151,7 +152,7 @@ void announce_active_timers()
 {
     std::wstring announcement;
     int count = 0;
-    for (void* timer : unity::find_objects(kScreenTimer)) {
+    for (void* timer : field::cache::get_all(kScreenTimer)) {
         void* view = timer ? ref::rd<void*>(timer, fScreenTimerView) : nullptr;
         if (!view) continue;
         void* group = ref::rd<void*>(view, fCanvasGroup);
@@ -163,7 +164,7 @@ void announce_active_timers()
         announcement += format_time(minutes, seconds);
         ++count;
     }
-    for (void* timer : unity::find_objects(kFieldTimer)) {
+    for (void* timer : field::cache::get_all(kFieldTimer)) {
         if (!timer || !unity::active_in_hierarchy(timer)) continue;
         std::wstring s = text_of(ref::rd<void*>(timer, fFieldTimerKeyText));
         if (s.empty()) s = text_of(ref::rd<void*>(timer, fFieldTimerTouchText));

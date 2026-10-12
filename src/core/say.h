@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <string_view>
+#include <vector>
 
 // The mod's speech front end. Every reader speaks through say(); speech.h is the backend.
 //
@@ -11,6 +12,7 @@
 // No text deduplication happens here (shared rules: identical text can belong to distinct
 // events). Readers that must suppress a repeated EVENT use dedup.h.
 namespace ffpr {
+void say_parts(std::vector<std::wstring> parts, bool interrupt = true);
 
 void say(std::wstring_view text, bool interrupt = true);
 /// Queue behind whatever is speaking (interrupt = false).

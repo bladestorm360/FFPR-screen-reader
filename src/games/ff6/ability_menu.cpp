@@ -57,6 +57,7 @@
 #include "../../core/battle/battle_util.h"
 #include "../../core/system/cursor_event.h"
 #include "../../core/system/system.h"
+#include "../../core/field/object_cache.h"
 
 namespace ffpr::ff6 {
 namespace {
@@ -526,13 +527,14 @@ Void_t o_WindowCommandInit;
 void d_WindowCommandInit(void* self, const void* mi)
 {
     const bool mine = kAbilityWindow.is(self);
+    if (mine) field::cache::register_object(kAbilityWindow, self);
     if (mine) dedup::reset(kCtxCommand);
     o_WindowCommandInit(self, mi);
     if (!mine) return;
     hooks::guarded("FF6.AbilityWindow.CommandInit", [&] {
         frame::next_frame([] {
             hooks::guarded("FF6.AbilityWindow.CommandFocus", [] {
-                void* window = unity::find_object(kAbilityWindow);
+                void* window = field::cache::get(kAbilityWindow);
                 if (!window || !unity::active_in_hierarchy(window)) return;
                 void* controller = ref::rd<void*>(window, fWindowCommandController);
                 void* cursor = controller ? ref::rd<void*>(controller, fCommandSelectCursor) : nullptr;
@@ -546,6 +548,7 @@ Void_t o_WindowUseListInit;
 void d_WindowUseListInit(void* self, const void* mi)
 {
     if (kAbilityWindow.is(self)) {
+        field::cache::register_object(kAbilityWindow, self);
         dedup::reset(kCtxList);
         dedup::reset(kCtxSpecial);
     }
@@ -555,14 +558,20 @@ void d_WindowUseListInit(void* self, const void* mi)
 Void_t o_WindowUseTargetInit;
 void d_WindowUseTargetInit(void* self, const void* mi)
 {
-    if (kAbilityWindow.is(self)) dedup::reset(kCtxUseTarget);
+    if (kAbilityWindow.is(self)) {
+        field::cache::register_object(kAbilityWindow, self);
+        dedup::reset(kCtxUseTarget);
+    }
     o_WindowUseTargetInit(self, mi);
 }
 
 Void_t o_WindowSelectMagicStoneInit;
 void d_WindowSelectMagicStoneInit(void* self, const void* mi)
 {
-    if (kAbilityWindow.is(self)) reset_esper_list_guard();
+    if (kAbilityWindow.is(self)) {
+        field::cache::register_object(kAbilityWindow, self);
+        reset_esper_list_guard();
+    }
     o_WindowSelectMagicStoneInit(self, mi);
 }
 
@@ -572,7 +581,12 @@ void d_WindowSetActive(void* self, bool active, const void* mi)
 {
     o_WindowSetActive(self, active, mi);
     hooks::guarded("FF6.AbilityWindow.SetActive", [&] {
-        if (active || !kAbilityWindow.is(self)) return;
+        if (!kAbilityWindow.is(self)) return;
+        if (active) {
+            field::cache::register_object(kAbilityWindow, self);
+            return;
+        }
+        if (field::cache::get(kAbilityWindow) == self) field::cache::clear(kAbilityWindow);
         reset_window_guards();
         g_focus = Focus{};
     });

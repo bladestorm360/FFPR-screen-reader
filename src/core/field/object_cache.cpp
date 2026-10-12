@@ -31,19 +31,16 @@ void* get(ref::Class& type)
     if (!key) return nullptr;
     auto it = g_single.find(key);
     if (it == g_single.end()) return nullptr;
-    if (valid(it->second)) return it->second;
+    if (type.is(it->second) && valid(it->second)) return it->second;
     g_single.erase(it);
     return nullptr;
 }
 
 void* refresh(ref::Class& type)
 {
-    void* key = key_of(type);
-    if (!key) return nullptr;
-    g_single.erase(key);
-    void* found = unity::find_object(type);
-    if (found) g_single[key] = found;
-    return found;
+    // Lifecycle observers supply current instances. A missing instance is not
+    // permission to search every engine object from a game callback.
+    return get(type);
 }
 
 void* get_or_refresh(ref::Class& type)
@@ -64,7 +61,7 @@ bool has(ref::Class& type)
     void* key = key_of(type);
     if (!key) return false;
     auto it = g_single.find(key);
-    return it != g_single.end() && valid(it->second);
+    return it != g_single.end() && type.is(it->second) && valid(it->second);
 }
 
 void clear(ref::Class& type)
@@ -80,7 +77,7 @@ std::vector<void*> get_all(ref::Class& type)
     if (it == g_multi.end()) return {};
     std::vector<void*> valid_objects;
     for (void* o : it->second)
-        if (valid(o)) valid_objects.push_back(o);
+        if (type.is(o) && valid(o)) valid_objects.push_back(o);
     it->second = valid_objects;
     return valid_objects;
 }

@@ -5,6 +5,7 @@
 #include "frame.h"
 #include "hooks.h"
 #include "speech.h"
+#include "audio/sound.h"
 
 namespace frame {
 namespace {
@@ -55,9 +56,12 @@ void run_tick()
 
     {
         std::vector<Task> posted;
-        AcquireSRWLockExclusive(&g_post_lock);
-        posted.swap(g_posted);
-        ReleaseSRWLockExclusive(&g_post_lock);
+        // A producer may be appending. Skip this handoff until the next tick;
+        // native input/game processing must never wait for a worker's lock.
+        if (TryAcquireSRWLockExclusive(&g_post_lock)) {
+            posted.swap(g_posted);
+            ReleaseSRWLockExclusive(&g_post_lock);
+        }
         for (Task& t : posted) hooks::guarded("frame.post", [&] { t(); });
     }
 
@@ -99,6 +103,7 @@ void d_Update(void* self, const void* mi)
         g_main_tid = GetCurrentThreadId();
         LOGF("frame: tick live on thread %lu", g_main_tid);
         speech::request_load();
+        sound::initialize(); // only signals the dedicated SDL owner
     }
     hooks::guarded("frame.tick", [] { run_tick(); });
     o_Update(self, mi);
@@ -187,6 +192,7 @@ void cancel_label(const char* prefix)
 
 void post(Task t)
 {
+    if (on_main_thread()) { next_frame(std::move(t), "frame.main_post"); return; }
     AcquireSRWLockExclusive(&g_post_lock);
     g_posted.push_back(std::move(t));
     ReleaseSRWLockExclusive(&g_post_lock);

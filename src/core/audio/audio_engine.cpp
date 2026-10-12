@@ -1,11 +1,14 @@
 // Ports FF1 Utils/AudioEngine.cs.
 //
 // SDL3-backed output: one logical playback device with one SDL_AudioStream per sound kind
-// bound to it. SDL mixes every bound stream on its own device thread, so the game's main
-// thread only queues buffers (SDL_PutAudioStreamData copies synchronously) and sets gains.
+// bound to it. A dedicated worker owns device/stream calls; game callbacks only
+// copy bounded PCM commands and publish cancellation/gain values without waiting.
 // Every SDL call goes through sdl_dyn.h (no import library); sdl::load() runs first.
 #include "audio_engine.h"
+#include <windows.h>
 #include <atomic>
+#include <array>
+#include <cstring>
 #include "sound_constants.h"
 #include "../log.h"
 #include "../sdl_dyn.h"
@@ -17,8 +20,25 @@ constexpr int kStreamCount = static_cast<int>(Stream::Count);
 
 SDL_AudioDeviceID g_device = 0;
 SDL_AudioStream* g_streams[kStreamCount] = {};
-std::vector<int16_t> g_beacon_scratch;   // CHANNEL_BUFFER_SIZE bytes
 std::atomic<bool> g_initialized{false};
+std::atomic<bool> g_started{false}, g_running{true};
+std::atomic<HANDLE> g_wake{nullptr};
+HANDLE g_worker = nullptr;
+// Single producer: game callbacks. Single consumer: audio worker. Fixed slots
+// own their PCM; no Unity pointers, stack callbacks, mutexes or disk I/O.
+constexpr unsigned kCommands = 64;
+struct Command {
+    Stream stream{};
+    unsigned generation = 0;
+    int bytes = 0;
+    std::function<void(int16_t*)> generate;
+    std::array<int16_t, constants::CHANNEL_BUFFER_SIZE / sizeof(int16_t)> pcm;
+};
+std::array<Command, kCommands> g_commands;
+std::atomic<unsigned> g_head{0}, g_tail{0};
+std::atomic<unsigned> g_generation[kStreamCount]{};
+std::atomic<int> g_queued[kStreamCount]{};
+std::atomic<float> g_gain[kStreamCount];
 
 const char* stream_name(int i)
 {
@@ -35,13 +55,6 @@ const char* sdl_error()
     return (e && *e) ? e : "(no SDL error)";
 }
 
-SDL_AudioStream* stream_of(Stream id)
-{
-    int i = static_cast<int>(id);
-    if (!g_initialized.load() || i < 0 || i >= kStreamCount) return nullptr;
-    return g_streams[i];
-}
-
 void release_all()
 {
     for (int i = 0; i < kStreamCount; i++) {
@@ -55,27 +68,14 @@ void release_all()
         try { sdl::SDL_CloseAudioDevice(g_device); } catch (...) {}
         g_device = 0;
     }
-    g_beacon_scratch.clear();
-    g_beacon_scratch.shrink_to_fit();
 }
 
 } // namespace
 
-bool initialize()
+bool open_device()
 {
     if (g_initialized.load()) return true;
     try {
-        // Subsystem-scoped: independent of the gamepad's SDL_INIT_GAMEPAD (SDL ref-counts each
-        // subsystem). Without SDL3.dll there is no playback path at all.
-        if (!sdl::load()) {
-            LOGF("[SDL Audio] SDL3.dll NOT FOUND or unusable - audio DISABLED (no fallback; nothing will play)");
-            return false;
-        }
-        if (!sdl::SDL_InitSubSystem(SDL_INIT_AUDIO)) {
-            LOGF("[SDL Audio] SDL_InitSubSystem(AUDIO) failed: %s - audio DISABLED (no fallback)", sdl_error());
-            return false;
-        }
-
         SDL_AudioSpec spec{};
         spec.format = SDL_AUDIO_S16LE;
         spec.channels = 2;
@@ -84,7 +84,6 @@ bool initialize()
         g_device = sdl::SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
         if (g_device == 0) {
             LOGF("[SDL Audio] SDL_OpenAudioDevice failed: %s - audio DISABLED (no fallback)", sdl_error());
-            sdl::SDL_QuitSubSystem(SDL_INIT_AUDIO);
             return false;
         }
         for (int i = 0; i < kStreamCount; i++) {
@@ -104,8 +103,6 @@ bool initialize()
         if (!sdl::SDL_ResumeAudioDevice(g_device))
             LOGF("[SDL Audio] SDL_ResumeAudioDevice failed: %s", sdl_error());
 
-        g_beacon_scratch.assign(constants::CHANNEL_BUFFER_SIZE / sizeof(int16_t), 0);
-
         g_initialized = true;
         LOGF("[SDL Audio] device %u open, %d streams, S16LE stereo %d Hz", static_cast<unsigned>(g_device),
              kStreamCount, constants::SAMPLE_RATE);
@@ -118,42 +115,127 @@ bool initialize()
     }
 }
 
+namespace {
+int index(Stream id) { return static_cast<int>(id); }
+DWORD WINAPI audio_worker(void*)
+{
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+    if (!open_device()) return 0;
+    unsigned applied[kStreamCount]{};
+    float gain[kStreamCount];
+    for (float& value : gain) value = -1;
+    auto update_stream = [&](int i) {
+        if (!g_streams[i]) return;
+        const unsigned current = g_generation[i].load(std::memory_order_acquire);
+        if (applied[i] != current) {
+            sdl::SDL_ClearAudioStream(g_streams[i]);
+            applied[i] = current;
+        }
+        const float wanted = g_gain[i].load(std::memory_order_relaxed);
+        if (gain[i] != wanted) {
+            sdl::SDL_SetAudioStreamGain(g_streams[i], wanted);
+            gain[i] = wanted;
+        }
+    };
+    try { while (g_running.load(std::memory_order_acquire)) {
+        WaitForSingleObject(g_wake, 20); // audio-queue snapshots, no game polling
+        for (int i = 0; i < kStreamCount; ++i) update_stream(i);
+        unsigned head = g_head.load(std::memory_order_relaxed);
+        while (head != g_tail.load(std::memory_order_acquire)) {
+            const auto& command = g_commands[head];
+            const int i = index(command.stream);
+            update_stream(i);
+            if (g_streams[i] && command.generation == g_generation[i].load(std::memory_order_acquire)) {
+                if (command.generate) command.generate(g_commands[head].pcm.data());
+                sdl::SDL_PutAudioStreamData(g_streams[i], command.pcm.data(), command.bytes);
+            }
+            head = (head + 1) % kCommands;
+            g_head.store(head, std::memory_order_release);
+        }
+        for (int i = 0; i < kStreamCount; ++i) {
+            update_stream(i); // a cancellation arriving during a device call still wins
+            const int bytes = g_streams[i] ? sdl::SDL_GetAudioStreamQueued(g_streams[i]) : 0;
+            g_queued[i].store(bytes > 0 ? bytes : 0, std::memory_order_relaxed);
+        }
+    } } catch (...) {
+        LOGF("[SDL Audio] worker call failed; mod audio disabled, game continues");
+        g_running.store(false, std::memory_order_release);
+    }
+    g_initialized.store(false, std::memory_order_release);
+    release_all();
+    return 0;
+}
+}
+
+bool initialize()
+{
+    if (g_started.exchange(true)) return initialized();
+    // Called exclusively by the dedicated SDL owner, which initializes and pumps
+    // this Windows SDL instance. Device/stream work belongs to the audio worker.
+    if (!sdl::load() || !sdl::SDL_InitSubSystem(SDL_INIT_AUDIO)) return false;
+    for (auto& value : g_gain) value.store(1);
+    g_wake = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+    if (!g_wake) return false;
+    g_worker = CreateThread(nullptr, 0, audio_worker, nullptr, 0, nullptr);
+    if (!g_worker) { CloseHandle(g_wake); g_wake = nullptr; return false; }
+    return initialized(); // no wait for device construction
+}
+
 void shutdown()
 {
-    if (!g_initialized.exchange(false)) return;
-    release_all();
-    try { sdl::SDL_QuitSubSystem(SDL_INIT_AUDIO); } catch (...) {}
+    g_initialized.store(false, std::memory_order_release);
+    g_running.store(false, std::memory_order_release);
+    if (g_wake) SetEvent(g_wake);
+    // Process-lifetime SDL subsystem. Never wait for device teardown or quit an
+    // SDL subsystem while its worker may still be using it; DllMain does nothing.
 }
 
 bool initialized() { return g_initialized.load(); }
 
 void set_gain(Stream id, float gain)
 {
-    SDL_AudioStream* s = stream_of(id);
-    if (!s) return;
-    sdl::SDL_SetAudioStreamGain(s, gain);
+    const int i = index(id);
+    if (i < 0 || i >= kStreamCount) return;
+    g_gain[i].store(gain, std::memory_order_relaxed);
+    if (g_wake) SetEvent(g_wake);
 }
 
 int queued_bytes(Stream id)
 {
-    SDL_AudioStream* s = stream_of(id);
-    if (!s) return 0;
-    int q = sdl::SDL_GetAudioStreamQueued(s);
-    return q < 0 ? 0 : q;
+    const int i = index(id);
+    if (!initialized() || i < 0 || i >= kStreamCount) return 0;
+    int result = g_queued[i].load(std::memory_order_relaxed);
+    const unsigned generation = g_generation[i].load(std::memory_order_relaxed);
+    const unsigned tail = g_tail.load(std::memory_order_relaxed);
+    for (unsigned head = g_head.load(std::memory_order_acquire); head != tail; head = (head + 1) % kCommands) {
+        const auto& command = g_commands[head];
+        if (command.stream == id && command.generation == generation) result += command.bytes;
+    }
+    return result;
 }
 
 void clear(Stream id)
 {
-    SDL_AudioStream* s = stream_of(id);
-    if (!s) return;
-    sdl::SDL_ClearAudioStream(s);
+    const int i = index(id);
+    if (i < 0 || i >= kStreamCount) return;
+    ++g_generation[i]; // cannot be lost even if the PCM ring is full
+    g_queued[i].store(0, std::memory_order_relaxed);
+    if (g_wake) SetEvent(g_wake);
 }
 
 void submit(Stream id, const int16_t* pcm, int bytes)
 {
-    SDL_AudioStream* s = stream_of(id);
-    if (!s || !pcm || bytes <= 0) return;
-    sdl::SDL_PutAudioStreamData(s, pcm, bytes);
+    const int i = index(id);
+    if (!initialized() || i < 0 || i >= kStreamCount || !pcm || bytes <= 0 || bytes > constants::CHANNEL_BUFFER_SIZE) return;
+    const unsigned tail = g_tail.load(std::memory_order_relaxed), next = (tail + 1) % kCommands;
+    if (next == g_head.load(std::memory_order_acquire)) return; // bounded: never wait on a driver
+    auto& command = g_commands[tail];
+    command.stream = id; command.bytes = bytes;
+    command.generate = {};
+    command.generation = g_generation[i].load(std::memory_order_relaxed);
+    memcpy(command.pcm.data(), pcm, bytes);
+    g_tail.store(next, std::memory_order_release);
+    SetEvent(g_wake);
 }
 
 void submit(Stream id, const std::vector<int16_t>& pcm)
@@ -164,23 +246,25 @@ void submit(Stream id, const std::vector<int16_t>& pcm)
 
 void play_one_shot(Stream id, const std::vector<int16_t>& pcm, float gain)
 {
-    SDL_AudioStream* s = stream_of(id);
-    if (!s) return;
-    sdl::SDL_SetAudioStreamGain(s, gain);
-    sdl::SDL_ClearAudioStream(s);
+    if (!initialized()) return;
+    set_gain(id, gain);
+    clear(id);
     submit(id, pcm);
 }
 
-void play_beacon_direct(int length, Fill fill, void* context)
+void play_generated(Stream id, int bytes, std::function<void(int16_t*)> generate, float gain)
 {
-    SDL_AudioStream* s = stream_of(Stream::Beacon);
-    if (!s || !fill) return;
-    if (length <= 0 || length > constants::CHANNEL_BUFFER_SIZE) return;
-    if (g_beacon_scratch.size() * sizeof(int16_t) < static_cast<size_t>(length)) return;
-
-    fill(g_beacon_scratch.data(), context);
-    sdl::SDL_ClearAudioStream(s);
-    sdl::SDL_PutAudioStreamData(s, g_beacon_scratch.data(), length);
+    const int i = index(id);
+    if (!initialized() || i < 0 || i >= kStreamCount || !generate || bytes <= 0 || bytes > constants::CHANNEL_BUFFER_SIZE) return;
+    clear(id); set_gain(id, gain);
+    const unsigned tail = g_tail.load(std::memory_order_relaxed), next = (tail + 1) % kCommands;
+    if (next == g_head.load(std::memory_order_acquire)) return;
+    auto& command = g_commands[tail];
+    command.stream = id; command.bytes = bytes;
+    command.generation = g_generation[i].load(std::memory_order_relaxed);
+    command.generate = std::move(generate);
+    g_tail.store(next, std::memory_order_release);
+    SetEvent(g_wake);
 }
 
 } // namespace sound::engine

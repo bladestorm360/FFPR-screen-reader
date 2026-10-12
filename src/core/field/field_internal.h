@@ -3,8 +3,10 @@
 // areas: they use field_api.h, map_names.h, entity_translator.h, object_cache.h and
 // scene_events.h. (NavigationTargetTracker and LocationMessageTracker live in src/core/fieldnav.)
 #include <memory>
+#include <functional>
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include "../refs.h"
 #include "../unity.h"
 
@@ -40,7 +42,7 @@ extern ref::Method mGetCollisionLayerHeight;
 
 extern ref::Class kTransportationController;
 extern ref::Field fInfoData;
-extern ref::Method mNeedInteractiveList;
+extern ref::Method mCheckNeedInteractive;
 extern ref::Method mGetCurrentTransportation;
 extern ref::Class kTransportation;
 extern ref::Field fModelList;
@@ -105,17 +107,9 @@ extern ref::Method mGetMessage;
 extern ref::Class kContentUtitlity;
 extern ref::Method mGetMesIdItemName;
 
-extern ref::Class kMapRouteSearcher;
-extern ref::Method mSearch;
-extern ref::Method mSearchSimple;
-
 extern ref::Class kMapManager;
 extern ref::Field fCurrentMapModel;
 extern ref::Class kMapModel;
-extern ref::Field fCurrentMappingData;
-extern ref::Field fCollisionMappingData;
-extern ref::Field fHiddenPassageMappingData;
-extern ref::Method mSetCurrentMappingData;
 
 extern ref::Class kGameObject;
 extern ref::Method mGetLayer;
@@ -157,14 +151,6 @@ std::vector<VehicleOnMap> vehicles_on_map();
 /// FF1-FF3's canoe, FF2's snowcraft), read from Transportation.ModelList now. On a world map
 /// they extend walking: the player boards them by stepping onto their terrain.
 std::vector<int> owned_auto_vehicle_groups();
-
-// --- BreadcrumbRouteChainer (breadcrumb_chain.cpp) --------------------------------------------
-/// FF5 BreadcrumbRouteChainer.TryChain: chains MapRouteSearcher searches through reachable
-/// midpoints to a target beyond the game's ~31-cell window. False (out_path untouched) when the
-/// target is inside the window, there is no player, or no route was found. True with the stitched
-/// world-space path from the player to the target.
-bool try_breadcrumb_chain(unity::Vec3 player_world_pos, unity::Vec3 target_world_pos, void* map_handle,
-                          void* player, std::vector<unity::Vec3>& out_path);
 
 // --- FieldEntityState (entity_detection.cpp) ------------------------------------------------
 bool entity_is_present(void* field_entity);
@@ -246,6 +232,7 @@ struct FilterContext {
 
 // --- EntityScanner (entity_scanner.cpp) -----------------------------------------------------
 namespace scanner {
+void when_filter_ready(std::function<void()> ready);
 void scan_entities();
 void schedule_scan();
 void cancel_scan();
@@ -269,6 +256,15 @@ std::vector<unity::Vec3> map_exit_positions();
 // --- player / map helpers (navigation.cpp) --------------------------------------------------
 void* player_controller();          // GameObjectCache.Get<FieldPlayerController>() ?? Refresh
 void* field_map();                  // GameObjectCache.Get<FieldMap>() ?? Refresh
+// Native-owner cursor: one current collection slot per call. Never transfer it or
+// returned engine objects to a worker; callers capture ready values immediately.
+struct EntityCursor {
+    int stage = 0, index = 0;
+    std::unordered_set<void*> seen;
+    std::vector<int> auto_groups;
+    bool next(void*& entity);
+};
+bool native_position_walkable(void* player, unity::Vec3 position);
 // map_names.cpp: EntityScanner.GetCurrentMapId / MapNameResolver.GetCurrentMapIdInternal
 int current_map_id_or_user_data();  // FieldMapProvisionInformation (> 0), then UserDataManager
 

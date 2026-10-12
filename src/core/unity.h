@@ -74,6 +74,11 @@ template <typename T> T list_value(void* list, int index);
 void dict_for_each(void* dict, void (*fn)(uint64_t key, uint64_t value, void* state), void* state,
                    int key_size = 8, int value_size = 8);
 int dict_count(void* dict);
+/// Current int-key/reference-value lookup, using the native dictionary's bucket logic.
+void* dict_reference(void* dict, int32_t key);
+/// Read one current dictionary slot on its native owner; false for a free/missing slot.
+bool dict_entry(void* dict, int index, uint64_t& key, uint64_t& value,
+                int key_size = 8, int value_size = 8);
 
 // --- implementation details for the templates ------------------------------------------
 constexpr int32_t kArrayLengthOff = 0x18;
