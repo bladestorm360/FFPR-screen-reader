@@ -11,22 +11,22 @@ FieldMap.StateInit RVA 355AD0
 355AE7 cmp eax, 0xf
 355AEA ja 0x355c80
 355AF0 lea rcx, [rip - 0x355af7]
-355AF7 cdqe 
+355AF7 cdqe
 355AF9 mov r8d, dword ptr [rcx + rax*4 + 0x355d28]
 355B01 add r8, rcx
 355B04 jmp r8
 355B07 xor edx, edx
 355B09 mov rcx, rbx
 355B0C call 0x350620 ; FieldMap.InitChangeMap
-355B11 jmp 0x355c80 ; 
+355B11 jmp 0x355c80
 355B16 xor edx, edx
 355B18 mov rcx, rbx
 355B1B call 0x351ee0 ; FieldMap.InitPlayer
-355B20 jmp 0x355c80 ; 
+355B20 jmp 0x355c80
 355B25 cmp byte ptr [rip + 0x1f8a5d2], 0
 355B2C jne 0x355b40
 355B2E mov ecx, dword ptr [rip + 0x16d7d78]
-355B34 call 0x24fac0 ; 
+355B34 call 0x24fac0
 355B39 mov byte ptr [rip + 0x1f8a5be], 1
 355B40 mov rcx, qword ptr [rbx + 0xa0]
 355B47 test rcx, rcx
@@ -43,7 +43,7 @@ FieldMap.StateInit RVA 355AD0
 355B74 test rax, rax
 355B77 jne 0x355b7d
 355B79 xor edi, edi
-355B7B jmp 0x355bb3 ; 
+355B7B jmp 0x355bb3
 355B7D mov r8, qword ptr [rip + 0x22a5124]
 355B84 mov rax, qword ptr [rax]
 355B87 movzx ecx, byte ptr [r8 + 0x128]
@@ -53,7 +53,7 @@ FieldMap.StateInit RVA 355AD0
 355B9E cmp qword ptr [rax + rcx*8 - 8], r8
 355BA3 jne 0x355ba9
 355BA5 mov al, 1
-355BA7 jmp 0x355bab ; 
+355BA7 jmp 0x355bab
 355BA9 xor al, al
 355BAB xor edi, edi
 355BAD test al, al
@@ -63,7 +63,7 @@ FieldMap.StateInit RVA 355AD0
 355BC1 je 0x355bd1
 355BC3 cmp dword ptr [rcx + 0xe0], 0
 355BCA jne 0x355bd1
-355BCC call 0x1dd530 ; 
+355BCC call 0x1dd530
 355BD1 xor r8d, r8d
 355BD4 xor edx, edx
 355BD6 mov rcx, rdi
@@ -76,24 +76,24 @@ FieldMap.StateInit RVA 355AD0
 355BF1 mov byte ptr [rdi + 0x210], 0
 355BF8 mov rcx, rdi
 355BFB call 0xfe9880 ; FieldEntity.ResumeMove
-355C00 jmp 0x355c80 ; 
+355C00 jmp 0x355c80
 355C02 xor edx, edx
 355C04 mov rcx, rbx
 355C07 call 0x351560 ; FieldMap.InitMenu
-355C0C jmp 0x355c80 ; 
+355C0C jmp 0x355c80
 355C0E cmp byte ptr [rip + 0x1f8a4eb], 0
 355C15 jne 0x355c29
 355C17 mov ecx, dword ptr [rip + 0x16d7ca7]
-355C1D call 0x24fac0 ; 
+355C1D call 0x24fac0
 355C22 mov byte ptr [rip + 0x1f8a4d7], 1
 355C29 mov rcx, qword ptr [rip + 0x22a5000]
 355C30 test byte ptr [rcx + 0x12f], 2
 355C37 je 0x355c47
 355C39 cmp dword ptr [rcx + 0xe0], 0
 355C40 jne 0x355c47
-355C42 call 0x1dd530 ; 
+355C42 call 0x1dd530
 355C47 mov rcx, qword ptr [rip + 0x22447d2]
-355C4E call 0x11b22c0 ; 
+355C4E call 0x11b22c0
 355C53 test rax, rax
 355C56 je 0x355d22
 355C5C xor edx, edx
@@ -121,7 +121,7 @@ FieldMap.StateInit RVA 355AD0
 355CB3 cmp byte ptr [rip + 0x1f8a445], 0
 355CBA jne 0x355cce
 355CBC mov ecx, dword ptr [rip + 0x16d7b12]
-355CC2 call 0x24fac0 ; 
+355CC2 call 0x24fac0
 355CC7 mov byte ptr [rip + 0x1f8a431], 1
 355CCE mov rcx, qword ptr [rbx + 0xa0]
 355CD5 test rcx, rcx
@@ -134,17 +134,17 @@ FieldMap.StateInit RVA 355AD0
 355CF2 je 0x355d02
 355CF4 cmp dword ptr [rcx + 0xe0], 0
 355CFB jne 0x355d02
-355CFD call 0x1dd530 ; 
+355CFD call 0x1dd530
 355D02 mov rcx, qword ptr [rip + 0x2243fff]
-355D09 call 0x11b22c0 ; 
+355D09 call 0x11b22c0
 355D0E test rax, rax
 355D11 je 0x355d22
 355D13 xor edx, edx
 355D15 mov rcx, rax
 355D18 call 0x6aaa60 ; SystemIndicator.Hide
-355D1D jmp 0x355c80 ; 
-355D22 call 0x24fc30 ; 
-355D27 int3 
+355D1D jmp 0x355c80
+355D22 call 0x24fc30
+355D27 int3
 
 FieldController.CreateFieldPlayer RVA 2FD990
 2FD990 push rbx
@@ -160,19 +160,19 @@ FieldController.CreateFieldPlayer RVA 2FD990
 2FD9B3 mov qword ptr [rcx], rax
 2FD9B6 add rsp, 0x20
 2FD9BA pop rbx
-2FD9BB jmp 0x24f820 ; 
-2FD9C0 call 0x24fc30 ; 
-2FD9C5 int3 
-2FD9C6 int3 
-2FD9C7 int3 
-2FD9C8 int3 
-2FD9C9 int3 
-2FD9CA int3 
-2FD9CB int3 
-2FD9CC int3 
-2FD9CD int3 
-2FD9CE int3 
-2FD9CF int3 
+2FD9BB jmp 0x24f820
+2FD9C0 call 0x24fc30
+2FD9C5 int3
+2FD9C6 int3
+2FD9C7 int3
+2FD9C8 int3
+2FD9C9 int3
+2FD9CA int3
+2FD9CB int3
+2FD9CC int3
+2FD9CD int3
+2FD9CE int3
+2FD9CF int3
 
 FieldController.SetControlPlayer RVA 314A10
 314A10 mov qword ptr [rsp + 0x18], rbp
@@ -183,14 +183,14 @@ FieldController.SetControlPlayer RVA 314A10
 314A24 mov rdi, rcx
 314A27 jne 0x314a3b
 314A29 mov ecx, dword ptr [rip + 0x1717131]
-314A2F call 0x24fac0 ; 
+314A2F call 0x24fac0
 314A34 mov byte ptr [rip + 0x1fcac60], 1
 314A3B mov rcx, qword ptr [rip + 0x22e678e]
 314A42 test byte ptr [rcx + 0x12f], 2
 314A49 je 0x314a59
 314A4B cmp dword ptr [rcx + 0xe0], 0
 314A52 jne 0x314a59
-314A54 call 0x1dd530 ; 
+314A54 call 0x1dd530
 314A59 mov qword ptr [rsp + 0x40], rbx
 314A5E xor ecx, ecx
 314A60 mov qword ptr [rsp + 0x48], rsi
@@ -206,7 +206,7 @@ FieldController.SetControlPlayer RVA 314A10
 314A8F je 0x314d5b
 314A95 mov r8, qword ptr [rip + 0x22d861c]
 314A9C mov rdx, qword ptr [rdi + 0xa0]
-314AA3 call 0x1719930 ; 
+314AA3 call 0x1719930
 314AA8 xor r8d, r8d
 314AAB mov dl, 1
 314AAD mov rcx, rdi
@@ -216,7 +216,7 @@ FieldController.SetControlPlayer RVA 314A10
 314ABA call 0x2f99e0 ; FieldController.ChangeConditionAsset
 314ABF mov rcx, qword ptr [rip + 0x22c269a]
 314AC6 mov rsi, qword ptr [rdi + 0xa0]
-314ACD call 0x24fbf0 ; 
+314ACD call 0x24fbf0
 314AD2 mov r8, qword ptr [rip + 0x22f242f]
 314AD9 xor r9d, r9d
 314ADC mov rdx, rdi
@@ -228,10 +228,10 @@ FieldController.SetControlPlayer RVA 314A10
 314AF3 lea rcx, [rsi + 0x230]
 314AFA mov rdx, rbx
 314AFD mov qword ptr [rcx], rbx
-314B00 call 0x24f820 ; 
+314B00 call 0x24f820
 314B05 mov rcx, qword ptr [rip + 0x22c261c]
 314B0C mov rsi, qword ptr [rdi + 0xa0]
-314B13 call 0x24fbf0 ; 
+314B13 call 0x24fbf0
 314B18 mov r8, qword ptr [rip + 0x22f2329]
 314B1F xor r9d, r9d
 314B22 mov rdx, rdi
@@ -243,10 +243,10 @@ FieldController.SetControlPlayer RVA 314A10
 314B39 lea rcx, [rsi + 0x238]
 314B40 mov rdx, rbx
 314B43 mov qword ptr [rcx], rbx
-314B46 call 0x24f820 ; 
+314B46 call 0x24f820
 314B4B mov rcx, qword ptr [rip + 0x22d2c76]
 314B52 mov rbx, qword ptr [rdi + 0xa0]
-314B59 call 0x24fbf0 ; 
+314B59 call 0x24fbf0
 314B5E mov r8, qword ptr [rip + 0x22f224b]
 314B65 xor r9d, r9d
 314B68 mov rdx, rdi
@@ -261,7 +261,7 @@ FieldController.SetControlPlayer RVA 314A10
 314B88 call 0xfe7200 ; FieldEntity.AddDelegateMoveFinished
 314B8D mov rcx, qword ptr [rip + 0x22c2554]
 314B94 mov rsi, qword ptr [rdi + 0xa0]
-314B9B call 0x24fbf0 ; 
+314B9B call 0x24fbf0
 314BA0 mov r8, qword ptr [rip + 0x22f2231]
 314BA7 xor r9d, r9d
 314BAA mov rdx, rdi
@@ -273,10 +273,10 @@ FieldController.SetControlPlayer RVA 314A10
 314BC1 lea rcx, [rsi + 0x248]
 314BC8 mov rdx, rbx
 314BCB mov qword ptr [rcx], rbx
-314BCE call 0x24f820 ; 
+314BCE call 0x24f820
 314BD3 mov rcx, qword ptr [rip + 0x22c24b6]
 314BDA mov rsi, qword ptr [rdi + 0xa0]
-314BE1 call 0x24fbf0 ; 
+314BE1 call 0x24fbf0
 314BE6 mov r8, qword ptr [rip + 0x22c0483]
 314BED xor r9d, r9d
 314BF0 mov rdx, rdi
@@ -288,10 +288,10 @@ FieldController.SetControlPlayer RVA 314A10
 314C07 lea rcx, [rsi + 0x108]
 314C0E mov rdx, rbx
 314C11 mov qword ptr [rcx], rbx
-314C14 call 0x24f820 ; 
+314C14 call 0x24f820
 314C19 mov rcx, qword ptr [rip + 0x2296a70]
 314C20 mov rsi, qword ptr [rdi + 0xa0]
-314C27 call 0x24fbf0 ; 
+314C27 call 0x24fbf0
 314C2C mov r8, qword ptr [rip + 0x22f263d]
 314C33 xor r9d, r9d
 314C36 mov rdx, rdi
@@ -303,10 +303,10 @@ FieldController.SetControlPlayer RVA 314A10
 314C4D lea rcx, [rsi + 0x250]
 314C54 mov rdx, rbx
 314C57 mov qword ptr [rcx], rbx
-314C5A call 0x24f820 ; 
+314C5A call 0x24f820
 314C5F mov rcx, qword ptr [rip + 0x2296a2a]
 314C66 mov rsi, qword ptr [rdi + 0xa0]
-314C6D call 0x24fbf0 ; 
+314C6D call 0x24fbf0
 314C72 mov r8, qword ptr [rip + 0x22f25b7]
 314C79 xor r9d, r9d
 314C7C mov rdx, rdi
@@ -318,7 +318,7 @@ FieldController.SetControlPlayer RVA 314A10
 314C93 lea rcx, [rsi + 0x258]
 314C9A mov rdx, rbx
 314C9D mov qword ptr [rcx], rbx
-314CA0 call 0x24f820 ; 
+314CA0 call 0x24f820
 314CA5 mov rsi, qword ptr [rdi + 0x128]
 314CAC xor ecx, ecx
 314CAE xor ebx, ebx
@@ -340,15 +340,15 @@ FieldController.SetControlPlayer RVA 314A10
 314CE9 call qword ptr [rax + 0x210]
 314CEF inc ebx
 314CF1 mov ecx, ebx
-314CF3 jmp 0x314cc0 ; 
+314CF3 jmp 0x314cc0
 314CF5 mov rcx, qword ptr [rip + 0x22e6514]
 314CFC test byte ptr [rcx + 0x12f], 2
 314D03 je 0x314d13
 314D05 cmp dword ptr [rcx + 0xe0], 0
 314D0C jne 0x314d13
-314D0E call 0x1dd530 ; 
+314D0E call 0x1dd530
 314D13 mov rcx, qword ptr [rip + 0x22851be]
-314D1A call 0x11b22c0 ; 
+314D1A call 0x11b22c0
 314D1F test rax, rax
 314D22 je 0x314d5b
 314D24 mov r9, qword ptr [rdi + 0xa0]
@@ -362,29 +362,29 @@ FieldController.SetControlPlayer RVA 314A10
 314D50 mov rbp, qword ptr [rsp + 0x50]
 314D55 add rsp, 0x30
 314D59 pop rdi
-314D5A ret 
-314D5B call 0x24fc30 ; 
-314D60 int3 
-314D61 call 0x24fa40 ; 
+314D5A ret
+314D5B call 0x24fc30
+314D60 int3
+314D61 call 0x24fa40
 314D66 mov rcx, rax
 314D69 xor edx, edx
-314D6B call 0x24fc00 ; 
-314D70 int3 
-314D71 int3 
-314D72 int3 
-314D73 int3 
-314D74 int3 
-314D75 int3 
-314D76 int3 
-314D77 int3 
-314D78 int3 
-314D79 int3 
-314D7A int3 
-314D7B int3 
-314D7C int3 
-314D7D int3 
-314D7E int3 
-314D7F int3 
+314D6B call 0x24fc00
+314D70 int3
+314D71 int3
+314D72 int3
+314D73 int3
+314D74 int3
+314D75 int3
+314D76 int3
+314D77 int3
+314D78 int3
+314D79 int3
+314D7A int3
+314D7B int3
+314D7C int3
+314D7D int3
+314D7E int3
+314D7F int3
 
 FieldController.IsCanMoveToDestPosition RVA 303F30
 303F30 push rbp
@@ -405,7 +405,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 303F72 cmp byte ptr [rip + 0x1fdb757], 0
 303F79 jne 0x303f8d
 303F7B mov ecx, dword ptr [rip + 0x1727277]
-303F81 call 0x24fac0 ; 
+303F81 call 0x24fac0
 303F86 mov byte ptr [rip + 0x1fdb743], 1
 303F8D xor r13b, r13b
 303F90 mov byte ptr [rbp + 0x140], r13b
@@ -434,7 +434,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 303FF2 je 0x304002
 303FF4 cmp dword ptr [rcx + 0xe0], 0
 303FFB jne 0x304002
-303FFD call 0x1dd530 ; 
+303FFD call 0x1dd530
 304002 xor ecx, ecx
 304004 call 0xb52a50 ; EntityManager.get_Instance
 304009 test rax, rax
@@ -444,7 +444,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 304019 je 0x304412
 30401F mov r8, qword ptr [rip + 0x22f3efa]
 304026 lea rcx, [rbp + 0xa0]
-30402D call 0x13420a0 ; 
+30402D call 0x13420a0
 304032 movups xmm0, xmmword ptr [rbp + 0xa0]
 304039 movups xmmword ptr [rbp + 0x30], xmm0
 30403D movsd xmm1, qword ptr [rbp + 0xb0]
@@ -453,14 +453,14 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 30404C nop dword ptr [rax]
 304050 mov rdx, qword ptr [rip + 0x22a68b1]
 304057 lea rcx, [rbp + 0x30]
-30405B call 0xbe4cd0 ; 
+30405B call 0xbe4cd0
 304060 test al, al
 304062 je 0x30437e
 304068 mov rdx, qword ptr [rbp + 0x40]
 30406C test rdx, rdx
 30406F jne 0x304076
 304071 mov rbx, rdi
-304074 jmp 0x3040ad ; 
+304074 jmp 0x3040ad
 304076 mov rax, qword ptr [rdx]
 304079 mov r8, qword ptr [rip + 0x22e3ae0]
 304080 movzx ecx, byte ptr [r8 + 0x128]
@@ -470,7 +470,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 304097 cmp qword ptr [rax + rcx*8 - 8], r8
 30409C jne 0x3040a2
 30409E mov al, 1
-3040A0 jmp 0x3040a4 ; 
+3040A0 jmp 0x3040a4
 3040A2 xor al, al
 3040A4 mov rbx, rdi
 3040A7 test al, al
@@ -480,7 +480,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 3040BB je 0x3040ca
 3040BD cmp dword ptr [rcx + 0xe0], edi
 3040C3 jne 0x3040ca
-3040C5 call 0x1dd530 ; 
+3040C5 call 0x1dd530
 3040CA xor r8d, r8d
 3040CD xor edx, edx
 3040CF mov rcx, rbx
@@ -492,7 +492,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 3040ED je 0x3040fc
 3040EF cmp dword ptr [rcx + 0xe0], edi
 3040F5 jne 0x3040fc
-3040F7 call 0x1dd530 ; 
+3040F7 call 0x1dd530
 3040FC xor r8d, r8d
 3040FF mov rdx, rbx
 304102 mov rcx, r12
@@ -531,7 +531,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 30418C je 0x30419b
 30418E cmp dword ptr [rcx + 0xe0], edi
 304194 jne 0x30419b
-304196 call 0x1dd530 ; 
+304196 call 0x1dd530
 30419B movsd qword ptr [rbp + 0x10], xmm6
 3041A0 mov dword ptr [rbp + 0x18], r14d
 3041A4 movsd qword ptr [rbp + 0x50], xmm7
@@ -548,7 +548,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 3041DA je 0x3041e9
 3041DC cmp dword ptr [rcx + 0xe0], edi
 3041E2 jne 0x3041e9
-3041E4 call 0x1dd530 ; 
+3041E4 call 0x1dd530
 3041E9 movsd qword ptr [rbp + 0x60], xmm6
 3041EE mov dword ptr [rbp + 0x68], r14d
 3041F2 xor edx, edx
@@ -577,7 +577,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 304256 je 0x304265
 304258 cmp dword ptr [rcx + 0xe0], edi
 30425E jne 0x304265
-304260 call 0x1dd530 ; 
+304260 call 0x1dd530
 304265 movsd qword ptr [rbp + 0x70], xmm7
 30426A mov dword ptr [rbp + 0x78], r15d
 30426E movsd qword ptr [rbp + 0x80], xmm6
@@ -596,7 +596,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 3042AB mov rdx, qword ptr [rip + 0x22f1b36]
 3042B2 lea rcx, [rbp + 0x30]
 3042B6 call 0x2f10a0 ; folded 2809 aliases
-3042BB jmp 0x3043ca ; 
+3042BB jmp 0x3043ca
 3042C0 xor edx, edx
 3042C2 mov rcx, rbx
 3042C5 call 0xfea3e0 ; FieldEntity.get_IsMovingDestPosition
@@ -620,7 +620,7 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 304314 je 0x304323
 304316 cmp dword ptr [rcx + 0xe0], edi
 30431C jne 0x304323
-30431E call 0x1dd530 ; 
+30431E call 0x1dd530
 304323 movsd qword ptr [rbp + 0x90], xmm6
 30432B mov dword ptr [rbp + 0x98], ebx
 304331 movsd qword ptr [rbp + 0x20], xmm7
@@ -639,14 +639,14 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 30436C mov rdx, qword ptr [rip + 0x22f1a75]
 304373 lea rcx, [rbp + 0x30]
 304377 call 0x2f10a0 ; folded 2809 aliases
-30437C jmp 0x3043ca ; 
+30437C jmp 0x3043ca
 30437E mov dword ptr [rbp], edi
 304381 mov rbx, qword ptr [rbp + 8]
 304385 mov dword ptr [rbx], 0xd6
 30438B mov rdx, qword ptr [rip + 0x22f1a56]
 304392 lea rcx, [rbp + 0x30]
 304396 call 0x2f10a0 ; folded 2809 aliases
-30439B jmp 0x3043ca ; 
+30439B jmp 0x3043ca
 30439D mov rdx, qword ptr [rip + 0x22f1a44]
 3043A4 lea rcx, [rbp + 0x30]
 3043A8 call 0x2f10a0 ; folded 2809 aliases
@@ -673,35 +673,35 @@ FieldController.IsCanMoveToDestPosition RVA 303F30
 304408 pop r13
 30440A pop r12
 30440C pop rbp
-30440D ret 
+30440D ret
 30440E mov al, 1
-304410 jmp 0x3043da ; 
-304412 call 0x24fc30 ; 
-304417 nop 
-304418 call 0x24fc30 ; 
-30441D nop 
-30441E call 0x24fc30 ; 
-304423 call 0x24fc30 ; 
-304428 call 0x24fc30 ; 
-30442D call 0x24fc30 ; 
-304432 nop 
+304410 jmp 0x3043da
+304412 call 0x24fc30
+304417 nop
+304418 call 0x24fc30
+30441D nop
+30441E call 0x24fc30
+304423 call 0x24fc30
+304428 call 0x24fc30
+30442D call 0x24fc30
+304432 nop
 304433 xor edx, edx
-304435 call 0x24fc00 ; 
-30443A int3 
-30443B int3 
-30443C int3 
-30443D int3 
-30443E int3 
-30443F int3 
+304435 call 0x24fc00
+30443A int3
+30443B int3
+30443C int3
+30443D int3
+30443E int3
+30443F int3
 
 FieldPlayerController.Init RVA 2F56B0
 2F56B0 add rcx, 0x20
 2F56B4 mov qword ptr [rcx], rdx
-2F56B7 jmp 0x24f820 ; 
-2F56BC int3 
-2F56BD int3 
-2F56BE int3 
-2F56BF int3 
+2F56B7 jmp 0x24f820
+2F56BC int3
+2F56BD int3
+2F56BE int3
+2F56BF int3
 
 FieldPlayerKeyController.Init RVA 5F4F40
 5F4F40 push rbx
@@ -709,11 +709,11 @@ FieldPlayerKeyController.Init RVA 5F4F40
 5F4F46 mov rbx, rcx
 5F4F49 mov qword ptr [rcx + 0x20], rdx
 5F4F4D add rcx, 0x20
-5F4F51 call 0x24f820 ; 
+5F4F51 call 0x24f820
 5F4F56 mov byte ptr [rbx + 0x50], 0
 5F4F5A add rsp, 0x20
 5F4F5E pop rbx
-5F4F5F ret 
+5F4F5F ret
 
 Transportation.GetInfoData RVA 7F3210
 7F3210 mov qword ptr [rsp + 8], rbx
@@ -728,7 +728,7 @@ Transportation.GetInfoData RVA 7F3210
 7F3237 mov rdi, rcx
 7F323A jne 0x7f324e
 7F323C mov ecx, dword ptr [rip + 0x12c25ae]
-7F3242 call 0x24fac0 ; 
+7F3242 call 0x24fac0
 7F3247 mov byte ptr [rip + 0x1af14c7], 1
 7F324E mov rcx, qword ptr [rdi + 0x18]
 7F3252 xor r14d, r14d
@@ -737,7 +737,7 @@ Transportation.GetInfoData RVA 7F3210
 7F325B je 0x7f329b
 7F325D mov r8, qword ptr [rip + 0x1dbcb7c]
 7F3264 mov edx, esi
-7F3266 call 0x11c7650 ; 
+7F3266 call 0x11c7650
 7F326B test al, al
 7F326D je 0x7f329b
 7F326F mov rcx, qword ptr [rdi + 0x18]
@@ -745,7 +745,7 @@ Transportation.GetInfoData RVA 7F3210
 7F3276 je 0x7f32b9
 7F3278 mov r8, qword ptr [rip + 0x1e069a1]
 7F327F mov edx, esi
-7F3281 call 0x163f3f0 ; 
+7F3281 call 0x163f3f0
 7F3286 mov rbx, rax
 7F3289 test bpl, bpl
 7F328C je 0x7f329b
@@ -760,10 +760,10 @@ Transportation.GetInfoData RVA 7F3210
 7F32AD mov rdi, qword ptr [rsp + 0x48]
 7F32B2 add rsp, 0x20
 7F32B6 pop r14
-7F32B8 ret 
-7F32B9 call 0x24fc30 ; 
-7F32BE int3 
-7F32BF int3 
+7F32B8 ret
+7F32B9 call 0x24fc30
+7F32BE int3
+7F32BF int3
 
 Transportation.CheckNeedInteractive RVA 7F28A0
 7F28A0 mov qword ptr [rsp + 8], rbx
@@ -777,7 +777,7 @@ Transportation.CheckNeedInteractive RVA 7F28A0
 7F28C1 mov rsi, rcx
 7F28C4 jne 0x7f28d8
 7F28C6 mov ecx, dword ptr [rip + 0x12c2c7c]
-7F28CC call 0x24fac0 ; 
+7F28CC call 0x24fac0
 7F28D1 mov byte ptr [rip + 0x1af1e40], 1
 7F28D8 xor bl, 1
 7F28DB xor r9d, r9d
@@ -797,7 +797,7 @@ Transportation.CheckNeedInteractive RVA 7F28A0
 7F2910 cmp dword ptr [rax + 0xe0], 0
 7F2917 jne 0x7f2928
 7F2919 mov rcx, rax
-7F291C call 0x1dd530 ; 
+7F291C call 0x1dd530
 7F2921 mov rax, qword ptr [rip + 0x1e081e0]
 7F2928 mov rcx, qword ptr [rax + 0xb8]
 7F292F mov rdx, qword ptr [rcx + 0x78]
@@ -811,7 +811,7 @@ Transportation.CheckNeedInteractive RVA 7F28A0
 7F2949 cmp dword ptr [rax + 0xe0], 0
 7F2950 jne 0x7f2961
 7F2952 mov rcx, rax
-7F2955 call 0x1dd530 ; 
+7F2955 call 0x1dd530
 7F295A mov rax, qword ptr [rip + 0x1e081a7]
 7F2961 mov rcx, qword ptr [rax + 0xb8]
 7F2968 mov rcx, qword ptr [rcx + 0x78]
@@ -819,11 +819,11 @@ Transportation.CheckNeedInteractive RVA 7F28A0
 7F296F je 0x7f29a6
 7F2971 mov r8, qword ptr [rip + 0x1da8400]
 7F2978 mov edx, ebx
-7F297A call 0xe7860 ; 
+7F297A call 0xe7860
 7F297F cmp edi, eax
 7F2981 je 0x7f298a
 7F2983 inc ebx
-7F2985 jmp 0x7f2900 ; 
+7F2985 jmp 0x7f2900
 7F298A mov bpl, 1
 7F298D mov rbx, qword ptr [rsp + 0x30]
 7F2992 movzx eax, bpl
@@ -831,13 +831,13 @@ Transportation.CheckNeedInteractive RVA 7F28A0
 7F299B mov rsi, qword ptr [rsp + 0x40]
 7F29A0 add rsp, 0x20
 7F29A4 pop rdi
-7F29A5 ret 
-7F29A6 call 0x24fc30 ; 
-7F29AB int3 
-7F29AC int3 
-7F29AD int3 
-7F29AE int3 
-7F29AF int3 
+7F29A5 ret
+7F29A6 call 0x24fc30
+7F29AB int3
+7F29AC int3
+7F29AD int3
+7F29AE int3
+7F29AF int3
 
 TransportationController.NeedInteractiveList RVA 7F0240
 7F0240 push rbp
@@ -852,18 +852,18 @@ TransportationController.NeedInteractiveList RVA 7F0240
 7F025E cmp byte ptr [rip + 0x1af44ce], 0
 7F0265 jne 0x7f0279
 7F0267 mov ecx, dword ptr [rip + 0x12c4ef3]
-7F026D call 0x24fac0 ; 
+7F026D call 0x24fac0
 7F0272 mov byte ptr [rip + 0x1af44ba], 1
 7F0279 mov eax, dword ptr [rsp]
 7F027C sub rsp, 0x10
 7F0280 lea r15, [rsp + 0x20]
 7F0285 mov eax, dword ptr [r15]
 7F0288 mov rcx, qword ptr [rip + 0x1de6b19]
-7F028F call 0x24fbf0 ; 
+7F028F call 0x24fbf0
 7F0294 mov rsi, rax
 7F0297 mov rdx, qword ptr [rip + 0x1dfca1a]
 7F029E mov rcx, rax
-7F02A1 call 0xbeadd0 ; 
+7F02A1 call 0xbeadd0
 7F02A6 mov qword ptr [rbp + 0xb0], rsi
 7F02AD mov rdx, qword ptr [r14 + 0x18]
 7F02B1 test rdx, rdx
@@ -873,7 +873,7 @@ TransportationController.NeedInteractiveList RVA 7F0240
 7F02C1 je 0x7f03f6
 7F02C7 mov r8, qword ptr [rip + 0x1e1615a]
 7F02CE lea rcx, [rbp + 0x40]
-7F02D2 call 0x11c90c0 ; 
+7F02D2 call 0x11c90c0
 7F02D7 movups xmm0, xmmword ptr [rbp + 0x40]
 7F02DB movups xmmword ptr [rbp + 0x18], xmm0
 7F02DF movups xmm1, xmmword ptr [rbp + 0x50]
@@ -884,7 +884,7 @@ TransportationController.NeedInteractiveList RVA 7F0240
 7F02F5 nop word ptr [rax + rax]
 7F0300 mov rdx, qword ptr [rip + 0x1dc5a79]
 7F0307 lea rcx, [rbp + 0x18]
-7F030B call 0xc35a00 ; 
+7F030B call 0xc35a00
 7F0310 test al, al
 7F0312 je 0x7f03a4
 7F0318 movups xmm0, xmmword ptr [rbp + 0x28]
@@ -904,7 +904,7 @@ TransportationController.NeedInteractiveList RVA 7F0240
 7F034C mov rbx, qword ptr [rbx + 0x28]
 7F0350 mov rdx, qword ptr [rip + 0x1df7359]
 7F0357 mov rcx, rbx
-7F035A call 0x24f830 ; 
+7F035A call 0x24f830
 7F035F test rax, rax
 7F0362 je 0x7f0300
 7F0364 test rsi, rsi
@@ -913,22 +913,22 @@ TransportationController.NeedInteractiveList RVA 7F0240
 7F0374 test rbx, rbx
 7F0377 jne 0x7f037d
 7F0379 xor eax, eax
-7F037B jmp 0x7f038d ; 
+7F037B jmp 0x7f038d
 7F037D mov rdx, rdi
 7F0380 mov rcx, rbx
-7F0383 call 0x24f830 ; 
+7F0383 call 0x24f830
 7F0388 test rax, rax
 7F038B je 0x7f03fc
 7F038D mov r8, qword ptr [rip + 0x1dfc8ec]
 7F0394 mov rdx, rax
 7F0397 mov rcx, rsi
-7F039A call 0x1719930 ; 
-7F039F jmp 0x7f0300 ; 
+7F039A call 0x1719930
+7F039F jmp 0x7f0300
 7F03A4 mov dword ptr [r15], 0x70
 7F03AB mov rdx, qword ptr [rip + 0x1db15f6]
 7F03B2 lea rcx, [rbp + 0x18]
 7F03B6 call 0x2f10a0 ; folded 2809 aliases
-7F03BB jmp 0x7f03e0 ; 
+7F03BB jmp 0x7f03e0
 7F03BD mov rdx, qword ptr [rip + 0x1db15e4]
 7F03C4 lea rcx, [rbp + 0x18]
 7F03C8 call 0x2f10a0 ; folded 2809 aliases
@@ -944,82 +944,82 @@ TransportationController.NeedInteractiveList RVA 7F0240
 7F03F2 pop rdi
 7F03F3 pop rsi
 7F03F4 pop rbp
-7F03F5 ret 
-7F03F6 call 0x24fc30 ; 
-7F03FB nop 
+7F03F5 ret
+7F03F6 call 0x24fc30
+7F03FB nop
 7F03FC mov rdx, rdi
 7F03FF mov rcx, rbx
-7F0402 call 0x24f860 ; 
-7F0407 call 0x24fc30 ; 
-7F040C call 0x24fc30 ; 
-7F0411 call 0x24fc30 ; 
-7F0416 nop 
+7F0402 call 0x24f860
+7F0407 call 0x24fc30
+7F040C call 0x24fc30
+7F0411 call 0x24fc30
+7F0416 nop
 7F0417 xor edx, edx
-7F0419 call 0x24fc00 ; 
-7F041E int3 
-7F041F int3 
+7F0419 call 0x24fc00
+7F041E int3
+7F041F int3
 
 TransportationInfo.get_MapObject RVA 2F7580
 2F7580 mov rax, qword ptr [rcx + 0x28]
-2F7584 ret 
-2F7585 int3 
-2F7586 int3 
-2F7587 int3 
-2F7588 int3 
-2F7589 int3 
-2F758A int3 
-2F758B int3 
-2F758C int3 
-2F758D int3 
-2F758E int3 
-2F758F int3 
+2F7584 ret
+2F7585 int3
+2F7586 int3
+2F7587 int3
+2F7588 int3
+2F7589 int3
+2F758A int3
+2F758B int3
+2F758C int3
+2F758D int3
+2F758E int3
+2F758F int3
 
 TransportationInfo.get_Enable RVA 2F1380
 2F1380 movzx eax, byte ptr [rcx + 0x48]
-2F1384 ret 
-2F1385 int3 
-2F1386 int3 
-2F1387 int3 
-2F1388 int3 
-2F1389 int3 
-2F138A int3 
-2F138B int3 
-2F138C int3 
-2F138D int3 
-2F138E int3 
-2F138F int3 
+2F1384 ret
+2F1385 int3
+2F1386 int3
+2F1387 int3
+2F1388 int3
+2F1389 int3
+2F138A int3
+2F138B int3
+2F138C int3
+2F138D int3
+2F138E int3
+2F138F int3
 
 TransportationInfo.get_Id RVA 481A70
 481A70 mov eax, dword ptr [rcx + 0x60]
-481A73 ret 
-481A74 int3 
-481A75 int3 
-481A76 int3 
-481A77 int3 
-481A78 int3 
-481A79 int3 
-481A7A int3 
-481A7B int3 
-481A7C int3 
-481A7D int3 
-481A7E int3 
-481A7F int3 
+481A73 ret
+481A74 int3
+481A75 int3
+481A76 int3
+481A77 int3
+481A78 int3
+481A79 int3
+481A7A int3
+481A7B int3
+481A7C int3
+481A7D int3
+481A7E int3
+481A7F int3
 
 TransportationInfo.get_Type RVA 3719F0
 3719F0 mov eax, dword ptr [rcx + 0x6c]
-3719F3 ret 
-3719F4 int3 
-3719F5 int3 
-3719F6 int3 
-3719F7 int3 
-3719F8 int3 
-3719F9 int3 
-3719FA int3 
-3719FB int3 
-3719FC int3 
-3719FD int3 
-3719FE int3 
-3719FF int3 
+3719F3 ret
+3719F4 int3
+3719F5 int3
+3719F6 int3
+3719F7 int3
+3719F8 int3
+3719F9 int3
+3719FA int3
+3719FB int3
+3719FC int3
+3719FD int3
+3719FE int3
+3719FF int3
 
 ScreenTimerController.Initialize RVA A31080
 A31080 mov qword ptr [rsp + 8], rbx
@@ -1033,7 +1033,7 @@ A31099 je 0xa3118f
 A3109F cmp byte ptr [rip + 0x18b4f6d], 0
 A310A6 jne 0xa310ba
 A310A8 mov ecx, dword ptr [rip + 0xff79ce]
-A310AE call 0x24fac0 ; 
+A310AE call 0x24fac0
 A310B3 mov byte ptr [rip + 0x18b4f59], 1
 A310BA mov rax, qword ptr [rip + 0x1bcb43f]
 A310C1 mov rsi, qword ptr [rbx + 0x18]
@@ -1042,7 +1042,7 @@ A310CC je 0xa310e6
 A310CE cmp dword ptr [rax + 0xe0], 0
 A310D5 jne 0xa310e6
 A310D7 mov rcx, rax
-A310DA call 0x1dd530 ; 
+A310DA call 0x1dd530
 A310DF mov rax, qword ptr [rip + 0x1bcb41a]
 A310E6 mov rax, qword ptr [rax + 0xb8]
 A310ED xor r8d, r8d
@@ -1066,7 +1066,7 @@ A31139 test rcx, rcx
 A3113C je 0xa31147
 A3113E xor edx, edx
 A31140 call 0x12ed1c0 ; Component.get_gameObject
-A31145 jmp 0xa31149 ; 
+A31145 jmp 0xa31149
 A31147 xor eax, eax
 A31149 xor edx, edx
 A3114B mov rcx, rax
@@ -1076,7 +1076,7 @@ A31157 test rcx, rcx
 A3115A je 0xa31165
 A3115C xor edx, edx
 A3115E call 0x12ed1c0 ; Component.get_gameObject
-A31163 jmp 0xa31167 ; 
+A31163 jmp 0xa31167
 A31165 xor eax, eax
 A31167 xor edx, edx
 A31169 mov rcx, rax
@@ -1086,7 +1086,7 @@ A31175 test rcx, rcx
 A31178 je 0xa31183
 A3117A xor edx, edx
 A3117C call 0x12ed1c0 ; Component.get_gameObject
-A31181 jmp 0xa31185 ; 
+A31181 jmp 0xa31185
 A31183 xor eax, eax
 A31185 xor edx, edx
 A31187 mov rcx, rax
@@ -1094,18 +1094,18 @@ A3118A call 0x653d20 ; UICommonProvider.Use
 A3118F cmp byte ptr [rip + 0x18b4e74], 0
 A31196 jne 0xa311aa
 A31198 mov ecx, dword ptr [rip + 0xff7796]
-A3119E call 0x24fac0 ; 
+A3119E call 0x24fac0
 A311A3 mov byte ptr [rip + 0x18b4e60], 1
 A311AA mov rcx, qword ptr [rip + 0x1b903ef]
-A311B1 call 0x24fbf0 ; 
+A311B1 call 0x24fbf0
 A311B6 mov rdx, qword ptr [rip + 0x1bc987b]
 A311BD mov rcx, rax
 A311C0 mov rbx, rax
-A311C3 call 0xfda630 ; 
+A311C3 call 0xfda630
 A311C8 mov rdx, rbx
 A311CB mov qword ptr [rdi + 0x28], rbx
 A311CF lea rcx, [rdi + 0x28]
-A311D3 call 0x24f820 ; 
+A311D3 call 0x24f820
 A311D8 mov rcx, qword ptr [rdi + 0x28]
 A311DC test rcx, rcx
 A311DF je 0xa31273
@@ -1115,10 +1115,10 @@ A311EF mov qword ptr [rsp + 0x28], rax
 A311F4 xor r8d, r8d
 A311F7 xor edx, edx
 A311F9 mov qword ptr [rsp + 0x20], 0
-A31202 call 0xfd9790 ; 
+A31202 call 0xfd9790
 A31207 mov rcx, qword ptr [rip + 0x1b7a482]
 A3120E mov rbx, qword ptr [rdi + 0x28]
-A31212 call 0x24fbf0 ; 
+A31212 call 0x24fbf0
 A31217 mov r8, qword ptr [rip + 0x1bb19da]
 A3121E xor r9d, r9d
 A31221 mov rdx, rdi
@@ -1134,23 +1134,23 @@ A31243 mov r9, rsi
 A31246 mov rcx, rbx
 A31249 mov qword ptr [rsp + 0x20], 0
 A31252 lea edx, [r8 + 1]
-A31256 call 0xfd9790 ; 
+A31256 call 0xfd9790
 A3125B mov rbx, qword ptr [rsp + 0x40]
 A31260 mov rsi, qword ptr [rsp + 0x48]
 A31265 mov byte ptr [rdi + 0x30], 1
 A31269 mov byte ptr [rdi + 0x38], 0
 A3126D add rsp, 0x30
 A31271 pop rdi
-A31272 ret 
-A31273 call 0x24fc30 ; 
-A31278 int3 
-A31279 int3 
-A3127A int3 
-A3127B int3 
-A3127C int3 
-A3127D int3 
-A3127E int3 
-A3127F int3 
+A31272 ret
+A31273 call 0x24fc30
+A31278 int3
+A31279 int3
+A3127A int3
+A3127B int3
+A3127C int3
+A3127D int3
+A3127E int3
+A3127F int3
 
 FieldGrobalTimer.Init RVA 45B9A0
 45B9A0 push rbx
@@ -1166,13 +1166,13 @@ FieldGrobalTimer.Init RVA 45B9A0
 45B9BF add rsp, 0x20
 45B9C3 pop rbx
 45B9C4 jmp 0xbee300 ; SafeSetFunction.SafeActiveSet
-45B9C9 int3 
-45B9CA int3 
-45B9CB int3 
-45B9CC int3 
-45B9CD int3 
-45B9CE int3 
-45B9CF int3 
+45B9C9 int3
+45B9CA int3
+45B9CB int3
+45B9CC int3
+45B9CD int3
+45B9CE int3
+45B9CF int3
 
 KeyHelpController.Initialize RVA A152A0
 A152A0 mov qword ptr [rsp + 8], rcx
@@ -1186,7 +1186,7 @@ A152B5 mov rdi, rcx
 A152B8 cmp byte ptr [rip + 0x18d0c1c], 0
 A152BF jne 0xa152d3
 A152C1 mov ecx, dword ptr [rip + 0x100ba0d]
-A152C7 call 0x24fac0 ; 
+A152C7 call 0x24fac0
 A152CC mov byte ptr [rip + 0x18d0c08], 1
 A152D3 mov eax, dword ptr [rsp]
 A152D6 sub rsp, 0x10
@@ -1197,14 +1197,14 @@ A152E5 test rdx, rdx
 A152E8 je 0xa1546c
 A152EE mov r8, qword ptr [rip + 0x1be056b]
 A152F5 lea rcx, [rbp + 0x20]
-A152F9 call 0x13420a0 ; 
+A152F9 call 0x13420a0
 A152FE movups xmm0, xmmword ptr [rbp + 0x20]
 A15302 movups xmmword ptr [rbp + 8], xmm0
 A15306 movsd xmm1, qword ptr [rbp + 0x30]
 A1530B movsd qword ptr [rbp + 0x18], xmm1
 A15310 mov rdx, qword ptr [rip + 0x1b92f21]
 A15317 lea rcx, [rbp + 8]
-A1531B call 0xbe4cd0 ; 
+A1531B call 0xbe4cd0
 A15320 test al, al
 A15322 je 0xa153ee
 A15328 mov rbx, qword ptr [rbp + 0x18]
@@ -1213,7 +1213,7 @@ A1532F je 0xa15478
 A15335 cmp byte ptr [rip + 0x18d0bb8], 0
 A1533C jne 0xa15350
 A1533E mov ecx, dword ptr [rip + 0x100bbc0]
-A15344 call 0x24fac0 ; 
+A15344 call 0x24fac0
 A15349 mov byte ptr [rip + 0x18d0ba4], 1
 A15350 mov rcx, qword ptr [rbx + 0x18]
 A15354 test rcx, rcx
@@ -1234,15 +1234,15 @@ A15385 mov rcx, qword ptr [rax + 0xb8]
 A1538C mov rdx, qword ptr [rcx]
 A1538F lea rcx, [rbx + 0x28]
 A15393 mov qword ptr [rcx], rdx
-A15396 call 0x24f820 ; 
+A15396 call 0x24f820
 A1539B mov rcx, qword ptr [rip + 0x1bc9b86]
 A153A2 test byte ptr [rcx + 0x12f], 2
 A153A9 je 0xa153b9
 A153AB cmp dword ptr [rcx + 0xe0], 0
 A153B2 jne 0xa153b9
-A153B4 call 0x1dd530 ; 
+A153B4 call 0x1dd530
 A153B9 mov rcx, qword ptr [rip + 0x1b84d80]
-A153C0 call 0x11b22c0 ; 
+A153C0 call 0x11b22c0
 A153C5 test rax, rax
 A153C8 je 0xa15472
 A153CE xor r8d, r8d
@@ -1253,12 +1253,12 @@ A153DC xor r8d, r8d
 A153DF xor edx, edx
 A153E1 mov rcx, rbx
 A153E4 call 0xbee300 ; SafeSetFunction.SafeActiveSet
-A153E9 jmp 0xa15310 ; 
+A153E9 jmp 0xa15310
 A153EE mov dword ptr [rsi], 0x4c
 A153F4 mov rdx, qword ptr [rip + 0x1bde355]
 A153FB lea rcx, [rbp + 8]
 A153FF call 0x2f10a0 ; folded 2809 aliases
-A15404 jmp 0xa15423 ; 
+A15404 jmp 0xa15423
 A15406 mov rdx, qword ptr [rip + 0x1bde343]
 A1540D lea rcx, [rbp + 8]
 A15411 call 0x2f10a0 ; folded 2809 aliases
@@ -1271,9 +1271,9 @@ A1542A test byte ptr [rcx + 0x12f], 2
 A15431 je 0xa15441
 A15433 cmp dword ptr [rcx + 0xe0], 0
 A1543A jne 0xa15441
-A1543C call 0x1dd530 ; 
+A1543C call 0x1dd530
 A15441 mov rcx, qword ptr [rip + 0x1b84cf8]
-A15448 call 0x11b22c0 ; 
+A15448 call 0x11b22c0
 A1544D test rax, rax
 A15450 je 0xa1546c
 A15452 xor r8d, r8d
@@ -1285,26 +1285,26 @@ A15464 lea rsp, [rbp + 0x40]
 A15468 pop rdi
 A15469 pop rsi
 A1546A pop rbp
-A1546B ret 
-A1546C call 0x24fc30 ; 
-A15471 nop 
-A15472 call 0x24fc30 ; 
-A15477 nop 
-A15478 call 0x24fc30 ; 
-A1547D nop 
+A1546B ret
+A1546C call 0x24fc30
+A15471 nop
+A15472 call 0x24fc30
+A15477 nop
+A15478 call 0x24fc30
+A1547D nop
 A1547E xor edx, edx
-A15480 call 0x24fc00 ; 
-A15485 int3 
-A15486 int3 
-A15487 int3 
-A15488 int3 
-A15489 int3 
-A1548A int3 
-A1548B int3 
-A1548C int3 
-A1548D int3 
-A1548E int3 
-A1548F int3 
+A15480 call 0x24fc00
+A15485 int3
+A15486 int3
+A15487 int3
+A15488 int3
+A15489 int3
+A1548A int3
+A1548B int3
+A1548C int3
+A1548D int3
+A1548E int3
+A1548F int3
 
 BattlePlayerInfomationController.Initalize RVA 8BF920
 8BF920 mov qword ptr [rsp + 8], rbx
@@ -1314,7 +1314,7 @@ BattlePlayerInfomationController.Initalize RVA 8BF920
 8BF931 mov rbx, rcx
 8BF934 jne 0x8bf948
 8BF936 mov ecx, dword ptr [rip + 0x11eea64]
-8BF93C call 0x24fac0 ; 
+8BF93C call 0x24fac0
 8BF941 mov byte ptr [rip + 0x1a25a4d], 1
 8BF948 mov rdi, qword ptr [rbx + 0x18]
 8BF94C test rdi, rdi
@@ -1344,19 +1344,19 @@ BattlePlayerInfomationController.Initalize RVA 8BF920
 8BF9A5 add rsp, 0x20
 8BF9A9 pop rdi
 8BF9AA jmp 0xbe8430 ; ArrayList.Clear
-8BF9AF call 0x24fc30 ; 
-8BF9B4 int3 
-8BF9B5 int3 
-8BF9B6 int3 
-8BF9B7 int3 
-8BF9B8 int3 
-8BF9B9 int3 
-8BF9BA int3 
-8BF9BB int3 
-8BF9BC int3 
-8BF9BD int3 
-8BF9BE int3 
-8BF9BF int3 
+8BF9AF call 0x24fc30
+8BF9B4 int3
+8BF9B5 int3
+8BF9B6 int3
+8BF9B7 int3
+8BF9B8 int3
+8BF9B9 int3
+8BF9BA int3
+8BF9BB int3
+8BF9BC int3
+8BF9BD int3
+8BF9BE int3
+8BF9BF int3
 
 ExtraSoundController.Initialize RVA 96EBE0
 96EBE0 push rdi
@@ -1365,19 +1365,19 @@ ExtraSoundController.Initialize RVA 96EBE0
 96EBED mov rdi, rcx
 96EBF0 jne 0x96ec04
 96EBF2 mov ecx, dword ptr [rip + 0x10b7330]
-96EBF8 call 0x24fac0 ; 
+96EBF8 call 0x24fac0
 96EBFD mov byte ptr [rip + 0x1976d77], 1
 96EC04 mov rcx, qword ptr [rip + 0x1c8c295]
 96EC0B test byte ptr [rcx + 0x12f], 2
 96EC12 je 0x96ec22
 96EC14 cmp dword ptr [rcx + 0xe0], 0
 96EC1B jne 0x96ec22
-96EC1D call 0x1dd530 ; 
+96EC1D call 0x1dd530
 96EC22 mov rcx, qword ptr [rip + 0x1c2b89f]
 96EC29 mov qword ptr [rsp + 0x30], rbx
 96EC2E mov qword ptr [rsp + 0x38], rbp
 96EC33 mov qword ptr [rsp + 0x40], rsi
-96EC38 call 0x11b22c0 ; 
+96EC38 call 0x11b22c0
 96EC3D test rax, rax
 96EC40 je 0x96eece
 96EC46 xor edx, edx
@@ -1389,7 +1389,7 @@ ExtraSoundController.Initialize RVA 96EBE0
 96EC5D cmp byte ptr [rip + 0x1976d4a], 0
 96EC64 jne 0x96ec78
 96EC66 mov ecx, dword ptr [rip + 0x10b7a54]
-96EC6C call 0x24fac0 ; 
+96EC6C call 0x24fac0
 96EC71 mov byte ptr [rip + 0x1976d36], 1
 96EC78 mov rcx, qword ptr [rsi + 0x38]
 96EC7C test rcx, rcx
@@ -1420,9 +1420,9 @@ ExtraSoundController.Initialize RVA 96EBE0
 96ECD2 je 0x96ece2
 96ECD4 cmp dword ptr [rcx + 0xe0], 0
 96ECDB jne 0x96ece2
-96ECDD call 0x1dd530 ; 
+96ECDD call 0x1dd530
 96ECE2 mov rcx, qword ptr [rip + 0x1c2b3a7]
-96ECE9 call 0x11b22c0 ; 
+96ECE9 call 0x11b22c0
 96ECEE mov rbx, qword ptr [rsi + 0x18]
 96ECF2 mov rbp, rax
 96ECF5 mov rax, qword ptr [rip + 0x1c8bd24]
@@ -1431,7 +1431,7 @@ ExtraSoundController.Initialize RVA 96EBE0
 96ED05 cmp dword ptr [rax + 0xe0], 0
 96ED0C jne 0x96ed1d
 96ED0E mov rcx, rax
-96ED11 call 0x1dd530 ; 
+96ED11 call 0x1dd530
 96ED16 mov rax, qword ptr [rip + 0x1c8bd03]
 96ED1D mov rax, qword ptr [rax + 0xb8]
 96ED24 test rbp, rbp
@@ -1472,7 +1472,7 @@ ExtraSoundController.Initialize RVA 96EBE0
 96EDB3 je 0x96edc3
 96EDB5 cmp dword ptr [rcx + 0xe0], 0
 96EDBC jne 0x96edc3
-96EDBE call 0x1dd530 ; 
+96EDBE call 0x1dd530
 96EDC3 xor ecx, ecx
 96EDC5 call 0x7702e0 ; SoundResourceLoader.GetInstance
 96EDCA test rax, rax
@@ -1481,11 +1481,11 @@ ExtraSoundController.Initialize RVA 96EBE0
 96EDDA mov rcx, rax
 96EDDD mov r8, qword ptr [rip + 0x1c7bee4]
 96EDE4 mov rdx, qword ptr [rip + 0x1c7be0d]
-96EDEB call 0x9fed10 ; 
+96EDEB call 0x9fed10
 96EDF0 lea rcx, [rdi + 0x60]
 96EDF4 mov rdx, rax
 96EDF7 mov qword ptr [rcx], rax
-96EDFA call 0x24f820 ; 
+96EDFA call 0x24f820
 96EDFF mov rcx, qword ptr [rdi + 0x20]
 96EE03 test rcx, rcx
 96EE06 je 0x96ee0f
@@ -1495,7 +1495,7 @@ ExtraSoundController.Initialize RVA 96EBE0
 96EE13 test rsi, rsi
 96EE16 je 0x96ee4e
 96EE18 mov rcx, qword ptr [rip + 0x1c59279]
-96EE1F call 0x24fbf0 ; 
+96EE1F call 0x24fbf0
 96EE24 mov r9, qword ptr [rip + 0x1c4c77d]
 96EE2B mov rdx, rdi
 96EE2E mov r8, qword ptr [rip + 0x1c80db3]
@@ -1527,7 +1527,7 @@ ExtraSoundController.Initialize RVA 96EBE0
 96EE97 je 0x96eea7
 96EE99 cmp dword ptr [rcx + 0xe0], 0
 96EEA0 jne 0x96eea7
-96EEA2 call 0x1dd530 ; 
+96EEA2 call 0x1dd530
 96EEA7 xor ecx, ecx
 96EEA9 call 0x572050 ; SystemConfig.Instance
 96EEAE test rax, rax
@@ -1539,21 +1539,21 @@ ExtraSoundController.Initialize RVA 96EBE0
 96EEC5 mov dword ptr [rdi + 0x6c], eax
 96EEC8 add rsp, 0x20
 96EECC pop rdi
-96EECD ret 
-96EECE call 0x24fc30 ; 
-96EED3 int3 
-96EED4 int3 
-96EED5 int3 
-96EED6 int3 
-96EED7 int3 
-96EED8 int3 
-96EED9 int3 
-96EEDA int3 
-96EEDB int3 
-96EEDC int3 
-96EEDD int3 
-96EEDE int3 
-96EEDF int3 
+96EECD ret
+96EECE call 0x24fc30
+96EED3 int3
+96EED4 int3
+96EED5 int3
+96EED6 int3
+96EED7 int3
+96EED8 int3
+96EED9 int3
+96EEDA int3
+96EEDB int3
+96EEDC int3
+96EEDD int3
+96EEDE int3
+96EEDF int3
 
 LoadGameWindowController.SetActive RVA 8E34A0
 8E34A0 mov qword ptr [rsp + 8], rbx
@@ -1564,7 +1564,7 @@ LoadGameWindowController.SetActive RVA 8E34A0
 8E34B4 mov rbx, rcx
 8E34B7 jne 0x8e34cb
 8E34B9 mov ecx, dword ptr [rip + 0x1145521]
-8E34BF call 0x24fac0 ; 
+8E34BF call 0x24fac0
 8E34C4 mov byte ptr [rip + 0x1a01fc7], 1
 8E34CB xor r8d, r8d
 8E34CE movzx edx, dil
@@ -1583,24 +1583,24 @@ LoadGameWindowController.SetActive RVA 8E34A0
 8E34FB test rcx, rcx
 8E34FE je 0x8e351e
 8E3500 xor edx, edx
-8E3502 jmp 0x8e3512 ; 
+8E3502 jmp 0x8e3512
 8E3504 mov byte ptr [rbx + 0x69], 1
 8E3508 test rcx, rcx
 8E350B je 0x8e351e
 8E350D mov edx, 1
 8E3512 mov r8, qword ptr [rip + 0x1d18467]
-8E3519 call 0xfd99f0 ; 
+8E3519 call 0xfd99f0
 8E351E mov rbx, qword ptr [rsp + 0x30]
 8E3523 add rsp, 0x20
 8E3527 pop rdi
-8E3528 ret 
-8E3529 int3 
-8E352A int3 
-8E352B int3 
-8E352C int3 
-8E352D int3 
-8E352E int3 
-8E352F int3 
+8E3528 ret
+8E3529 int3
+8E352A int3
+8E352B int3
+8E352C int3
+8E352D int3
+8E352E int3
+8E352F int3
 
 ShopController.Show RVA 705DA0
 705DA0 push rbp
@@ -1619,7 +1619,7 @@ ShopController.Show RVA 705DA0
 705DD4 cmp byte ptr [rip + 0x1bde10f], 0
 705DDB jne 0x705def
 705DDD mov ecx, dword ptr [rip + 0x1327c11]
-705DE3 call 0x24fac0 ; 
+705DE3 call 0x24fac0
 705DE8 mov byte ptr [rip + 0x1bde0fb], 1
 705DEF xorps xmm0, xmm0
 705DF2 xor eax, eax
@@ -1638,17 +1638,17 @@ ShopController.Show RVA 705DA0
 705E22 mov qword ptr [rsi + 0x60], rbx
 705E26 mov rdx, rbx
 705E29 lea rcx, [rsi + 0x60]
-705E2D call 0x24f820 ; 
+705E2D call 0x24f820
 705E32 lea rcx, [rsi + 0x88]
 705E39 mov qword ptr [rcx], rdi
 705E3C mov rdx, rdi
-705E3F call 0x24f820 ; 
+705E3F call 0x24f820
 705E44 mov rcx, qword ptr [rip + 0x1ed58f5]
 705E4B test byte ptr [rcx + 0x12f], 2
 705E52 je 0x705e62
 705E54 cmp dword ptr [rcx + 0xe0], 0
 705E5B jne 0x705e62
-705E5D call 0x1dd530 ; 
+705E5D call 0x1dd530
 705E62 xor edx, edx
 705E64 mov rcx, rbx
 705E67 call 0x3fd420 ; ShopUtility.GetContentType
@@ -1659,12 +1659,12 @@ ShopController.Show RVA 705DA0
 705E7C lea rcx, [rsi + 0x68]
 705E80 mov qword ptr [rcx], rax
 705E83 mov rdx, rax
-705E86 call 0x24f820 ; 
+705E86 call 0x24f820
 705E8B mov r12d, dword ptr [rsi + 0x90]
 705E92 cmp byte ptr [rip + 0x1bde073], 0
 705E99 jne 0x705ead
 705E9B mov ecx, dword ptr [rip + 0x1327613]
-705EA1 call 0x24fac0 ; 
+705EA1 call 0x24fac0
 705EA6 mov byte ptr [rip + 0x1bde05f], 1
 705EAD xor r15d, r15d
 705EB0 mov r14d, r15d
@@ -1676,19 +1676,19 @@ ShopController.Show RVA 705DA0
 705EC7 nop word ptr [rax + rax]
 705ED0 mov rdx, qword ptr [rip + 0x1eca3f9]
 705ED7 mov rcx, rax
-705EDA call 0x11d5cd0 ; 
+705EDA call 0x11d5cd0
 705EDF cmp ebx, eax
 705EE1 jge 0x705f8f
 705EE7 mov r9, qword ptr [rip + 0x1e9f362]
 705EEE mov r8d, r14d
 705EF1 mov rdx, qword ptr [rsi + 0x48]
 705EF5 lea rcx, [rbp + 0x40]
-705EF9 call 0x9931c0 ; 
+705EF9 call 0x9931c0
 705EFE mov r9, qword ptr [rip + 0x1e9f34b]
 705F05 mov r8d, r14d
 705F08 mov rdx, qword ptr [rsi + 0x48]
 705F0C lea rcx, [rbp + 0x28]
-705F10 call 0x9931c0 ; 
+705F10 call 0x9931c0
 705F15 cmp dword ptr [rbp + 0x40], r12d
 705F19 jne 0x705f66
 705F1B mov rcx, qword ptr [rip + 0x1e9de56]
@@ -1696,7 +1696,7 @@ ShopController.Show RVA 705DA0
 705F29 je 0x705f39
 705F2B cmp dword ptr [rcx + 0xe0], r15d
 705F32 jne 0x705f39
-705F34 call 0x1dd530 ; 
+705F34 call 0x1dd530
 705F39 xor r8d, r8d
 705F3C xor edx, edx
 705F3E mov rdi, qword ptr [rbp + 0x30]
@@ -1707,10 +1707,10 @@ ShopController.Show RVA 705DA0
 705F4E mov qword ptr [rsi + 0x38], rdi
 705F52 mov rdx, rdi
 705F55 lea rcx, [rsi + 0x38]
-705F59 call 0x24f820 ; 
+705F59 call 0x24f820
 705F5E mov rdi, qword ptr [rsi + 0x38]
 705F62 mov dl, 1
-705F64 jmp 0x705f6c ; 
+705F64 jmp 0x705f6c
 705F66 mov rdi, qword ptr [rbp + 0x30]
 705F6A xor dl, dl
 705F6C xor r8d, r8d
@@ -1721,7 +1721,7 @@ ShopController.Show RVA 705DA0
 705F7D mov rax, qword ptr [rsi + 0x48]
 705F81 test rax, rax
 705F84 je 0x7060d0
-705F8A jmp 0x705ed0 ; 
+705F8A jmp 0x705ed0
 705F8F xor r8d, r8d
 705F92 mov edx, dword ptr [rsi + 0x90]
 705F98 mov rcx, rsi
@@ -1742,7 +1742,7 @@ ShopController.Show RVA 705DA0
 705FD2 je 0x705ffb
 705FD4 mov rdx, qword ptr [rip + 0x1e9daad]
 705FDB mov rcx, qword ptr [rsi + 0x60]
-705FDF call 0x9973b0 ; 
+705FDF call 0x9973b0
 705FE4 test rax, rax
 705FE7 je 0x705fed
 705FE9 mov r15, qword ptr [rax + 0x20]
@@ -1756,7 +1756,7 @@ ShopController.Show RVA 705DA0
 70600C je 0x7060d0
 706012 mov r8, qword ptr [rip + 0x1f0126f]
 706019 lea rcx, [rbp + 0x50]
-70601D call 0x11c90c0 ; 
+70601D call 0x11c90c0
 706022 movups xmm0, xmmword ptr [rbp + 0x50]
 706026 movups xmmword ptr [rbp], xmm0
 70602A movups xmm1, xmmword ptr [rbp + 0x60]
@@ -1766,7 +1766,7 @@ ShopController.Show RVA 705DA0
 70603C nop dword ptr [rax]
 706040 mov rdx, qword ptr [rip + 0x1eb0c31]
 706047 lea rcx, [rbp]
-70604B call 0xc37250 ; 
+70604B call 0xc37250
 706050 test al, al
 706052 je 0x70606f
 706054 mov rax, qword ptr [rbp + 0x18]
@@ -1776,13 +1776,13 @@ ShopController.Show RVA 705DA0
 706061 test rcx, rcx
 706064 je 0x706040
 706066 mov byte ptr [rcx + 0x9a], 1
-70606D jmp 0x706040 ; 
+70606D jmp 0x706040
 70606F mov rax, qword ptr [rbp + 0xb0]
 706076 mov dword ptr [rax], 0xcf
 70607C mov rdx, qword ptr [rip + 0x1e9c895]
 706083 lea rcx, [rbp]
 706087 call 0x2f10a0 ; folded 2809 aliases
-70608C jmp 0x7060aa ; 
+70608C jmp 0x7060aa
 70608E mov rdx, qword ptr [rip + 0x1e9c883]
 706095 lea rcx, [rbp]
 706099 call 0x2f10a0 ; folded 2809 aliases
@@ -1798,23 +1798,23 @@ ShopController.Show RVA 705DA0
 7060CA pop r13
 7060CC pop r12
 7060CE pop rbp
-7060CF ret 
-7060D0 call 0x24fc30 ; 
-7060D5 nop 
-7060D6 call 0x24fc30 ; 
-7060DB nop 
+7060CF ret
+7060D0 call 0x24fc30
+7060D5 nop
+7060D6 call 0x24fc30
+7060DB nop
 7060DC xor edx, edx
-7060DE call 0x24fc00 ; 
-7060E3 int3 
-7060E4 int3 
-7060E5 int3 
-7060E6 int3 
-7060E7 int3 
-7060E8 int3 
-7060E9 int3 
-7060EA int3 
-7060EB int3 
-7060EC int3 
-7060ED int3 
-7060EE int3 
-7060EF int3 
+7060DE call 0x24fc00
+7060E3 int3
+7060E4 int3
+7060E5 int3
+7060E6 int3
+7060E7 int3
+7060E8 int3
+7060E9 int3
+7060EA int3
+7060EB int3
+7060EC int3
+7060ED int3
+7060EE int3
+7060EF int3

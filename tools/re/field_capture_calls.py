@@ -50,8 +50,9 @@ for number, folder in enumerate(GAMES, 1):
             note = ''
             if ins.mnemonic in ('call', 'jmp') and ins.op_str.startswith('0x'):
                 labels = names.get(int(ins.op_str, 16), [])
-                note = ' ; ' + (' / '.join(labels) if len(labels) < 7 else 'folded %d aliases' % len(labels))
-            output.append('%X %s %s%s' % (ins.address, ins.mnemonic, ins.op_str, note))
+                if labels:
+                    note = ' ; ' + (' / '.join(labels) if len(labels) < 7 else 'folded %d aliases' % len(labels))
+            output.append(('%X %s %s%s' % (ins.address, ins.mnemonic, ins.op_str, note)).rstrip())
     required = ('FieldMap.StateInit', 'FieldPlayerKeyController.Init',
                 'TransportationController.NeedInteractiveList', 'Transportation.CheckNeedInteractive',
                 'FieldController.IsCanMoveToDestPosition', 'FieldController.CreateFieldPlayer',
