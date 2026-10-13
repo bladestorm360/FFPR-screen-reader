@@ -126,13 +126,8 @@ TargetKind target_kind_of(const Entity& e)
     }
 }
 
-/// AnnounceCurrentEntity: the path to the selected entity.
-void announce_current_entity(bool walking = false)
+void announce_ready_entity(bool walking, double requested_at)
 {
-    const double requested_at = frame::now();
-    if (!ensure_field_context()) return;
-    refresh_entities_if_needed();
-
     EntityPtr e = scanner::current_entity();
     if (!e) {
         speak(T(L"No entity selected"));
@@ -177,19 +172,35 @@ void announce_current_entity(bool walking = false)
     }
 }
 
+/// Resolve the current grouped representative before directions/autowalk capture.
+void announce_current_entity(bool walking = false)
+{
+    const double requested_at=frame::now();
+    if (!ensure_field_context()) return;
+    refresh_entities_if_needed();
+    scanner::when_filter_ready([walking,requested_at,generation=g_category_generation] {
+        if (generation==g_category_generation && ensure_field_context()) announce_ready_entity(walking,requested_at);
+    });
+}
+
 /// Shared keyboard/controller policy; autowalk speech remains its independent setting.
 void navigate_to_entity()
 {
     if (!ensure_field_context()) return;
     if (ffpr::fieldnav::autowalk::stop_requested()) return;
-    mark_entity();
-    const bool walking = ui::prefs::autowalk_enabled();
-    if (ui::prefs::audio_beacons_enabled()) {
-        if (walking || ui::prefs::beacon_with_directions_enabled())
-            ffpr::fieldnav::audio_loops::restart_beacon();
-        else { actions::run("Mod.RestartEntityBeacon"); return; }
-    }
-    announce_current_entity(walking);
+    const double requested_at=frame::now();
+    refresh_entities_if_needed();
+    scanner::when_filter_ready([requested_at,generation=g_category_generation] {
+        if (generation!=g_category_generation || !ensure_field_context()) return;
+        mark_entity();
+        const bool walking = ui::prefs::autowalk_enabled();
+        if (ui::prefs::audio_beacons_enabled()) {
+            if (walking || ui::prefs::beacon_with_directions_enabled())
+                ffpr::fieldnav::audio_loops::restart_beacon();
+            else { actions::run("Mod.RestartEntityBeacon"); return; }
+        }
+        announce_ready_entity(walking,requested_at);
+    });
 }
 
 void announce_entity_only(speech::Timing timing = {})

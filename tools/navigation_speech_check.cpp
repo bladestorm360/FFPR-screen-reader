@@ -127,11 +127,16 @@ int main() {
         "empty category announces only its current category headline");
     fixture::output.clear(); fixture::selectable = true;
     field::announce_current_entity();
+    expect(!fixture::route,"directions wait for current grouped-exit representative before planning");
+    fixture::finish();
     expect(static_cast<bool>(fixture::route), "actual route producer waits for asynchronous plan");
     field::category_next(); fixture::finish();
     auto before = fixture::output.size(); field::PathInfo path; path.success = true; path.description = L"1 north";
     fixture::route(path);
     expect(fixture::output.size() == before, "old asynchronous route cannot interrupt a newer category even if entity handle matches");
+    fixture::route={};
+    field::announce_current_entity();field::category_next();fixture::finish();
+    expect(!fixture::route,"new category retires directions still waiting for nearest-exit readiness");
     std::printf("Navigation speech: ordered category/focus, stale-event rejection, FIFO browse, async route: %d failures\n", failures);
     return failures ? 1 : 0;
 }

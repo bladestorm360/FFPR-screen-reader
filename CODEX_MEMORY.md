@@ -1,5 +1,19 @@
 # Native FFPR durable memory
 
+- October 13 exit follow-up: regenerated all six bakes with native directional stair
+  masks, FF6 MapRange room bounds and corrected FF6 puzzle coordinates. Restored
+  missing Karnak/Kaipo grids; world exits use exact reachable trigger tiles and
+  Group exits keeps the nearest usable route before pruning. All 178 South Figaro
+  exits pass the offline arrival audit. [Native evidence, ownership, remaining
+  script/state cases and validation](docs/re/MAP_EXITS.md). Gameplay confirmation
+  remains pending. Canonical build/all offline checks, deterministic bake roundtrip
+  and isolated DLL smoke pass; deployed/hash-verified in all six, Prism unchanged:
+  `24C1EF06A7E7153CADB8249D0C8FEE06324FB6E46C751320C0CC97E037E692B5`.
+  This is the current installed DLL, superseding older installation records below.
+  Recovery copies are in `build_check/exit_recovery/`. No game launch/probe or
+  delegation. Public V0.9 unchanged. The user subsequently requests commit/push
+  and release 0.9.1 through the [release procedure](docs/release.md).
+
 - October 13 release finalization: GitHub/local source and named remote now use
   FFPRCore-Screen-Reader, preserving public user ownership, repository ID and master
   history. Current root is D:/Games/Dev/Unity/FFPR/FFPRCore-Screen-Reader. Standard

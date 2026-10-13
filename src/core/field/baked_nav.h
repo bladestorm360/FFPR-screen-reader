@@ -3,6 +3,7 @@
 #include <vector>
 #include <functional>
 #include <optional>
+#include <memory>
 #include "field_api.h"
 #include "baked_router.h"
 #include "route_progress.h"
@@ -88,6 +89,17 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
 void cancel_requests();
 bool request_pending();
 void request_reachability(bool with_vehicles, std::function<void()> ready);
+// Same owned native obstacle snapshot and movement rules as explicit routes.
+// Capture functions run on the native owner; distances run only on Navigation.
+struct ExitSnapshot;
+struct ExitTarget { unity::Vec3 position; int map_id = 0, destination = 0; baked_route::Cell cell; };
+std::shared_ptr<ExitSnapshot> begin_exit_capture(bool with_vehicles, bool indoor);
+void capture_exit_obstacle(ExitSnapshot& snapshot, void* entity);
+void finish_exit_capture(ExitSnapshot& snapshot);
+bool exit_snapshot_world(const ExitSnapshot& snapshot);
+int exit_snapshot_vehicle(const ExitSnapshot& snapshot);
+std::vector<int> exit_distances(ExitSnapshot& snapshot, const std::vector<ExitTarget>& targets,
+                              std::function<bool()> cancelled);
 
 /// The first leg of the shortest way from the player to `goal`, possibly on another map: the
 /// route across the current map to the exit or warp to take (Dijkstra over the sub-map graph of

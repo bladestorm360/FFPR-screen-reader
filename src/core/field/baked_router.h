@@ -10,10 +10,12 @@
 // data: no game pointers, so tools/route_check.cpp runs it offline against data/ffN/maps.bin.
 //
 // Movement model (what the game does, confirmed in the FF2 decompile of 2026-10-10):
-//  * 4-connected steps, one tile each; a cell is open when its collision id is 0, and a
+//  * cardinal steps plus only the native parser's diagonal stair connections; a
+//    cell's direction mask controls its edges, and a
 //    hidden-passage cell is open to the player (never to the game's searcher) when asked;
 //  * layer changes happen by stepping on a ToLayer cell (the object's own layer -> its target
-//    layer, and back); the step is taken when the cell is open on either layer;
+//    layer); the reverse direction has its own native trigger. The step is taken
+//    when the cell is open on either layer;
 //  * world maps have no collision grid: on foot the player moves where transportation group 1
 //    is open; a vehicle moves where its group's layer is open; the auto-ridden vehicles
 //    (FF1-FF3 canoe, FF2 snowcraft: type 5 "Content") extend walking with their groups once
@@ -54,7 +56,8 @@ struct Request {
     bool ignore_hazards = false;     // filter reachability includes destinations behind events
     bool live_hazards = false;       // current map: replace baked variants with active triggers
     std::vector<Cell> hazards;
-    bool goals_open = true;           // a goal cell may be entered although it is closed: the
+    bool goals_open = true;           // a closed transition goal may be entered, retaining
+                                      // native terrain/transport and directional restrictions: the
                                       // game opens a GotoMap entity's cells for the route
                                       // (IMapAccessor.CombinedGotoMapEntityCurrentMappingData);
                                       // a world-map town tile is closed to walking otherwise
@@ -114,10 +117,16 @@ Reach flood(const Request& r);
 /// Multi-source reachability, used to include legal shores after an onboard ride.
 /// Invalid seeds are ignored; every seed belongs to the request's movement mode.
 Reach flood(const Request& r, const std::vector<Cell>& starts);
+Reach flood(const Request& r, const std::vector<Cell>& starts, const std::vector<int>& costs);
+bool transition_enterable(const Request& r, const baked::Grids& g, int x, int y);
+int transition_distance(const Request& request, const Reach& reach);
 
 /// Cell tests shared with the callers: open for the request's movement rules.
 bool open(const Request& r, const baked::Grids& g, const Cell& c);
 bool direction_allowed(const Request& r, const Cell& from, const Cell& to);
+// Native baked cardinal masks and the parser's explicit diagonal stair edges.
+bool edge_allowed(const Request& r, const baked::Grids& g, const Cell& from, const Cell& to);
+int step_direction(const Cell& from, const Cell& to, int wrap_width = 0, int wrap_height = 0);
 /// The layer the player is on after stepping on `c` (ToLayer objects), else c.layer.
 int layer_after(const baked::Grids& g, int from_layer, int x, int y);
 

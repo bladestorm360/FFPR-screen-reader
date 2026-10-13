@@ -415,6 +415,8 @@ int g_index = 0;
 Category g_category = Category::All;
 std::vector<EntityPtr>& filtered_view() { return g_category_views[static_cast<size_t>(g_category)]; }
 bool g_views_ready = false;
+bool g_navigation_filtered = false;
+int g_view_vehicle = 0;
 std::optional<Vec3> g_view_origin;
 double g_view_captured_at = 0;
 int g_last_scanned_map_id = -1;
@@ -565,6 +567,12 @@ void apply_filter() {
     auto input = std::make_shared<FilterInput>();
     input->category = g_category; input->sort = player_local_position(input->player);
     input->pads = game::flags().has_vehicle_pads; input->exits = settings::get_bool("MapExitFilter", false);
+    input->navigation = baked_nav::begin_exit_capture(pathfinding_mode() == ui::prefs::kFilterCurrentMapWithVehicles,input->exits);
+    input->world = input->navigation && baked_nav::exit_snapshot_world(*input->navigation);
+    const bool navigation_filtered = input->navigation != nullptr;
+    const int vehicle = input->navigation ? baked_nav::exit_snapshot_vehicle(*input->navigation) : 0;
+    const auto epoch = g_filter_work.epoch(); const auto epoch_generation = epoch->load();
+    input->cancelled = [epoch,epoch_generation] { return epoch->load() != epoch_generation; };
     input->layer = to_layer_enabled(); input->selected_has = g_sel_has;
     input->selected_position = g_sel_pos; input->selected_category = g_sel_category; input->selected_name = g_sel_name;
     input->selected_remote = g_sel_remote; input->selected_x = g_sel_cx; input->selected_y = g_sel_cy;
@@ -575,7 +583,8 @@ void apply_filter() {
     input->current_map = map_id; input->continued_map = continued.map_id;
     input->continued_x = continued.cell.x; input->continued_y = continued.cell.y;
     const int continued_map = input->continued_map, continued_x = input->continued_x, continued_y = input->continued_y;
-    frame::every_frame([entities, input, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y, captured_at]() mutable {
+    auto obstacles = std::make_shared<EntityCursor>(); // native pointers remain in this closure
+    frame::every_frame([entities, input, obstacles, captured = false, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y, captured_at, navigation_filtered, vehicle]() mutable {
         if (generation != g_filter_generation) return false;
         if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) { cancel_filter(); return false; }
         CaptureBudget budget;
@@ -585,6 +594,7 @@ void apply_filter() {
             row.index = next; row.kind = entity->kind; row.category = entity->category();
             row.position = entity->position(); row.numbering_position = entity->pos;
             row.remote_map = entity->remote_map_id; row.cell_x = entity->cell_x; row.cell_y = entity->cell_y;
+            row.cell_layer = entity->cell_layer;
             if (input->continued_goal && !row.remote_map && map_id == continued_map) {
                 baked_route::Cell cell;
                 row.cell_valid = baked_nav::cell_at(field::map_handle(), row.position, cell);
@@ -597,14 +607,25 @@ void apply_filter() {
             input->rows.push_back(std::move(row));
         }
         if (next < entities->size()) return true;
+        if (input->navigation && !captured) {
+            bool more = true;
+            while (budget.available()) {
+                void* entity = nullptr;
+                if (!(more = obstacles->next(entity))) break;
+                if (entity) baked_nav::capture_exit_obstacle(*input->navigation,entity);
+            }
+            if (more) return true;
+            baked_nav::finish_exit_capture(*input->navigation);
+            captured = true;
+        }
         const auto origin = input->sort ? std::optional<Vec3>(input->player) : std::nullopt;
         worker_job::start(g_filter_work, std::move(*input), &filter_worker::build_categories,
-            [entities, generation, map_id, continued_map, continued_x, continued_y, origin, captured_at](Categories filtered) {
+            [entities, generation, map_id, continued_map, continued_x, continued_y, origin, captured_at, navigation_filtered, vehicle](Categories filtered) {
                 if (generation != g_filter_generation || map_id != current_map_id_or_user_data()) return;
                 auto result = std::make_shared<Categories>(std::move(filtered));
                 auto handles = std::make_shared<std::array<std::vector<EntityPtr>, 6>>(); // native owner registry only
                 frame::every_frame([entities, result, handles, named = size_t(0), ordered = size_t(0), view = size_t(0),
-                                    generation, map_id, continued_map, continued_x, continued_y, origin, captured_at]() mutable {
+                                    generation, map_id, continued_map, continued_x, continued_y, origin, captured_at, navigation_filtered, vehicle]() mutable {
                     if (generation != g_filter_generation) return false;
                     if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) {
                         cancel_filter(); return false;
@@ -620,6 +641,13 @@ void apply_filter() {
                         if (ordered < order.size()) return true;
                     }
                     if (named < all.names.size() || view < handles->size()) return true;
+                    if (navigation_filtered) {
+                        Vec3 at; const auto transport = field::current_vehicle();
+                        if (!origin || !player_local_position(at) || at.x!=origin->x || at.y!=origin->y || at.z!=origin->z ||
+                            (transport.valid ? transport.id : 0)!=vehicle) {
+                            g_views_ready=false; apply_filter(); return false;
+                        }
+                    }
                     g_category_views.swap(*handles); g_exit_positions.swap(all.exits);
                     auto& current = result->views[static_cast<size_t>(g_category)];
                     // Input can move selection while this refresh is running. Keep
@@ -635,6 +663,7 @@ void apply_filter() {
                     if (g_index >= static_cast<int>(filtered_view().size())) g_index = 0;
                     g_views_ready = true;
                     g_view_origin = origin;
+                    g_navigation_filtered = navigation_filtered; g_view_vehicle = vehicle;
                     g_view_captured_at = captured_at;
                     g_filter_pending = false;
                     if (continued_current) {
@@ -684,6 +713,13 @@ void ensure_correct_map()
 namespace scanner {
 void when_filter_ready(std::function<void()> ready) {
     ensure_correct_map();
+    if (g_views_ready && g_navigation_filtered) {
+        Vec3 at; const auto transport=field::current_vehicle();
+        if (!g_view_origin || !player_local_position(at) || at.x!=g_view_origin->x || at.y!=g_view_origin->y || at.z!=g_view_origin->z ||
+            (transport.valid ? transport.id : 0)!=g_view_vehicle) {
+            g_views_ready=false; apply_filter();
+        }
+    }
     const int map_id = current_map_id_or_user_data();
     auto attempt = [map_id, ready = std::move(ready)]() mutable {
         if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) return false;
@@ -738,6 +774,7 @@ void invalidate_map()
     for (auto& view : g_category_views) view.clear();
     g_views_ready = false;
     g_view_origin.reset();
+    g_navigation_filtered=false; g_view_vehicle=0;
     g_view_captured_at = 0;
     g_exit_positions.clear();
     g_index = 0;

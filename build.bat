@@ -44,6 +44,11 @@ if errorlevel 1 (
 )
 
 echo Checking the baked-map router against FF2 and FF1 routes known from the dumps...
+"out\checks\map_exit_check.exe" > build_check\map_exit_report.txt 2>&1
+if errorlevel 1 (
+    echo Map exit check FAILED - see build_check\map_exit_report.txt
+    exit /b 1
+)
 "out\checks\route_check.exe" "data\ff2\maps.bin" "data\ff1\maps.bin" > build_check\route_report.txt 2>&1
 if errorlevel 1 (
     echo Route check FAILED - see build_check\route_report.txt

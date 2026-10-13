@@ -8,9 +8,8 @@ Usage:
    <game>_master/{map,transportation,transportation_group,landing_group}.txt)
 
 What is baked, per sub-map (the Tiled sub-map "Map_20011_1"; a world map is "Map_10010"):
-  * the collision grids per layer (Bottom 0, Ground 1, Upper 2) as OPEN / BLOCKED cells
-    (CollisionId 0 is open; MapRouteSearcher.MakeRouteMapWithCollision marks EVERY non-zero
-    id NoEnter: FF2 GameAssembly.dll 0xA987B0, decompiled 2026-10-10);
+  * native movement direction masks per layer (Bottom 0, Ground 1, Upper 2), including
+    half-tile restrictions and the native parser's specific diagonal stair connections;
   * the hidden-passage grids (cells the player walks that the game's searcher never enters);
   * world maps: the terrain attribute ids (one per cell, 1-32) and the per-transportation-GROUP
     passability layers "Transportation01".."NN" (0 open, 1 blocked: the riding route grid);
@@ -23,7 +22,7 @@ transportation rows (id, group, landing group, type, message id), the transporta
 32 terrain-type flags and the landing groups' flags.
 
 Binary layout (little-endian; every offset is from the start of the file):
-  header   "FFPRMAP1" u32 version(1) u8 game u8[3] pad
+  header   "FFPRMAP1" u32 version(2) u8 game u8[3] pad
            u32 strings_off u32 strings_count      (u32 off per string; UTF-8, NUL-terminated)
            u32 submaps_off u32 submap_count
            u32 maps_off    u32 map_count           ({i32 map_id, u32 submap_index})
@@ -36,6 +35,9 @@ Binary layout (little-endian; every offset is from the start of the file):
            u32 collision_off[3] u32 passage_off[3] u32 attribute_off u32 transport_off
            u32 objects_off u32 object_count
   grid     RLE of bytes: (u16 run_length, u8 value)* until w*h cells; offset 0 = absent.
+           Version 2 collision bytes: allowed up/left/right/down bits 1/2/4/8 and native
+           diagonal bits 16/32/64/128; zero is blocked. Version 1 used 0 open / 1 blocked.
+           Grids and object coordinates are relative to the native MapRange rectangle.
            Layer order Bottom, Ground, Upper. The transport block is transport_layers grids
            back to back, each prefixed with u32 byte size, group 1 first.
   object   u8 type u8 layer i16 tx i16 ty u16 tw u16 th i32 a i32 b i32 c i32 d
@@ -180,15 +182,80 @@ def grid_cells(rows, w, h, wide):
                 t = row[2 * x:2 * x + 2]
                 cells.append(int(t, 16) if len(t) == 2 and t != "??" else 0)
             else:
-                c = row[x] if x < len(row) else "0"
+                c = row[x] if x < len(row) else "1"
                 cells.append(int(c, 16) if c != "?" else 1)
     return cells
+
+
+# MapConstants.CollisionFilter / DirectCollision, recovered from the matching
+# IL2CPP metadata field initializers. Bits are native allowed directions:
+# up=1, left=2, right=4, down=8, diagonals=16/32/64/128.
+COLLISION_FILTER = (15, 0, 14, 11, 7, 13, 6, 9, 0, 0, 0, 0, 0, 0)
+DIRECT_COLLISION = (0, 0, 0, 0, 0, 0, 0, 0, 11, 22, 208, 104, 219, 126)
+DIAGONAL_RULES = (
+    (11, 208, -1, -1, 2, 4, 1, 8, 32, 64),
+    (104, 22, -1, 1, 2, 4, 8, 1, 128, 16),
+    (22, 104, 1, -1, 4, 2, 1, 8, 16, 128),
+    (208, 11, 1, 1, 4, 2, 8, 1, 64, 32),
+)
+
+
+def collision_masks(rows, w, h):
+    """Recovered MapUtility.ParseCollisionMappingData, without world wrapping.
+
+    Raw triangle tiles are closed; the native parser connects their adjacent
+    open cells with specific diagonal stair edges. Half tiles retain cardinal
+    direction masks. Treating every nonzero raw id as a wall loses both rules.
+    """
+    raw = grid_cells(rows, w, h, False)
+    result = [COLLISION_FILTER[c] if c < len(COLLISION_FILTER) else 0 for c in raw]
+
+    def index(x, y):
+        return y * w + x if 0 <= x < w and 0 <= y < h else -1
+
+    for pos, cell in enumerate(raw):
+        direct = DIRECT_COLLISION[cell] if cell < len(DIRECT_COLLISION) else 0
+        if not direct:
+            continue
+        x, y = pos % w, pos // w
+        for cmp, rev, dx, dy, hb, hr, vb, vr, hd, vd in DIAGONAL_RULES:
+            if direct & cmp != cmp:
+                continue
+            hi, vi, di = index(x + dx, y), index(x, y + dy), index(x + dx, y + dy)
+            hm = result[hi] if hi >= 0 else 0
+            vm = result[vi] if vi >= 0 else 0
+            dm = result[di] if di >= 0 else 0
+            if not (hm & hr and hm & vb and vm & vb and vm & vr):
+                continue
+            dd = DIRECT_COLLISION[raw[di]] if di >= 0 and raw[di] < len(DIRECT_COLLISION) else 0
+            if (dm & hr and dm & vr) or (di > 0 and dd & rev == rev):
+                result[hi] |= hd
+                result[vi] |= vd
+    return result
+
+
+def map_bounds(info, objects):
+    """Native MapRange rectangle, else the tilemap extent (FF6 shared room sheets)."""
+    for obj in objects:
+        if obj["type_name"] == "MapRange" and obj.get("group") == "entity_default" and obj.get("w") and obj.get("h"):
+            return to_int(obj.get("tx")), tile_row(obj), to_int(obj["w"]) // 16, to_int(obj["h"]) // 16
+    return 0, 0, to_int(info.get("width")), to_int(info.get("height"))
+
+
+def crop_rows(rows, bounds, wide=False):
+    x, y, w, h = bounds
+    stride = 2 if wide else 1
+    return [row[x*stride:(x+w)*stride] for row in rows[y:y+h]]
 
 
 def bake_game(game, out_dir, check=False):
     grids = json.load(open(os.path.join(MAPDUMP, f"{game}_grids.json"), encoding="utf-8"))
     submaps = json.load(open(os.path.join(MAPDUMP, f"{game}_submaps.json"), encoding="utf-8"))
     objects = [json.loads(l) for l in open(os.path.join(MAPDUMP, f"{game}_objects.jsonl"), encoding="utf-8")]
+    raw_by_sub = {}
+    for obj in objects:
+        raw_by_sub.setdefault(obj["submap"], []).append(obj)
+    bounds = {n: map_bounds(info,raw_by_sub.get(n,[])) for n,info in submaps.items()}
     master = os.path.join(MAPDUMP, f"{game}_master")
 
     strings = Strings()
@@ -377,11 +444,12 @@ def bake_game(game, out_dir, check=False):
             layer = 1
         tw = max(1, to_int(o.get("w")) // 16)
         th = max(1, to_int(o.get("h")) // 16)
-        return struct.pack("<BBhhHHiiiiII", BAKED_TYPES[t], layer, to_int(o.get("tx")), tile_row(o),
+        ox, oy, _, _ = bounds[o["submap"]]
+        return struct.pack("<BBhhHHiiiiII", BAKED_TYPES[t], layer, to_int(o.get("tx"))-ox, tile_row(o)-oy,
                            tw, th, a, b, c, d, strings.add(name), strings.add(o.get("group") or ""))
 
     # --- sub-map blobs -------------------------------------------------------------------
-    blobs = bytearray()          # every grid / object table, appended; offsets patched later
+    blobs = bytearray(b"\0")     # offset zero is reserved for absent data
     sub_recs = []
     stats = {"submaps": 0, "world": 0, "cells": 0, "objects": 0, "bytes": 0}
 
@@ -393,7 +461,8 @@ def bake_game(game, out_dir, check=False):
     for n in names:
         info = submaps[n]
         g = grids.get(n) or {}
-        w, h_ = to_int(info.get("width")), to_int(info.get("height"))
+        region = bounds[n]
+        _, _, w, h_ = region
         coll = g.get("collision") or {}
         passage = g.get("hidden_passage") or {}
         attribute = g.get("attribute") or {}
@@ -407,20 +476,20 @@ def bake_game(game, out_dir, check=False):
                 rows = collision_rows(coll, li)
                 if rows is None:
                     continue
-                cells = grid_cells(rows, w, h_, False)
-                coll_off[li] = put(rle(bytes(1 if c else 0 for c in cells)))
+                cells = collision_masks(crop_rows(rows,region), w, h_)
+                coll_off[li] = put(rle(bytes(cells)))
                 layer_mask |= 1 << li
                 stats["cells"] += w * h_
             for ln, rows in passage.items():
                 li = layer_index(ln)
                 if li < 0:
                     continue
-                cells = grid_cells(rows, w, h_, True)
+                cells = grid_cells(crop_rows(rows,region,True), w, h_, True)
                 pass_off[li] = put(rle(bytes(1 if c else 0 for c in cells)))
         attr_off = 0
         if attribute and w and h_:
             rows = next(iter(attribute.values()))
-            attr_off = put(rle(bytes(min(255, c) for c in grid_cells(rows, w, h_, True))))
+            attr_off = put(rle(bytes(min(255, c) for c in grid_cells(crop_rows(rows,region,True), w, h_, True))))
         tr_off = 0
         tr_count = 0
         if transport_layers and w and h_:
@@ -428,7 +497,7 @@ def bake_game(game, out_dir, check=False):
             ordered = sorted(transport_layers.items(), key=lambda kv: kv[0])
             block = bytearray()
             for ln, rows in ordered:
-                data = rle(bytes(1 if c else 0 for c in grid_cells(rows, w, h_, False)))
+                data = rle(bytes(1 if c else 0 for c in grid_cells(crop_rows(rows,region), w, h_, False)))
                 block += struct.pack("<I", len(data)) + data
                 tr_count += 1
             tr_off = put(bytes(block))
@@ -461,7 +530,7 @@ def bake_game(game, out_dir, check=False):
     blob_base += (-blob_base) % 4
 
     out = bytearray()
-    out += struct.pack("<8sIB3sIIIIIIIIIIII", b"FFPRMAP1", 1, GAMES.index(game) + 1, b"\0\0\0",
+    out += struct.pack("<8sIB3sIIIIIIIIIIII", b"FFPRMAP1", 2, GAMES.index(game) + 1, b"\0\0\0",
                        strings_off, len(strings.list), sub_table_off, len(sub_recs), maps_off, len(maps),
                        transport_off, len(transport), tgroup_off, len(tgroups), lgroup_off, len(lgroups))
     assert len(out) == HEADER
@@ -497,10 +566,10 @@ def bake_game(game, out_dir, check=False):
           f"({warps} warps, {scenes} round-trip cutscenes kept as events), {stats['cells']} collision cells "
           f"-> {stats['bytes']} bytes: {path}")
     if check:
-        verify(path, grids, names)
+        verify(path, grids, names, bounds)
 
 
-def verify(path, grids, names):
+def verify(path, grids, names, bounds):
     """Decode every collision grid back and compare with the dump (the RLE round trip)."""
     data = open(path, "rb").read()
     hdr = struct.unpack_from("<8sIB3sIIIIIIIIIIII", data, 0)
@@ -525,11 +594,13 @@ def verify(path, grids, names):
                 run, v = struct.unpack_from("<HB", data, p)
                 p += 3
                 cells.extend([v] * run)
-            want = [1 if c else 0 for c in grid_cells(rows, w, h, False)]
+            want = collision_masks(crop_rows(rows,bounds[n]), w, h)
             if cells != want:
                 bad += 1
                 print("  mismatch:", n, ln)
     print("  verify:", "OK" if not bad else f"{bad} grid(s) differ")
+    if bad:
+        raise ValueError(f"{bad} collision grid(s) differ")
 
 
 def main():

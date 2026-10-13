@@ -9,7 +9,10 @@
 namespace field::baked_route {
 namespace {
 
-constexpr int kDirs[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};   // north, east, south, west
+constexpr int kDirs[8][2] = {{0,-1},{1,0},{0,1},{-1,0},{1,-1},{1,1},{-1,1},{-1,-1}};
+constexpr int kBits[8] = {1,4,8,2,32,128,64,16};
+constexpr int kReverse[8] = {2,3,0,1,6,7,4,5};
+bool world_enterable(const Request& r, const baked::Grids& g, int x, int y);
 
 /// Dense node index: layer * w * h + y * w + x.
 inline int node_of(const baked::Grids& g, const Cell& c) { return (c.layer * g.height + c.y) * g.width + c.x; }
@@ -40,12 +43,12 @@ bool is_goal_cell(const Request& r, const Cell& c)
     return false;
 }
 
-/// The ToLayer object at (x, y) whose own layer or target layer is `layer`, if any.
+/// A ToLayer trigger owned by the player's incoming layer.
 const baked::Object* to_layer_at(const baked::Grids& g, int layer, int x, int y)
 {
     for (const baked::Object& o : g.objects) {
         if (o.type != baked::ObjType::ToLayer || !o.contains(x, y)) continue;
-        if (o.layer == layer || o.a == layer) return &o;
+        if (o.layer == layer) return &o;
     }
     return nullptr;
 }
@@ -57,7 +60,6 @@ int layer_after(const baked::Grids& g, int from_layer, int x, int y)
     const baked::Object* o = to_layer_at(g, from_layer, x, y);
     if (!o) return from_layer;
     if (o->layer == from_layer && o->a >= 0 && o->a <= 2) return o->a;
-    if (o->a == from_layer) return o->layer;
     return from_layer;
 }
 
@@ -65,10 +67,12 @@ bool open(const Request& r, const baked::Grids& g, const Cell& c)
 {
     if (!baked::in_bounds(g, c.x, c.y)) return false;
     if (r.submap && r.submap->world) {
-        if (r.vehicle_group > 0) return baked::vehicle_open(g, r.vehicle_group, c.x, c.y);
-        if (baked::vehicle_open(g, 1, c.x, c.y)) return true;
+        const int attribute = baked::attribute(g,c.x,c.y);
+        auto allowed = [&](int group) { return baked::vehicle_open(g,group,c.x,c.y) && baked::group_crosses(group,attribute); };
+        if (r.vehicle_group > 0) return allowed(r.vehicle_group);
+        if (allowed(1)) return true;
         for (int grp : r.auto_groups)
-            if (baked::vehicle_open(g, grp, c.x, c.y)) return true;
+            if (allowed(grp)) return true;
         return false;
     }
     return baked::walkable(g, c.layer, c.x, c.y, r.passages);
@@ -83,13 +87,47 @@ bool direction_allowed(const Request& r, const Cell& from, const Cell& to)
     return true;
 }
 
+int step_direction(const Cell& from, const Cell& to, int w, int h) {
+    int dx = to.x-from.x, dy = to.y-from.y;
+    if (w > 0 && std::abs(dx) > w/2) dx += dx > 0 ? -w : w;
+    if (h > 0 && std::abs(dy) > h/2) dy += dy > 0 ? -h : h;
+    for (int dir=0; dir<8; ++dir) if (dx==kDirs[dir][0] && dy==kDirs[dir][1]) return dir;
+    return -1;
+}
+bool edge_allowed(const Request& r, const baked::Grids& g, const Cell& from, const Cell& to) {
+    const bool world = r.submap && r.submap->world;
+    const int dir = step_direction(from,to,world ? g.width : 0,world ? g.height : 0);
+    if (dir < 0 || (world && dir >= 4) || !direction_allowed(r,from,to)) return false;
+    if (world) {
+        if (!is_goal_cell(r,to) || !r.goals_open) return true;
+        for (const auto& object : g.objects)
+            if ((object.type==baked::ObjType::GotoMap || (object.type==baked::ObjType::Warp && object.d==1)) && object.contains(to.x,to.y))
+                return transition_enterable(r,g,to.x,to.y);
+        return world_enterable(r,g,to.x,to.y);
+    }
+    auto mask = [&](const Cell& cell) {
+        if (!baked::in_bounds(g,cell.x,cell.y) || cell.layer<0 || cell.layer>2 || g.collision[cell.layer].empty()) return 0;
+        if (r.passages && baked::is_passage(g,cell.layer,cell.x,cell.y)) return 15;
+        return static_cast<int>(g.collision[cell.layer][static_cast<size_t>(cell.y)*g.width+cell.x]);
+    };
+    const int source = mask(from);
+    int target = mask(to);
+    if (!target && to.layer != from.layer) target = mask({from.layer,to.x,to.y});
+    // A native arrival may already occupy a closed exit tile. It can leave it,
+    // but closed tiles never invent a diagonal connection.
+    if (!(source & kBits[dir]) && (source || dir>=4)) return false;
+    if (target & kBits[kReverse[dir]]) return true;
+    return dir<4 && !target && r.goals_open && is_goal_cell(r,to);
+}
+
 namespace {
 
-/// Expands `from` in the four directions; `visit(next)` returns false to stop.
+/// Cardinal edges and native stair diagonals; `visit(next)` returns false to stop.
 template <typename F>
 void neighbours(const Request& r, const baked::Grids& g, const Cell& from, F&& visit)
 {
-    for (const auto& d : kDirs) {
+    for (int dir=0; dir<(r.submap && r.submap->world ? 4 : 8); ++dir) {
+        const auto& d = kDirs[dir];
         Cell n{from.layer, from.x + d[0], from.y + d[1]};
         if (r.submap && r.submap->world) {
             n.x = (n.x + g.width) % g.width;
@@ -101,7 +139,7 @@ void neighbours(const Request& r, const baked::Grids& g, const Cell& from, F&& v
         // open on either layer (the collision grids of a stairway overlap at its ends).
         const int nl = r.submap && r.submap->world ? from.layer : layer_after(g, from.layer, n.x, n.y);
         Cell moved{nl, n.x, n.y};
-        if (!direction_allowed(r, from, moved)) continue;
+        if (!edge_allowed(r, g, from, moved)) continue;
         bool ok = open(r, g, moved);
         if (!ok && nl != from.layer && open(r, g, n)) ok = true;
         if (!ok && r.goals_open && is_goal_cell(r, moved)) ok = true;   // a closed goal cell (town tile)
@@ -147,7 +185,7 @@ Route find(const Request& r)
         for (const Cell& goal : goals) {
             int dx = std::abs(goal.x - c.x), dy = std::abs(goal.y - c.y);
             if (r.submap->world) { dx = std::min(dx,g.width-dx); dy = std::min(dy,g.height-dy); }
-            best = std::min(best,dx+dy);
+            best = std::min(best,r.submap->world ? dx+dy : std::max(dx,dy));
         }
         return best;
     };
@@ -167,14 +205,15 @@ Route find(const Request& r)
     // South 1 ..." (user, 2026-10-11). Ties break on the state index: the same route every time.
     constexpr int kStep = 10;
     constexpr int kTurn = 15;
-    const int states = total * 4;
+    const int headings = r.submap->world ? 4 : 8;
+    const int states = total * headings;
     std::vector<int32_t> cost(static_cast<size_t>(states), -1);
     std::vector<int32_t> came(static_cast<size_t>(states), -1);   // -1 = reached from the start
     using Item = std::pair<int, int>;   // f, state (node * 4 + direction)
     std::priority_queue<Item, std::vector<Item>, std::greater<Item>> frontier;
     auto h = [&](const Cell& c) { return heuristic(c) * kStep; };
     auto relax = [&](const Cell& next, int dir, int ng, int from_state) {
-        const int st = node_of(g, next) * 4 + dir;
+        const int st = node_of(g, next) * headings + dir;
         if (cost[static_cast<size_t>(st)] < 0 || ng < cost[static_cast<size_t>(st)]) {
             cost[static_cast<size_t>(st)] = ng;
             came[static_cast<size_t>(st)] = from_state;
@@ -183,7 +222,7 @@ Route find(const Request& r)
     };
     // The start has no direction: its exits cost a step each, never a turn.
     neighbours(r, g, start, [&](const Cell& next) {
-        relax(next, direction_towards(start, next, r.submap->world ? g.width : 0, r.submap->world ? g.height : 0), kStep, -1);
+        relax(next, step_direction(start, next, r.submap->world ? g.width : 0, r.submap->world ? g.height : 0), kStep, -1);
         return true;
     });
     int expansions = 0;
@@ -194,8 +233,8 @@ Route find(const Request& r)
         Item top = frontier.top();
         frontier.pop();
         const int st = top.second;
-        const int dir = st % 4;
-        const Cell cur = cell_of(g, st / 4);
+        const int dir = st % headings;
+        const Cell cur = cell_of(g, st / headings);
         const int gcost = cost[static_cast<size_t>(st)];
         if (top.first - h(cur) > gcost) continue;   // stale entry
         if (is_goal(cur)) {
@@ -204,7 +243,7 @@ Route find(const Request& r)
         }
         if (r.max_expansions > 0 && ++expansions > r.max_expansions) break;
         neighbours(r, g, cur, [&](const Cell& next) {
-            const int nd = direction_towards(cur, next, r.submap->world ? g.width : 0, r.submap->world ? g.height : 0);
+            const int nd = step_direction(cur, next, r.submap->world ? g.width : 0, r.submap->world ? g.height : 0);
             relax(next, nd, gcost + kStep + (nd != dir ? kTurn : 0), st);
             return true;
         });
@@ -212,7 +251,7 @@ Route find(const Request& r)
     if (goal_state < 0) return out;
 
     std::vector<Cell> path;
-    for (int st = goal_state; st >= 0; st = came[static_cast<size_t>(st)]) path.push_back(cell_of(g, st / 4));
+    for (int st = goal_state; st >= 0; st = came[static_cast<size_t>(st)]) path.push_back(cell_of(g, st / headings));
     path.push_back(start);
     std::reverse(path.begin(), path.end());
     if (r.submap->world)
@@ -238,6 +277,8 @@ Reach flood(const Request& r)
     return flood(r, {r.start});
 }
 Reach flood(const Request& r, const std::vector<Cell>& starts)
+{ return flood(r,starts,{}); }
+Reach flood(const Request& r, const std::vector<Cell>& starts, const std::vector<int>& costs)
 {
     Reach out;
     out.submap = r.submap;
@@ -249,26 +290,36 @@ Reach flood(const Request& r, const std::vector<Cell>& starts)
     const int layers = r.submap->world ? 1 : 3;
     for (int l = 0; l < layers; ++l) out.dist[l].assign(static_cast<size_t>(g.width) * g.height, 0xFFFF);
 
-    std::queue<Cell> q;
-    for (Cell start : starts) {
+    using Pending = std::pair<int,int>;
+    std::priority_queue<Pending,std::vector<Pending>,std::greater<Pending>> q;
+    std::queue<Cell> fifo;
+    const bool weighted = !costs.empty();
+    for (size_t i=0; i<starts.size(); ++i) {
+        Cell start = starts[i];
         if (r.cancelled && r.cancelled()) return Reach{};
         if (!baked::in_bounds(g, start.x, start.y)) continue;
         if (r.submap->world) start.layer = 0;
         if (start.layer < 0 || start.layer >= layers) continue;
         auto& d0 = out.dist[start.layer][static_cast<size_t>(start.y) * g.width + start.x];
-        if (d0 == 0) continue;
-        d0 = 0; q.push(start);
+        const int cost = costs.empty() ? 0 : (i<costs.size() ? costs[i] : 0);
+        if (cost<0 || cost>=d0) continue;
+        d0 = static_cast<uint16_t>(std::min(0xFFFE,cost));
+        if (weighted) q.push({d0,node_of(g,start)}); else fifo.push(start);
     }
-    while (!q.empty()) {
+    while (weighted ? !q.empty() : !fifo.empty()) {
         if (r.cancelled && r.cancelled()) return Reach{};
-        Cell cur = q.front();
-        q.pop();
+        Pending item{};
+        Cell cur;
+        if (weighted) { item=q.top(); cur=cell_of(g,item.second); q.pop(); }
+        else { cur=fifo.front(); fifo.pop(); }
         const uint16_t dc = out.dist[cur.layer][static_cast<size_t>(cur.y) * g.width + cur.x];
+        if (weighted && dc != item.first) continue;
         neighbours(r, g, cur, [&](const Cell& next) {
             uint16_t& dn = out.dist[next.layer][static_cast<size_t>(next.y) * g.width + next.x];
-            if (dn == 0xFFFF) {
-                dn = static_cast<uint16_t>(std::min(0xFFFE, dc + 1));
-                q.push(next);
+            const auto cost = static_cast<uint16_t>(std::min(0xFFFE,dc+1));
+            if (cost < dn) {
+                dn = cost;
+                if (weighted) q.push({dn,node_of(g,next)}); else fifo.push(next);
             }
             return true;
         });
@@ -303,7 +354,7 @@ std::vector<Leg> legs(const std::vector<Cell>& cells, int wrap_width, int wrap_h
 {
     std::vector<Leg> out;
     for (size_t i = 1; i < cells.size(); ++i) {
-        const int dir = direction_towards(cells[i - 1], cells[i], wrap_width, wrap_height);
+        const int dir = step_direction(cells[i - 1], cells[i], wrap_width, wrap_height);
         if (dir < 0) continue;
         if (!out.empty() && out.back().dir == dir) ++out.back().count;
         else out.push_back(Leg{dir, 1});
@@ -415,6 +466,32 @@ constexpr int kAcceptBitOfSide[4] = {1, 2, 4, 8};   // north, east, south, west
 
 } // namespace
 
+bool transition_enterable(const Request& r, const baked::Grids& g, int x, int y) {
+    return !(r.submap && r.submap->world) ||
+        ((r.vehicle_group<=0 || r.vehicle_type==5) && world_enterable(r,g,x,y));
+}
+int transition_distance(const Request& request, const Reach& reach) {
+    if (!request.submap || !reach.submap) return -1;
+    const auto& g = baked::grids(*request.submap);
+    const bool world = request.submap->world;
+    int best = -1;
+    for (const Cell& goal : request.goals) {
+        if (!baked::in_bounds(g,goal.x,goal.y) || blocked_by_caller(request,goal) ||
+            !transition_enterable(request,g,goal.x,goal.y)) continue;
+        int distance = reach.distance(goal);
+        for (int dir=0;dir<(world ? 4 : 8);++dir) {
+            Cell source{goal.layer,goal.x-kDirs[dir][0],goal.y-kDirs[dir][1]};
+            if (world) { source.x=(source.x+g.width)%g.width; source.y=(source.y+g.height)%g.height; }
+            if (!world && layer_after(g,source.layer,goal.x,goal.y) != goal.layer) continue;
+            if (!edge_allowed(request,g,source,goal)) continue;
+            const int from = reach.distance(source);
+            if (from>=0 && (distance<0 || from+1<distance)) distance=from+1;
+        }
+        if (distance>=0 && (best<0 || distance<best)) best=distance;
+    }
+    return best;
+}
+
 Goals goals_for(const Request& r, const Cell& target, GoalKind kind)
 {
     Goals out;
@@ -438,6 +515,7 @@ Goals goals_for(const Request& r, const Cell& target, GoalKind kind)
         // arrival point within two cells: a town's arc of three tiles is one entrance).
         std::vector<Cell> footprint;
         const baked::Object* anchor = exit ? exit : pad;
+        if (world && !anchor) return out; // only an actual transition trigger is an exit
         const int layer = anchor ? anchor->layer : target.layer;
         if (anchor) {
             footprint_of(*anchor, footprint, world ? target.layer : layer);
@@ -454,8 +532,7 @@ Goals goals_for(const Request& r, const Cell& target, GoalKind kind)
         }
         if (world) {
             for (const Cell& c : footprint)
-                if (world_enterable(r, g, c.x, c.y)) out.cells.push_back(c);
-            if (out.cells.empty()) out.cells = footprint;   // nothing crossable: let the game decide
+                if (transition_enterable(r, g, c.x, c.y)) out.cells.push_back(c);
         } else {
             // Entered although closed (the game opens GotoMap cells for a route), on the exit's
             // layer and on any other layer the cell is open on.

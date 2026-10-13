@@ -64,7 +64,7 @@ struct Submap {
 /// Decoded grids of one sub-map, built on first use and kept (a few hundred KB at most).
 struct Grids {
     int width = 0, height = 0;
-    std::vector<uint8_t> collision[3];   // 1 = blocked, empty = layer absent
+    std::vector<uint8_t> collision[3];   // native allowed-direction masks; 0 blocked, empty absent
     std::vector<uint8_t> passage[3];     // 1 = hidden-passage cell
     std::vector<uint8_t> attribute;      // world maps: terrain attribute id per cell
     std::vector<std::vector<uint8_t>> transport;   // [group - 1]: 1 = blocked for the group
@@ -93,7 +93,7 @@ const Grids& grids(const Submap& s);
 
 /// Cell tests. A layer absent from the sub-map is closed.
 bool in_bounds(const Grids& g, int x, int y);
-/// Open for walking on `layer` (collision 0), or a hidden-passage cell when `passages`.
+/// Has native movement directions on `layer`, or is a hidden passage when requested.
 bool walkable(const Grids& g, int layer, int x, int y, bool passages);
 bool is_passage(const Grids& g, int layer, int x, int y);
 /// World maps: open for a transportation group (its Transportation layer), group 1-based.

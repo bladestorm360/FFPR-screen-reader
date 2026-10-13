@@ -56,7 +56,9 @@ public:
                 const Cell& to = p.cells[cell_ + 1];
                 int dx = delta(to.x - at.x, width_, wraps_);
                 int dy = delta(to.y - at.y, height_, wraps_);
-                if (std::abs(dx) + std::abs(dy) != 1) return {}; // never jump/teleport
+                if (std::max(std::abs(dx),std::abs(dy)) != 1 || (wraps_ && dx && dy)) return {};
+                // Diagonals are only native baked stair edges; walk_edge verifies
+                // that edge and native collision again before any input is owned.
                 return {Result::Move, to, dx, -dy, {}, cell_ + 2 == p.cells.size(), -1,
                     automatic && cell_ == 0 ? p.vehicle_before : VehicleAction::None, p.transportation_id};
             }

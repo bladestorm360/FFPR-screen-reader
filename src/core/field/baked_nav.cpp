@@ -147,7 +147,11 @@ const wchar_t* direction_key(int dir)
     case 0: return L"North";
     case 1: return L"East";
     case 2: return L"South";
-    default: return L"West";
+    case 3: return L"West";
+    case 4: return L"Northeast";
+    case 5: return L"Southeast";
+    case 6: return L"Southwest";
+    default: return L"Northwest";
     }
 }
 
@@ -173,7 +177,7 @@ baked_route::Goals goals_for(const baked::Submap& sm, const Cell& target, Target
     // Land destinations are reached after legally leaving the current vehicle.
     // Determine their actual walking footprint rather than a ship's fallback tile.
     if (sm.world && movement.vehicle_group > 0 &&
-        !baked::group_crosses(movement.vehicle_group, baked::attribute(baked::grids(sm), target.x, target.y))) {
+        (kind == TargetKind::Transition || !baked::group_crosses(movement.vehicle_group,baked::attribute(baked::grids(sm),target.x,target.y)))) {
         movement.vehicle_group = 0;
     }
     return baked_route::goals_for(movement, target, goal_kind(kind));
@@ -467,6 +471,7 @@ baked_route::Reach land_after_ride(const baked_route::Request& riding, const bak
     foot.goals.clear();
     const bool sails = riding.vehicle_type == kTransportShip || riding.vehicle_type == kTransportSubmarine;
     std::vector<Cell> starts;
+    std::vector<int> costs;
     constexpr int sides[4][2] = {{0,-1},{1,0},{0,1},{-1,0}};
     for (int y=0; y<g.height; ++y) {
         if (planning_cancelled() || (riding.cancelled && riding.cancelled())) return {};
@@ -474,15 +479,16 @@ baked_route::Reach land_after_ride(const baked_route::Request& riding, const bak
             const Cell shore{riding.start.layer,x,y};
             if (!baked_route::open(foot,g,shore) ||
                 (riding.landing_group > 0 && !baked::group_lands(riding.landing_group,baked::attribute(g,x,y)))) continue;
-            bool reachable = !sails && ride.reachable(shore);
+            int cost = !sails ? ride.distance(shore) : -1;
             if (sails) for (const auto& side : sides) {
                 const Cell water{riding.start.layer,(x+side[0]+g.width)%g.width,(y+side[1]+g.height)%g.height};
-                if (ride.reachable(water) && baked_route::direction_allowed(foot,water,shore)) { reachable=true; break; }
+                const int distance = ride.distance(water);
+                if (distance>=0 && baked_route::direction_allowed(foot,water,shore) && (cost<0 || distance+1<cost)) cost=distance+1;
             }
-            if (reachable) starts.push_back(shore);
+            if (cost>=0) { starts.push_back(shore); costs.push_back(cost); }
         }
     }
-    return baked_route::flood(foot,starts);
+    return baked_route::flood(foot,starts,costs);
 }
 
 /// Full mode on a world map, on foot, when walking (with the auto-vehicles) cannot reach the
@@ -1411,7 +1417,7 @@ bool walk_edge(void* map_handle, void* player, const Cell& from, const Cell& to,
     }
     // Native exit/town cells can be closed in the static grid and explicitly entered as a
     // route goal. Keep that planner rule only for the final edge; live gates still veto it.
-    return baked_route::direction_allowed(req, from, to) && (open || goal_edge || boundary);
+    return baked_route::edge_allowed(req, g, from, to) && (open || goal_edge || boundary);
 }
 
 // --- other floors (user, 2026-10-11) ---------------------------------------------------------
@@ -1821,6 +1827,95 @@ NativeObstacle capture_obstacle(void* fe, const RouteSnapshot& snapshot) {
 
 void cancel_requests() { cancel_route_work(); cancel_follow_work(); }
 bool request_pending() { return g_request_pending; }
+
+struct ExitSnapshot {
+    RouteSnapshot route;
+    bool with_vehicles;
+    explicit ExitSnapshot(bool vehicles, map_state::Resolver state = map_state::Resolver())
+        : route(std::move(state)), with_vehicles(vehicles) {}
+};
+std::shared_ptr<ExitSnapshot> begin_exit_capture(bool with_vehicles, bool indoor) {
+    void* pl = field::player();
+    const auto* sm = current_submap(field::map_handle());
+    if (!sm || !pl || !unity::transform(pl)) return {};
+    if (!sm->world && !indoor) return {};
+    auto capture = std::make_shared<ExitSnapshot>(with_vehicles);
+    auto& snapshot = capture->route;
+    snapshot.map_id = field::current_map_id(); snapshot.submap = sm;
+    snapshot.position = unity::local_position(unity::transform(pl));
+    snapshot.layer = sm->world ? 1 : player_layer(pl);
+    snapshot.vehicle = field::current_vehicle();
+    return capture;
+}
+void capture_exit_obstacle(ExitSnapshot& capture, void* entity) {
+    if (live_entity(entity) && entity_is_active(entity) && unity::transform(entity))
+        capture.route.obstacles.push_back(capture_obstacle(entity,capture.route));
+}
+void finish_exit_capture(ExitSnapshot& capture) {
+    capture.route.auto_groups = field::owned_auto_vehicle_groups();
+    if (capture.with_vehicles) {
+        capture.route.vehicles = field::vehicles_on_map();
+        for (auto& vehicle : capture.route.vehicles) vehicle.game = nullptr;
+    }
+}
+bool exit_snapshot_world(const ExitSnapshot& capture) { return capture.route.submap->world; }
+int exit_snapshot_vehicle(const ExitSnapshot& capture) { return capture.route.vehicle.valid ? capture.route.vehicle.id : 0; }
+std::vector<int> exit_distances(ExitSnapshot& capture, const std::vector<ExitTarget>& targets,
+                              std::function<bool()> cancelled) {
+    auto& snapshot = capture.route;
+    SnapshotScope scope(snapshot);
+    const auto* sm = snapshot.submap;
+    const auto& g = baked::grids(*sm);
+    auto req = walk_request(*sm,cell_of(*sm,snapshot.position,snapshot.layer));
+    world_mode(req);
+    req.cancelled = cancelled;
+    const auto live = live_blockers(*sm,g,{});
+    req.blocked = live.hard(); req.directional = live.directional;
+    req.live_hazards = true; req.hazards = live.triggers;
+    const auto reach = baked_route::flood(req);
+    const auto landed = land_after_ride(req,reach);
+    auto foot = req; foot.vehicle_group = foot.vehicle_type = foot.landing_group = 0;
+    std::vector<int> result(targets.size(),-1);
+    for (size_t i=0; i<targets.size(); ++i) {
+        if (cancelled && cancelled()) return result;
+        const auto& target = targets[i];
+        if (target.map_id > 0 && target.map_id != snapshot.map_id) {
+            MapGoal goal; goal.map_id = target.map_id; goal.cell = target.cell;
+            const auto leg = find_across(nullptr,nullptr,goal);
+            if (leg.found) result[i] = leg.steps_total;
+            continue;
+        }
+        const Cell at = cell_of(*sm,target.position,snapshot.layer);
+        for (const auto& object : g.objects) {
+            if (object.type != baked::ObjType::GotoMap || object.a != target.destination || !object.contains(at.x,at.y)) continue;
+            if (!snapshot.state.active(*sm,object)) continue;
+            // Exact trigger footprint: sibling arcs may improve a selected route,
+            // but cannot make a decorative or unreachable list row eligible.
+            auto movement = req;
+            movement.goals.clear();
+            for (int y=object.ty; y<object.ty+object.th; ++y) for (int x=object.tx; x<object.tx+object.tw; ++x) {
+                if (baked_route::transition_enterable(movement,g,x,y)) movement.goals.push_back({sm->world ? 1 : object.layer,x,y});
+            }
+            int distance = baked_route::transition_distance(movement,reach);
+            if (sm->world && req.vehicle_group > 0) {
+                foot.goals.clear();
+                for (int y=object.ty; y<object.ty+object.th; ++y) for (int x=object.tx; x<object.tx+object.tw; ++x)
+                    if (baked_route::transition_enterable(foot,g,x,y)) foot.goals.push_back({1,x,y});
+                const int land = baked_route::transition_distance(foot,landed);
+                if (land >= 0 && (distance < 0 || land < distance)) distance = land;
+            }
+            if (distance < 0 && sm->world && capture.with_vehicles && req.vehicle_group == 0 && !movement.goals.empty()) {
+                std::vector<Phase> phases;
+                if (boarding_route(*sm,g,movement,movement.goals,phases)) {
+                    distance = 0;
+                    for (const auto& phase : phases) distance += std::max(0,static_cast<int>(phase.cells.size())-1);
+                }
+            }
+            if (distance >= 0 && (result[i]<0 || distance<result[i])) result[i] = distance;
+        }
+    }
+    return result;
+}
 void request_reachability(bool with_vehicles, std::function<void()> ready) {
     ensure_quick(quick_movement(field::player_position(), field::map_handle(), field::player(), with_vehicles),
         [with_vehicles, ready = std::move(ready)]() mutable {

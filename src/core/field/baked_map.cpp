@@ -104,7 +104,7 @@ bool load(const void* data, size_t size)
 {
     if (!data || size < sizeof(Header)) return false;
     const Header* h = static_cast<const Header*>(data);
-    if (std::memcmp(h->magic, "FFPRMAP1", 8) != 0 || h->version != 1) return false;
+    if (std::memcmp(h->magic, "FFPRMAP1", 8) != 0 || (h->version != 1 && h->version != 2)) return false;
     g_data = static_cast<const uint8_t*>(data);
     g_size = size;
     g_header = h;
@@ -222,6 +222,8 @@ const Grids& grids(const Submap& s)
     if (cells) {
         for (int l = 0; l < 3; ++l) {
             if (s.collision_off[l] && !decode_rle(s.collision_off[l], cells, g->collision[l])) g->collision[l].clear();
+            if (g_header->version == 1)
+                for (auto& value : g->collision[l]) value = value == 0 ? 15 : 0;
             if (s.passage_off[l] && !decode_rle(s.passage_off[l], cells, g->passage[l])) g->passage[l].clear();
         }
         if (s.attribute_off && !decode_rle(s.attribute_off, cells, g->attribute)) g->attribute.clear();
@@ -283,7 +285,7 @@ bool walkable(const Grids& g, int layer, int x, int y, bool passages)
     const std::vector<uint8_t>& c = g.collision[layer];
     if (c.empty()) return false;
     const size_t i = static_cast<size_t>(y) * g.width + x;
-    if (c[i] == 0) return true;
+    if (c[i] != 0) return true;
     return passages && !g.passage[layer].empty() && g.passage[layer][i] != 0;
 }
 

@@ -1,4 +1,4 @@
-// check-sources: field/baked_map.cpp field/baked_router.cpp field/map_state_program.cpp field/field_refs.cpp json.cpp text.cpp
+// check-sources: field/baked_map.cpp field/baked_router.cpp field/map_state_program.cpp field/field_refs.cpp field/entity_filter.cpp field/npc_names.cpp json.cpp text.cpp
 // Actual baked planner snapshot on a worker. Every fake native API flags worker use.
 #include <windows.h>
 #include <atomic>
@@ -7,6 +7,7 @@
 #include <fstream>
 #include <chrono>
 #include "../src/core/field/baked_nav.cpp"
+#include "../src/core/field/entity_filter.h"
 namespace fixture {
 const DWORD native_owner = GetCurrentThreadId();
 std::atomic<int> wrong_owner{0};
@@ -117,9 +118,9 @@ int main() {
     if (world) {
         RouteSnapshot long_route(field::map_state::Resolver(field::map_state::Flags{}, fixture::records));
         long_route.submap = world; long_route.map_id = world->first_map_id; long_route.layer = 1;
-        long_route.position = world_of_cell(*world, {1, 123, 34});
+        long_route.position = world_of_cell(*world, {1, 124, 36});
         long_route.auto_groups = {2}; // Semitt Falls requires the owned canoe
-        long_route.goal.map_id = world->first_map_id; long_route.goal.cell = {1, 107, 44};
+        long_route.goal.map_id = world->first_map_id; long_route.goal.cell = {1, 107, 43};
         long_route.kind = field::TargetKind::Transition; long_route.locale = L"en";
         double route_ms = 0, flood_ms = 0;
         std::thread full([&] {
@@ -203,6 +204,8 @@ int main() {
                "retired contexts cancel A* and reachability computation");
     }
     int vehicle_cases=0, no_landing=0;
+    int world_exit_cases=0, world_exit_reachable=0, world_exit_pruned=0;
+    double worst_exit_ms=0;
     double worst_vehicle_ms=0, worst_vehicle_filter_ms=0;
     for(int number=1; number<=6; ++number) {
         fixture::game_id=static_cast<game::Id>(number);
@@ -249,6 +252,62 @@ int main() {
             const auto* map=field::baked::submap_at(index);
             if(!map->world) continue;
             const auto& grid=field::baked::grids(*map);
+            {
+                using namespace field::filter_worker;
+                FilterInput input; input.world=true; input.exits=true; input.sort=true;
+                input.navigation=std::make_shared<ExitSnapshot>(false,field::map_state::Resolver(field::map_state::Flags{},chest_records));
+                auto& copied=input.navigation->route;
+                copied.submap=map; copied.map_id=map->first_map_id; copied.layer=1;
+                bool start=false;
+                for (int y=0;y<grid.height&&!start;++y) for (int x=0;x<grid.width&&!start;++x)
+                    if (field::baked::vehicle_open(grid,1,x,y)) { copied.position=world_of_cell(*map,{1,x,y}); start=true; }
+                input.player=copied.position;
+                for (const auto& object:grid.objects) {
+                    if (object.type!=field::baked::ObjType::GotoMap) continue;
+                    FilterRow row; row.index=input.rows.size(); row.kind=field::Kind::MapExit;
+                    row.category=field::Category::MapExits; row.destination=object.a;
+                    row.position=row.numbering_position=world_of_cell(*map,{1,object.tx,object.ty});
+                    row.cell_x=object.tx; row.cell_y=object.ty; row.cell_layer=1;
+                    input.rows.push_back(std::move(row));
+                }
+                Categories categories;
+                std::thread exit_worker([&] {
+                    const auto began=std::chrono::steady_clock::now(); categories=build_categories(input);
+                    worst_exit_ms=std::max(worst_exit_ms,std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-began).count());
+                }); exit_worker.join();
+                auto movement=walk_request(*map,cell_of(*map,copied.position,1));
+                std::map<int,int> minimum;
+                for (const auto& row:input.rows) {
+                    ++world_exit_cases;
+                    if(row.route_distance<0) { ++world_exit_pruned; continue; }
+                    ++world_exit_reachable;
+                    expect(field::baked_route::transition_enterable(movement,grid,row.cell_x,row.cell_y),"every retained world exit is on enterable terrain");
+                    auto found=minimum.find(row.destination);
+                    if(found==minimum.end()||row.route_distance<found->second) minimum[row.destination]=row.route_distance;
+                }
+                std::unordered_set<int> seen;
+                for(size_t index:categories.views[0].order) {
+                    const auto& row=input.rows[index];
+                    expect(row.route_distance>=0&&minimum[row.destination]==row.route_distance&&seen.insert(row.destination).second,
+                        "all-six world grouping keeps exactly the nearest reachable trigger per destination");
+                    RouteSnapshot route(field::map_state::Resolver(field::map_state::Flags{},chest_records));
+                    route.submap=map;route.map_id=map->first_map_id;route.layer=1;route.position=copied.position;
+                    route.goal.map_id=route.map_id;route.goal.cell={1,row.cell_x,row.cell_y};route.kind=field::TargetKind::Transition;route.locale=L"en";
+                    std::thread route_worker([&]{result=plan_snapshot(route);});route_worker.join();
+                    expect(result.path.success,"retained grouped world exit is usable by the production route planner");
+                }
+                expect(seen.size()==minimum.size(),"group filter preserves every reachable world destination");
+                input.exits=false; const auto ungrouped=build(input);
+                expect(ungrouped.order.size()==static_cast<size_t>(std::count_if(input.rows.begin(),input.rows.end(),[](const auto& row){return row.route_distance>=0;})),
+                    "grouping off retains each reachable trigger and still prunes invalid world tiles");
+                if(!categories.views[0].order.empty()) {
+                    const auto index=categories.views[0].order.front(); const auto& row=input.rows[index];
+                    NativeObstacle gate;gate.type=19;gate.cell={-1,row.cell_x,row.cell_y};gate.collider=true;gate.collision=1;
+                    copied.obstacles.push_back(gate);
+                    std::thread gated([&]{categories=build_categories(input);});gated.join();
+                    expect(input.rows[index].route_distance<0,"copied native story collider vetoes a world transition before grouping");
+                }
+            }
             for(const auto& row:field::baked::transports()) {
                 if(row.type==0 || row.type==1 || row.type==5 || row.group<=0 || row.group>static_cast<int>(grid.transport.size())) continue;
                 Cell start; bool found=false;
@@ -290,6 +349,7 @@ int main() {
     }
     expect(vehicle_cases>=20, "all-six boarded-vehicle regression has representative coverage");
     std::printf("All-six boarded vehicles: %d world/transport cases; %d without eligible start/land destination; worst route %.3f ms, filter %.3f ms (offline)\n",vehicle_cases,no_landing,worst_vehicle_ms,worst_vehicle_filter_ms);
+    std::printf("All-six world exits: %d candidates, %d reachable, %d pruned from representative starts; worst six-category preparation %.3f ms (offline)\n",world_exit_cases,world_exit_reachable,world_exit_pruned,worst_exit_ms);
     expect(fixture::wrong_owner == 0, "world search/cancellation also avoid all native APIs");
     std::printf("Route worker check: %d failures\n", failures); return failures ? 1 : 0;
 }

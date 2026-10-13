@@ -3,6 +3,9 @@
 #include <cstdio>
 #include <thread>
 #include <chrono>
+namespace field::baked_nav {
+std::vector<int> exit_distances(ExitSnapshot&,const std::vector<ExitTarget>&,std::function<bool()>) { return {}; }
+}
 int main() {
     using namespace field; using namespace filter_worker;
     int failures = 0;
@@ -36,6 +39,18 @@ int main() {
     expect(result.order.size() == 7 && result.restored >= 0 && result.order[result.restored] == 1,
         "existing pad/exit/layer guards and selected identity survive worker sort");
     expect(result.exits.size() == 2, "navigation filters do not remove wall-tone exit locations");
+    input.rows[5].route_distance=-1; input.rows[6].route_distance=20;
+    result=build(input);
+    expect(std::find(result.order.begin(),result.order.end(),6)!=result.order.end() &&
+        std::find(result.order.begin(),result.order.end(),5)==result.order.end(),"blocked nearest tile cannot prune a reachable sibling exit");
+    input.rows[5].route_distance=50; input.rows[6].route_distance=20; input.sort=false;
+    result=build(input);
+    expect(std::find(result.order.begin(),result.order.end(),6)!=result.order.end(),"grouping chooses shortest usable route independently of sort order");
+    input.world=true; input.exits=false; input.rows[5].route_distance=-1;
+    result=build(input);
+    expect(std::find(result.order.begin(),result.order.end(),5)==result.order.end() && result.exits.size()==1,
+        "unreachable world trigger is pruned from list and audio exit cache with grouping off");
+    input.world=false; input.exits=true; input.sort=true; input.rows[5].route_distance=input.rows[6].route_distance=-1;
     input.category = Category::NPCs; result = build(input);
     expect(result.order.size() == 5 && result.names[0] == L"Soldier2", "category filter does not renumber groups");
     input.rows[1].selected = false; input.selected_has = true; input.selected_remote = 50;

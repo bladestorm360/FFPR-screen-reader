@@ -124,6 +124,7 @@ int current_map_id_or_user_data() { fixture::native(); return fixture::map; }
 int current_map_id() { return current_map_id_or_user_data(); }
 void* player() { fixture::native(); return nullptr; }
 void* map_handle() { fixture::native(); return nullptr; }
+VehicleState current_vehicle() { fixture::native(); return {}; }
 bool entity_is_active(void*) { fixture::native(); return true; }
 bool entity_is_hidden_by_vehicle(void*) { fixture::native(); return false; }
 bool entity_is_scenery(void*) { fixture::native(); return false; }
@@ -152,6 +153,12 @@ unity::Vec3 Entity::position() const { fixture::native(); return pos; }
 PathInfo find_path_to_quick(unity::Vec3, unity::Vec3, void*, void*, TargetKind, bool) { fixture::native(); return {}; }
 }
 namespace field::baked_nav {
+std::shared_ptr<ExitSnapshot> begin_exit_capture(bool,bool) { fixture::native(); return {}; }
+void capture_exit_obstacle(ExitSnapshot&,void*) { fixture::native(); }
+void finish_exit_capture(ExitSnapshot&) { fixture::native(); }
+bool exit_snapshot_world(const ExitSnapshot&) { fixture::native(); return false; }
+int exit_snapshot_vehicle(const ExitSnapshot&) { fixture::native(); return 0; }
+std::vector<int> exit_distances(ExitSnapshot&,const std::vector<ExitTarget>&,std::function<bool()>) { return {}; }
 bool available(void*) { fixture::native(); return true; }
 bool prepared() { fixture::native(); return true; }
 bool cell_at(void*, unity::Vec3, baked_route::Cell&) { fixture::native(); return false; }
@@ -210,6 +217,12 @@ int main() {
     filtered_view()[10]->game = reinterpret_cast<void*>(2);
     scanner::next_entity();
     expect(scanner::current_index() == 11, "warm browsing skips a despawned native handle even without reachability filtering");
+    g_navigation_filtered=true;g_view_vehicle=0;
+    fixture::pose.x+=1;spoken=false;
+    scanner::when_filter_ready([&]{spoken=true;});
+    expect(!spoken&&!g_views_ready&&g_filter_pending,"moving before grouped-exit browse waits for the new nearest-exit generation");
+    for(int i=0;!spoken&&i<100;++i){fixture::tick();fixture::work();}
+    expect(spoken,"grouped-exit browse resumes after owned worker publication");
     scanner::invalidate_map();
     spoken = false; scanner::when_filter_ready([&] { spoken = true; });
     expect(!spoken, "map invalidation requires a new ready generation");

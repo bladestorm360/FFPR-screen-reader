@@ -1,5 +1,8 @@
 # Read-only snapshots and worker ownership
 
+October 13 exit follow-up adds owned route-distance/grouping snapshots, native
+stair masks and FF6 cropped room geometry. [Evidence, limits and validation](MAP_EXITS.md).
+
 User contract, October 12: pure computation, formatting, speech, audio, scanning,
 extraction, pathfinding and I/O must not hold up native processing. Game callbacks
 only observe current state or copy bounded ready values. They never wait for a

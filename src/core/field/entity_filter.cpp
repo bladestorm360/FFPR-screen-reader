@@ -48,7 +48,7 @@ Filtered build(FilterInput& input) {
     }
     npc_names::renumber(names); // before category/distance/reachability inclusion
     for (const auto& row : input.rows) {
-        if (row.kind == Kind::MapExit && !row.remote_map) result.exits.push_back(row.numbering_position);
+        if (row.kind == Kind::MapExit && !row.remote_map && (!input.world || row.route_distance>=0)) result.exits.push_back(row.numbering_position);
         result.names.push_back(row.name);
         if (input.category == Category::All || input.category == row.category) result.order.push_back(row.index);
     }
@@ -60,18 +60,45 @@ Filtered build(FilterInput& input) {
         return distance(a) < distance(b);
     });
     std::unordered_set<std::wstring> pads;
-    std::unordered_set<int> exits;
+    std::unordered_map<int,size_t> exits;
+    if (input.exits) for (size_t index : result.order) {
+        const auto& row = input.rows[index];
+        if (row.kind != Kind::MapExit || row.destination <= 0) continue;
+        const auto found = exits.find(row.destination);
+        if (found == exits.end()) { exits.emplace(row.destination,index); continue; }
+        const auto& old = input.rows[found->second];
+        // Grouping is independent from list sorting. Prefer the shortest usable
+        // route; if every indoor exit is blocked, retain one for its explanation.
+        const bool better = row.route_distance >= 0 &&
+            (old.route_distance < 0 || row.route_distance < old.route_distance);
+        const bool fallback = row.route_distance < 0 && old.route_distance < 0 && input.sort &&
+            point_distance(row.position,input.player) < point_distance(old.position,input.player);
+        if (better || fallback) found->second = index;
+    }
     result.order.erase(std::remove_if(result.order.begin(), result.order.end(), [&](size_t index) {
         const auto& row = input.rows[index];
+        if (input.world && row.kind == Kind::MapExit && row.route_distance < 0) return true;
         // Preserve only the two existing, user-approved grouping guards.
         if (input.pads && !row.pad.empty() && !pads.insert(row.pad).second) return true;
-        if (input.exits && row.kind == Kind::MapExit && row.destination > 0 && !exits.insert(row.destination).second) return true;
+        if (input.exits && row.kind == Kind::MapExit && row.destination > 0 && exits[row.destination] != index) return true;
         return input.layer && row.kind == Kind::Event && row.event_type == L"ToLayer";
     }), result.order.end());
     restore_selection(result, input);
     return result;
 }
 Categories build_categories(FilterInput& input) {
+    if (input.navigation) {
+        std::vector<baked_nav::ExitTarget> targets;
+        std::vector<size_t> indices;
+        for (size_t i=0; i<input.rows.size(); ++i) {
+            const auto& row = input.rows[i];
+            if (row.kind != Kind::MapExit) continue;
+            targets.push_back({row.position,row.remote_map,row.destination,{row.cell_layer,row.cell_x,row.cell_y}});
+            indices.push_back(i);
+        }
+        const auto distances = baked_nav::exit_distances(*input.navigation,targets,input.cancelled);
+        for (size_t i=0; i<distances.size(); ++i) input.rows[indices[i]].route_distance = distances[i];
+    }
     input.category = Category::All;
     Categories result;
     auto& all = result.views[0];

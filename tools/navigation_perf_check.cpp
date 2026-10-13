@@ -40,6 +40,8 @@ int main() {
                 at = std::chrono::steady_clock::now();
                 auto route = baked_route::find(request);
                 const auto route_ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - at).count();
+                std::printf("FF%d %ls start(%d,%d) goal(%d,%d) distance %d flood %.3f ms route %.3f ms\n",
+                    game,baked::name_of(*sm).c_str(),request.start.x,request.start.y,target.x,target.y,far,flood_ms,route_ms);
                 worst_route = std::max(worst_route, route_ms);
                 if (!route.found || reach.distance(target) < 0 || route.cells.front() != request.start || route.cells.back() != target) {
                     ++failures;

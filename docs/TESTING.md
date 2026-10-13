@@ -4,15 +4,18 @@ Offline checks pass; user gameplay testing has identified regressions recorded i
 [October 11 follow-up](FOLLOWUP_2026_10_11.md). Test one game at a time. Report what you hear,
 and attach `ffpr_screen_reader.log` from that game's folder if something is wrong.
 
-Prioritize the [current hook/title/boarded-save checks](#hook-installation-title-and-boarded-save-retest-october-13)
-before continuing the earlier FF2 results checks when progression permits.
+Prioritize the [South Figaro stairs and grouped world exits](re/MAP_EXITS.md#prioritized-gameplay-checks)
+when progression permits. These October 13 fixes are installed in all six games;
+offline checks passed and gameplay confirmation is pending. Then continue the
+[hook/title/boarded-save checks](#hook-installation-title-and-boarded-save-retest-october-13)
+and earlier FF2 results checks.
 
 ## Gameplay confirmations, October 13
 
 Initial user report after deployment (`a2f3b81`, DLL
 `AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`):
 the table also incorporates subsequent FF2 ship/results and Verbose/Brief retests.
-The latest follow-up DLL/deployment is recorded in [MENU_DETAILS.md](re/MENU_DETAILS.md).
+The latest follow-up DLL/deployment is recorded in [MAP_EXITS.md](re/MAP_EXITS.md#installed-build-and-recovery).
 
 | Feature | Gameplay status |
 | --- | --- |
