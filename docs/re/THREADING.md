@@ -63,6 +63,12 @@ pressure recovery, cancellation/data-age limits and fake-SDK versus audible timi
 
 ### Boarded vehicles and wrapped worlds, October 13
 
+Subsequent user retest after `4013355`: FF2 ship pathfinding works, including boarding/
+disembarking across vehicle/foot route legs. Other vehicles remain untested. This is
+qualitative gameplay confirmation of those reported cases, not numerical timing or
+every loaded-save/story-state combination. It supersedes pending ship-landing statements
+below; the initial failures and offline evidence remain historical provenance.
+
 The later FF2 report narrows the initial lag-free confirmation to tested land routes.
 The user's own current log records Ship boarding and No path from world map 1 cell
 `(126,129)` to `(110,98)` and `(218,43)`. Existing bakes already contain ship group 4

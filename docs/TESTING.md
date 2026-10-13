@@ -9,16 +9,18 @@ before continuing the earlier FF2 results checks when progression permits.
 
 ## Gameplay confirmations, October 13
 
-User report after the latest deployment (`a2f3b81`, DLL
+Initial user report after deployment (`a2f3b81`, DLL
 `AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`):
+the table also incorporates the subsequent retest after `4013355` (current DLL
+`473F868AB8BCDBE5CC91F4FB41F654C9674ECDB88521F087E50B6DBD0BD31FD4`).
 
 | Feature | Gameplay status |
 | --- | --- |
 | Land pathfinding responsiveness | Confirmed by the user: working perfectly with no lag in the tested session. Later FF2 ship report is tracked separately below. |
 | Battle transitions | Confirmed by the user: smooth in the tested session. |
 | FF1 battle-results buffer reading | Confirmed by the user: reads correctly. Specific Autodetail/input/detail cases were not separately enumerated. |
-| FF2 battle-results buffer | User confirms character/hand levels and progress are read, but weapon type is missing; fix and phase-wide I summary require retest. Gil/other phases not individually confirmed. |
-| FF2 boarded ship routing | User reports No path for world destinations while onboard. Corrected riding/landing/walking and world-wrap paths await gameplay retest. |
+| FF2 battle-results buffer | User's later example includes character, hand, weapon type, skill level and progress. Screenshot confirms hand headings, icon type, level numeral and bar are displayed. Phase-wide I and other phase/control cases remain unconfirmed. |
+| FF2 boarded ship routing | Subsequent user retest confirms ship pathfinding and boarding/disembarking across vehicle/foot route legs work. Other vehicles remain untested; no numerical timing or every loaded-save/story case is implied. |
 | FF3–FF6 battle-results buffers | Expected by the user to work through the shared implementation; direct gameplay confirmation pending. |
 
 These confirmations supersede earlier blanket pending statements for the reported
@@ -27,6 +29,11 @@ measurements and unreported speech-order/control cases remain distinct. FF2 resu
 are the next active check; its first-page/weapon-row procedure is below. The original
 confirmation was recorded without changing code; subsequent FF2 reports required the
 fixes below. No agent game launch was performed.
+
+The later FF2 screenshot/source review is recorded in
+[results evidence](re/RESULTS.md#ff2-screenshot-review-october-13). The displayed numeral
+is skill level, not the internal weapon-type identifier. The spoken percentage is a
+numerical description of the visible bar under the existing approved progress contract.
 
 ## October 11 audit test
 
@@ -529,6 +536,10 @@ if a route still fails. Unreported category/F8/prompt/naming speech-order checks
 remain separate from confirmed features. No agent game launch or runtime probe occurred.
 
 ## Hook installation, title and boarded-save retest, October 13
+
+Subsequent user confirmation: FF2 ship routing and boarding/disembarking work. Retain
+the steps below for unreported loaded-save/V cases; other vehicles and title-prompt
+timing remain unconfirmed. No further ship workaround or broad retest is requested.
 
 Built, isolated-smoke tested and deployed to all six; installed DLL hashes independently
 match `473F868AB8BCDBE5CC91F4FB41F654C9674ECDB88521F087E50B6DBD0BD31FD4`.

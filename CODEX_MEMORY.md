@@ -1,5 +1,16 @@
 # Native FFPR durable memory
 
+- October 13 subsequent user retest confirms FF2 ship pathfinding and boarding/
+  disembarking across route legs work; other vehicles remain untested. No numerical
+  timing or every boarded-save/story case is implied. Screenshot review confirms
+  the FF2 results table displays R. Hand/L. Hand column headings, weapon-type icons,
+  skill-level numerals and progress bars. In `R. Hand Spear 5, 66%`, 5 is the visible
+  level, not an internal weapon ID; 66% describes the rendered bar under the existing
+  approved progress-reading contract. Source reads the displayed hand headings/text
+  and labels only matching visible icons. No reader code change is needed for this
+  disclosure concern. [Confirmation record](docs/TESTING.md#gameplay-confirmations-october-13),
+  [screenshot/source evidence](docs/re/RESULTS.md#ff2-screenshot-review-october-13).
+
 - October 13 hook-allocation/title/boarded-save follow-up deployed/hash-verified in
   all six: `473F868AB8BCDBE5CC91F4FB41F654C9674ECDB88521F087E50B6DBD0BD31FD4`.
   Supersedes older DLLs below. User's FF2 log installed 29/failed 199 hooks, including

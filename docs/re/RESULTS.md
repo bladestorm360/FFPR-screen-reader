@@ -1,5 +1,32 @@
 # Current-screen results buffers (2026-10-12)
 
+## FF2 screenshot review, October 13
+
+The user's later spoken example is `Firion: R. Hand Spear 5, 66%`; their attached
+FF2 results screenshot (`codex-clipboard-cb1ac045-2fc0-4abc-99bb-77e160ffe37a.png`)
+shows Gil 300 and a Skill Lv. table. R. Hand and L. Hand are visible column headings.
+Firion's right-hand column has the weapon-type icon, visible level 5 and a filled
+progress bar; his left-hand column has a shield icon, level 7 and another bar.
+Maria/Guy/Leila likewise have a character name and two icon/level/bar columns.
+No percentage text is printed on this screenshot: spoken 66% is the numeric description
+of the visible gauge under the existing user-approved weapon progress contract.
+The image establishes the presentation structure, not the exact percentage from pixels.
+
+Source audit: `battle_result.cpp::ff2_weapon_rows` reads the rendered fixedRightHandText/
+fixedLeftHandText headings and nameText; `displayed::skill_row` combines visible text
+(including the level numeral), the matching visible weapon icon's meaning and the
+rendered gauge. The weaponType enum selects a translated label; the enum itself is
+never appended as a number. Thus the 5 in this row is displayed skill level, not an
+internal weapon identifier. All three fields questioned by the user are represented
+on screen; this concern requires no reader code change. Existing visibility/native
+phase/sprite checks and scoped before/after progress comparisons remain in force.
+
+User's ship-pathfinding/boarding/disembarking confirmation is recorded separately in
+[testing](../TESTING.md#gameplay-confirmations-october-13). Other vehicles, phase-wide I,
+title-prompt timing and unreported results cases remain pending. Sol inspected the
+provided image and current source; no game launch/probe, new test/build or deployment
+was necessary for this evidence/documentation update.
+
 User requirement: replace the L results log in all six games with the currently
 displayed native phase's arrow-review buffer. Always announce displayed EXP/gil
 totals and each phase headline. Member EXP, individual drops and stat tables
@@ -10,9 +37,10 @@ the interval before the page buffer is ready. Ordinary confirm advances normally
 ## Gameplay confirmation, October 13
 
 The user confirms that FF1's battle-results buffer reads correctly after the shared
-deployment. Later FF2 testing confirms hand levels/progress are read, while reporting
-missing weapon types and requesting phase-wide I summaries; corrections are recorded
-below and await retest. Gil/other phase details remain unreported. The user expects FF3–FF6 to work because of the shared results
+deployment. Initial FF2 testing reported missing weapon types and requested phase-wide
+I summaries. The later example confirms the weapon label is now read; screenshot/source
+review above confirms the hand/level/icon/bar presentation. Phase-wide I, gil speech and
+other phase details remain unreported. The user expects FF3–FF6 to work because of the shared results
 implementation; this is an expectation, not direct gameplay confirmation for those
 games. Specific Autodetail, held/release input, row details and native advancement
 cases were not individually reported as tested. The user also confirms lag-free
