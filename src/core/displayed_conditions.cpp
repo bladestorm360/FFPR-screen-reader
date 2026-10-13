@@ -14,6 +14,8 @@ ref::Class kIcons{"Last.UI", "ConditionIconController"};
 ref::Method mUpdate{kIcons, "UpdateView", 1}, mIcon{kIcons, "GetIcon", 1};
 ref::Class kSkill{"Serial.FF2.UI", "SkillLevelContentController", game::kFF2};
 ref::Method mWeapon{kSkill, "SetWeaponIcon", 0}, mAbility{kSkill, "SetAbilityIcon", 1};
+ref::Method mHands{kSkill, "SetBothHandsData", 1};
+ref::Field fWeaponType{kSkill, "weaponType"};
 ref::Class kImage{"UnityEngine.UI", "Image"};
 ref::Method mSprite{kImage, "get_overrideSprite", 0};
 struct Icon { void* sprite; std::wstring description; };
@@ -52,20 +54,32 @@ void d_update(void* self, void* values, const void* mi)
 }
 using Weapon = void (*)(void*, const void*);
 Weapon o_weapon;
+void capture_weapon(void* self)
+{
+    for (auto it = g_weapons.begin(); it != g_weapons.end();)
+        if (!unity::alive(it->first)) it = g_weapons.erase(it); else ++it;
+    g_weapons.erase(self);
+    if (!kSkill.is(self) || fWeaponType.get() < 0) return;
+    const auto type = ref::rd<int32_t>(self, fWeaponType);
+    static const wchar_t* labels[] = {L"Sword", L"Knife", L"Spear", L"Axe", L"Staff", L"Bow", L"Shield", L"Unarmed"};
+    if (type < 0 || type >= 8) return;
+    void* image = field(field(field(self, "view"), "iconText"), "iconImage");
+    if (!unity::alive(image)) return;
+    void* sprite = ref::call<void*>(mSprite, image);
+    if (unity::alive(sprite)) g_weapons[self] = {sprite, T(labels[type])};
+}
 void d_weapon(void* self, const void* mi)
 {
     o_weapon(self, mi);
-    hooks::guarded("Displayed.WeaponIcon", [=] {
-        for (auto it = g_weapons.begin(); it != g_weapons.end();)
-            if (!unity::alive(it->first)) it = g_weapons.erase(it); else ++it;
-        g_weapons.erase(self);
-        const auto type = il2cpp::read_field<int32_t>(self, il2cpp::field_offset(kSkill.get(), "weaponType"));
-        static const wchar_t* labels[] = {L"Sword", L"Knife", L"Spear", L"Axe", L"Staff", L"Bow", L"Shield", L"Unarmed"};
-        if (type < 0 || type >= 8) return;
-        void* image = field(field(field(self, "view"), "iconText"), "iconImage");
-        void* sprite = ref::call<void*>(mSprite, image);
-        if (unity::alive(sprite)) g_weapons[self] = {sprite, T(labels[type])};
-    });
+    hooks::guarded("Displayed.WeaponIcon", [=] { capture_weapon(self); });
+}
+using Hands = void (*)(void*, void*, const void*);
+Hands o_hands;
+void d_hands(void* self, void* data, const void* mi)
+{
+    // Results populate the rendered icon here without calling SetWeaponIcon.
+    o_hands(self, data, mi);
+    hooks::guarded("Displayed.WeaponHandsIcon", [=] { capture_weapon(self); });
 }
 using Ability = void (*)(void*, void*, const void*);
 Ability o_ability;
@@ -78,6 +92,7 @@ int install() {
     int n = hooks::attach(mIcon, &d_icon, &o_icon) ? 1 : 0;
     if (game::is(game::Id::FF2)) {
         n += hooks::attach(mWeapon, &d_weapon, &o_weapon) ? 1 : 0;
+        n += hooks::attach(mHands, &d_hands, &o_hands) ? 1 : 0;
         n += hooks::attach(mAbility, &d_ability, &o_ability) ? 1 : 0;
     }
     return n + (hooks::attach(mUpdate, &d_update, &o_update) ? 1 : 0);

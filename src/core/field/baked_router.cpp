@@ -91,6 +91,11 @@ void neighbours(const Request& r, const baked::Grids& g, const Cell& from, F&& v
 {
     for (const auto& d : kDirs) {
         Cell n{from.layer, from.x + d[0], from.y + d[1]};
+        if (r.submap && r.submap->world) {
+            n.x = (n.x + g.width) % g.width;
+            n.y = (n.y + g.height) % g.height;
+            if (n.x == from.x && n.y == from.y) continue;
+        }
         if (!baked::in_bounds(g, n.x, n.y)) continue;
         // A ToLayer cell moves the player to its other layer; the step counts when the cell is
         // open on either layer (the collision grids of a stairway overlap at its ends).
@@ -139,7 +144,11 @@ Route find(const Request& r)
     };
     auto heuristic = [&](const Cell& c) {
         int best = 1 << 30;
-        for (const Cell& goal : goals) best = std::min(best, std::abs(goal.x - c.x) + std::abs(goal.y - c.y));
+        for (const Cell& goal : goals) {
+            int dx = std::abs(goal.x - c.x), dy = std::abs(goal.y - c.y);
+            if (r.submap->world) { dx = std::min(dx,g.width-dx); dy = std::min(dy,g.height-dy); }
+            best = std::min(best,dx+dy);
+        }
         return best;
     };
 
@@ -174,7 +183,7 @@ Route find(const Request& r)
     };
     // The start has no direction: its exits cost a step each, never a turn.
     neighbours(r, g, start, [&](const Cell& next) {
-        relax(next, direction_towards(start, next), kStep, -1);
+        relax(next, direction_towards(start, next, r.submap->world ? g.width : 0, r.submap->world ? g.height : 0), kStep, -1);
         return true;
     });
     int expansions = 0;
@@ -195,7 +204,7 @@ Route find(const Request& r)
         }
         if (r.max_expansions > 0 && ++expansions > r.max_expansions) break;
         neighbours(r, g, cur, [&](const Cell& next) {
-            const int nd = direction_towards(cur, next);
+            const int nd = direction_towards(cur, next, r.submap->world ? g.width : 0, r.submap->world ? g.height : 0);
             relax(next, nd, gcost + kStep + (nd != dir ? kTurn : 0), st);
             return true;
         });
@@ -226,22 +235,30 @@ int Reach::distance(const Cell& c) const
 
 Reach flood(const Request& r)
 {
+    return flood(r, {r.start});
+}
+Reach flood(const Request& r, const std::vector<Cell>& starts)
+{
     Reach out;
     out.submap = r.submap;
     if (!r.submap) return out;
     const baked::Grids& g = baked::grids(*r.submap);
     out.width = g.width;
     out.height = g.height;
-    if (g.width <= 0 || g.height <= 0 || !baked::in_bounds(g, r.start.x, r.start.y)) return out;
+    if (g.width <= 0 || g.height <= 0) return out;
     const int layers = r.submap->world ? 1 : 3;
     for (int l = 0; l < layers; ++l) out.dist[l].assign(static_cast<size_t>(g.width) * g.height, 0xFFFF);
 
-    Cell start = r.start;
-    if (r.submap->world) start.layer = 0;
-    auto& d0 = out.dist[start.layer];
-    d0[static_cast<size_t>(start.y) * g.width + start.x] = 0;
     std::queue<Cell> q;
-    q.push(start);
+    for (Cell start : starts) {
+        if (r.cancelled && r.cancelled()) return Reach{};
+        if (!baked::in_bounds(g, start.x, start.y)) continue;
+        if (r.submap->world) start.layer = 0;
+        if (start.layer < 0 || start.layer >= layers) continue;
+        auto& d0 = out.dist[start.layer][static_cast<size_t>(start.y) * g.width + start.x];
+        if (d0 == 0) continue;
+        d0 = 0; q.push(start);
+    }
     while (!q.empty()) {
         if (r.cancelled && r.cancelled()) return Reach{};
         Cell cur = q.front();
@@ -259,10 +276,12 @@ Reach flood(const Request& r)
     return out;
 }
 
-int direction_towards(const Cell& from, const Cell& to)
+int direction_towards(const Cell& from, const Cell& to, int wrap_width, int wrap_height)
 {
-    const int dx = to.x - from.x;
-    const int dy = to.y - from.y;   // tile rows grow downward: dy < 0 is north
+    int dx = to.x - from.x;
+    int dy = to.y - from.y;   // tile rows grow downward: dy < 0 is north
+    if (wrap_width > 0 && std::abs(dx) > wrap_width/2) dx += dx > 0 ? -wrap_width : wrap_width;
+    if (wrap_height > 0 && std::abs(dy) > wrap_height/2) dy += dy > 0 ? -wrap_height : wrap_height;
     if (dx == 0 && dy == 0) return -1;
     if (std::abs(dy) >= std::abs(dx)) return dy < 0 ? 0 : 2;
     return dx > 0 ? 1 : 3;
@@ -280,11 +299,11 @@ int facing_direction(const Cell& from, const Goals& goals)
     return direction_towards(from, *nearest);
 }
 
-std::vector<Leg> legs(const std::vector<Cell>& cells)
+std::vector<Leg> legs(const std::vector<Cell>& cells, int wrap_width, int wrap_height)
 {
     std::vector<Leg> out;
     for (size_t i = 1; i < cells.size(); ++i) {
-        const int dir = direction_towards(cells[i - 1], cells[i]);
+        const int dir = direction_towards(cells[i - 1], cells[i], wrap_width, wrap_height);
         if (dir < 0) continue;
         if (!out.empty() && out.back().dir == dir) ++out.back().count;
         else out.push_back(Leg{dir, 1});

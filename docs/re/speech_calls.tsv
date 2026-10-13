@@ -19,7 +19,7 @@ src/core/battle/battle_party.cpp	137	ffpr::say	interrupt
 src/core/battle/battle_party.cpp	139	ffpr::say	interrupt
 src/core/battle/battle_party.cpp	145	ffpr::say	interrupt
 src/core/battle/battle_party.cpp	148	ffpr::say	interrupt
-src/core/battle/battle_result.cpp	371	ffpr::say	queued
+src/core/battle/battle_result.cpp	367	ffpr::say	queued
 src/core/battle/rendered_feedback.cpp	23	ffpr::say	queued
 src/core/bestiary/bestiary_navigation.cpp	47	ffpr::say	interrupt
 src/core/bestiary/bestiary_patches.cpp	147	ffpr::say	queued
@@ -59,7 +59,7 @@ src/core/extras/music_player.cpp	237	ffpr::say	interrupt
 src/core/extras/music_player.cpp	251	ffpr::say	interrupt
 src/core/extras/music_player.cpp	267	ffpr::say	interrupt
 src/core/extras/music_player.cpp	272	ffpr::say	queued
-src/core/field/baked_nav.cpp	1476	ffpr::say	queued
+src/core/field/baked_nav.cpp	1573	ffpr::say	queued
 src/core/field/condition_feedback.cpp	27	ffpr::say	queued
 src/core/field/entity_nav.cpp	50	ffpr::say	interrupt
 src/core/field/entity_nav.cpp	174	ffpr::say	interrupt
@@ -204,13 +204,12 @@ src/core/ui/mod_menu.cpp	394	ffpr::say	interrupt
 src/core/ui/mod_menu.cpp	491	ffpr::say_sequence	interrupt
 src/core/ui/mod_menu.cpp	503	ffpr::say	interrupt
 src/core/ui/mod_menu.cpp	514	ffpr::say_sequence	interrupt
-src/core/ui/review_buffer.cpp	35	ffpr::say	interrupt
-src/core/ui/review_buffer.cpp	101	ffpr::say_parts	interrupt
-src/core/ui/review_buffer.cpp	135	ffpr::say	queued
+src/core/ui/review_buffer.cpp	36	ffpr::say	interrupt
+src/core/ui/review_buffer.cpp	102	ffpr::say_parts	interrupt
 src/core/ui/review_buffer.cpp	137	ffpr::say	queued
-src/core/ui/review_buffer.cpp	170	ffpr::say	queued
-src/core/ui/review_buffer.cpp	175	ffpr::say	queued
-src/core/ui/review_buffer.cpp	178	ffpr::say	queued
+src/core/ui/review_buffer.cpp	139	ffpr::say	queued
+src/core/ui/review_buffer.cpp	171	ffpr::say_parts	interrupt
+src/core/ui/review_buffer.cpp	174	ffpr::say	queued
 src/core/ui/text_input.cpp	44	ffpr::say	interrupt
 src/core/ui/text_input.cpp	106	ffpr::say	interrupt
 src/core/ui/text_input.cpp	128	ffpr::say	interrupt

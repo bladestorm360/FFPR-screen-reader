@@ -1,5 +1,34 @@
 # Native FFPR durable memory
 
+- October 13 FF2 results/boarded-vehicle follow-up deployed/hash-verified in all six:
+  `FA433F55BD5743D3FFAA57450528E796C39FB875495BF329C5015E0F95A7D99E`.
+  Supersedes earlier DLLs. Observe native SetBothHandsData as well as SetWeaponIcon;
+  FF2 results now retain the actual rendered weapon type with hand/level/progress.
+  I/controller West reads every current-phase delta from any cursor position, independent
+  of automatic summaries/Autodetail, superseding the prior row-only behavior. Shared
+  review retains the worker-built brief; no new deduplication or native-thread joins.
+  [Results source/evidence](docs/re/RESULTS.md#weapon-labels-and-phase-wide-changes-october-13).
+  Boarded navigation now plans ride/legal landing/walk; filters include reachable land.
+  Existing bakes already contain vehicle rules. World A*/flood, heuristic, directions
+  and beacon corners wrap; transport changes reject obsolete pending/preserved plans.
+  Both logged FF2 ship failures pass offline in 7.516/11.974 ms; 103 eligible all-six
+  world/transport cases pass (85 have no eligible start/land destination). Worst route/
+  filter compute 25.100/12.319 ms, not target-game audible/frame measurements.
+  [Ownership, bounds, evidence and limits](docs/re/THREADING.md#boarded-vehicles-and-wrapped-worlds-october-13).
+  Canonical build (7,063 names, zero missing/undefined wiring), actual-reader results,
+  routes, 2,292 autowalk replays, speech/input and isolated DLL smoke pass. No delegation,
+  game launch/probe or Prism change. [Focused retest](docs/TESTING.md#current-ff2-results-and-vehicle-retest-october-13).
+
+- October 13 user gameplay confirmation after the latest deployment: pathfinding works
+  without lag; battle transitions are smooth; FF1 battle-results buffer reads correctly.
+  These are user-observed confirmations, not instrumented latency/frame measurements
+  or an all-six gameplay pass. FF2 results testing is in progress. The user expects
+  FF3–FF6 results to work because they share the implementation, but direct confirmation
+  remains pending. Later FF2 reports narrow navigation confirmation to land routes:
+  boarded Ship failed; weapon rows read levels/progress but omitted type. Corrections
+  above are offline-verified and await retest. [Current confirmation record](docs/TESTING.md#gameplay-confirmations-october-13),
+  [results status](docs/re/RESULTS.md#gameplay-confirmation-october-13).
+
 - October 13 category/speech-order audit deployed/hash-verified in all six games:
   `AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`.
   Supersedes earlier DLLs below. Prism interrupt=true cancels NVDA speech; use owned
@@ -71,7 +100,8 @@
 - 2026-10-12 FF2 retest/results deltas: first-phase pending reads now follow native result
   updates rather than a 30-frame expiry. FF2 has gil and nested displayed weapon rows;
   other games retain member EXP. All six growth tables support Battle's changed-stats toggle
-  (default on); I/controller West reads only the selected growth/weapon row's change. Full
+  (default on); the prior row-only I/controller West behavior was superseded by the
+  October 13 current-phase correction above. Full
   displayed tables remain in arrows/Autodetail; weapon summaries require the toggle even
   with Autodetail on. Native integer gauge operands stay exact until ceil formatting,
   including rollover/cap; FF2 has 16 levels, intervals 20..100, minimum positive gain 1%,

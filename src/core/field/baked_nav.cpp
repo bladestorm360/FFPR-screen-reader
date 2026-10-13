@@ -41,6 +41,7 @@ struct ActiveRoute {
     Cell target;                  // the target cell the route was planned to (x, y)
     int goal_map_id = 0;          // the target's map: map_id, or another floor (route_to_goal)
     int next_map_id = 0;          // the route goes on there after its last leg (0 = ends at the target)
+    int transportation_id = 0;
     std::vector<Phase> phases;
 };
 
@@ -169,6 +170,12 @@ baked_route::Goals goals_for(const baked::Submap& sm, const Cell& target, Target
     movement.submap = &sm;
     movement.passages = game::flags().has_hidden_passages;
     world_mode(movement);
+    // Land destinations are reached after legally leaving the current vehicle.
+    // Determine their actual walking footprint rather than a ship's fallback tile.
+    if (sm.world && movement.vehicle_group > 0 &&
+        !baked::group_crosses(movement.vehicle_group, baked::attribute(baked::grids(sm), target.x, target.y))) {
+        movement.vehicle_group = 0;
+    }
     return baked_route::goals_for(movement, target, goal_kind(kind));
 }
 
@@ -362,18 +369,20 @@ bool any_reachable(const baked_route::Reach& reach, const std::vector<Cell>& goa
 void world_mode(baked_route::Request& req)
 {
     req.vehicle_group = 0;
+    req.vehicle_type = req.landing_group = 0;
     req.auto_groups.clear();
     if (!req.submap || !req.submap->world) return;
+    req.auto_groups = planning_auto_groups();
     VehicleState v = planning_vehicle();
     if (v.valid && v.type != 1 && v.type != 0) {
         if (const baked::TransportRow* row = baked::transport(v.id)) {
             if (row->type != kTransportContent) {
                 req.vehicle_group = row->group;
+                req.vehicle_type = row->type; req.landing_group = row->landing_group;
                 return;
             }
         }
     }
-    req.auto_groups = planning_auto_groups();
 }
 
 /// The vehicle that would carry the player to the goals on a world map: the cheapest kind
@@ -447,6 +456,35 @@ std::vector<Vec3> world_path_of(const baked::Submap& sm, const std::vector<Cell>
     return out;
 }
 
+// Pure worker reachability after legally leaving the already-ridden vehicle.
+// Seed all reachable shores once; never flood the whole map separately per shore.
+baked_route::Reach land_after_ride(const baked_route::Request& riding, const baked_route::Reach& ride)
+{
+    if (!riding.submap || !riding.submap->world || riding.vehicle_group <= 0 || !ride.submap) return {};
+    const auto& g = baked::grids(*riding.submap);
+    auto foot = riding;
+    foot.vehicle_group = 0; foot.vehicle_type = foot.landing_group = 0;
+    foot.goals.clear();
+    const bool sails = riding.vehicle_type == kTransportShip || riding.vehicle_type == kTransportSubmarine;
+    std::vector<Cell> starts;
+    constexpr int sides[4][2] = {{0,-1},{1,0},{0,1},{-1,0}};
+    for (int y=0; y<g.height; ++y) {
+        if (planning_cancelled() || (riding.cancelled && riding.cancelled())) return {};
+        for (int x=0; x<g.width; ++x) {
+            const Cell shore{riding.start.layer,x,y};
+            if (!baked_route::open(foot,g,shore) ||
+                (riding.landing_group > 0 && !baked::group_lands(riding.landing_group,baked::attribute(g,x,y)))) continue;
+            bool reachable = !sails && ride.reachable(shore);
+            if (sails) for (const auto& side : sides) {
+                const Cell water{riding.start.layer,(x+side[0]+g.width)%g.width,(y+side[1]+g.height)%g.height};
+                if (ride.reachable(water) && baked_route::direction_allowed(foot,water,shore)) { reachable=true; break; }
+            }
+            if (reachable) starts.push_back(shore);
+        }
+    }
+    return baked_route::flood(foot,starts);
+}
+
 /// Full mode on a world map, on foot, when walking (with the auto-vehicles) cannot reach the
 /// target: board a parked ship, submarine or airship. Walk to a cell beside the vehicle, ride
 /// to a cell from which the target's walkable area is entered (a ship: a water cell beside a
@@ -455,15 +493,25 @@ std::vector<Vec3> world_path_of(const baked::Submap& sm, const std::vector<Cell>
 bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_route::Request& walk,
                     const std::vector<Cell>& goals, std::vector<Phase>& phases)
 {
-    std::vector<VehicleOnMap> vehicles = planning_vehicles();
+    const bool riding = walk.vehicle_group > 0;
+    auto foot = walk;
+    foot.vehicle_group = 0; foot.vehicle_type = foot.landing_group = 0;
+    foot.goals_open = true;
+    std::vector<VehicleOnMap> vehicles;
+    if (riding) {
+        const auto current = planning_vehicle();
+        VehicleOnMap vehicle;
+        vehicle.transportation_id = current.id; vehicle.type = current.type;
+        vehicle.message_id = current.message_id; vehicle.pos = snapshot_position();
+        if (current.valid) vehicles.push_back(std::move(vehicle));
+    } else vehicles = planning_vehicles();
     if (vehicles.empty()) return false;
 
     // The target's own walkable area (where the last leg walks).
-    baked_route::Request from_target = walk;
+    baked_route::Request from_target = foot;
     from_target.goals.clear();
-    from_target.blocked.clear();
     from_target.start = goals.front();
-    baked_route::Reach land = baked_route::flood(from_target);
+    baked_route::Reach land = baked_route::flood(from_target, goals);
 
     int best_total = 1 << 30;
     std::vector<Phase> best;
@@ -477,16 +525,20 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
         if (!baked::in_bounds(g, vcell.x, vcell.y)) continue;
 
         // 1. Walk to a cell beside the vehicle.
-        baked_route::Request to_vehicle = walk;
+        baked_route::Request to_vehicle = foot;
         to_vehicle.goals.clear();
         static const int kSide[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
         for (const auto& d : kSide) {
             Cell c{walk.start.layer, vcell.x + d[0], vcell.y + d[1]};
-            if (baked_route::open(walk, g, c)) to_vehicle.goals.push_back(c);
+            c.x = (c.x + g.width) % g.width; c.y = (c.y + g.height) % g.height;
+            if (baked_route::open(foot, g, c)) to_vehicle.goals.push_back(c);
         }
-        if (to_vehicle.goals.empty()) continue;
-        baked_route::Route leg1 = baked_route::find(to_vehicle);
-        if (!leg1.found) continue;
+        baked_route::Route leg1;
+        if (!riding) {
+            if (to_vehicle.goals.empty()) continue;
+            leg1 = baked_route::find(to_vehicle);
+            if (!leg1.found) continue;
+        }
 
         // 2. Ride to where the target's area is entered.
         baked_route::Request ride;
@@ -495,24 +547,36 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
         ride.vehicle_group = group;
         ride.start = vcell;
         ride.goals_open = false;
+        ride.blocked = walk.blocked; ride.directional = walk.directional;
+        ride.live_hazards = walk.live_hazards; ride.hazards = walk.hazards;
+        ride.ignore_hazards = walk.ignore_hazards;
+        const auto reachable_ride = baked_route::flood(ride);
+        int best_landing = INT_MAX;
+        Cell land_start;
         for (int y = 0; y < g.height; ++y) {
             if (planning_cancelled()) return false;
             for (int x = 0; x < g.width; ++x) {
                 Cell here{walk.start.layer, x, y};
-                if (!land.reachable(here)) continue;
+                if (!land.reachable(here) || !baked_route::open(foot, g, here)) continue;
                 const int attr = baked::attribute(g, x, y);
                 if (sails) {
                     // A water cell beside this land cell, where the ship may stop.
                     for (const auto& d : kSide) {
                         Cell w{walk.start.layer, x + d[0], y + d[1]};
-                        if (!baked::vehicle_open(g, group, w.x, w.y)) continue;
+                        w.x = (w.x + g.width) % g.width; w.y = (w.y + g.height) % g.height;
+                        const int distance = reachable_ride.distance(w);
+                        if (distance < 0 || !baked::vehicle_open(g, group, w.x, w.y)) continue;
                         if (row->landing_group > 0 && !baked::group_lands(row->landing_group, attr)) continue;
-                        ride.goals.push_back(w);
+                        if (!baked_route::direction_allowed(foot, w, here)) continue;
+                        const int cost = distance + 1 + land.distance(here);
+                        if (cost < best_landing) { best_landing = cost; ride.goals = {w}; land_start = here; }
                     }
                 } else {
-                    if (!baked::vehicle_open(g, group, x, y)) continue;
+                    const int distance = reachable_ride.distance(here);
+                    if (distance < 0 || !baked::vehicle_open(g, group, x, y)) continue;
                     if (row->landing_group > 0 && !baked::group_lands(row->landing_group, attr)) continue;
-                    ride.goals.push_back(here);
+                    const int cost = distance + land.distance(here);
+                    if (cost < best_landing) { best_landing = cost; ride.goals = {here}; land_start = here; }
                 }
             }
         }
@@ -523,11 +587,12 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
         // 3. Walk from the landing to the target. A ship's stop is a water cell: the first step
         //    of this leg walks off it onto the land cell beside it (a start cell is never
         //    tested for openness, only the cells entered).
-        baked_route::Request last = walk;
-        last.blocked.clear();
-        last.start = leg2.cells.back();
+        baked_route::Request last = foot;
+        const Cell stop = leg2.cells.back();
+        last.start = land_start;
         baked_route::Route leg3 = baked_route::find(last);
         if (!leg3.found) continue;
+        if (sails) leg3.cells.insert(leg3.cells.begin(), stop);
 
         const int total = leg1.steps() + leg2.steps() + leg3.steps();
         if (total >= best_total) continue;
@@ -539,11 +604,11 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
         p1.cells = leg1.cells;
         Phase p2;
         p2.cells = leg2.cells;
-        p2.action_before = TF(L"board the {0}", {name});
+        if (!riding) p2.action_before = TF(L"board the {0}", {name});
         Phase p3;
         p3.cells = leg3.cells;
-        if (!sails) p3.action_before = T(L"land");
-        best.push_back(p1);
+        if (!sails || riding) p3.action_before = T(L"land");
+        if (!riding) best.push_back(p1);
         best.push_back(p2);
         best.push_back(p3);
     }
@@ -614,11 +679,14 @@ std::vector<Cell> goal_cells(void* map_handle, Vec3 target)
 
 std::wstring describe(const std::vector<Phase>& phases, bool full)
 {
+    const auto* map = snapshot_submap();
+    const int width = map && map->world ? map->width : 0;
+    const int height = map && map->world ? map->height : 0;
     std::vector<std::wstring> parts;
     size_t total_legs = 0;
     int total_steps = 0;
     for (const Phase& p : phases) {
-        total_legs += baked_route::legs(p.cells).size();
+        total_legs += baked_route::legs(p.cells,width,height).size();
         total_steps += p.cells.empty() ? 0 : static_cast<int>(p.cells.size()) - 1;
     }
     // A route the game's searcher could have given is spoken whole (FF1); a longer one is
@@ -629,7 +697,7 @@ std::wstring describe(const std::vector<Phase>& phases, bool full)
         const Phase& p = phases[pi];
         if (!p.action_before.empty()) parts.push_back(p.action_before);
         bool whole = true;
-        for (const baked_route::Leg& leg : baked_route::legs(p.cells)) {
+        for (const baked_route::Leg& leg : baked_route::legs(p.cells,width,height)) {
             if (spoken >= cap) {
                 whole = false;
                 break;
@@ -967,6 +1035,7 @@ void set_active(int map_id, const Cell& target, int goal_map_id, const std::vect
     auto& active = g_route_snapshot->active;
     active.valid = true; active.map_id = map_id; active.target = target;
     active.goal_map_id = goal_map_id; active.next_map_id = next_map_id; active.phases = phases;
+    active.transportation_id = g_route_snapshot->vehicle.valid ? g_route_snapshot->vehicle.id : 0;
 }
 
 /// The rest of the active route from the player's cell, when the cell lies on it (the last
@@ -1018,6 +1087,7 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
         const baked_route::Goals goals = goals_for(*sm, target, kind);
         req.goals = goals.cells;
         world_mode(req);
+        if (req.vehicle_group > 0) req.goals_open = false;
         if (!baked::in_bounds(g, req.start.x, req.start.y) || req.goals.empty()) {
             out.error = L"No path found";
             return true;   // handled: the game's searcher would not do better off the grid
@@ -1061,7 +1131,8 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
         };
         // The route already planned to this target, while the player is still on it.
         const int map_id = planning_map_id();
-        if (g_active && same_target(*g_active, map_id, target, map_id)) {
+        if (g_active && g_active->transportation_id == (g_route_snapshot->vehicle.valid ? g_route_snapshot->vehicle.id : 0) &&
+            same_target(*g_active, map_id, target, map_id)) {
             std::vector<Phase> rest;
             if (remaining_from(*g_active, req.start, rest)) {
                 bool blocked = false;
@@ -1087,13 +1158,19 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
         // Every solid live NPC is a wall at its current position. Native Stamp movement
         // changes facing without leaving the tile (Dreadnought captains); even a travelling
         // NPC may not be crossed just because the real detour is longer than six cells.
-        baked_route::Route route = baked_route::find(req);
+        baked_route::Route route;
+        const bool riding_goal = std::any_of(req.goals.begin(),req.goals.end(),[&](const Cell& goal) {
+            return baked_route::open(req,g,goal);
+        });
+        // A land goal cannot terminate ship-only A*. Go straight to the owned
+        // ride/landing/walk planner instead of exhausting the whole sea first.
+        if (req.vehicle_group == 0 || riding_goal) route = baked_route::find(req);
         if (!route.found && game::flags().has_hidden_passages && !sm->world) {
             baked_route::Request with = req;
             with.passages = true;
             route = baked_route::find(with);
         }
-        if (!route.found && !live.triggers.empty()) {
+        if (!route.found && !live.triggers.empty() && (req.vehicle_group == 0 || riding_goal)) {
             auto through_events = req;
             through_events.ignore_hazards = true;
             if (game::flags().has_hidden_passages && !sm->world) through_events.passages = true;
@@ -1104,8 +1181,15 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
             Phase p;
             p.cells = route.cells;
             phases.push_back(p);
-        } else if (sm->world && req.vehicle_group == 0 && boarding_route(*sm, g, req, req.goals, phases)) {
-            // boarding found a way
+        } else if (sm->world) {
+            if (!boarding_route(*sm, g, req, req.goals, phases) && !live.triggers.empty()) {
+                // The existing explicit-route policy may cross a live event with
+                // a warning. Apply it to both vehicle/walking legs, without
+                // repeating a ship-only search for an unreachable land goal.
+                auto through_events = req;
+                through_events.ignore_hazards = true;
+                boarding_route(*sm, g, through_events, req.goals, phases);
+            }
         }
         std::wstring reason;
         int next_map = 0;
@@ -1161,12 +1245,25 @@ void corner_of(const baked::Submap& sm, const std::vector<Phase>& rest, const Ce
     for (const Phase& p : rest) steps_left += p.cells.empty() ? 0 : static_cast<int>(p.cells.size()) - 1;
     Cell corner = at;
     int to_corner = 0;
+    Vec3 projected_corner{};
+    bool project = false;
     for (size_t pi = 0; pi < rest.size(); ++pi) {
         const Phase& p = rest[pi];
         if (p.cells.size() >= 2) {
-            const std::vector<baked_route::Leg> legs = baked_route::legs(p.cells);
+            const std::vector<baked_route::Leg> legs = baked_route::legs(p.cells,sm.world ? sm.width : 0,sm.world ? sm.height : 0);
             to_corner = legs.empty() ? static_cast<int>(p.cells.size()) - 1 : legs.front().count;
             corner = p.cells[static_cast<size_t>(to_corner)];
+            if (sm.world && !legs.empty()) {
+                // The beacon follows this leg's direction across an edge, not
+                // the long Cartesian vector to the opposite side of the map.
+                projected_corner = world_of_cell(sm,p.cells.front());
+                const float length = to_corner * kTile;
+                if (legs.front().dir == 0) projected_corner.y += length;
+                else if (legs.front().dir == 1) projected_corner.x += length;
+                else if (legs.front().dir == 2) projected_corner.y -= length;
+                else projected_corner.x -= length;
+                project = true;
+            }
             break;
         }
         if (pi + 1 < rest.size() && !rest[pi + 1].cells.empty()) {
@@ -1177,7 +1274,7 @@ void corner_of(const baked::Submap& sm, const std::vector<Phase>& rest, const Ce
     }
     out.found = true;
     out.arrived = steps_left == 0;
-    out.point = world_of_cell(sm, corner);
+    out.point = project ? projected_corner : world_of_cell(sm, corner);
     out.steps_to_corner = to_corner;
     out.steps_left = steps_left;
 }
@@ -1509,7 +1606,7 @@ worker_job::Owner g_route_owner;
 worker_job::Owner g_quick_owner;
 struct QuickGrid {
     baked_route::Request movement;
-    baked_route::Reach reach, passages;
+    baked_route::Reach reach, passages, landed;
     int map_id = 0;
 };
 std::shared_ptr<const QuickGrid> g_quick_grid;
@@ -1520,7 +1617,8 @@ void cancel_quick_work() {
     g_quick_owner.cancel(); g_quick_grid.reset(); g_quick_pending = false; g_quick_waiters.clear();
 }
 bool same_movement(const baked_route::Request& a, const baked_route::Request& b) {
-    return a.submap == b.submap && a.start == b.start && a.vehicle_group == b.vehicle_group && a.auto_groups == b.auto_groups;
+    return a.submap == b.submap && a.start == b.start && a.vehicle_group == b.vehicle_group &&
+        a.vehicle_type == b.vehicle_type && a.landing_group == b.landing_group && a.auto_groups == b.auto_groups;
 }
 baked_route::Request quick_movement(Vec3 from, void* map, void* player, bool with_vehicles) {
     baked_route::Request req;
@@ -1551,6 +1649,7 @@ void ensure_quick(baked_route::Request request, std::function<void()> ready = {}
             auto grid = std::make_shared<QuickGrid>();
             grid->map_id = input.map_id; grid->movement = input.request;
             grid->reach = baked_route::flood(input.request);
+            grid->landed = land_after_ride(input.request,grid->reach);
             if (input.passages && !input.request.submap->world) {
                 input.request.passages = true; grid->passages = baked_route::flood(input.request);
             }
@@ -1571,7 +1670,8 @@ bool quick_query(Vec3 from, Vec3 to, void* map, void* player, TargetKind kind, b
     ensure_quick(req);
     if (!g_quick_grid || !same_movement(req, g_quick_grid->movement)) { out.pending = true; return true; }
     const auto goals = goals_for(*req.submap, cell_of(*req.submap, to, 1), kind);
-    out.success = any_reachable(g_quick_grid->reach, goals.cells) || any_reachable(g_quick_grid->passages, goals.cells);
+    out.success = any_reachable(g_quick_grid->reach, goals.cells) || any_reachable(g_quick_grid->passages, goals.cells) ||
+        any_reachable(g_quick_grid->landed, goals.cells);
     if (!out.success) out.error = T(L"No path found");
     return true;
 }
@@ -1594,6 +1694,7 @@ struct SnapshotScope {
 };
 struct Planned {
     double requested_at = 0, capture_ms = 0, compute_ms = 0;
+    VehicleState vehicle;
     PathInfo path;
     std::shared_ptr<ActiveRoute> active;
     Pending pending;
@@ -1613,6 +1714,7 @@ Planned plan_snapshot(RouteSnapshot& snapshot) {
     const Pending previous_pending = snapshot.pending;
     Planned result;
     result.requested_at = snapshot.requested_at;
+    result.vehicle = snapshot.vehicle;
     result.capture_ms = (snapshot.captured_at - snapshot.requested_at) * 1000;
     result.map_id = snapshot.map_id;
     result.start = cell_of(*snapshot.submap, snapshot.position, snapshot.layer);
@@ -1646,7 +1748,10 @@ void resolve_plan_name(Planned& result, const std::wstring& name) {
 bool still_current(const Planned& result) {
     if (!ffpr::system::is_field_navigation_ready() || field::current_map_id() != result.map_id) return false;
     Cell now;
-    return player_cell(field::map_handle(), field::player(), now) && now == result.start;
+    if (!player_cell(field::map_handle(), field::player(), now) || !(now == result.start)) return false;
+    const auto vehicle = field::current_vehicle();
+    return vehicle.valid == result.vehicle.valid && (!vehicle.valid ||
+        (vehicle.id == result.vehicle.id && vehicle.type == result.vehicle.type));
 }
 void commit_plan(Planned& result) {
     g_request_pending = false;

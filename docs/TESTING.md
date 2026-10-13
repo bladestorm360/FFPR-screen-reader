@@ -4,6 +4,27 @@ Offline checks pass; user gameplay testing has identified regressions recorded i
 [October 11 follow-up](FOLLOWUP_2026_10_11.md). Test one game at a time. Report what you hear,
 and attach `ffpr_screen_reader.log` from that game's folder if something is wrong.
 
+## Gameplay confirmations, October 13
+
+User report after the latest deployment (`a2f3b81`, DLL
+`AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`):
+
+| Feature | Gameplay status |
+| --- | --- |
+| Land pathfinding responsiveness | Confirmed by the user: working perfectly with no lag in the tested session. Later FF2 ship report is tracked separately below. |
+| Battle transitions | Confirmed by the user: smooth in the tested session. |
+| FF1 battle-results buffer reading | Confirmed by the user: reads correctly. Specific Autodetail/input/detail cases were not separately enumerated. |
+| FF2 battle-results buffer | User confirms character/hand levels and progress are read, but weapon type is missing; fix and phase-wide I summary require retest. Gil/other phases not individually confirmed. |
+| FF2 boarded ship routing | User reports No path for world destinations while onboard. Corrected riding/landing/walking and world-wrap paths await gameplay retest. |
+| FF3–FF6 battle-results buffers | Expected by the user to work through the shared implementation; direct gameplay confirmation pending. |
+
+These confirmations supersede earlier blanket pending statements for the reported
+features. They are qualitative gameplay evidence; numeric input-to-speech/frame/load
+measurements and unreported speech-order/control cases remain distinct. FF2 results
+are the next active check; its first-page/weapon-row procedure is below. The original
+confirmation was recorded without changing code; subsequent FF2 reports required the
+fixes below. No agent game launch was performed.
+
 ## October 11 audit test
 
 Follow-up checks: confirmation bodies speak on entry before their Yes/No choices;
@@ -40,8 +61,9 @@ They do not confirm gameplay or measure game startup time.
    EXP/drop rows. FF2 has gil and weapon/spell gains rather than character EXP.
    Battle's `Battle results: changed stats` toggle (default on) adds a concise changed-stat
    rundown; toggle it off to hear only growth headings. The full table remains in arrows.
-   On a growth or FF2 weapon row, I reads that row's delta; an unchanged row says No stat
-   changes. FF2 weapon rows contain each displayed character/hand, weapon level and gauge
+   From any position in a growth or FF2 weapon buffer, I/controller West reads every
+   change in the current phase; a phase without changes says No stat changes. FF2 weapon
+   rows contain each displayed character/hand, actual weapon type, level and gauge
    percentage. Autodetail reads that table but weapon delta summaries still require the
    changed-stats toggle. Check percentage-only evasion gains and weapon level rollover.
    No EXP total or member EXP row should appear in FF2. With Autodetail on, hear the current
@@ -398,7 +420,7 @@ The follow-up is deployed/hash-verified in all six games:
 1. Win an FF2 battle without spell gains. The first page must announce gil; arrows
    review every displayed equipped weapon/level/progress row. With Autodetail off,
    it must not automatically read the full table. I on a weapon/stat row reads its
-   change; Battle's changed-stats toggle alone enables automatic change summaries.
+   all changes in that current phase; Battle's changed-stats toggle alone enables automatic change summaries.
 2. Hold/release arrows on every results page. They must never advance the native
    screen, including while the buffer is preparing. Confirm advances normally.
    Only actual stat-change pages get buffers; each character's page is separate.
@@ -418,7 +440,9 @@ The follow-up is deployed/hash-verified in all six games:
 Offline evidence and implementation details: [thread ownership and latency record](re/THREADING.md#navigation-latency-follow-up-october-13).
 Canonical build and isolated DLL smoke pass. Deployed/hash-verified in all six games:
 `ED888BC45404857EA010B80991E38DAD8107F9047FC1D8F34075BC6E9421C7C2`.
-Gameplay confirmation and measured input-to-speech/load/frame timings remain pending.
+User now confirms lag-free pathfinding and smooth battle transitions in the tested
+session; [current coverage](#gameplay-confirmations-october-13). Numeric timings and
+the specific movement/cancellation/loading cases below remain separately unconfirmed.
 
 1. On a world map, rapidly browse targets and cycle categories. Browsing should remain
    responsive while a live refresh runs.
@@ -435,8 +459,10 @@ Current accumulated procedure for the latency and speech-order follow-ups. Imple
 and actual-source offline checks are complete; [evidence and runtime gaps](re/SPEECH_ORDER.md).
 Canonical build and isolated DLL smoke pass. Deployed/hash-verified in all six games:
 `AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`.
-No game was launched or probed. Please test the first two items first when progression
-permits. The later naming check can wait until you naturally start a new game.
+No game was launched or probed by the agent. Pathfinding responsiveness and FF1 results
+reading are now user-confirmed; FF2 results testing is in progress. After FF2, prioritize
+remaining category/F8 speech-order checks when progression permits. The later naming
+check can wait until you naturally start a new game.
 
 1. **Categories and browsing, on an available field/world map.** Change category once:
    hear its complete name, then its first destination. Browse repeatedly, then rapidly
@@ -469,3 +495,32 @@ and whether it was the first request or repeated browsing. The normal log now re
 request-to-Prism submission, queue/data age and SDK duration for navigation and F8;
 SDK success is not proof that speech finished audibly. Compare loading/map/battle
 transitions using the same save with and without the mod if a game slowdown is observed.
+
+## Current FF2 results and vehicle retest, October 13
+
+Canonical build and isolated DLL smoke pass; installed hashes match in all six games:
+`FA433F55BD5743D3FFAA57450528E796C39FB875495BF329C5015E0F95A7D99E`.
+[Weapon/I evidence](re/RESULTS.md#weapon-labels-and-phase-wide-changes-october-13),
+[vehicle/world-wrap evidence](re/THREADING.md#boarded-vehicles-and-wrapped-worlds-october-13).
+Earlier working land routing, smooth battle transitions and FF1 results reading retain
+the user's confirmation. These corrections need gameplay retest:
+
+1. **FF2 ship first, when available.** While onboard, select a world-map land
+   destination and request directions. Hear sailing, land and walking instructions
+   instead of No path. Try Altair and Deist if available; both logged failures pass
+   offline. With the pathfinding filter enabled, reachable land destinations remain
+   listed. Repeat from land to check ordinary routing.
+2. **Next FF2 battle.** Each hand row must include the actual weapon type, level and
+   progress, for example R. Hand Sword 5, 66%. Change summaries name the same type.
+3. **Current results phase, any game.** Press I from the heading, a changed row and
+   an unchanged row. Each reads all changes for this phase/character, matching the
+   automatic summary. Repeat with that toggle off: I still works. A phase without
+   changes says No stat changes. Arrows read individual rows; confirm advances normally.
+4. **Other boarded vehicles, as progression permits.** Check destinations and legal
+   landing/walking instructions. World-edge directions must wrap correctly; autowalk
+   stops for manual landing. Special flight controls remain manual. The 103 offline
+   vehicle cases are representative world/transport combinations, not every story state.
+
+Report the game, vehicle, destination and whether failure occurs before or after landing
+if a route still fails. Unreported category/F8/prompt/naming speech-order checks above
+remain separate from confirmed features. No agent game launch or runtime probe occurred.

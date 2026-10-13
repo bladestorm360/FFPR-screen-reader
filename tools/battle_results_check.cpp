@@ -1,4 +1,4 @@
-// check-sources: text.cpp ui/navigation_buffer.cpp displayed_values.cpp battle/rendered_feedback.cpp
+// check-sources: text.cpp ui/navigation_buffer.cpp displayed_values.cpp displayed_conditions.cpp battle/rendered_feedback.cpp
 // Real shared readers, scheduler and native input detours with fake rendered views.
 // No game/window/probe is launched.
 #include <map>
@@ -19,6 +19,7 @@ struct Node {
     bool alive = true, visible = true;
     int end_count = 0;
     int weapon_type = 0;
+    bool skill = false;
     Node* parent = nullptr;
     std::map<std::string, void*> fields;
     std::map<std::string, std::wstring> text;
@@ -57,6 +58,24 @@ game::Id game_id = game::Id::FF2;
 int native_calls = 0;
 bool native_result = true;
 int utility_calls = 0;
+int (*icon_install)() = nullptr;
+using WeaponHook = void (*)(void*, const void*);
+using DataHook = void (*)(void*, void*, const void*);
+WeaponHook weapon_hook = nullptr;
+DataHook hands_hook = nullptr, ability_hook = nullptr;
+int hands_calls = 0;
+void weapon_icon(void*, const void*) {}
+void ability_icon(void*, void*, const void*) {}
+void hands_icon(void* self, void* data, const void*) {
+    ++hands_calls;
+    auto* row = static_cast<Node*>(self);
+    row->weapon_type = static_cast<Node*>(data)->weapon_type;
+    auto* view = static_cast<Node*>(row->fields["view"]);
+    auto* icon = static_cast<Node*>(view->fields["iconText"]);
+    auto* image = static_cast<Node*>(icon->fields["iconImage"]);
+    image->sprite = static_cast<Node*>(data)->sprite;
+}
+void* override_sprite(void* self, const void*) { return self ? static_cast<Node*>(self)->sprite : nullptr; }
 Node point, status;
 void settle_buffer() {
     const DWORD deadline = GetTickCount() + 5000;
@@ -87,7 +106,7 @@ bool listener_down(void*, void*, int32_t, bool, bool, const void*) { ++native_ca
 bool listener_key(void*, void*, int32_t, bool, const void*) { ++native_calls; return native_result; }
 }
 
-namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
+namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) { if(std::string(n)=="Displayed.ConditionIcons") fixture::icon_install=f; } }
 namespace ref {
 Class::Class(const char* n, const char* c, uint8_t g, const char* a) : ns(n), name(c), games(g), assembly(a) {}
 Method::Method(Class& c, const char* n, int a) : cls(c), name(n), argc(a) {}
@@ -99,14 +118,20 @@ void* Method::ptr() {
     if (std::string(name) == "GetExpLevel") return reinterpret_cast<void*>(&fixture::skill_level);
     if (std::string(name) == "GetNextExp") return reinterpret_cast<void*>(&fixture::skill_remaining);
     if (std::string(name) == "GetExpDifference") return reinterpret_cast<void*>(&fixture::skill_interval);
+    if (std::string(name) == "get_overrideSprite") return reinterpret_cast<void*>(&fixture::override_sprite);
     return nullptr;
 }
 void call_failed_note(const char*) { std::abort(); }
-bool Class::is(void* o) { return o != nullptr; }
+bool Class::is(void* o) { return o && (std::string(name)!="SkillLevelContentController" || static_cast<fixture::Node*>(o)->skill); }
 std::wstring rd_str(void*, Field&) { return L"Action"; }
 }
 namespace hooks {
-bool attach_raw(ref::Method&, void*, void**) { return false; }
+bool attach_raw(ref::Method& method, void* hook, void** original) {
+    if(std::string(method.name)=="SetWeaponIcon") { fixture::weapon_hook=reinterpret_cast<fixture::WeaponHook>(hook); *original=reinterpret_cast<void*>(&fixture::weapon_icon); return true; }
+    if(std::string(method.name)=="SetBothHandsData") { fixture::hands_hook=reinterpret_cast<fixture::DataHook>(hook); *original=reinterpret_cast<void*>(&fixture::hands_icon); return true; }
+    if(std::string(method.name)=="SetAbilityIcon") { fixture::ability_hook=reinterpret_cast<fixture::DataHook>(hook); *original=reinterpret_cast<void*>(&fixture::ability_icon); return true; }
+    return false;
+}
 void note_fault(const char*) { std::abort(); }
 }
 namespace queries {
@@ -131,6 +156,7 @@ void state_set(const char*, bool) {}
 void command_reset_state() {}
 void magic_reset_state() {}
 }
+namespace menus { std::wstring condition_name(void* value) { return static_cast<fixture::Node*>(value)->name; } }
 }
 namespace modtext { std::wstring T(std::wstring_view s) { return std::wstring(s); }
 std::wstring TF(std::wstring_view s, std::initializer_list<std::wstring> args) { return text::format(s, args); }
@@ -153,6 +179,7 @@ void* transform(void* o) { return o; }
 int child_count(void* o) { return o ? static_cast<int>(static_cast<fixture::Node*>(o)->children.size()) : 0; }
 void* child(void* o, int i) { return static_cast<fixture::Node*>(o)->children[i]; }
 void* get_component(void* o, ref::Class&) { return o; }
+void* get_component_in_children(void* o, ref::Class& type, bool) { if(!o) return nullptr; if(type.is(o)) return o; auto& fields=static_cast<fixture::Node*>(o)->fields; auto it=fields.find("skill"); return it==fields.end()?nullptr:it->second; }
 ref::Class& image_class() { static ref::Class image{"UnityEngine.UI", "Image"}; return image; }
 int array_length(void* a) { return list_count(a); }
 void* array_at(void* a, int i) { return list_at(a, i); }
@@ -163,10 +190,9 @@ namespace displayed {
 bool visible(void* o) { return unity::alive(o) && static_cast<fixture::Node*>(o)->visible && (!static_cast<fixture::Node*>(o)->parent || visible(static_cast<fixture::Node*>(o)->parent)); }
 void* field(void* o, const char* name) { if (!o) return nullptr; auto& m = static_cast<fixture::Node*>(o)->fields; auto i = m.find(name); return i == m.end() ? nullptr : i->second; }
 std::wstring text_field(void* o, const char* name) { if (!visible(o)) return {}; auto& m = static_cast<fixture::Node*>(o)->text; auto i = m.find(name); return i == m.end() ? L"" : i->second; }
-std::vector<std::wstring> texts(void* o) { return visible(o) ? static_cast<fixture::Node*>(o)->texts : std::vector<std::wstring>{}; }
+std::vector<std::wstring> texts(void* o) { if(!visible(o)) return {}; auto* node=static_cast<fixture::Node*>(o); return node->texts.empty() && !node->row.empty() ? std::vector<std::wstring>{node->row} : node->texts; }
 std::wstring pair(void* o, const char* label, const char* value) { const auto v = text_field(o, value); return v.empty() ? L"" : text_field(o, label) + L" " + v; }
-std::wstring skill_row(void* o) { return visible(o) ? static_cast<fixture::Node*>(o)->row : L""; }
-std::wstring skill_name(void* o) { return visible(o) ? static_cast<fixture::Node*>(o)->name : L""; }
+std::wstring bar(void* o) { auto fill=bar_fraction(o); return fill?std::to_wstring(static_cast<int>(std::lround(*fill*100)))+L"%":L""; }
 std::optional<float> bar_fraction(void* o) { return visible(o) ? std::optional<float>(static_cast<fixture::Node*>(o)->fill) : std::nullopt; }
 bool container_visible(void* o) { return visible(o); }
 std::wstring comparison_arrow(void*) { return {}; }
@@ -297,16 +323,16 @@ int main()
     expect(contains(L"Strength 10 to 11") && contains(L"Evasion 2x45% to 2x46%") && !contains(L"Agility"),
         "proactive brief includes numeric and percentage-only changes without unchanged rows");
     spoken.clear(); ui::review::details();
-    expect(!contains(L"Strength"), "I on the heading does not read every delta");
+    expect(contains(L"Strength") && contains(L"Evasion") && !contains(L"Agility"), "I on the heading reads all current-phase changes");
     ui::review::next(); spoken.clear(); ui::review::details();
-    expect(contains(L"Strength") && !contains(L"Evasion") && !contains(L"Agility"), "I rereads only the selected stat delta");
+    expect(contains(L"Strength") && contains(L"Evasion") && !contains(L"Agility"), "I on a changed row repeats the same complete phase summary");
     spoken.clear(); ui::review::first(); ui::review::next(); ui::review::next();
     expect(contains(L"Agility"), "arrow buffer still contains unchanged stats");
     spoken.clear(); ui::review::details();
-    expect(contains(L"No stat changes") && !contains(L"Strength"), "I on an unchanged row cannot read another row's delta");
+    expect(contains(L"Strength") && contains(L"Evasion") && !contains(L"Agility"), "I on an unchanged row still reads all current-phase changes");
     changed_stats = false; spoken.clear(); status_rows(&status); tick();
     expect(!contains(L"Strength") && spoken.front() == L"Firion level 2", "toggle off keeps entry concise");
-    ui::review::next(); spoken.clear(); ui::review::details(); expect(contains(L"Strength"), "I works with proactive toggle off");
+    ui::review::next(); spoken.clear(); ui::review::details(); expect(contains(L"Strength") && contains(L"Evasion"), "I reads all changes with proactive toggle off");
     detail = true; spoken.clear(); status_rows(&status); tick();
     expect(contains(L"Agility"), "Autodetail still reads the full table");
     int strength_reads = 0; for (auto& s : spoken) if (s.find(L"Strength") != std::wstring::npos) ++strength_reads;
@@ -331,6 +357,13 @@ int main()
     }
     status.fields["contentList"] = &full_stats;
 
+    // No changes anywhere: I reports the phase state, regardless of highlighted row.
+    status.fields["contentList"] = &stat_list;
+    stat_view.text["afterValueText"] = L"10";
+    spoken.clear(); status_rows(&status); tick(); spoken.clear(); ui::review::details();
+    expect(contains(L"No stat changes") && !contains(L"Strength"), "empty phase change summary stays available from I");
+    stat_view.text["afterValueText"] = L"11"; status.fields["contentList"] = &full_stats;
+
     // Native skipped phases and UI initialization cannot create speculative buffers.
     result_reset_state(); spoken.clear(); status_rows(&status); point_rows(&point); d_skill_levels(&point, nullptr); tick();
     expect(!g_pending_page && !ui::review::active() && spoken.empty(), "UI initialization outside a native results phase builds no buffer");
@@ -345,6 +378,28 @@ int main()
     game_id = game::Id::FF2;
     displayed::o_setting = &setting; displayed::o_color = &color;
     Node skill_content, skill_view, gauge, before_data, after_data;
+    Node icon_text, icon_image, icon_sprite, equipment;
+    skill_content.skill = true;
+    skill_view.fields["iconText"] = &icon_text;
+    icon_text.fields["iconImage"] = &icon_image;
+    icon_image.sprite = &icon_sprite;
+    equipment.sprite = &icon_sprite;
+    skill_content.fields["view"] = &skill_view;
+    expect(icon_install && icon_install() >= 3 && hands_hook && weapon_hook && ability_hook, "actual icon producer hooks include the distinct results hand-data path");
+    hands_hook(&skill_content, &equipment, nullptr);
+    expect(hands_calls==1 && displayed::skill_name(&skill_content)==L"Sword", "results SetBothHandsData captures its visible type without SetWeaponIcon");
+    static const wchar_t* weapon_names[] = {L"Sword",L"Knife",L"Spear",L"Axe",L"Staff",L"Bow",L"Shield",L"Unarmed"};
+    for(int type=0; type<8; ++type) {
+        equipment.weapon_type=type; hands_hook(&skill_content,&equipment,nullptr);
+        expect(displayed::skill_name(&skill_content)==weapon_names[type], "all eight rendered weapon types are named by the actual producer reader");
+    }
+    icon_image.visible=false; expect(displayed::skill_name(&skill_content).empty(), "hidden weapon icon cannot disclose its type"); icon_image.visible=true;
+    Node changed_sprite;
+    icon_image.sprite=&changed_sprite; expect(displayed::skill_name(&skill_content).empty(), "a changed sprite cannot reuse an old captured type");
+    equipment.weapon_type=8; hands_hook(&skill_content,&equipment,nullptr); expect(displayed::skill_name(&skill_content).empty(), "nonweapon skill values cannot become weapon labels");
+    equipment.weapon_type=0; hands_hook(&skill_content,&equipment,nullptr);
+    ability_hook(&skill_content,nullptr,nullptr); expect(displayed::skill_name(&skill_content).empty(), "ability reuse retires the previous weapon label");
+    hands_hook(&skill_content,&equipment,nullptr);
     SkillDict before_points{{0, 1}}, after_points{{0, 2}};
     before_data.fields["<SkillLevelTargets>k__BackingField"] = &before_points;
     after_data.fields["<SkillLevelTargets>k__BackingField"] = &after_points;
@@ -371,13 +426,13 @@ int main()
     List equipped{&skill_content}, weapon_characters{&weapon_character};
     weapon_name.text["nameText"] = L"Guy"; weapon_character.fields = {{"view", &weapon_name}, {"contentList", &equipped}};
     weapon_view.text["fixedRightHandText"] = L"Right hand";
-    weapon.fields = {{"contentList", &weapon_characters}, {"view", &weapon_view}}; skill_content.row = L"Sword level 1, 10%";
+    weapon.fields = {{"contentList", &weapon_characters}, {"view", &weapon_view}}; skill_content.row = L"level 1";
     for (bool auto_detail : {false, true}) for (bool announce_changes : {false, true}) {
         detail = auto_detail; changed_stats = announce_changes; spoken.clear(); d_ability(&menu, nullptr); tick();
         expect(contains(L"gained 5%") == announce_changes, "weapon delta auto-announces only with the toggle in both Autodetail states");
         expect(contains(L"Sword level 1, 10%") == auto_detail, "Autodetail reads the displayed weapon table");
         ui::review::first(); ui::review::next(); ui::review::next(); spoken.clear(); ui::review::details();
-        expect(contains(L"Guy: Right hand Sword") && contains(L"gained 5%"), "I reads the selected weapon row delta with either toggle state");
+        expect(contains(L"Guy: Right hand Sword") && contains(L"gained 5%"), "I reads the current weapon-phase changes with either toggle state");
     }
     // Actual FF2 first-screen outer entry, with no spell levels. Check both native
     // callback orders and outer entry alone (a wrapper may be inlined).

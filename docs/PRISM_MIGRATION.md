@@ -102,7 +102,7 @@ historical source and loader files were preserved.
 
 User-side check: launch FF2, confirm title/menu speech, then win a battle. Hear gil on
 the first phase. Arrows review weapon/stat rows without advancing; I on a selected row
-reads its change. Battle's changed-stats toggle controls automatic summaries. Check braille
+reads all current-phase changes. Battle's changed-stats toggle controls automatic summaries. Check braille
 if used and compare a spoken hit count with the actual displayed count if a mismatch is
 reported. These are confirmation steps, not already-confirmed runtime behavior.
 

@@ -14,6 +14,12 @@ Final October 12 build and isolated DLL smoke pass. Deployed/hash-verified in al
 Native-name checks: 7,061, zero missing; wiring: zero undefined. Actual-source checks
 listed below pass. Runtime speech/loading/frame confirmation remains user-side.
 
+October 13 user confirmation after the latest deployment: pathfinding has no lag,
+battle transitions are smooth, and the FF1 results buffer reads correctly. FF2 is
+being tested; FF3–FF6 results are expected through shared code but not directly
+confirmed. These are qualitative gameplay observations, not instrumented latency or
+aggregate frame/load measurements. [Current coverage](../TESTING.md#gameplay-confirmations-october-13).
+
 ## Implementation and ownership
 
 | Subsystem | Native owner work | Worker work / handoff |
@@ -54,6 +60,53 @@ owner. Tagged request/capture/enqueue timestamps contain no native pointer. See
 pressure recovery, cancellation/data-age limits and fake-SDK versus audible timing.
 
 ## Native lifecycle evidence and bounded field capture
+
+### Boarded vehicles and wrapped worlds, October 13
+
+The later FF2 report narrows the initial lag-free confirmation to tested land routes.
+The user's own current log records Ship boarding and No path from world map 1 cell
+`(126,129)` to `(110,98)` and `(218,43)`. Existing bakes already contain ship group 4
+and native landing group 2; no map/master-data change was needed.
+
+Two defects reproduce offline: only the land-to-parked-vehicle boarding plan existed,
+so the ship-only search could not reach inland towns; and A*/flood rejected world
+edges instead of wrapping. The same FF2 bake connects 37,212 ship cells with wrapping,
+versus 22,471 reached by the old unwrapped fixture flood, excluding Deist's shores.
+
+The owned planner now routes the already-ridden vehicle to a legal landing and then
+walks with owned automatic-vehicle rules to the destination. It omits boarding again,
+keeps a manual land boundary, and respects specific legal water-to-shore pairs or
+other vehicles' landing terrain. Live blockers/directional/event rules remain. Two
+floods score ride/walk distances, then A* searches one selected landing. Known land
+goals skip a doomed ship-only search. The filter uses one multi-source foot flood
+from all legal reachable shores, with unique seeds bounded by width times height.
+Each additional reach grid is bounded by the validated baked world dimensions.
+
+All scans/floods/A* remain on Navigation workers with cancellation. Native owner work
+copies ready transport rules and rejects publication after vehicle ID/type changes;
+preserved routes also key transport identity. Search, heuristic, turn/direction grouping
+and beacon corners now honor world seams. Beacon points project along the chosen leg,
+not the long Cartesian span to the opposite edge. Existing native/manual movement,
+boarding/landing and special flight controls are unchanged.
+
+Actual-source route-worker regression reproduces the old ship-only failure, then
+validates both logged targets, legal shore/ship cells, filter inclusion, cancellation,
+westward seam directions/beacon corner and zero native calls on workers. Final logged
+FF2 fixture routes: 7.516/11.974 ms, two phases each. Across all six real bakes, 103
+eligible world/transport cases pass, with all automatic groups owned in the fixture;
+85 combinations have no eligible start/land destination and are reported separately.
+Worst observed route/filter compute: 25.100/12.319 ms. The same wrapped 103-case scenario
+before bypassing the doomed search observed up to 105.122 ms; host load varies.
+
+General world benchmark: 24 worlds/16 far routes, worst flood/route 5.854/49.694 ms.
+Wrapping changes its selected farthest endpoint, so this is not an unchanged-scenario
+comparison against the older unwrapped benchmark. Native/autowalk movement already
+normalized seam steps; an intermediate replay failed because it expected raw coordinate
+subtraction. That expectation now matches the native wrapped axis. All 2,292 sampled
+map routes, real floor/facing handoffs and land Fynn/canoe regressions pass. Intermediate
+reports are retained locally in build_check. Target-game capture/queue/audible/frame
+timings and actual boarded landing behavior still require gameplay retest; these are
+offline compute observations, not universal latency guarantees.
 
 There are no active `unity::find_object` / `unity::find_objects` callers in core or
 per-game sources. Central class-keyed caches receive native instances from their own
@@ -219,5 +272,7 @@ replacement/lifetime. Native PE paths and all-six native-name/wiring checks supp
 these isolated tests. Build and isolated DLL smoke/deployment are recorded in memory.
 
 Implemented and offline-verified behavior is separate from gameplay-confirmed behavior.
-The first-page speech, actual SDL/Prism/controller output and modded-versus-unmodded
-same-save load/battle/map timings remain user-side. No game or runtime probe was run.
+FF1 results reading, pathfinding responsiveness and smooth battle transitions now
+have the user's October 13 confirmation above. FF2 first-page speech, unreported
+SDL/controller/speech-order cases and modded-versus-unmodded numeric same-save timings
+remain user-side. No game or runtime probe was run by the agent.

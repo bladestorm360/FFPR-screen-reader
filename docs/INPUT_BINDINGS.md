@@ -13,12 +13,13 @@ visible party rows. Enemy HP's optional Numbers/Percentage/Hidden modes remain o
 Controller mod mode: North (Y/Triangle) reads the turn; shoulders review party members.
 
 Results: Up/Down review current lines; Left/Right first/last; I reads current details.
-On growth/FF2 weapon rows, I reads only the selected row's delta (or No stat changes).
+On growth/FF2 weapon phases, I/controller West reads all current-phase deltas, regardless
+of the highlighted row (or No stat changes when the phase has none).
 Each native phase replaces the buffer; there is no separate L results log. Displayed
 EXP/gil totals are always announced. Member EXP, item/drop rows and stat tables follow
 Autodetail. Battle's persistent `Battle results: changed stats` toggle defaults on and
 summarizes displayed changes without reading the entire stat table. FF2 weapon rows
-retain character/hand, weapon level and gauge percentage; their automatic delta summary
+retain character/hand, actual weapon type, level and gauge percentage; their automatic delta summary
 requires the toggle even with Autodetail on. Other games retain member EXP rows instead
 of the FF2 weapon buffer. Review input is consumed before both native input APIs, including held/release
 keys and the interval before the buffer is ready. Ordinary confirm advances normally.

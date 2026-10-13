@@ -46,6 +46,7 @@ struct Request {
     std::vector<Cell> goals;          // reaching any one ends the search
     bool passages = false;            // hidden passages open
     int vehicle_group = 0;            // riding: that group's world layer; 0 = on foot
+    int vehicle_type = 0, landing_group = 0; // owned riding/landing rules for filter handoff
     std::vector<int> auto_groups;     // on foot: groups ridden automatically when owned
     std::vector<Cell> blocked;        // live blockers; layer -1 = every layer
     struct Directional { Cell cell; int axis; }; // 1 blocks north/south, 2 blocks east/west
@@ -96,7 +97,7 @@ Goals goals_for(const Request& movement, const Cell& target, GoalKind kind);
 
 /// The direction index (0 north, 1 east, 2 south, 3 west) from `from` towards `to`, by the
 /// larger axis delta (ties: the vertical). -1 when the cells coincide.
-int direction_towards(const Cell& from, const Cell& to);
+int direction_towards(const Cell& from, const Cell& to, int wrap_width = 0, int wrap_height = 0);
 /// Face the nearest cell of an interaction's actual footprint, including NPC counters.
 int facing_direction(const Cell& from, const Goals& goals);
 
@@ -110,6 +111,9 @@ struct Reach {
     int distance(const Cell& c) const;   // -1 when unreachable
 };
 Reach flood(const Request& r);
+/// Multi-source reachability, used to include legal shores after an onboard ride.
+/// Invalid seeds are ignored; every seed belongs to the request's movement mode.
+Reach flood(const Request& r, const std::vector<Cell>& starts);
 
 /// Cell tests shared with the callers: open for the request's movement rules.
 bool open(const Request& r, const baked::Grids& g, const Cell& c);
@@ -121,6 +125,6 @@ int layer_after(const baked::Grids& g, int from_layer, int x, int y);
 /// "steps", no totals (user rule). The direction words are the caller's (mod text); this
 /// returns direction indices: 0 north, 1 east, 2 south, 3 west, with counts.
 struct Leg { int dir; int count; };
-std::vector<Leg> legs(const std::vector<Cell>& cells);
+std::vector<Leg> legs(const std::vector<Cell>& cells, int wrap_width = 0, int wrap_height = 0);
 
 } // namespace field::baked_route

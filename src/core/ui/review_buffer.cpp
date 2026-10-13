@@ -27,6 +27,7 @@ bool g_replaying = false;
 bool g_executing_action = false;
 uint64_t g_generation = 0;
 std::wstring g_full_details;
+std::wstring g_phase_changes;
 using Action = void (*)();
 std::deque<Action> g_pending_actions;
 Domain g_domain = Domain::Results;
@@ -131,10 +132,11 @@ void show_impl(void* owner, const std::wstring& headline, std::vector<std::wstri
             g_build_pending = false;
             g_options = std::move(built.options); g_lines = std::move(built.lines);
             g_buffer = std::move(built.buffer); g_full_details = std::move(built.full);
+            g_phase_changes = std::move(built.brief);
             if (g_options.announce) {
                 if (built.autodetail && !g_options.defer_details && !built.details.empty()) ffpr::say(built.details, false);
                 if ((!built.autodetail || g_options.announce_brief_with_details) &&
-                    g_options.announce_brief && !g_options.defer_details && !built.brief.empty()) ffpr::say(built.brief, false);
+                    g_options.announce_brief && !g_options.defer_details && !g_phase_changes.empty()) ffpr::say(g_phase_changes, false);
             }
             begin_replay(generation);
         });
@@ -147,7 +149,7 @@ int index() { return g_buffer.index(); }
 void clear() {
     g_work.cancel(); frame::cancel_label("ReviewBuffer.Replay"); ++g_generation;
     g_build_pending = false; g_replaying = false; g_executing_action = false; g_pending_actions.clear();
-    g_owner = nullptr; g_buffer = {}; g_lines.clear(); g_headline.clear(); g_options = {}; g_full_details.clear();
+    g_owner = nullptr; g_buffer = {}; g_lines.clear(); g_headline.clear(); g_options = {}; g_full_details.clear(); g_phase_changes.clear();
 }
 void replace_lines(std::vector<std::wstring> lines, int restore_index) {
     const auto headline = g_headline;
@@ -164,15 +166,9 @@ void details() {
     if (!active()) return;
     if (pending_action(&details)) return;
     if (g_options.brief) {
-        const int row = g_buffer.index() - (g_options.include_headline && !g_headline.empty() ? 1 : 0) -
-            static_cast<int>(g_options.summary.size());
-        if (row < 0 || row >= static_cast<int>(g_options.row_details.size())) {
-            ffpr::say(g_lines[g_buffer.index()], false);
-            return;
-        }
-        auto brief = g_options.row_details[row];
-        if (brief.empty()) brief = T(L"No stat changes");
-        ffpr::say(g_headline + (g_headline.empty() ? L"" : L". ") + brief, false);
+        // Explicit I/West repeats the automatic current-phase summary, regardless
+        // of cursor position or automatic-summary/Autodetail preferences.
+        ffpr::say_parts({g_headline, g_phase_changes.empty() ? T(L"No stat changes") : g_phase_changes}, true);
         return;
     }
     if (!g_full_details.empty()) ffpr::say(g_full_details, false);

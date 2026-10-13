@@ -211,8 +211,12 @@ int wmain()
                 if (i + 1 == path.cells.size()) valid &= step.result == a::Result::Arrived;
                 else {
                     valid &= step.result == a::Result::Move && step.next == path.cells[i+1];
-                    valid &= step.x == path.cells[i+1].x - path.cells[i].x &&
-                        step.y == path.cells[i].y - path.cells[i+1].y;
+                    int dx=path.cells[i+1].x-path.cells[i].x, dy=path.cells[i].y-path.cells[i+1].y;
+                    if(sm->world) {
+                        if(std::abs(dx)>grids.width/2) dx+=dx>0?-grids.width:grids.width;
+                        if(std::abs(dy)>grids.height/2) dy+=dy>0?-grids.height:grids.height;
+                    }
+                    valid &= step.x == dx && step.y == dy;
                     const auto repeated = follower.next(path.cells[i]);
                     valid &= repeated.x == step.x && repeated.y == step.y;
                 }

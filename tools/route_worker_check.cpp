@@ -134,12 +134,124 @@ int main() {
         }); full.join();
         std::printf("FF2 world worker: route %.3f ms, reachability %.3f ms (offline computation)\n", route_ms, flood_ms);
         expect(result.path.success && result.path.step_count >= 26, "worker routes real world map without native distance cap");
+        // User's actual FF2 onboard failures: map 1, ship at (126,129),
+        // land entrances (110,98) and (218,43). Existing bakes contain group 4.
+        const auto* ship = field::baked::transport(4);
+        expect(ship && ship->type==2 && ship->group==4, "actual FF2 ship transportation rules are baked");
+        for (auto target : {Cell{1,110,98}, Cell{1,218,43}}) {
+            RouteSnapshot onboard(field::map_state::Resolver(field::map_state::Flags{}, fixture::records));
+            onboard.submap=world; onboard.map_id=world->first_map_id; onboard.layer=1;
+            onboard.position=world_of_cell(*world,{1,126,129}); onboard.vehicle={true,4,2,L"MSG_SYSTEM_200"};
+            onboard.auto_groups={2}; onboard.goal.map_id=onboard.map_id; onboard.goal.cell=target;
+            onboard.kind=field::TargetKind::Transition; onboard.locale=L"en";
+            std::thread ship_worker([&] {
+                field::baked_route::Request riding;
+                riding.submap=world; riding.start={1,126,129}; riding.vehicle_group=4;
+                riding.vehicle_type=2; riding.landing_group=ship->landing_group; riding.auto_groups={2}; riding.ignore_hazards=true;
+                auto foot=riding; foot.vehicle_group=0;
+                auto goals=field::baked_route::goals_for(foot,target,field::baked_route::GoalKind::Transition);
+                riding.goals=goals.cells;
+                expect(!field::baked_route::find(riding).found, "old ship-only search reproduces the logged no-path failure");
+                auto reach=field::baked_route::flood(riding);
+                auto land=land_after_ride(riding,reach);
+                if (!any_reachable(land,goals.cells)) {
+                    int riding_count=0, land_count=0;
+                    for(const auto distance:reach.dist[0]) if(distance!=0xFFFF) ++riding_count;
+                    for(const auto distance:land.dist[0]) if(distance!=0xFFFF) ++land_count;
+                    std::printf("FF2 ship target (%d,%d): ride cells %d, land cells %d, target attribute %d, %zu goals\n",target.x,target.y,riding_count,land_count,field::baked::attribute(field::baked::grids(*world),target.x,target.y),goals.cells.size());
+                    for(const auto& cell:goals.cells) std::printf("goal (%d,%d) foot-open %d, land-distance %d\n",cell.x,cell.y,field::baked::vehicle_open(field::baked::grids(*world),1,cell.x,cell.y),land.distance(cell));
+                }
+                expect(any_reachable(land,goals.cells), "onboard filter includes land destinations through legal shores");
+                const auto started=std::chrono::steady_clock::now();
+                result=plan_snapshot(onboard);
+                const double elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count();
+                std::printf("FF2 onboard route (%d,%d): %.3f ms, %zu phases\n",target.x,target.y,elapsed,result.path.walk_phases.size());
+                expect(result.path.success && result.path.walk_phases.size()==2, "actual ship position reaches the reported land entrance using ride and walk phases");
+                if(result.path.walk_phases.size()==2) {
+                    const auto& ride_phase=result.path.walk_phases[0]; const auto& walk_phase=result.path.walk_phases[1];
+                    expect(ride_phase.action_before.empty() && walk_phase.action_before==L"land", "already-boarded route requests landing without boarding again");
+                    expect(ride_phase.cells.back()==walk_phase.cells.front(), "ship and walking phases meet at the same legal coastal stop");
+                    for(const auto& cell:ride_phase.cells) expect(field::baked::vehicle_open(field::baked::grids(*world),4,cell.x,cell.y), "riding leg remains on the ship grid");
+                    const auto& shore=walk_phase.cells[1];
+                    expect(field::baked::group_lands(ship->landing_group,field::baked::attribute(field::baked::grids(*world),shore.x,shore.y)), "walking leg starts through the native ship landing policy");
+                }
+                riding.cancelled=[] { return true; };
+                expect(!land_after_ride(riding,reach).submap, "cancelled onboard reachability never publishes land results");
+            }); ship_worker.join();
+        }
+        // A one-cell wrapped ship step must retain native cardinal direction.
+        field::baked_route::Request edge;
+        edge.submap=world; edge.vehicle_group=4; edge.ignore_hazards=true; edge.goals_open=false;
+        const auto& grid=field::baked::grids(*world);
+        bool wrap_case=false;
+        for(int y=0; y<grid.height; ++y) if(field::baked::vehicle_open(grid,4,0,y) && field::baked::vehicle_open(grid,4,grid.width-1,y)) {
+            edge.start={1,0,y}; edge.goals={{1,grid.width-1,y}};
+            auto wrapped=field::baked_route::find(edge);
+            auto directions=field::baked_route::legs(wrapped.cells,grid.width,grid.height);
+            expect(wrapped.found && wrapped.steps()==1 && directions.size()==1 && directions[0].dir==3, "world left edge wraps west in A* and spoken directions");
+            Phase phase; phase.cells=wrapped.cells; Corner corner;
+            corner_of(*world,{phase},edge.start,corner);
+            expect(corner.point.x < world_of_cell(*world,edge.start).x && corner.steps_to_corner==1, "wrapped beacon corner points along the westward route leg");
+            wrap_case=true; break;
+        }
+        expect(wrap_case, "actual ship grids supply a wrapped-edge regression");
         field::baked_route::Request cancelled;
         cancelled.submap = world; cancelled.start = {1, 123, 34}; cancelled.goals = {{1, 107, 44}};
         cancelled.cancelled = [] { return true; };
         expect(!field::baked_route::find(cancelled).found && field::baked_route::flood(cancelled).submap == nullptr,
                "retired contexts cancel A* and reachability computation");
     }
+    int vehicle_cases=0, no_landing=0;
+    double worst_vehicle_ms=0, worst_vehicle_filter_ms=0;
+    for(int number=1; number<=6; ++number) {
+        std::ifstream source("data/ff"+std::to_string(number)+"/maps.bin",std::ios::binary);
+        std::string vehicle_bytes((std::istreambuf_iterator<char>(source)),{});
+        expect(field::baked::load(vehicle_bytes.data(),vehicle_bytes.size()), "each game's actual vehicle grids load");
+        for(int index=0; index<field::baked::submap_count(); ++index) {
+            const auto* map=field::baked::submap_at(index);
+            if(!map->world) continue;
+            const auto& grid=field::baked::grids(*map);
+            for(const auto& row:field::baked::transports()) {
+                if(row.type==0 || row.type==1 || row.type==5 || row.group<=0 || row.group>static_cast<int>(grid.transport.size())) continue;
+                Cell start; bool found=false;
+                for(int y=0; y<grid.height && !found; ++y) for(int x=0; x<grid.width; ++x)
+                    if(field::baked::vehicle_open(grid,row.group,x,y)) { start={1,x,y}; found=true; break; }
+                if(!found) { ++no_landing; continue; }
+                field::baked_route::Request riding;
+                riding.submap=map; riding.start=start; riding.vehicle_group=row.group;
+                riding.vehicle_type=row.type; riding.landing_group=row.landing_group; riding.ignore_hazards=true;
+                for(const auto& owned:field::baked::transports()) if(owned.type==5) riding.auto_groups.push_back(owned.group);
+                field::baked_route::Reach ride, landed;
+                std::thread reach_worker([&] {
+                    const auto started=std::chrono::steady_clock::now();
+                    ride=field::baked_route::flood(riding); landed=land_after_ride(riding,ride);
+                    worst_vehicle_filter_ms=std::max(worst_vehicle_filter_ms,std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count());
+                }); reach_worker.join();
+                auto foot=riding; foot.vehicle_group=0;
+                Cell target; bool destination=false;
+                for(const auto& object:grid.objects) {
+                    if(object.type!=field::baked::ObjType::GotoMap) continue;
+                    Cell cell{1,object.tx,object.ty};
+                    const auto goals=field::baked_route::goals_for(foot,cell,field::baked_route::GoalKind::Transition);
+                    if(any_reachable(landed,goals.cells)) { target=cell; destination=true; break; }
+                }
+                if(!destination) { ++no_landing; continue; }
+                RouteSnapshot onboard(field::map_state::Resolver(field::map_state::Flags{},fixture::records));
+                onboard.submap=map; onboard.map_id=map->first_map_id; onboard.layer=1; onboard.position=world_of_cell(*map,start);
+                onboard.vehicle={true,row.id,row.type,field::baked::str(row.message)}; onboard.auto_groups=riding.auto_groups;
+                onboard.goal.map_id=onboard.map_id; onboard.goal.cell=target; onboard.kind=field::TargetKind::Transition; onboard.locale=L"en";
+                std::thread vehicle_worker([&] {
+                    const auto started=std::chrono::steady_clock::now(); result=plan_snapshot(onboard);
+                    worst_vehicle_ms=std::max(worst_vehicle_ms,std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count());
+                }); vehicle_worker.join();
+                if(!result.path.success) std::printf("FAIL FF%d world %d vehicle %d type %d group %d: onboard destination (%d,%d)\n",number,index,row.id,row.type,row.group,target.x,target.y);
+                expect(result.path.success, "representative boarded vehicles reach their world-map land destination"); ++vehicle_cases;
+                for(const auto& phase:result.path.walk_phases) expect(phase.action_before.find(L"board")==std::wstring::npos, "already-boarded plans never require boarding again");
+            }
+        }
+    }
+    expect(vehicle_cases>=20, "all-six boarded-vehicle regression has representative coverage");
+    std::printf("All-six boarded vehicles: %d world/transport cases; %d without eligible start/land destination; worst route %.3f ms, filter %.3f ms (offline)\n",vehicle_cases,no_landing,worst_vehicle_ms,worst_vehicle_filter_ms);
     expect(fixture::wrong_owner == 0, "world search/cancellation also avoid all native APIs");
     std::printf("Route worker check: %d failures\n", failures); return failures ? 1 : 0;
 }

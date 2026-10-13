@@ -253,7 +253,7 @@ void point_rows(void* self)
         }
     }
 }
-std::vector<std::wstring> growth_rows(void* self, bool changed_only, bool preserve_rows = false)
+std::vector<std::wstring> growth_rows(void* self, bool changed_only)
 {
     std::vector<std::wstring> lines;
     void* list = displayed::field(self, "contentList");
@@ -263,7 +263,6 @@ std::vector<std::wstring> growth_rows(void* self, bool changed_only, bool preser
         auto reading = displayed::comparison_reading(displayed::field(content, "view"));
         if (reading.line.empty()) continue;
         if (!changed_only || reading.changed) lines.push_back(std::move(reading.line));
-        else if (preserve_rows) lines.emplace_back();
     }
     return lines;
 }
@@ -283,11 +282,10 @@ void status_rows(void* self)
         return lines;
     }, {}, [self](ui::review::Options& options) {
         options.brief = growth_rows(self, true);
-        options.row_details = growth_rows(self, true, true);
         options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
     });
 }
-std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = false, bool preserve_rows = false)
+std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = false)
 {
     std::vector<std::wstring> lines;
     if (!game::is(game::Id::FF2) || !displayed::container_visible(controller)) return lines;
@@ -309,7 +307,6 @@ std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = 
                 j == 0 ? "fixedRightHandText" : j == 1 ? "fixedLeftHandText" : "");
             if (!line.empty()) lines.push_back(name + (name.empty() ? L"" : L": ") +
                 hand + (hand.empty() ? L"" : L" ") + line);
-            else if (preserve_rows) lines.emplace_back();
         }
     }
     return lines;
@@ -343,7 +340,6 @@ void weapon_page(void* point)
     }, [point](ui::review::Options& options) {
         void* controller = displayed::field(point, "skillLevelController");
         options.brief = ff2_weapon_rows(controller, true);
-        options.row_details = ff2_weapon_rows(controller, true, true);
         options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
         options.announce_brief_with_details = true;
     });

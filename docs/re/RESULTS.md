@@ -7,6 +7,18 @@ follow Autodetail; manual review/details always remain available. Arrow input
 must never advance a native results phase, including held/release input and
 the interval before the page buffer is ready. Ordinary confirm advances normally.
 
+## Gameplay confirmation, October 13
+
+The user confirms that FF1's battle-results buffer reads correctly after the shared
+deployment. Later FF2 testing confirms hand levels/progress are read, while reporting
+missing weapon types and requesting phase-wide I summaries; corrections are recorded
+below and await retest. Gil/other phase details remain unreported. The user expects FF3–FF6 to work because of the shared results
+implementation; this is an expectation, not direct gameplay confirmation for those
+games. Specific Autodetail, held/release input, row details and native advancement
+cases were not individually reported as tested. The user also confirms lag-free
+pathfinding and smooth battle transitions in the tested session.
+[Current per-feature status](../TESTING.md#gameplay-confirmations-october-13).
+
 ## Offline evidence and producer paths
 
 `tools/re/results_calls.py` disassembles metadata-sized PE ranges without loading
@@ -139,9 +151,9 @@ into an early combined reward readout. [Selected prefab records](ff2_rendered_pr
 
 Battle's persistent `Battle results: changed stats` toggle defaults on. With Autodetail
 off, the title/essential totals remain automatic and the toggle adds changed rows only.
-Arrows retain the full displayed table. I/controller West on a growth/weapon row reads
-that row's delta; an unchanged row says No stat changes. On titles/totals it repeats that
-line, without reading other rows' changes. Autodetail reads full tables; weapon delta
+Arrows retain the full displayed table. October 13 user correction supersedes the prior
+row-specific policy: I/controller West reads all deltas for the current phase, from any
+cursor position. A phase without changes says No stat changes. Autodetail reads full tables; weapon delta
 summaries still require the toggle. Native stat before/after values already belong to
 the full table, so its automatic full reading does not also repeat a stat brief.
 
@@ -317,3 +329,45 @@ Final follow-up DLL, deployed/hash-verified in all six games:
 Canonical build: 7,061 native-name checks, zero missing/undefined wiring; all
 results/worker/route/input/cache checks and isolated DLL host pass. Prism prerequisites
 were checked without changes and all six game-root Tolk.dll files remain absent.
+
+## Weapon labels and phase-wide changes, October 13
+
+The user's FF2 retest reads Firion/Maria/Guy hand levels and progress, but omits weapon
+type. The first-page buffer is therefore producing rows; this is a missing icon label,
+not a wholly silent buffer. The user also replaces the prior row-specific I behavior:
+I/controller West must repeat all current-phase changes, just like the automatic brief.
+
+Exact FF2 native evidence: results SetData calls SkillLevelContentController.SetBothHandsData
+(`3DBF80`, ABI self/OwnedItemData/MethodInfo), which sets weaponType and IconTextUtility
+directly, without calling the separately hooked SetWeaponIcon (`3DC460`). Capture the
+same bounded owned type/visible-sprite meaning after either producer. The renderer's
+current sprite must match the captured sprite; hidden/changed icons, ability reuse,
+nonweapon enums and missing fields cannot disclose a weapon label. Existing eight-type
+translations remain; no guessed weapon is inferred from hand or progress. Full rows and
+delta summaries now receive the actual Sword/Knife/Spear/Axe/Staff/Bow/Shield/Unarmed
+icon meaning. No asset/master lookup or Unity traversal is moved onto workers.
+
+Read-only `tools/re/ff2_weapon_icon_check.py` asserts both exact producer paths, preserving
+matching binary SHA-256 and raw native instructions locally in ignored
+`build_check/re/ff2_weapon_icon.txt`. Raw commercial code is excluded from publication.
+
+The review worker retains its already-built complete change brief. Manual I publishes
+headline plus that brief as one interrupting input event, independent of cursor,
+Autodetail or automatic-summary preference. It does not join a table on the native
+thread, read another character/phase, advance the game or add text deduplication.
+Obsolete row-detail alignment/capture is removed. Existing generation/readiness/FIFO
+and phase cancellation still govern pending input.
+
+`battle_results_check` now links the actual displayed_conditions reader rather than
+faking skill names/rows. It invokes real registered producer detours with fake native
+presentation, exercises all eight types, visibility/sprite/ability/invalid-type guards,
+and verifies FF2 first-page review/Autodetail/deltas. Phase-wide I checks cover headings,
+changed/unchanged rows, no-change phases, automatic-summary off and all six games.
+Canonical build passes 7,063 native names, zero missing/undefined wiring; results,
+worker/input/speech/route checks pass. Gameplay retest of these corrections remains
+pending; FF1 reading and smooth battle transitions retain the user's confirmation.
+
+This build is deployed/hash-verified in all six games:
+`FA433F55BD5743D3FFAA57450528E796C39FB875495BF329C5015E0F95A7D99E`.
+Isolated DLL smoke passes; Prism dependency checks were read-only. No game was launched
+or probed by the agent. [Current focused retest](../TESTING.md#current-ff2-results-and-vehicle-retest-october-13).

@@ -58,7 +58,9 @@ Speak game information only when displayed, or under an explicit scoped user app
 Scoped user approval, 2026-10-11: retain the optional Enemy HP Display modes and saved/default preferences in every game, despite HP not being rendered in native target panels. Numbers adds `HP current/maximum`; Percentage adds `remaining%`; Hidden adds nothing and must not query parameters. This exception covers enemy HP only, not hidden enemy conditions or other statistics. F5 cycles these modes during battle; the Battle submenu explains the disclosure. Scan/Libra follows the ordinary displayed-message reader.
 
 Results follow-up, 2026-10-12: all six growth tables support Battle's changed-stats toggle
-(default on) and row-specific I/controller West deltas. FF2 alone has nested weapon rows;
+(default on). October 13 user correction: I/controller West reads every delta in the
+current results phase, independent of highlighted row or automatic-summary preferences.
+FF2 alone has nested weapon rows;
 keep its full displayed weapon/level/gauge buffer independent from delta summaries and
 Autodetail. User explicitly requests current displayed weapon progress comparisons using
 the native before/after battle data. Scope that access to matching visible weapon icons,
@@ -79,6 +81,12 @@ NPC labels remove developer prefixes/suffixes (ASCII, full-width and circled num
 Only exact same descriptive tags on the same floor get sequential suffixes, e.g. Soldier1,
 Soldier2; unique names have none. Use the central NPC naming service for live/remote entries;
 number before distance/reachability filters. Preserve existing entity inclusion guards.
+
+World navigation includes already-boarded vehicles: use the current riding grid,
+legal native landing rules and walking/owned automatic-vehicle legs. World edges wrap
+in search, floods, direction grouping and beacon corners. Vehicle identity changes
+invalidate pending/preserved plans; all computation stays on the Navigation worker.
+Current regression/evidence: docs/re/THREADING.md.
 
 Shared autowalk and simultaneous beacon/directions are implemented in the core. Preserve
 the three independent, default-off Navigation settings and the Backslash/P/Slash/controller
