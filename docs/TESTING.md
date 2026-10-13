@@ -17,6 +17,7 @@ The latest follow-up DLL/deployment is recorded in [MENU_DETAILS.md](re/MENU_DET
 | Feature | Gameplay status |
 | --- | --- |
 | Land pathfinding responsiveness | Confirmed by the user: working perfectly with no lag in the tested session. Later FF2 ship report is tracked separately below. |
+| FF2 Castle Deist to world-map loading | User confirms the transition lag seems fixed after 0e717ab and accepts it for V0.9 release preparation. This is qualitative gameplay confirmation, not instrumented timings for all maps/games. |
 | Battle transitions | Confirmed by the user: smooth in the tested session. |
 | FF1 battle-results buffer reading | Confirmed by the user: reads correctly. Specific Autodetail/input/detail cases were not separately enumerated. |
 | FF2 battle-results buffer | User's later example includes character, hand, weapon type, skill level and progress. Screenshot confirms hand headings, icon type, level numeral and bar are displayed. Phase-wide I and other phase/control cases remain unconfirmed. |

@@ -1,537 +1,190 @@
-# FFPR Screen Reader
+# Final Fantasy Pixel Master Core Screen Reader V0.9
 
-A screen reader mod for FINAL FANTASY I, II, III, IV, V and VI Pixel Remaster on Steam.
+## Purpose
 
-## What it is
+Adds speech, menu and battle reading, pathfinding, optional autowalk and audio navigation to FINAL FANTASY I-VI Pixel Remaster on Steam. One set of files supports all six games. Keyboard and controller controls are supported.
 
-- It speaks the games through your screen reader: dialogue, menus, battles, the field and the title screen.
-- It adds navigation aids: wall tones, footsteps, an audio beacon, optional autowalk, a list of destinations with step by step directions, and waypoints you can name.
-- One set of files works in all six games. The mod finds out by itself which game it is running in.
-- It is one native file, hid.dll. MelonLoader is not needed, but it can stay installed, and so can BepInEx, if you use them for other mods.
-- It replaces the six older screen reader mods, FFI_ScreenReader.dll to FFVI_ScreenReader.dll. Your old settings and waypoints carry over.
-- The keyboard and a game controller both work, for the game and for the mod.
+## Known Issues
 
-Why hid.dll: every game loads a Windows file called hid.dll when it starts, to talk to controllers. The mod's hid.dll passes all of that on to the hid.dll that comes with Windows, so controllers keep working. Then it starts the screen reader.
+V0.9 is an early combined release. Some game-specific screens, vehicles and story situations still need further gameplay testing. Report missing or repeated speech with the game's ffpr_screen_reader.log and a short description of what happened.
 
-## Requirements
+## Install
 
-- Windows, and one or more of the six games from Steam.
-- A running screen reader, such as NVDA or JAWS.
-- Prism v0.18.3 (64-bit), installed separately with the supplied `install_prism.bat` command. Prism connects speech and braille output to supported screen readers.
-- The files in the zip:
-  - hid.dll: the mod.
-  - SDL3.dll: the mod's sounds and controller support.
-  - MinHook_LICENSE.txt: license for MinHook, which is built into hid.dll.
+Requires 64-bit Windows, a Steam Pixel Remaster game and a running screen reader such as NVDA or JAWS. Prism 0.18.3 and SDL3 are included in this V0.9 bundle. MelonLoader, BepInEx, Python and separate dependency downloads are not required.
 
-Prism is a separate prerequisite and is not included in the mod release zip. Its installer
-uses the pinned official Prism v0.18.3 x64 package and installs it in the selected game's
-`.ffpr-deps\prism` folder. It performs no downloads.
+1. Close the game and extract the zip.
+2. Open the game's installation folder using Steam's Manage, Browse local files command. This is the folder containing FINAL FANTASY.exe, FINAL FANTASY II.exe, and so on.
+3. If an older screen reader is installed, remove its DLL from the game's Mods folder: FFI_ScreenReader.dll, FFII_ScreenReader.dll, FFIII_ScreenReader.dll, FFIV_ScreenReader.dll, FFV_ScreenReader.dll or FFVI_ScreenReader.dll, as appropriate. Keep your UserData folder.
+4. Open the extracted Final Fantasy Pixel Master Core Screen Reader V0.9 folder. Copy its contents into the game folder, including the .ffpr-deps folder. hid.dll and SDL3.dll must sit beside the game's EXE, and Prism must remain at .ffpr-deps/prism/prism.dll.
+5. Start your screen reader, then the game. The title screen should speak. Repeat these steps for each game you use.
 
-### Getting the games
+The included license files should stay with the mod. Other mods' MelonLoader or BepInEx installations may remain; remove only the old screen reader DLL.
 
-- Create an account at store.steampowered.com. Then install the Steam desktop app and log into it.
-- Buying is easiest on the Steam website while you are logged in. After you buy, Steam asks if you want to install the game, which opens the desktop app to finish.
-- Buy the Pixel Remaster versions. The store page mentions the remaster in the description.
-- For FINAL FANTASY V, do not buy FINAL FANTASY V Old Ver.
+Settings are saved separately for each game in ffpr_screen_reader.ini. Old settings are imported once from UserData/MelonPreferences.cfg. Existing waypoints are retained in UserData/waypoints.json, or UserData/ffvi_waypoints.json for FFVI.
 
-## Installing
+To update, close the game and replace the release files. To uninstall, remove hid.dll. Your settings and waypoints can remain.
 
-First install Prism once for each game, then install or update the mod. The mod files are the same in every game.
+## Keys
 
-1. Close the game.
-2. Open the game folder. With Steam's default library, the folders are in C:\Program Files (x86)\Steam\steamapps\common, and they are called FINAL FANTASY PR, FINAL FANTASY II PR, FINAL FANTASY III PR, FINAL FANTASY IV PR, FINAL FANTASY V PR and FINAL FANTASY VI PR.
-3. If your Steam library is on another drive, the path is drive letter, then the path to your library, then SteamLibrary\steamapps\common, then the game's folder.
-4. If you used the old screen reader, take its file out of the game's Mods folder. Delete it, or move it somewhere else. See the list below.
-5. From the project folder, run `install_prism.bat ff1` for FINAL FANTASY, `ff2` for FINAL FANTASY II, and so on through `ff6` for FINAL FANTASY VI. This installs Prism once for that game. Repeat for each game you use.
-   For another Steam library, add `--game-root "path to steamapps\common"`.
-6. Copy the mod release files from the zip into the game folder, next to the game's exe. If Windows asks, replace the files that are already there.
-7. Start the game. You hear speech at the title screen.
+Mod keys require the game window to have focus. Field controls require the field to be active with no menu open. Mod keys are disabled while typing in the game's name fields. There is no keyboard mod mode.
 
-For later mod updates, copy the new mod release files into the game folder; do not reinstall Prism. Run `install_prism.bat` again only when you explicitly want to install or update the Prism dependency. The normal `deploy.bat [ffN]` command checks that Prism is installed, then deploys the mod files; it never downloads or installs Prism.
+### Game
 
-The old screen reader files:
-
-- FINAL FANTASY: FFI_ScreenReader.dll
-- FINAL FANTASY II: FFII_ScreenReader.dll
-- FINAL FANTASY III: FFIII_ScreenReader.dll
-- FINAL FANTASY IV: FFIV_ScreenReader.dll
-- FINAL FANTASY V: FFV_ScreenReader.dll
-- FINAL FANTASY VI: FFVI_ScreenReader.dll
-
-If you forget to remove it, both mods speak at once, and the new mod says "Old screen reader still installed" when the game starts.
-
-MelonLoader and BepInEx can stay if you use them for other mods. This mod does not need either of them, and it is built to run alongside them: it hooks the game in a way that leaves room for their hooks on the same game functions. Only the old screen reader file has to go.
-
-The game exes are FINAL FANTASY.exe, FINAL FANTASY II.exe, FINAL FANTASY III.exe, FINAL FANTASY IV.exe, FINAL FANTASY V.exe and FINAL FANTASY VI.exe.
-
-The mod only works in these six games. In another game, it says "this game is not supported" and stays quiet.
-
-## Uninstalling
-
-- Delete hid.dll from the game folder. That turns the mod off: the game then uses the hid.dll that comes with Windows.
-- Earlier versions of this mod also put MinHook.x64.dll in the game folder. You can delete it, unless another mod you use needs it.
-- If you want, also delete ffpr_screen_reader.ini, which holds your settings, and the ffpr_screen_reader log files.
-- SDL3.dll can stay. Prism is installed separately in `.ffpr-deps\prism`.
-- To go back to an old screen reader, put its file back in the Mods folder. The old screen readers need MelonLoader.
-
-## Settings and waypoints
-
-- Settings are saved in ffpr_screen_reader.ini in the game folder. Each game has its own.
-- Change them in the mod menu: F8, or Start on a controller. You do not need to edit the file.
-- The first time the mod starts in a game, it copies your old screen reader's settings from UserData\MelonPreferences.cfg in the game folder. This happens once. The old file is not changed.
-- If you delete ffpr_screen_reader.ini, the next start copies the old settings again, or uses the defaults if there are none.
-- Waypoints are saved in UserData\waypoints.json in the game folder. It is the same file the old screen reader used, so your waypoints carry over. In FINAL FANTASY VI the file is UserData\ffvi_waypoints.json, the old FINAL FANTASY VI screen reader's file. The mod creates the UserData folder if it is missing.
-
-## Log file
-
-- The log is ffpr_screen_reader.log in the game folder.
-- The logs of the five starts before are kept as ffpr_screen_reader.1.log to ffpr_screen_reader.5.log. Number 1 is the most recent.
-- If something goes wrong, send the log from that game's folder, with a short description of what you did and what you heard.
-
-## Game keys
-
-These are the game's own controls. The mod reads what they do.
-
-### Keyboard
-
-- W, A, S, D or arrow keys: move.
+- W, A, S, D or arrows: move and select.
 - Enter: confirm.
 - Backspace or Escape: cancel.
-- Q: on the naming screen, a random suggested name. In menus that have them, switch between statistics and description.
-- F1: switch between walk and run. On the field the mod says "Walk" or "Run".
-- F3: turn random encounters on or off. On the field the mod says "Encounters on" or "Encounters off".
+- Tab: open or close the game menu.
+- Q: switch the current stats/description panel where available; random name on naming screens.
+- F1: walk/run where the game permits it.
+- F3: toggle random encounters.
+
+### Mod
+
+- J or left bracket: previous pathfinder destination.
+- L or right bracket: next destination.
+- Shift+J, Shift+left bracket or Minus: previous destination category.
+- Shift+L, Shift+right bracket or Equals: next category.
+- Shift+K: reset to All.
+- K: repeat the selected destination.
+- Backslash or P: request directions or beacon navigation. With Autowalk enabled, start walking; press again to stop.
+- Shift+Backslash or Shift+P: cycle Current floor, Current map with vehicles, Current map.
+- Ctrl+Backslash or Ctrl+P: toggle the layer transition filter.
+- Backtick, above Tab: rescan the map.
+- Shift+M: toggle the map exit filter.
+- Ctrl+arrow: teleport north, south, west or east of the selected destination.
+- Shift+G: start or repeat the current puzzle-guide step.
+- Ctrl+G: stop the puzzle guide.
+- G: announce gil.
+- M: announce the current map.
+- V: announce walking or the current vehicle.
+- H: announce the active character's vitals in battle; party information elsewhere. FFVI also reports airship heading and altitude when applicable.
+- T in battle: announce the active turn.
+- 1-9 in battle: read the corresponding party member's vitals. In shops: read that party member's equipment comparison.
+- R: repeat the current dialogue or message.
+- I: read the highlighted item's, spell's or setting's details. In equipment and shops, read the current stats/description panel, following Q or X/Square. In the mod menu, I describes the highlighted setting.
+- Shift+I: read the controls for the current screen.
+- U: read who can equip the highlighted equipment.
+
+Current map includes connected dungeon/town floors. Chests use generic labels unless Speech / Spoil treasure chest contents is enabled; opened state is included when known.
+
+### Waypoints (field only)
+
+- Comma / Period: previous / next waypoint.
+- Shift+Comma / Shift+Period: previous / next waypoint category.
+- Slash: navigate to the selected waypoint; start/stop Autowalk when enabled.
+- Shift+Slash: add a waypoint at your current location and name it.
+- Ctrl+Period: rename the selected waypoint.
+- Ctrl+Slash: remove the selected waypoint.
+- Ctrl+Shift+Slash: clear this map's waypoints.
+
+In the waypoint name window, type normally. Left/Right reviews letters, Up/Down reads the name, Home/End jumps to an end, Backspace deletes, Enter saves and Escape cancels. In confirmation windows, use Y/N or Left/Right and Enter; Escape cancels.
+
+### Other toggles
+
+- Apostrophe: toggle footsteps.
+- Semicolon: toggle wall tones.
+- F6: toggle beacon navigation.
+- F5 in battle: cycle enemy HP Numbers, Percentage or Hidden. Enemy HP is an optional extra; the native target panel does not display it.
+- F7: toggle Autodetail.
+- F8 on the field: open the mod menu. F8 closes it directly.
+
+The mod menu has Speech, Navigation audio and Battle categories. Speech includes Autodetail, Verbose/Brief stat deltas, Status damage (default on) and Spoil treasure chest contents (default off). Navigation audio includes Autowalk, Speak autowalk path and Beacon with directions, each default off.
+
+In the mod menu, Up/Down selects a category or setting, Enter/Space opens or toggles it, Left/Right changes a value, I reads its description, and Escape returns to categories or closes from the root.
+
+### Battle results and information buffers
+
+- Up/Down: previous/next line.
+- Left/Right: first/last line.
+- I: details for the current page. On battle growth and weapon-progress pages, read all current-phase deltas.
+- Enter: advance the native results phase normally.
+
+Equipment replacement comparisons and extra item-detail screens use an arrow-key buffer. W/A/S/D retains native equipment selection; I reads the current item panel. Equipment slots speak the slot label, displayed Favored Hand and item name; Autodetail adds the current panel.
+
+### Status, bestiary and controls lists
+
+- Up/Down: previous/next entry; W/S also works.
+- Shift+Up/Down: previous/next group where grouped; Shift+W/S also works.
+- Ctrl+Up/Down: first/last entry; Ctrl+W/S also works.
+- Native page and character-switch controls remain available.
+
+### Game-specific keys
+
+- FFI: I in the 15-puzzle reads the tile's row and column; I on new-game class selection reads the class description. F1 runs in towns/dungeons; the world map is walk-only.
+- FFII: I in Ask/Learn and key-term lists reads the selected term's description. U reports that any character can equip the item.
+- FFIII: R on status repeats the current stat; I in job selection reads the job description.
+- FFIII-VI: 9 on the field toggles beacon navigation, like F6.
+- FFIV-VI: T outside battle reads active timers; Shift+T freezes/resumes them.
+- FFV: Shift+Semicolon toggles landing pings on the field.
+- FFVI: extra equipment/item detail screens also support Up/Down and Ctrl+Up/Down review.
 
 ### Game controller
 
-This readme names buttons by their place on the controller, with the Xbox name first and the PlayStation name in brackets. A is the bottom face button, B the right one, X the left one and Y the top one. The mod detects Xbox, PlayStation and Nintendo controllers, and speaks the names printed on yours.
+Button names below use Xbox, with PlayStation in brackets. The mod announces labels appropriate to Xbox, PlayStation or Nintendo controllers.
 
-- Left stick: move on the field, and move in menus.
-- D-pad: move in menus. On the field the mod uses the D-pad for waypoints.
+- Left stick: movement and native menu selection.
 - A (Cross): confirm.
 - B (Circle): cancel.
-- X (Square): the same as Q on the keyboard.
-- Y (Triangle): open or close the field menu.
-- LB and RB (L1 and R1): switch tabs in menus.
-- LT (L2): page up in menus. On the field the mod uses LT for pathfinding.
-- RT (R2): open the pause menu on the field and in battle. Page down in menus.
-- L3 and R3 (the stick clicks): walk or run, and random encounters, but only when Stick Click Normalization is on. See "Stick clicks" under the mod's controller keys.
-
-### FINAL FANTASY
-
-- F1 works in towns and dungeons. The world map is walk only. Use vehicles to travel faster.
-
-## Mod keys
-
-### Before you start
-
-- The mod reads keys only while the game window is in front.
-- No mod key works while you hold Alt, so Alt+F4 is safe.
-- F5, F7 and F8 work only without Shift, Ctrl or Alt.
-- Field keys work on the field when no menu is open. Anywhere else they do nothing.
-- While you type a name, the mod keys are off.
-
-### Field navigation
-
-These work on the field.
-
-- Backtick, the key above Tab: scan the map again.
-- Ctrl+Up, Ctrl+Down, Ctrl+Left or Ctrl+Right: teleport to the tile north, south, west or east of the selected destination.
-
-### Destinations
-
-The mod keeps a list of things on the map: chests, people, exits, events, vehicles, save points and more. They are sorted into categories. These keys work on the field, except Shift+M.
-
-- J or Left bracket: previous destination.
-- L or Right bracket: next destination.
-- Shift+J, Shift+Left bracket or Minus: previous category.
-- Shift+L, Shift+Right bracket or Equals: next category.
-- Shift+K: back to the All category.
-- K: say the selected destination again.
-- Shift+Backslash or Shift+P: pathfinding filter on or off. When it is on, only destinations with a path are listed.
-- Ctrl+Backslash or Ctrl+P: layer transition filter on or off. When it is on, stairs and other floor changes are hidden.
-- Shift+M: map exit filter on or off. When it is on, exits that lead to the same place are merged into the nearest one. This key works anywhere.
-
-### Waypoints
-
-These work on the field.
-
-- Comma: previous waypoint.
-- Period: next waypoint.
-- Shift+Comma: previous waypoint category.
-- Shift+Period: next waypoint category.
-- Slash: directions to the selected waypoint.
-- Shift+Slash: add a waypoint where you stand. A window asks for its name.
-- Ctrl+Period: rename the selected waypoint.
-- Ctrl+Slash: delete the selected waypoint. You confirm first.
-- Ctrl+Shift+Slash: delete all waypoints on this map. You confirm first.
-
-In the name window:
-
-- Type the name. Hold Shift for capital letters.
-- Backspace deletes the letter before the cursor.
-- Left and Right arrows move through the name, letter by letter.
-- Up or Down arrow reads the whole name.
-- Home and End jump to the start or the end.
-- Enter saves. Escape cancels.
-
-In the confirm window:
-
-- Y for yes, N for no.
-- Or Left and Right arrows to choose, then Enter.
-- Escape cancels.
-
-### Pathfinding
-
-These work on the field.
-
-- Backslash or P: navigate to the selected destination. With Autowalk on, start walking; press again to stop. Otherwise hear directions or restart the beacon. Beacon with directions lets both work together.
-- Slash: the same navigation action for the selected waypoint.
-- Shift+G: puzzle guide. On a map with a guided puzzle, it starts the guide and reads the first step with directions; press it again for the current step from where you stand now. Each step is spoken as "Step 2 of 4" with what to do and the way there. The guide notices when you reach a step and reads the next one.
-- Ctrl+G: stop the puzzle guide.
-
-Directions are worked out by the mod from the game's own map data, so there is no distance limit: a route can cross a whole map. Routes follow stairs and layer changes, use secret passages when there is no other way, end on the tile in front of a shop counter rather than on the shopkeeper, and on the world map they use your vehicle. If you are on foot and the destination is across water, the directions include boarding your ship or airship ("board the Ship", then the way, then "land"). With the canoe or the snowcraft, river and snow tiles count as walkable. A route to another floor ends at the stairs or exit to take, for example "North 3, take the exit to Snow Cavern B3"; ask again after the transition. Very long routes are read six legs at a time: walk them, then ask again.
-
-### Audio cues
-
-These work on the field.
-
-- Semicolon: wall tones on or off.
-- Apostrophe: footsteps on or off.
-- F6: beacon navigation on or off. When it is on, pings guide you along the route. Enable Beacon with directions in the Navigation audio category to hear directions as well.
-
-### Menus and details
-
-- I: details of what is highlighted:
-  - in the game's configuration menu, the setting's description;
-  - in a shop, the item's stats or description;
-  - in the equipment menu, the equipment's stats and description;
-  - in the magic menu, the spell's description;
-  - in the item menu, the item's description;
-  - in battle, the highlighted spell's or item's description.
-- Shift+I: read the controls shown on the screen.
-- U: who can equip the highlighted weapon or armour. Works in shops and in the item menu.
-- F7: Auto Detail on or off. When it is on, descriptions and stats are read as you move, so you rarely need I.
-
-On a character's status screen, a bestiary entry, and the controls list in the configuration menu:
-
-- Up and Down arrows, or W and S: next or previous entry.
-- Shift+Up or Shift+Down: jump to the next or previous group. Status screen and bestiary only.
-- Ctrl+Up or Ctrl+Down: jump to the first or last entry.
-
-### Battle
-
-- H: the active character's HP and status effects. Outside battle the mod says "Party status only available in battle".
-- F5: change how enemy HP is read: numbers, percentage or hidden. Hidden is how the developers meant the game to be played. Works in battle only. You can also set it in the mod menu.
-- Tab: if the mod still thinks a battle is going on after it has ended, Tab clears that. During a real battle it changes nothing.
-
-### Global
-
-These work anywhere.
-
-- G: your gil.
-- M: the current map.
-- V: walking, running, or the vehicle you are on.
-- R: repeat the current dialogue page, while a message is open.
-- F8: open the mod menu. It opens on the field with no menu open. Anywhere else the mod says why not: "Unavailable in battle", "Unavailable in menu" or "Unavailable here".
-
-### Controller
-
-Names follow the same rule as in the game keys: A bottom, B right, X left, Y top.
-
-#### Mod buttons
-
-- Back (View, Select, Share, Create or Minus): mod mode. See "Mod mode" below.
-- Start (Menu, Options or Plus): open the mod menu on the field. Press it again to close. The game never gets Start.
-- A, B, X and Y also stop the current speech, then go to the game as usual.
-
-#### On the field
-
-- D-pad Up and Down: previous and next waypoint.
-- D-pad Left and Right: previous and next waypoint category.
-- Right stick Up and Down: previous and next destination.
-- Right stick Left and Right: previous and next destination category.
-- LT (L2, ZL): navigate to the last destination or waypoint you selected. With Autowalk on, start walking; press again to stop. Otherwise hear directions or restart the beacon, or both with Beacon with directions on. With nothing selected the mod says "No target selected".
-- L3 and R3: see "Stick clicks" below.
-
-#### In menus and battle
-
-- Right stick Up: details, like I.
-- Right stick Down: the controls shown on the screen, like Shift+I.
-- Right stick Left: who can equip, like U.
-- D-pad or left stick Up and Down: next or previous entry on a status screen, a bestiary entry and the controls list.
-
-#### Mod mode
-
-Press Back. The mod says "Mod". Then press one button. Press Back again to leave without doing anything; the mod says "Cancelled".
-
-While a message is open:
-
-- X (Square): repeat the message, like R.
-
-In battle:
-
-- X (Square): the active character's HP and status, like H.
-- Right stick Down: read the mod mode controls.
-
-On the field and in menus:
-
-- X (Square): your gil.
-- Y (Triangle): the current map.
-- A (Cross): walking, running, or the vehicle you are on.
-- RB (R1): puzzle guide, like Shift+G. LB (L1): stop it, like Ctrl+G. Field only.
-- Right stick Up, Down, Left or Right: teleport to the tile north, south, west or east of the selected destination. Field only.
-- L3 or R3, when Stick Click Normalization is on: beacon navigation or the pathfinding filter on or off.
-
-#### Stick clicks (L3 and R3)
-
-Stick Click Normalization in the mod menu decides what the stick clicks do. It is off by default.
-
-- L3 and R3 together, on the field: turn Stick Click Normalization on or off, whichever way it is set. Press both sticks in at once. You hear "Stick click normalization on" or "off", and nothing else happens.
-- On the field, a single stick click acts when you let go of it, so that it can be part of the L3 and R3 chord.
-- Normalization off: L3 turns beacon navigation on or off, and R3 turns the pathfinding filter on or off.
-- Normalization on: L3 and R3 go to the game. L3 switches walk and run, and R3 turns random encounters on or off. The mod's two toggles move to mod mode: press Back, then L3 for beacon navigation or R3 for the pathfinding filter.
-- Off the field, a stick click goes straight to the game.
-
-#### In the mod menu
-
-- D-pad or left stick Up and Down: move.
-- D-pad or left stick Left and Right: change the value.
-- A (Cross): toggle or choose.
-- B (Circle) or Start: close.
-- Right stick Down: read these controls.
-
-### FINAL FANTASY
-
-- In the 15-puzzle, I or right stick Up: the row and column of the highlighted tile.
-- On the class choice at the start of a new game, I: the class description.
-
-### FINAL FANTASY II
-
-- I, in the keyword lists when you Ask or Learn, and in the Words menu: the keyword's description.
-- U, or right stick Left, in shops and the equipment menu: "Any character can equip this". FINAL FANTASY II has no class restrictions.
-- H also reads MP.
-
-### FINAL FANTASY III
-
-- 9: beacon navigation on or off, like F6. Field only.
-- R, on a character's status screen: repeat the current statistic. Elsewhere R repeats dialogue.
-- I, in the job menu: the job's description.
-
-### FINAL FANTASY IV
-
-- 9: beacon navigation on or off, like F6. Field only.
-- T: read the active timers, such as escape countdowns.
-- Shift+T: freeze or resume the timers.
-- H also reads MP.
-
-### FINAL FANTASY V
-
-- 9: beacon navigation on or off, like F6. Field only.
-- Shift+Semicolon: landing pings on or off. Field only.
-- T: read the active timers.
-- Shift+T: freeze or resume the timers.
-- H also reads MP.
-- I, in the Jobs and Abilities screens: the job's, ability's or spell's description.
-
-Battle results in all six games use the current native screen's buffer. Up/Down
-reviews lines; Left/Right goes to the first/last line; I reads current details.
-Controller mod mode: West (X/Square) reads details; shoulders or D-pad Up/Down
-review lines; D-pad Left/Right goes first/last.
-EXP and gil totals are announced automatically. FF2 has gil and its own weapon/spell
-growth pages, rather than character EXP. Its weapon buffer contains displayed character,
-hand, weapon level and gauge percentage. I on a growth or weapon row reads that row's
-change; arrows always retain the full table. With Autodetail off, items,
-member EXP and full growth tables stay available for manual review; with it on,
-the current phase's details are read after its headline. Review arrows never
-advance the screen. Use the game's ordinary confirm control to continue.
-
-### FINAL FANTASY VI
-
-- 9: beacon navigation on or off, like F6. Field only.
-- T: read the active timers.
-- Shift+T: freeze or resume the timers.
-- H also reads MP. On the airship, H reads the heading and altitude instead.
-- I, in the Skills menus: the spell's or ability's description. On a Blitz, I reads its button sequence. With an esper's details open, I reads them again.
-- U, in shops and the item menu: which party members can equip the item.
-- Up and Down arrows, on an item's details screen: move through the details. Ctrl+Up and Ctrl+Down: first and last line.
-
-## Mod menu
-
-Open it with F8 or Start, on the field with no menu open. The game gets no keys while it is open. The root menu has three categories, in this order: Speech, Navigation audio, and Battle, followed by Close Menu. Press Enter or Right to enter a category. Escape or controller B returns to the root menu, and F8 closes the menu. Menu Position Announcements controls whether entries include their position; it is off by default.
-
-Alt+Tab keeps the menu at its current setting. Keyboard input in another application has no
-effect on it; on return, release any held keys before pressing a menu control.
-
-Keyboard:
-
-- Up and Down arrows: move through the root categories and Close Menu, or through settings in the open category.
-- Left and Right arrows: change the value. Volumes change in steps of 5 percent.
-- Enter or Space: enter a category, toggle or choose. On a volume, it mutes, or sets it back to 50 percent. Right also enters a category.
-- I: describe the highlighted setting.
-- Escape: return to the root menu or close it from the root. F8 closes it from anywhere. Controller B returns to the root; Start closes the menu.
-
-Entries include their position only when Menu Position Announcements is on.
-
-The entries, by section, with their defaults:
-
-### Speech
-
-- Auto Detail, off: descriptions and current information buffers are read after their titles when they are displayed. Press I to read details on demand in either state.
-- Beacon Destination Announcement, off: restarting the beacon also says the destination.
-- Menu Position Announcements, off: list entries include their position, such as "3 of 12".
-
-### Navigation audio
-
-- Wall Tones, off: directional tones play as you approach walls.
-- Wall Tone Volume, then Wall Bump Volume: each ranges from 0 to 100 percent and defaults to 50.
-- Footsteps, off: a click plays for each tile of player movement. Footstep Volume follows it; 0 to 100 percent, default 50.
-- Beacon Navigation, off: pings guide you along the route. Beacon Volume follows it; 0 to 100 percent, default 50.
-- Beacon with directions, off: enables both route directions and Beacon Navigation for navigation requests. Beacon Navigation can then be turned off separately.
-- Landing Pings, off: on a ship or submarine, pings the directions in which you can land. Landing Ping Volume follows it; 0 to 100 percent, default 50. Neither setting appears in FINAL FANTASY IV or VI.
-- Autowalk, off: Backslash, P, Slash for a waypoint, or the controller's left trigger starts ordinary walking to the selected destination. Press again to stop. Manual input, menus, dialogue and battles stop the walk. Planned floor transitions continue towards the same destination. Boarding, landing, examining warps and confirming interactions remain manual; special flight controls remain manual too.
-- Speak autowalk path, off: reads every leg of the current route when autowalk starts, and the next leg after each planned map transition. Arrival and required actions are announced in either state.
-- Pathfinding Filter, Current map: cycles Current floor, Current map with vehicles, Current map.
-- Map Exit Filter, off.
-- Layer Transition Filter, off.
-- Stick Click Normalization, off.
-
-### Battle
-
-- Enemy HP Display, Numbers: Numbers, Percentage or Hidden. This optional setting reveals
-  enemy HP that the native targeting panel does not show. Numbers reads current/maximum;
-  Percentage reads remaining HP as a percentage; Hidden omits it. F5 cycles the modes in battle.
-- Enemy Letters, off: adds a letter such as A or B to enemies that share a name. FINAL FANTASY V only. It has no effect yet; see Known issues.
-- Multi-hit Damage, With hit count: adds the hit count when the game displays one. Total damage remains a separate number. Total only omits the hit count.
-- Battle results: changed stats, on: automatically summarizes displayed stat gains and
-  FF2 weapon gauge changes. Off keeps those summaries manual with I on their buffer row.
-  Autodetail still reads the displayed table in either state.
-- EXP Counter Sound, on: a tick plays while the EXP bar fills on the results screen. EXP Counter Volume follows it; 0 to 100 percent, default 50. Neither appears in FINAL FANTASY II.
-
-## Features
-
-### Speech
-
-- Dialogue, page by page, with the speaker's name.
-- Story text that scrolls or fades in. In FINAL FANTASY III it is read line by line.
-- "Entering" and the map's name when you change maps.
-- Popups, confirmations and Game Over.
-- "Press any button" on the title screen.
-- The mod's own words follow the game's language: English, Japanese, French, Italian, German, Spanish, Korean, traditional and simplified Chinese, Russian, Thai and Portuguese.
-- Some map objects only have Japanese names in the game. The mod translates them.
-
-### Menus
-
-- The highlighted entry is read as you move, with its position, such as "3 of 12".
-- Items, equipment, magic, status, configuration, the controls list, shops with quantity and total, save and load, the bestiary, the gallery and the music player.
-- FINAL FANTASY: the class choice at a new game, spell charges per level, spell shops, the 15-puzzle.
-- FINAL FANTASY II: keywords, with Ask, Learn and the Words menu; weapon skill levels; spell levels with their percentage.
-- FINAL FANTASY III: job change with job level, Onion Knight naming, the magic menu with Learn, Use, Remove, Forget and Exchange, and items that people ask you for.
-- FINAL FANTASY IV: the Ability menu, party setting with front and back row, and naming with Namingway.
-- FINAL FANTASY V: jobs with job level and ABP, abilities and ability slots, spells with MP, and name change.
-- FINAL FANTASY VI: the Skills menus with Magic, Espers, Lore, Blitz and Gogo's commands; esper details; party setting, rows and the party switch; item details; the Coliseum.
-- The bestiary lists stealable items in FINAL FANTASY IV, V and VI, the games whose bestiary shows them.
-
-### Battle
-
-- Whose turn it is, the commands, and targets with their status. "All allies" and "All enemies" in FINAL FANTASY IV, V and VI.
-- Item and spell lists, with descriptions.
-- Actions, damage, healing, misses, and statuses added and removed.
-- Steal results, in FINAL FANTASY III, IV and V: the game's own line, such as "Stole Potion!".
-- Multi-hit attacks as "14x1552 damage", in FINAL FANTASY, II and III.
-- The pause menu.
-- Results: gil, EXP, level-ups and items. In FINAL FANTASY II: gil, weapon skills, spell levels and stat gains.
-- A tick sound while the EXP bar fills, except in FINAL FANTASY II.
-
-### Field
-
-- The destination list: chests, opened or not, people, exits, events, vehicles and save points.
-- Boarding and leaving vehicles, and "Can land" where you can land.
-- Timers in FINAL FANTASY IV and V.
-
-### Pathfinding
-
-- Step by step directions to a destination or a waypoint, over the mod's own map of every floor: no distance limit. A long route reads up to 6 legs, then "and" the number of legs left; walk them and ask again, the rest of the same route follows from where you stand.
-- A route ends exactly where the thing is used: on an exit's own tile, on the tile in front of a shop counter, or beside a chest or person. Ordinary directions tell you which way to face at arrival. Autowalk turns the character towards the interactible automatically, so you can confirm immediately. It continues through planned stairs/exits and waits for the new floor's controls and fade before walking the next leg.
-- A destination cut off on the current floor is routed through another part of the map: the route ends with "take the exit to" a place. Go through, and after the floor's name the mod speaks the next leg from where you arrived, with the destination still selected; the beacon continues too. Selecting another entry forgets it.
-- When there is no route, the mod says why when it can: "Story gated" for a sealed door or a passage the story has not opened, "Blocked by an NPC" for someone standing in the only way, and on the world map "Requires Ship", "Requires Canoe" or "Requires Airship" for a vehicle you own. "Requires vehicle" means a vehicle you do not own yet would reach it.
-- On the world map, a ship or airship you own and have parked is used in the directions: "board the Ship", then the way across, "land", and the rest.
-- The pathfinding filter has three settings: "Current floor" lists only what you can walk to on this floor; "Current map with vehicles" also lists what a vehicle you have here reaches; "Current map" lists everything, and adds what is on the other floors of this town or dungeon: chests, people, save points and the way out, each with its floor's name ("Potion (Kashuan Keep 2F)"). Whether a chest there is already opened is not known from here. A route to one of them comes leg by leg: the first leg ends at the exit to take, the next is spoken after you go through.
-- The beacon leads along the route, corner by corner, and falls silent when you arrive.
-- FINAL FANTASY III, IV and V: the pathfinder knows secret passages, and leads through one when there is no other way. Wall tones may still sound at the start of a passage, as if it were a wall. Follow the spoken directions into it.
-- Puzzle guides (Shift+G) give the steps of switch and warp puzzles with directions to each.
-
-### Audio cues
-
-- Wall bump: a sound when you walk into a wall.
-- Footsteps: a click for each tile.
-- Wall tones: a tone for each direction with a wall near you.
-- Beacon: a sound from the direction of the selected destination.
-- Landing pings: on a ship or submarine, pings toward places where you can land. Not in FINAL FANTASY IV.
-- EXP tick: while the EXP bar fills after a battle.
-
-### Controller
-
-- Xbox, PlayStation and Nintendo controllers, through SDL3. The mod speaks the button names of your controller.
-- The keyboard and the controller work together.
-
-## Known issues
-
-### All games
-
-- This is the first version of the combined mod. If something the old screen reader read is now silent, or is read twice, please report it and send the log.
-- Running alongside MelonLoader or BepInEx is new and has not been tested in the games yet. If a game crashes with one of them installed, send the log; it says which loaders it found. Until that is fixed, delete hid.dll or move the other loader out.
-- Pathfinding on the mod's own maps is new. Known gaps: "Current map with vehicles" counts everything a parked vehicle's terrain reaches, without checking that you can reach the vehicle or land there; "Story gated" and "Blocked by an NPC" are judged on the current floor only, so a route through another floor can still run into a closed door there; a person who wanders is walked straight through, so wait a moment for them to move; the beacon on a map the mod has no data for falls back to pointing straight at the destination. Rooms the game leaves untitled carry labels the mod inferred from who and what is in them ("Josef's House", "Church", "Pub"); tell us about any that sound wrong.
-- The old screen readers' route searcher is still used only on a map the mod has no data for; the list of such maps is in the log.
-
-### FINAL FANTASY and FINAL FANTASY II
-
-- Secret passages, even when opened, do not show on the pathfinder. Use wall bumps and estimation to find them. They are usually near the thing that opens them.
-
-### FINAL FANTASY
-
-- On the class choice at a new game, the class may not be read in languages other than English.
-
-### FINAL FANTASY III
-
-- Some of the game's battle system messages are not read yet.
-- On the status screen, Attack reads one number. The old mod's "hits times power" is not in yet.
-
-### FINAL FANTASY IV, FINAL FANTASY V and FINAL FANTASY VI
-
-- When a new turn is announced, it can cut off the line before it.
-
-### FINAL FANTASY IV
-
-- The Falcon and the Lunar Whale are called "airship".
-- The old mod's special pathfinding on the moon is not in yet.
-
-### FINAL FANTASY V
-
-- The Enemy Letters setting has no effect yet, and some statuses on battle targets are not read yet.
-- Some kinds of damage are read as plain "damage".
-- Boko and some other vehicles may not be named correctly yet.
-
-### FINAL FANTASY VI
-
-- FINAL FANTASY VI support is new in the combined mod and has not been tested in the game yet. Please report anything that is silent, read twice, or worded oddly.
-- The old mod's grouping of world map entrances, such as the Phoenix Cave and Kefka's Tower, is not in.
-- The number of hits in a multi-hit attack is not read.
+- X (Square): native panel toggle where available.
+- Y (Triangle): game menu.
+- LB/RB (L1/R1): native page/character switching.
+- RT (R2): native pause/page-down where available.
+
+### Mod controller
+
+- Back/View/Select: enter or cancel controller mod mode.
+- Start/Menu/Options: open the mod menu on the active field, or close it.
+
+#### Normal-state mod actions
+
+- Field D-pad Up/Down: previous/next waypoint.
+- Field D-pad Left/Right: previous/next waypoint category.
+- Field right stick Up/Down: previous/next destination.
+- Field right stick Left/Right: previous/next destination category.
+- Field LT (L2/ZL): navigate to the last selected destination or waypoint; start/stop Autowalk when enabled.
+- In menus, right stick Up: details, like I.
+- In menus, right stick Down: screen controls, like Shift+I.
+- In menus, right stick Left: usable-by information, like U.
+- Status/bestiary/controls lists: D-pad or left stick Up/Down reviews entries.
+
+#### Mod mode combos
+
+Press Back/Select, then the action button. Simple actions return to normal mode; party/buffer review remains in mod mode until cancelled.
+
+- Dialogue: X (Square) repeats the message.
+- Battle: X (Square) reads the active character; Y (Triangle) reads the active turn; LB/RB reviews party members.
+- Results/information buffers: LB/RB or D-pad Up/Down reviews lines; D-pad Left/Right goes first/last; X (Square) reads details. On growth/weapon phases, details reads all current-phase deltas.
+- Field: X (Square) reads gil; Y (Triangle) reads the map; A (Cross) reads vehicle state.
+- Field: RB (R1) starts/repeats the puzzle guide; LB (L1) stops it.
+- Field: right stick directions teleport beside the selected destination.
+
+#### Stick clicks
+
+- L3+R3 together on the field: toggle Stick Click Normalization.
+- Normalization off: L3 toggles beacons; R3 cycles the pathfinding filter.
+- Normalization on: native L3/R3 controls pass to the game. In mod mode, L3 toggles beacons and R3 cycles the filter.
+
+#### Mod menu navigation
+
+- D-pad or left stick Up/Down: select.
+- D-pad or left stick Left/Right: adjust a value.
+- A (Cross): open or toggle.
+- B (Circle): return to categories, or close from the root.
+- Start/Menu/Options: close directly.
+- Right stick Down: read mod-menu controls.
+- Keyboard I: describe the selected setting.
 
 ## Credits
 
-- bladestorm360, for the mod.
-- ZKline, for originally writing the FINAL FANTASY VI mod, which this mod's FINAL FANTASY VI support is ported from, and without which I likely never would have tried modding these games.
-- Stirlock, for helping with the FINAL FANTASY and FINAL FANTASY III translations.
-- UnexplainedEntity, for the FINAL FANTASY II translations.
-- Lethal Lawn Mower, for helping with the FINAL FANTASY V translations.
-- G-rad, for the FINAL FANTASY VI translations.
-- Stirlock and UnexplainedEntity, for testing.
-- Stirlock, for obtaining Japanese entity names so they could be translated.
-- G-rad, for testing FINAL FANTASY IV and collecting entity names for translation.
+- bladestorm360: mod author.
+- ZKline / BlindGuyNW: original FINAL FANTASY VI screen reader and permission to include its work; inspiration for these mods.
+- Stirlock: FINAL FANTASY and FINAL FANTASY III translation help, testing and obtaining Japanese entity names.
+- UnexplainedEntity: FINAL FANTASY II translations and testing.
+- Lethal Lawn Mower: FINAL FANTASY V translation help.
+- G-rad: FINAL FANTASY VI translations, FINAL FANTASY IV testing and entity-name collection.
+- Tsuda Kageyu and Vyacheslav Patkov: MinHook and Hacker Disassembler Engine. MinHook 1.3.4 is compiled into the mod; its license is included as MinHook_LICENSE.txt.
+- Sam Lantinga and SDL contributors: SDL3; license included as SDL3_LICENSE.txt.
+- ethindp and Prism contributors: Prism 0.18.3 speech/braille support. Its upstream license and third-party notices are included under .ffpr-deps/prism/LICENSES.
 
-The mod uses:
-
-- MinHook, by Tsuda Kageyu, under the BSD 2-clause license, with the Hacker Disassembler Engine by Vyacheslav Patkov. It is built into hid.dll, changed so that it runs alongside MelonLoader and BepInEx. Its license is in MinHook_LICENSE.txt.
-- SDL3, by Sam Lantinga and the SDL contributors, under the zlib license.
-
-Speech and braille use Prism v0.18.3 x64, distributed and installed separately from its official release.
+Mod source: https://github.com/bladestorm360/FFPR-screen-reader
+Prism source: https://github.com/ethindp/prism/tree/94329ebeccbaee7f70b3494a290c9dfaac0184ee

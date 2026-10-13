@@ -1,5 +1,17 @@
 # Native FFPR durable memory
 
+- October 13 user confirms Deist-to-world transition lag seems fixed, accepts it for
+  release, and requests Final Fantasy Pixel Master Core Screen Reader V0.9. Prepared
+  the named local folder/7-Zip ZIP (20 files, 4,085,783 bytes), with hid.dll, SDL3,
+  pinned Prism 0.18.3, all licenses/source notice and matching ReadMe.md/ReadMe.txt.
+  Concise original-mod-style README keys/credits updated, including I in mod settings.
+  Version/build metadata now 0.9.0.0/V0.9; feature behavior unchanged from 0e717ab.
+  Canonical build/all checks and isolated smoke pass; exact archive/manifest/dependency
+  bytes verified. No game launch, game-folder/dependency modification or release upload.
+  Installed games retain the E3F6... DLL below; release DLL/ZIP hashes and local artifact
+  paths are in [the release record](docs/release.md#v09-preparation-record-october-13).
+  Sol handled preparation independently; no delegation.
+
 - October 13 subsequent follow-up deployed/hash-verified in all six:
   `E3F6C174CAE0FE65D969E3258B72936035EBA579BE051084B1BBB0845D0602BE`. This is the current DLL, superseding records below.
   Canonical build (7,077 names/zero missing, zero undefined wiring), all regressions
@@ -13,8 +25,9 @@
   [Source/evidence and validation](docs/re/MENU_DETAILS.md#subsequent-slotsettingstreasurewyvern-correction-october-13).
   User also reports FF2 Deist-to-world loading stall. Dispatcher posts/readers now share
   an elapsed budget with fair continuation; cancelled owned results retire on helpers.
-  Native/load versus mod timing is logged; actual nine-second symptom is not yet proven
-  resolved. [Audit, mechanism and evidence](docs/re/THREADING.md#large-map-loading-dispatcher-follow-up-october-13).
+  Native/load versus mod timing is logged. The user subsequently confirms the Deist-to-world
+  transition lag seems fixed and authorizes V0.9 release preparation; this is qualitative
+  confirmation of that case, not all-map timing evidence. [Audit, mechanism and evidence](docs/re/THREADING.md#large-map-loading-dispatcher-follow-up-october-13).
 
 - October 13 equipment/results/party/vehicle follow-up deployed/hash-verified in all six:
   `B09ED487633FF7075C63480673D050A231C0635E7D511345DA48CCA715BE21E6`. Supersedes earlier DLLs below.

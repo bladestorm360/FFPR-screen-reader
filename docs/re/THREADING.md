@@ -402,5 +402,6 @@ Unity frame, first-audible or comparable modded/unmodded loading measurements.
 Canonical build: 7,077 names/zero missing, zero undefined wiring, all regressions pass.
 Isolated DLL smoke and all-six deployment/hash verification pass:
 `E3F6C174CAE0FE65D969E3258B72936035EBA579BE051084B1BBB0845D0602BE`. Prism unchanged; no game launched/probed.
-The exact Deist-to-world loading symptom still requires user gameplay confirmation; no
-absolute zero-overhead or resolved nine-second gap claim is made from worker placement.
+Subsequent user gameplay retest: the Deist-to-world transition lag seems fixed and is
+accepted as good enough for V0.9 release preparation. This confirms the reported case
+qualitatively; no absolute zero-overhead or all-map numerical timing claim follows.

@@ -4,8 +4,8 @@
 // resource looks like a system-library impersonation. This says plainly what the file is.
 // Nothing here claims to be Microsoft's.
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION    0,1,0,0
- PRODUCTVERSION 0,1,0,0
+ FILEVERSION    0,9,0,0
+ PRODUCTVERSION 0,9,0,0
  FILEFLAGSMASK  VS_FFI_FILEFLAGSMASK
  FILEFLAGS      0
  FILEOS         VOS_NT_WINDOWS32
@@ -17,13 +17,13 @@ BEGIN
         BLOCK "040904B0"
         BEGIN
             VALUE "CompanyName",      "FFPR Screen Reader Project (bladestorm360)"
-            VALUE "FileDescription",  "FINAL FANTASY I-V Pixel Remaster Screen Reader (accessibility mod for blind players)"
-            VALUE "FileVersion",      "0.1.0.0"
+            VALUE "FileDescription",  "FINAL FANTASY I-VI Pixel Remaster Screen Reader (accessibility mod for blind players)"
+            VALUE "FileVersion",      "0.9.0.0"
             VALUE "InternalName",     "ffpr_screen_reader"
             VALUE "OriginalFilename", "hid.dll"
-            VALUE "ProductName",      "FFPR Screen Reader"
-            VALUE "ProductVersion",   "0.1.0.0"
-            VALUE "Comments",         "Speaks menus, dialogue, battle and field information through Tolk. Loads as a hid.dll proxy and forwards every export of the system hid.dll unchanged."
+            VALUE "ProductName",      "Final Fantasy Pixel Master Core Screen Reader"
+            VALUE "ProductVersion",   "0.9.0.0"
+            VALUE "Comments",         "Speaks menus, dialogue, battle and field information through Prism. Loads as a hid.dll proxy and forwards every export of the system hid.dll unchanged."
         END
     END
     BLOCK "VarFileInfo"
