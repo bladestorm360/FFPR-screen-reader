@@ -45,7 +45,7 @@ bool any_modal_open();
 namespace mod_menu {
 /// FF1 ModMenu.IsOpen.
 bool is_open();
-/// Opens the menu: "Mod menu", then the first item 0.15 s later. No-op when open.
+/// Opens the menu: "Mod menu", then the first item queued behind it. No-op when open.
 void open();
 /// Closes the menu: "Mod menu closed". No-op when closed.
 void close();
@@ -67,9 +67,9 @@ using Cancel = std::function<void()>;
 /// FF1 TextInputWindow.IsOpen.
 bool is_open();
 /// Opens the text entry (used to name waypoints). The prompt (": initial" when there is
-/// initial text) is spoken after 0.3 s. Enter confirms the trimmed text (empty is refused):
-/// the window closes, and 0.3 s later "Confirmed: <text>" is spoken and on_done(text) runs.
-/// Escape closes, says "Cancelled" 0.3 s later and runs on_cancel. No-op when already open.
+/// initial text) is queued in order immediately. Enter confirms the trimmed text (empty is
+/// refused): the window closes, "Confirmed: <text>" speaks, then on_done(text)'s output queues
+/// behind it. Escape closes, says "Cancelled" and runs on_cancel. No-op when already open.
 void open(const std::wstring& prompt, const std::wstring& initial, Confirm on_done, Cancel on_cancel = {});
 void close();
 /// Keyboard while open. True while open (all keys are consumed).
@@ -80,10 +80,10 @@ namespace confirmation {
 using Callback = std::function<void()>;
 /// FF1 ConfirmationDialog.IsOpen.
 bool is_open();
-/// Opens a Yes/No question ("<prompt> Yes or No", 0.1 s later; Yes is selected). Y, N,
+/// Opens a Yes/No question (prompt then "Yes or No" queued; Yes is selected). Y, N,
 /// Escape (= No, says "Cancelled"), Enter (the selection), Left/Right (switch). The answer is
-/// spoken 0.1 s later, then its callback runs. A callback may open the next question: the
-/// dialog then stays open and the new prompt is spoken at once (chained prompts).
+/// spoken immediately, then its callback runs with output queued behind the answer. A
+/// callback may open the next question: the dialog stays open and queues the new prompt.
 void open(const std::wstring& prompt, Callback on_yes, Callback on_no = {});
 void close();
 /// Keyboard while open. True while open (all keys are consumed).

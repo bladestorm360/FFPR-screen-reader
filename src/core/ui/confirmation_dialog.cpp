@@ -39,10 +39,10 @@ State& st()
     return *g_state;
 }
 
-/// Speaks the chosen option after a short delay, then runs the callback. If the callback opened
+/// Speaks the chosen option, then queues the callback's output behind it. If the callback opened
 /// a new prompt (chained confirmation), the dialog stays open (the new prompt announced itself);
 /// otherwise it closes.
-void delayed_close_announcement(std::wstring text, Callback callback)
+void complete_answer(std::wstring text, Callback callback)
 {
     // Clear the callbacks first, so a callback that opens a new prompt (which sets on_yes again)
     // can be detected.
@@ -50,11 +50,10 @@ void delayed_close_announcement(std::wstring text, Callback callback)
     s.on_yes = nullptr;
     s.on_no = nullptr;
 
-    frame::after_seconds(0.1, [text = std::move(text), callback = std::move(callback)] {
-        ffpr::say(text, true);
-        if (callback) callback();
-        if (!st().on_yes) close();
-    }, "ConfirmationDialog.DelayedCloseAnnouncement");
+    ffpr::say(text, true);
+    ffpr::QueuedSpeechScope followup;
+    if (callback) callback();
+    if (!st().on_yes) close();
 }
 
 bool handle_input_now()
@@ -67,25 +66,25 @@ bool handle_input_now()
 
     // Y - Yes at once
     if (pressed('Y')) {
-        delayed_close_announcement(T(L"Yes"), s.on_yes);
+        complete_answer(T(L"Yes"), s.on_yes);
         return true;
     }
     // N - No at once
     if (pressed('N')) {
-        delayed_close_announcement(T(L"No"), s.on_no);
+        complete_answer(T(L"No"), s.on_no);
         return true;
     }
     // Escape - same as No
     if (pressed(VK_ESCAPE)) {
-        delayed_close_announcement(T(L"Cancelled"), s.on_no);
+        complete_answer(T(L"Cancelled"), s.on_no);
         return true;
     }
     // Enter - confirm the current selection
     if (pressed(VK_RETURN)) {
         if (s.selected_yes)
-            delayed_close_announcement(T(L"Yes"), s.on_yes);
+            complete_answer(T(L"Yes"), s.on_yes);
         else
-            delayed_close_announcement(T(L"No"), s.on_no);
+            complete_answer(T(L"No"), s.on_no);
         return true;
     }
     // Left/Right - switch the selection
@@ -121,16 +120,8 @@ void open(const std::wstring& prompt, Callback on_yes, Callback on_no)
     s.on_no = std::move(on_no);
     s.selected_yes = true;   // default to Yes
 
-    const std::wstring announcement = s.prompt + L" " + T(L"Yes or No");
-    if (!was_already_open) {
-        // First open: speak the prompt after a short delay so it settles cleanly.
-        modal_keys::seed();
-        frame::after_seconds(0.1, [announcement] { ffpr::say(announcement, true); },
-                             "ConfirmationDialog.DelayedPromptAnnouncement");
-    } else {
-        // Continuation: the dialog is already open, speak the new prompt at once.
-        ffpr::say(announcement, true);
-    }
+    if (!was_already_open) modal_keys::seed();
+    ffpr::say_sequence({s.prompt, T(L"Yes or No")}, true);
 }
 
 void close()

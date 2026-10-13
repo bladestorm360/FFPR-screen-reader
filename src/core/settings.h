@@ -8,8 +8,9 @@
 // game's old category ([FFI_ScreenReader] .. [FFV_ScreenReader]) in UserData\MelonPreferences.cfg
 // are copied in, and the import is logged. MelonPreferences.cfg itself is never written.
 //
-// Writes only mark the store dirty and wake the speech worker, which saves off the game
-// thread (speech.cpp's pump calls save_pending()). Runtime getters/setters belong
+// Writes publish an owned pending snapshot and wake the speech worker. Its
+// save_pending() only posts to the separate I/O lane, never waits for a file write.
+// Runtime getters/setters belong
 // to the native owner; workers receive immutable snapshots, never the live map.
 namespace settings {
 
@@ -29,7 +30,7 @@ void set_str(const char* key, const std::wstring& v);
 /// Flip a bool, store it and return the new value.
 bool toggle(const char* key, bool def);
 
-/// Save an owned pending preference snapshot. Single speech-worker consumer.
+/// Nonblocking scheduling of the owned snapshot on the serialized I/O lane.
 void save_pending();
 
 /// True when this start imported the old MelonPreferences category.

@@ -39,13 +39,18 @@ bool run(const char*) { return false; }
 namespace queries { void define(const char*, std::function<bool()>) {} }
 namespace frame {
 uint64_t count() { return fixture::tick; }
+double now() { return fixture::tick / 60.0; }
 void subscribe(void (*)(), const char*) {}
 void after_seconds(double, Task task, const char*) { fixture::pending.push_back(std::move(task)); }
 }
 namespace game { Id current() { return Id::FF2; } }
 namespace input { bool game_window_focused() { return fixture::focused; } }
 namespace modtext { std::wstring T(std::wstring_view key) { return std::wstring(key); } }
-namespace ffpr { void say(std::wstring_view line, bool) { fixture::spoken.emplace_back(line); } }
+namespace ffpr {
+void say(std::wstring_view line, bool) { fixture::spoken.emplace_back(line); }
+void say_sequence(std::vector<std::wstring> parts, bool) { for (auto& part : parts) fixture::spoken.push_back(std::move(part)); }
+void say_sequence(std::vector<std::wstring> parts, bool interrupt, speech::Timing) { say_sequence(std::move(parts), interrupt); }
+}
 namespace text {
 std::wstring num(long long value) { return std::to_wstring(value); }
 bool is_blank(std::wstring_view value) { return value.empty(); }
@@ -84,12 +89,15 @@ int main()
     ui::mod_menu::initialize();
     fixture::keys[VK_F8] = true;
     ui::mod_menu::open();
+    expect(fixture::spoken.size() == 2 && fixture::spoken[0] == L"Mod menu" && fixture::spoken[1] == L"Speech" && fixture::pending.empty(),
+        "mod-menu entry queues its heading then initial item immediately, with no delayed stale speech");
     for (auto& task : fixture::pending) task();
     fixture::pending.clear();
     tick();
     expect(ui::mod_menu::is_open(), "opening key held does not close the menu");
     fixture::keys[VK_F8] = false; tick();
     press(VK_RETURN);
+    expect(fixture::spoken[fixture::spoken.size()-2] == L"Speech", "submenu headline precedes its initial setting");
     const auto initial_name = fixture::spoken.back();
     const size_t speech_count = fixture::spoken.size();
 

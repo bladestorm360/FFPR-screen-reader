@@ -110,3 +110,14 @@ Subsequent worker/first-page follow-up is deployed in all six games, DLL SHA-256
 `DA45D46CA76664B2E722D20AA898B7AD10389642F97E009D4D41D2B7B818C95F`.
 Normal deployment verified the existing Prism prerequisite without changing it;
 Tolk remains absent. [Current ownership/results evidence](re/THREADING.md).
+
+October 13 source/priority audit: the pinned NVDA backend cancels speech only for
+interrupt=true. The exclusive mod speech owner preserves that flag; there is no extra
+numeric priority. Owned `say_sequence` events now interrupt only their first usable
+part, then queue headings' initial focus/details in the same generation. Obsolete
+category callbacks and a queue-pressure carry flag were corrected; ready mod prompts
+no longer use speech timers. Known mod-owned callbacks queue behind their answer.
+Existing native event guards and intentional manual interruptions remain, without
+new text deduplication or a Prism dependency update. [Evidence, all-mod call-site audit,
+offline results and runtime gaps](re/SPEECH_ORDER.md),
+[current user checks](TESTING.md#speech-and-navigation-confirmation-october-13).

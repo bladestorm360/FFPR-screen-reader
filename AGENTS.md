@@ -31,6 +31,21 @@ Keep thread-affine APIs and native pointer lifetimes on their owner. Approved in
 movement actions remain isolated. Record ownership/evidence in docs/re/THREADING.md;
 modded/unmodded runtime measurements remain user-side unless explicitly authorized.
 
+October 13 responsiveness clarification: cheap hooks alone do not certify acceptable
+mod performance. Measure player request through capture/batching, snapshot readiness,
+worker/IPC queue, computation and first usable output, with relevant snapshot age.
+Use evidence-based feature/platform budgets and normal/large/busy/cold/warm/rapid-action
+checks. Prefer offline preprocessing, owned caches/live deltas and obsolete-event
+cancellation; never weaken native affinity, reveal or speech-order contracts. Runtime
+measurement remains user-side. Current [speech ordering/budgets](docs/re/SPEECH_ORDER.md)
+and [navigation capture/compute evidence](docs/re/THREADING.md) distinguish compute,
+fake-SDK first submission and actual audible/game-frame timing.
+
+Speech interrupts once per new input/context; category/heading then initial focus and
+same-event callback output queue through the central sequence/continuation services.
+Never restore arbitrary speech delays or add text deduplication. Scope queued callbacks
+only to known mod-owned operations, never around native game calls or on workers.
+
 All navigable maps must have baked data. Missing bakes are extraction/data bugs;
 never restore the deprecated native MapRouteSearcher, its distance cap, breadcrumb
 fallback or temporary game-grid writes. Use the cancellable owned-snapshot baked

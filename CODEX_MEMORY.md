@@ -1,5 +1,22 @@
 # Native FFPR durable memory
 
+- October 13 category/speech-order audit deployed/hash-verified in all six games:
+  `AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`.
+  Supersedes earlier DLLs below. Prism interrupt=true cancels NVDA speech; use owned
+  `say_sequence` for heading then initial focus, one interrupt generation. Corrected
+  stale category/browse/route replies and queue-pressure carry-flag short circuit.
+  F8/text/confirmation ready output has no timer; known mod-only callback output queues
+  behind its answer. FF1–FF3 initial naming focus queues after its heading. Preserve
+  native event guards, manual interruption and no new text deduplication; never use
+  QueuedSpeechScope around native game calls/workers. All-mod producer audit, exact
+  Prism/native evidence, runtime gaps and reviewed/tested Luna menu handoff are in
+  [speech ordering](docs/re/SPEECH_ORDER.md). Canonical build (7,061 names, zero missing/
+  undefined wiring), actual-source speech/navigation/modal/controller/route checks and
+  isolated DLL smoke pass. Fake-SDK cold/worst warm submission 1.186/0.110 ms; these
+  exclude real audible/native callback cost. SpeechTiming logs navigation/F8 request,
+  queue, snapshot age and SDK submission/duration; success is not audible completion.
+  No game launched; Prism unchanged. [Prioritized user checks](docs/TESTING.md#speech-and-navigation-confirmation-october-13).
+
 - October 13 navigation-latency fix deployed/hash-verified in all six games:
   `ED888BC45404857EA010B80991E38DAD8107F9047FC1D8F34075BC6E9421C7C2`.
   Supersedes preceding builds. FF1 log showed ~875 ms repeated world scans before

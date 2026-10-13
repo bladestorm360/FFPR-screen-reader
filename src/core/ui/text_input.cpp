@@ -37,14 +37,13 @@ State& st()
     return *g_state;
 }
 
-/// DelayedCloseAnnouncement: close now, speak after 0.3 s, then run the callback.
-void delayed_close_announcement(std::wstring text, std::function<void()> callback)
+/// Ready mod-owned answer and its callback belong to one ordered input event.
+void complete_input(std::wstring text, std::function<void()> callback)
 {
     close();
-    frame::after_seconds(0.3, [text = std::move(text), callback = std::move(callback)] {
-        ffpr::say(text, true);
-        if (callback) callback();
-    }, "TextInputWindow.DelayedCloseAnnouncement");
+    ffpr::say(text, true);
+    ffpr::QueuedSpeechScope followup;
+    if (callback) callback();
 }
 
 std::wstring character_name(wchar_t c)
@@ -108,7 +107,7 @@ bool handle_input_now()
             return true;
         }
         Confirm callback = s.on_confirm;
-        delayed_close_announcement(TF(L"Confirmed: {0}", {final_text}),
+        complete_input(TF(L"Confirmed: {0}", {final_text}),
                                    [callback = std::move(callback), final_text] {
                                        if (callback) callback(final_text);
                                    });
@@ -117,7 +116,7 @@ bool handle_input_now()
 
     if (pressed(VK_ESCAPE)) {
         Cancel callback = s.on_cancel;
-        delayed_close_announcement(T(L"Cancelled"), std::move(callback));
+        complete_input(T(L"Cancelled"), std::move(callback));
         return true;
     }
 
@@ -230,12 +229,7 @@ void open(const std::wstring& prompt, const std::wstring& initial, Confirm on_do
     s.cursor = static_cast<int>(s.buffer.size());
     modal_keys::seed();
 
-    // DelayedPromptAnnouncement
-    frame::after_seconds(0.3, [prompt_text = s.prompt, initial_text = s.buffer] {
-        std::wstring announcement = prompt_text;
-        if (!initial_text.empty()) announcement += L": " + initial_text;
-        ffpr::say(announcement, true);
-    }, "TextInputWindow.DelayedPromptAnnouncement");
+    ffpr::say_sequence({s.prompt, s.buffer}, true);
 }
 
 void close()

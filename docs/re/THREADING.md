@@ -44,6 +44,15 @@ Workers may wait on their own queues; the native frame handoff uses a non-waitin
 Callbacks run before posted worker completions, preserving current native context.
 Process-lifetime worker state avoids destructor waits from DllMain.
 
+October 13 speech ordering follow-up: `say_sequence` publishes an owned heading/focus
+event to speech ingress; only the first nonempty part interrupts. Known mod-owned
+prompt callbacks use an owner-only queued scope, never around native game calls or
+workers. Capture/generation checks retire stale category/route replies. Ready modal
+timers are removed; SDK calls, cleaning/chunking and timing logs remain on the speech
+owner. Tagged request/capture/enqueue timestamps contain no native pointer. See
+[speech producer audit and whole-pipeline evidence](SPEECH_ORDER.md) for queue bounds,
+pressure recovery, cancellation/data-age limits and fake-SDK versus audible timing.
+
 ## Native lifecycle evidence and bounded field capture
 
 There are no active `unity::find_object` / `unity::find_objects` callers in core or
@@ -195,6 +204,7 @@ and verification. No Astra was used; no measured token or reserve saving is clai
 | Bestiary lifecycle refs | Replaced all five actual scene finds with specified parent/current-controller paths (handoff had said six). Sol verified all-six chains/lifetime guards and build. | Runtime detail/list/formation transitions. |
 | Game-specific window lifecycle | Added specified FF2/3/4/6 ability and FF2 keyword native owner observations. Sol reviewed class guards/close identity and canonical name/build checks. | Runtime game-specific screen transitions. |
 | October 13 navigation latency documentation | Recorded known implementation/evidence and concise user checks. Sol reviewed against source/reports and corrected minor lane/publication/benchmark wording. | Gameplay timing remains user-side; final build/deployment recorded below and in memory. |
+| October 13 settings-menu speech sequencing | Implemented the specified owned heading/first-item sequence only in mod_menu.cpp. Sol reviewed native readiness/later focus and verified actual-source menu/input plus canonical checks. | Real F8 spoken completion remains user-side; no implementation issue outstanding. |
 
 ## Offline validation and runtime boundary
 

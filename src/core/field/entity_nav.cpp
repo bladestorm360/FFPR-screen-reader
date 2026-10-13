@@ -63,6 +63,7 @@ void clear_target()
 // EntityNavigationManager
 // =========================================================================================
 int g_nav_last_scanned_map_id = -1;
+uint64_t g_category_generation = 0; // event identity, including a return to the same enum
 
 /// EnsureFieldContext: the player is on an active field map and no menu is open.
 bool ensure_field_context()
@@ -128,6 +129,7 @@ TargetKind target_kind_of(const Entity& e)
 /// AnnounceCurrentEntity: the path to the selected entity.
 void announce_current_entity(bool walking = false)
 {
+    const double requested_at = frame::now();
     if (!ensure_field_context()) return;
     refresh_entities_if_needed();
 
@@ -167,9 +169,10 @@ void announce_current_entity(bool walking = false)
         ffpr::fieldnav::autowalk::request(walk_goal, kind, e->display_name());
     } else {
         const auto name = e->display_name() + (e->remote() ? L" (" + e->floor_name + L")" : std::wstring());
-        baked_nav::request_route(walk_goal, kind, name, [e](PathInfo p) {
-            if (scanner::current_entity() != e || !e->is_alive()) return;
-            speak(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")));
+        baked_nav::request_route(walk_goal, kind, name, [e, category_generation = g_category_generation, requested_at](PathInfo p) {
+            if (category_generation != g_category_generation || scanner::current_entity() != e || !e->is_alive()) return;
+            ffpr::say(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")), true,
+                {speech::Feature::Directions, requested_at, requested_at});
         });
     }
 }
@@ -189,7 +192,7 @@ void navigate_to_entity()
     announce_current_entity(walking);
 }
 
-void announce_entity_only()
+void announce_entity_only(speech::Timing timing = {})
 {
     if (!ensure_field_context()) return;
     refresh_entities_if_needed();
@@ -197,24 +200,29 @@ void announce_entity_only()
     std::wstring announcement = format_current_entity();
     if (announcement.empty()) {
         std::wstring cat = category_name(scanner::category());
-        if (scanner::count() == 0) speak(TF(L"No {0} found", {cat}));
-        else speak(T(L"No entity selected"));
+        if (scanner::count() == 0) ffpr::say(TF(L"No {0} found", {cat}), true, timing);
+        else ffpr::say(T(L"No entity selected"), true, timing);
         return;
     }
     mark_entity();
-    speak(announcement);
+    ffpr::say(announcement, true, timing);
 }
 
 void cycle(bool next)
 {
+    const double requested_at = frame::now();
     if (!ensure_field_context()) return;
+    if (!ffpr::fieldnav::autowalk::active()) baked_nav::cancel_requests();
     refresh_entities_if_needed();
-    scanner::when_filter_ready([next] {
+    const auto generation = g_category_generation;
+    scanner::when_filter_ready([next, generation, requested_at] {
+        if (generation != g_category_generation) return;
         if (!queries::is("GameStatePatches.IsFieldNavigationReady") || menu_state::any_active()) return;
         if (next) scanner::next_entity(); else scanner::previous_entity();
         baked_nav::clear_pending();
-        if (scanner::no_reachable_entities()) { speak(T(L"No reachable entities")); return; }
-        mark_entity(); announce_entity_only();
+        const speech::Timing timing{speech::Feature::EntityBrowse, requested_at, scanner::captured_at()};
+        if (scanner::no_reachable_entities()) { ffpr::say(T(L"No reachable entities"), true, timing); return; }
+        mark_entity(); announce_entity_only(timing);
     });
 }
 
@@ -223,62 +231,68 @@ void cycle(bool next)
 // =========================================================================================
 Category g_current_category = Category::All;
 
-void announce_category_change()
+void announce_category_change(double requested_at)
 {
+    const auto generation = ++g_category_generation;
+    if (!ffpr::fieldnav::autowalk::active()) baked_nav::cancel_requests();
     std::wstring category_text = TF(L"Category: {0}", {category_name(g_current_category)});
     baked_nav::clear_pending();   // the selection moves to the category's first entity
 
     // Refresh so the new category's nearest entity is the current selection.
     refresh_entities_if_needed();
     const Category requested = g_current_category;
-    scanner::when_filter_ready([requested, category_text = std::move(category_text)] {
-    if (requested != g_current_category || !queries::is("GameStatePatches.IsFieldNavigationReady") || menu_state::any_active()) return;
+    scanner::when_filter_ready([requested, generation, requested_at, category_text = std::move(category_text)] {
+    if (generation != g_category_generation || requested != g_current_category || !queries::is("GameStatePatches.IsFieldNavigationReady") || menu_state::any_active()) return;
 
     // Obey the pathfinding filter: select the nearest reachable entity. None reachable (or an
     // empty category): the category name only ("No reachable entities" is for cycling).
     if (!scanner::select_first_reachable()) {
-        speak(category_text);
+        ffpr::say(category_text, true, {speech::Feature::EntityCategory, requested_at, scanner::captured_at()});
         return;
     }
     std::wstring description = format_current_entity();
     if (description.empty()) {
-        speak(category_text);
+        ffpr::say(category_text, true, {speech::Feature::EntityCategory, requested_at, scanner::captured_at()});
         return;
     }
     // The category and its first entity, which becomes the navigation target.
     mark_entity();
-    speak(category_text + L", " + description);
+    ffpr::say_sequence({category_text, description}, true, {speech::Feature::EntityCategory, requested_at, scanner::captured_at()});
     });
 }
 
 void category_next()
 {
+    const double requested_at = frame::now();
     if (!ensure_field_context()) return;
     g_current_category = static_cast<Category>((static_cast<int>(g_current_category) + 1) % kCategoryCount);
     scanner::set_category(g_current_category);
-    announce_category_change();
+    announce_category_change(requested_at);
 }
 
 void category_previous()
 {
+    const double requested_at = frame::now();
     if (!ensure_field_context()) return;
     int prev = static_cast<int>(g_current_category) - 1;
     if (prev < 0) prev = kCategoryCount - 1;
     g_current_category = static_cast<Category>(prev);
     scanner::set_category(g_current_category);
-    announce_category_change();
+    announce_category_change(requested_at);
 }
 
 void category_reset_to_all()
 {
+    const double requested_at = frame::now();
     if (!ensure_field_context()) return;
     if (g_current_category == Category::All) {
+        ++g_category_generation;
         speak(T(L"Already in All category"));
         return;
     }
     g_current_category = Category::All;
     scanner::set_category(g_current_category);
-    announce_category_change();
+    announce_category_change(requested_at);
 }
 
 // =========================================================================================

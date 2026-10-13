@@ -111,6 +111,16 @@ if errorlevel 1 (
     echo Speech worker check FAILED - see build_check\speech_worker_report.txt
     exit /b 1
 )
+"out\checks\navigation_speech_check.exe" > build_check\navigation_speech_report.txt 2>&1
+if not "%errorlevel%"=="0" (
+    echo Navigation speech check FAILED - see build_check\navigation_speech_report.txt
+    exit /b 1
+)
+"out\checks\modal_speech_check.exe" > build_check\modal_speech_report.txt 2>&1
+if not "%errorlevel%"=="0" (
+    echo Modal speech check FAILED - see build_check\modal_speech_report.txt
+    exit /b 1
+)
 "out\checks\settings_worker_check.exe" > build_check\settings_worker_report.txt 2>&1
 if errorlevel 1 (
     echo Settings worker check FAILED - see build_check\settings_worker_report.txt

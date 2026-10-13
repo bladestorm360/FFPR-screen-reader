@@ -242,14 +242,18 @@ std::vector<int> page_items()
     return result;
 }
 
+std::wstring format_current_item();
+
 void enter_page(int header_index)
 {
+    const double requested_at = frame::now();
     State& s = st();
     s.page = header_index;
     const auto items = page_items();
     if (items.empty()) { s.page = -1; return; }
     s.index = items.front();
-    ffpr::say(T(s.items[header_index].name), true);
+    ffpr::say_sequence({T(s.items[header_index].name), format_current_item()}, true,
+        {speech::Feature::ModMenu, requested_at, requested_at});
 }
 
 // --- item behaviour ---------------------------------------------------------------------------
@@ -360,10 +364,10 @@ std::pair<int, int> navigable_position()
     return {it == items.end() ? -1 : static_cast<int>(it - items.begin()), static_cast<int>(items.size())};
 }
 
-void announce_current_item(bool interrupt = true)
+std::wstring format_current_item()
 {
     const State& s = st();
-    if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return;
+    if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return {};
 
     const Item& item = s.items[static_cast<size_t>(s.index)];
     const std::wstring value = value_string(item);
@@ -373,7 +377,12 @@ void announce_current_item(bool interrupt = true)
     const auto [index, count] = navigable_position();
     announcement = ui::menu_position(announcement, index, count);
 
-    ffpr::say(announcement, interrupt);
+    return announcement;
+}
+
+void announce_current_item(bool interrupt = true)
+{
+    ffpr::say(format_current_item(), interrupt);
 }
 
 void announce_current_item_description()
@@ -466,6 +475,7 @@ bool is_open() { return g_state && g_state->open; }
 
 void open()
 {
+    const double requested_at = frame::now();
     State& s = st();
     if (s.open) return;
 
@@ -478,11 +488,8 @@ void open()
     // the D-pad / stick drive the menu instead of acting underneath it.
     sync_router(true);
 
-    // Announce that the menu opened, then the first item after a short delay.
-    ffpr::say(T(L"Mod menu"), true);
-    frame::after_seconds(0.15, [] {
-        if (is_open()) announce_current_item(false);   // still open after the delay
-    }, "ModMenu.AnnounceFirstItemDelayed");
+    ffpr::say_sequence({T(L"Mod menu"), format_current_item()}, true,
+        {speech::Feature::ModMenu, requested_at, requested_at});
 }
 
 void close()
@@ -498,13 +505,14 @@ void close()
 
 void back()
 {
+    const double requested_at = frame::now();
     State& s = st();
     if (!s.open) return;
     if (s.page < 0) { close(); return; }
     s.index = s.page;
     s.page = -1;
-    ffpr::say(T(L"Mod menu"), true);
-    announce_current_item(false);
+    ffpr::say_sequence({T(L"Mod menu"), format_current_item()}, true,
+        {speech::Feature::ModMenu, requested_at, requested_at});
 }
 
 bool handle_input()
@@ -544,7 +552,7 @@ void adjust_current_item(int delta)
 
     const Item& item = s.items[static_cast<size_t>(s.index)];
     if (item.kind == Kind::Header) {
-        if (delta > 0) { enter_page(s.index); announce_current_item(false); }
+        if (delta > 0) enter_page(s.index);
         return;
     }
 
@@ -558,7 +566,7 @@ void toggle_current_item()
     if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return;
 
     const Item& item = s.items[static_cast<size_t>(s.index)];
-    if (item.kind == Kind::Header) { enter_page(s.index); announce_current_item(false); return; }
+    if (item.kind == Kind::Header) { enter_page(s.index); return; }
 
     activate(item);
 

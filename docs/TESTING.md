@@ -428,3 +428,44 @@ Gameplay confirmation and measured input-to-speech/load/frame timings remain pen
    continuation. Confirm cancellation prevents later movement and manual input wins.
 4. Repeat during a map transition/loading. Check that the game stays responsive and
    navigation becomes available when the map is ready.
+
+## Speech and navigation confirmation, October 13
+
+Current accumulated procedure for the latency and speech-order follow-ups. Implementation
+and actual-source offline checks are complete; [evidence and runtime gaps](re/SPEECH_ORDER.md).
+Canonical build and isolated DLL smoke pass. Deployed/hash-verified in all six games:
+`AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`.
+No game was launched or probed. Please test the first two items first when progression
+permits. The later naming check can wait until you naturally start a new game.
+
+1. **Categories and browsing, on an available field/world map.** Change category once:
+   hear its complete name, then its first destination. Browse repeatedly, then rapidly
+   change categories. The final reply must describe the final category, with no older
+   destination interrupting it. Ordinary browsing should respond promptly; report any
+   pause measured in seconds and whether it occurs only after entry/loading or also warm.
+   Offline: actual callbacks reordered, enum wrap/stale route/pressure tests, large scanner
+   and all-six world route checks pass. Real audible response and native frame cost remain
+   unmeasured. Keep the usual movement/nearest-target/directions/cancel checks above.
+2. **F8 settings, in a safe existing screen.** Open F8, enter Speech or Navigation audio,
+   then return. Hear each heading completely, followed by its first option. Move to
+   another option immediately after entry: the new selection should win; no delayed
+   old first option should return. Offline actual menu/input and zero-timer checks pass.
+3. **Waypoint prompts, when waypoints are available.** Create or rename a waypoint:
+   hear the prompt then initial text. Confirm or cancel; hear that answer before any
+   completion message. For a chained delete confirmation, hear Yes/No before the next
+   question. A later key still interrupts normally. Offline actual prompts/callbacks and
+   fake-SDK order pass; stale prompts or cut-off answers are failure symptoms.
+4. **Existing ordinary screens and battle, as reached.** Check dialogue, menus, battle
+   feedback and results. Manual movement/details must remain responsive; Autodetail
+   must queue behind the current heading without reading later rewards. Follow the
+   outstanding FF2 first-page/weapon-row procedure above. Source priorities and existing
+   results/input regressions pass; any new interruption should identify the screen/action.
+5. **FF1–FF3 naming, on a future new-game entry.** Enter name selection and hear Select
+   name before the initial offered name. Later cursor moves remain normal. Offline
+   helper order/signatures pass; actual native callback order remains unconfirmed.
+
+If a delay or interruption remains, report the game, screen/category, triggering input
+and whether it was the first request or repeated browsing. The normal log now records
+request-to-Prism submission, queue/data age and SDK duration for navigation and F8;
+SDK success is not proof that speech finished audibly. Compare loading/map/battle
+transitions using the same save with and without the mod if a game slowdown is observed.

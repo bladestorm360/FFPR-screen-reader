@@ -1,4 +1,5 @@
 #pragma once
+#include "speech_timing.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -43,8 +44,13 @@ void pump();
 /// Copy an owned UTF-16 message through bounded nonblocking ingress. Cleaning/
 /// word-boundary splitting and backend calls remain on the speech worker.
 void say(const wchar_t* text, bool interrupt = true);
+void say(const wchar_t* text, bool interrupt, Timing timing);
 using Parts = std::vector<std::wstring>;
 void say_parts(std::shared_ptr<const Parts> parts, bool interrupt = true);
+/// One owned event: first nonempty part may interrupt; every subsequent part
+/// queues behind it. Cleaning and splitting stay on the speech owner.
+void say_sequence(std::shared_ptr<const Parts> parts, bool interrupt = true);
+void say_sequence(std::shared_ptr<const Parts> parts, bool interrupt, Timing timing);
 void silence();
 void braille(const wchar_t* text);
 bool has_braille();

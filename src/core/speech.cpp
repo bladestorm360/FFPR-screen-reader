@@ -18,7 +18,7 @@
 // NVDA's side only when its interpreter is free - so a keypress cost the game thread
 // however long NVDA took, and the wait grew whenever NVDA was busy with the previous line.
 // The user heard it as lag while browsing battle menus and after every route key. Now a
-// hook copies its line into a fixed ring (a memcpy under a lock, no allocation) and
+// hook owns its ready text/parts, attempts publication to a fixed ingress queue and
 // signals; the RPC happens here, and the game thread never waits for a screen reader.
 //
 // ORDER AND INTERRUPTION are preserved: the pump sends the lines in the order they were
@@ -29,9 +29,8 @@
 // decision (a newer interrupting line arrived), not a text comparison: two identical lines
 // queued one after the other are both spoken (CLAUDE.md rule 13).
 //
-// The same ring also holds anything spoken BEFORE Prism is up (it replaces the old one-slot
-// pending buffer): the pump starts draining the moment the load completes, so the first
-// lines are never lost.
+// Ingress also holds speech before Prism is up. The pump drains when load completes;
+// newer input generations and fixed-capacity overload can still retire pending output.
 // ---------------------------------------------------------------------------
 
 namespace {
@@ -58,12 +57,19 @@ volatile LONG g_ready     = 0;
 HANDLE g_event = nullptr, g_ring_event = nullptr;
 INIT_ONCE g_events_once = INIT_ONCE_STATIC_INIT;
 speech::Queue g_ring; // chunking queue: speech worker only
-struct Message { std::wstring text; bool interrupt = false, silence = false; speech::Kind kind = speech::Kind::Speech; uint64_t generation = 0; std::shared_ptr<const speech::Parts> parts; };
+struct Message { std::wstring text; bool interrupt = false, silence = false; speech::Kind kind = speech::Kind::Speech; uint64_t generation = 0; std::shared_ptr<const speech::Parts> parts; bool sequence = false; speech::Timing timing; };
 NonblockingQueue<Message, 1024> g_ingress;
 std::atomic<uint64_t> g_output_generation{0};
 std::atomic<bool> g_carry_interrupt{false};
+double g_clock_frequency = 0; // prepared before hooks; never lazily initialized by a producer
+double speech_now() {
+    LARGE_INTEGER value{}; QueryPerformanceCounter(&value);
+    return g_clock_frequency ? static_cast<double>(value.QuadPart) / g_clock_frequency : 0;
+}
 
 BOOL CALLBACK create_events(PINIT_ONCE, PVOID, PVOID*) {
+    LARGE_INTEGER frequency{}; QueryPerformanceFrequency(&frequency);
+    g_clock_frequency = static_cast<double>(frequency.QuadPart);
     g_event = CreateEventW(nullptr,TRUE,FALSE,nullptr);
     g_ring_event = CreateEventW(nullptr,FALSE,FALSE,nullptr);
     // Complete initialization even on failure: no busy retry loop on the game thread.
@@ -75,6 +81,9 @@ void ensure_ring() { InitOnceExecuteOnce(&g_events_once,create_events,nullptr,nu
 void enqueue_owned(Message message) {
     if(g_stopping.load()) return;
     if (!g_ring_event) return;
+    if (message.timing.feature != speech::Feature::None) {
+        message.timing.enqueued_at = speech_now(); message.timing.first = true;
+    }
     message.generation = message.interrupt || message.silence ? ++g_output_generation : g_output_generation.load();
     if (!g_ingress.push(std::move(message))) {
         // Preserve the established oldest-output overflow policy. No text
@@ -94,10 +103,29 @@ bool dequeue(speech::Line* out) {
         Message message;
         while (g_ingress.pop(message)) {
             if (message.generation < g_output_generation.load()) continue;
+            if (message.sequence && message.parts) {
+                const bool carried = g_carry_interrupt.exchange(false);
+                bool interrupt = message.interrupt || carried;
+                for (const auto& part : *message.parts) {
+                    const auto clean = text::clean(part);
+                    if (clean.empty()) continue;
+                    g_ring.say(clean.c_str(), interrupt, message.generation, message.timing);
+                    interrupt = false;
+                    message.timing.first = false;
+                }
+                if (interrupt) g_carry_interrupt = true; // no usable part consumed it
+                continue;
+            }
             const auto clean = text::clean(message.parts ? text::join(*message.parts, L". ") : message.text);
-            if (message.silence) g_ring.silence(message.generation);
+            if (message.silence) { g_carry_interrupt = false; g_ring.silence(message.generation); }
             else if (message.kind == speech::Kind::Braille) g_ring.braille(clean.c_str(), message.generation);
-            else g_ring.say(clean.c_str(), message.interrupt || g_carry_interrupt.exchange(false), message.generation);
+            else {
+                // Consume the overflow handoff even when this line already
+                // interrupts. Short-circuit OR left it armed for the queued tail.
+                const bool carried = g_carry_interrupt.exchange(false);
+                if (clean.empty()) { if (message.interrupt || carried) g_carry_interrupt = true; continue; }
+                g_ring.say(clean.c_str(), message.interrupt || carried, message.generation, message.timing);
+            }
         }
         if (!g_ring.pop(*out)) return false;
         if (out->generation >= g_output_generation.load()) return true;
@@ -168,12 +196,27 @@ bool available() { return InterlockedCompareExchange(&g_ready, 1, 1) != 0; }
 
 void say(const wchar_t* text, bool interrupt)
 {
+    say(text, interrupt, {});
+}
+void say(const wchar_t* text, bool interrupt, Timing timing)
+{
     if (!text || !*text) return;
-    enqueue(text, interrupt, false);
+    Message message; message.text = text; message.interrupt = interrupt; message.timing = timing;
+    enqueue_owned(std::move(message));
 }
 void say_parts(std::shared_ptr<const Parts> parts, bool interrupt) {
     if (!parts || parts->empty()) return;
     Message message; message.interrupt = interrupt; message.parts = std::move(parts);
+    enqueue_owned(std::move(message));
+}
+
+void say_sequence(std::shared_ptr<const Parts> parts, bool interrupt) {
+    say_sequence(std::move(parts), interrupt, {});
+}
+void say_sequence(std::shared_ptr<const Parts> parts, bool interrupt, Timing timing) {
+    if (!parts || parts->empty()) return;
+    Message message; message.interrupt = interrupt; message.parts = std::move(parts); message.sequence = true;
+    message.timing = timing;
     enqueue_owned(std::move(message));
 }
 
@@ -182,12 +225,39 @@ void silence()
     enqueue(nullptr, true, true);
 }
 
+// Speech-owner dispatch, shared with the fake-SDK end-to-end fixture.
+void drain_backend()
+{
+    Line l;
+    while (dequeue(&l)) {
+        if (l.silence) { (void)g_backend.stop(); }
+        else if (l.text[0]) {
+            // Logging and screen-reader RPCs belong to this worker, never a UI hook.
+            LOGW(l.interrupt ? L"say: " : L"say (queued): ",l.text);
+            const double submitting = l.timing.feature != Feature::None && l.timing.first ? speech_now() : 0;
+            const auto error = g_backend.output(l.text, l.interrupt, l.kind == Kind::Braille);
+            if (submitting) {
+                const char* feature = l.timing.feature == Feature::EntityBrowse ? "browse" :
+                    l.timing.feature == Feature::EntityCategory ? "category" :
+                    l.timing.feature == Feature::Directions ? "directions" : "mod-menu";
+                LOGF("[SpeechTiming] %s generation %llu: request-to-submit %.3f ms, queue %.3f ms, data-age %.3f ms, SDK %.3f ms, result %d",
+                    feature, static_cast<unsigned long long>(l.generation),
+                    l.timing.requested_at ? (submitting - l.timing.requested_at) * 1000 : -1,
+                    l.timing.enqueued_at ? (submitting - l.timing.enqueued_at) * 1000 : -1,
+                    l.timing.captured_at ? (submitting - l.timing.captured_at) * 1000 : -1,
+                    (speech_now() - submitting) * 1000, static_cast<int>(error));
+            }
+            if (error != PRISM_OK && error != PRISM_ERROR_NOT_INITIALIZED)
+                LOGF("speech: Prism output failed: %s", g_backend.error(error));
+        }
+    }
+}
+
 void pump()
 {
     // Even without Prism this detached worker saves settings and parks on the event.
     if(!g_ring_event) return;
     LOGF("speech: pump running on thread %lu", GetCurrentThreadId());
-    Line l;
     for (;;) {
         const DWORD wake = WaitForSingleObject(g_ring_event, 250);
         if (wake == WAIT_TIMEOUT) { settings::save_pending(); continue; } // persistence retry, no game/SDK polling
@@ -199,16 +269,7 @@ void pump()
         settings::save_pending();
         if(g_stopping.load()) { shutdown(); LOGF("shutdown: speech backend unloaded"); return; }
         g_braille_available = g_backend.has_braille();
-        while (dequeue(&l)) {
-            if (l.silence) { (void)g_backend.stop(); }
-            else if (l.text[0]) {
-                // Logging and screen-reader RPCs belong to this worker, never a UI hook.
-                LOGW(l.interrupt ? L"say: " : L"say (queued): ",l.text);
-                const auto error = g_backend.output(l.text, l.interrupt, l.kind == Kind::Braille);
-                if (error != PRISM_OK && error != PRISM_ERROR_NOT_INITIALIZED)
-                    LOGF("speech: Prism output failed: %s", g_backend.error(error));
-            }
-        }
+        drain_backend();
     }
 }
 

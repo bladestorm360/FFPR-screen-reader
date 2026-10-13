@@ -42,6 +42,11 @@ int main() {
     auto expect = [&](bool okay, const char* what) { if (!okay) { ++failures; std::printf("FAIL %s\n", what); } };
     speech::prism::Backend backend;
     expect(backend.load(fake::api()), "already-initialized acquired backend is accepted");
+    backend.output(L"Category: NPCs", true);
+    backend.output(L"Soldier1", false);
+    expect(fake::calls[fake::calls.size()-2] == "output:Category: NPCs" && fake::calls.back() == "output:Soldier1" &&
+        fake::interrupts[fake::interrupts.size()-2] && !fake::interrupts.back(),
+        "combined Prism output preserves category interruption then queued initial destination");
     expect(backend.has_braille(), "native braille capability is retained");
     expect(backend.output(L"Zażółć 日本 😀", true) == PRISM_OK, "UTF-16 output encodes as UTF-8");
     expect(fake::calls.back() == "output:Zażółć 日本 😀" && fake::interrupts.back(), "combined output and interrupt flag reach the API");

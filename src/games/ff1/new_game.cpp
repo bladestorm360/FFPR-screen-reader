@@ -32,6 +32,7 @@
 #include "../../core/modtext.h"
 #include "../../core/refs.h"
 #include "../../core/say.h"
+#include "../../core/ui/initial_speech.h"
 #include "../../core/text.h"
 #include "../../core/ui_util.h"
 #include "../../core/unity.h"
@@ -90,6 +91,7 @@ bool g_handling_cursor = false;   // IsHandlingCursor
 // "Naming screen"). One line per move (2026-10-06): SetFocus speaks only during the list's entry
 // (InitNameSelect and the frame after it), where no cursor move is read.
 int64_t g_name_entry_frame = -100;
+ui::InitialSpeech g_name_speech;
 
 // lastCharacterIndex / lastFieldType / lastSlotNames[4], moved to dedup:: as they were: reset
 // only where the C# reset them (Session scope = no automatic resets).
@@ -363,7 +365,7 @@ void on_init_name_select(void* self)
     g_controller = self;
     std::wstring character_name = current_character_name(self);
     std::wstring announcement = character_name.empty() ? T(L"Select name") : TF(L"Select name for {0}", {character_name});
-    ffpr::say(announcement);
+    g_name_speech.ready(std::move(announcement));
 }
 
 void on_name_set_focus(int index)
@@ -372,7 +374,7 @@ void on_name_set_focus(int index)
     void* ctrl = g_controller;
     if (!ctrl || !kNewGameWindow.is(ctrl) || !unity::alive(ctrl)) return;
     std::wstring name = auto_name(ctrl, index);
-    if (!name.empty()) ffpr::say(name);
+    if (!name.empty() && !g_name_speech.capture(name)) ffpr::say(name, false);
 }
 
 void on_update_view(void* self)
@@ -430,6 +432,8 @@ void d_CharSetTarget(void* self, int32_t index, const void* mi)
 
 void d_InitNameSelect(void* self, const void* mi)
 {
+    g_controller = self;
+    g_name_speech.begin();
     g_name_entry_frame = static_cast<int64_t>(frame::count());
     o_InitNameSelect(self, mi);
     g_name_entry_frame = static_cast<int64_t>(frame::count());

@@ -409,6 +409,7 @@ Category g_category = Category::All;
 std::vector<EntityPtr>& filtered_view() { return g_category_views[static_cast<size_t>(g_category)]; }
 bool g_views_ready = false;
 std::optional<Vec3> g_view_origin;
+double g_view_captured_at = 0;
 int g_last_scanned_map_id = -1;
 worker_job::Owner g_filter_work;
 bool g_filter_pending = false;
@@ -547,6 +548,7 @@ void cancel_filter() {
 void save_selected_identifier();
 void apply_filter() {
     cancel_filter();
+    const double captured_at = frame::now();
     g_filter_pending = true;
     const auto generation = g_filter_generation;
     const auto map_id = current_map_id_or_user_data();
@@ -564,7 +566,7 @@ void apply_filter() {
     input->current_map = map_id; input->continued_map = continued.map_id;
     input->continued_x = continued.cell.x; input->continued_y = continued.cell.y;
     const int continued_map = input->continued_map, continued_x = input->continued_x, continued_y = input->continued_y;
-    frame::every_frame([entities, input, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y]() mutable {
+    frame::every_frame([entities, input, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y, captured_at]() mutable {
         if (generation != g_filter_generation) return false;
         if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) { cancel_filter(); return false; }
         CaptureBudget budget;
@@ -588,12 +590,12 @@ void apply_filter() {
         if (next < entities->size()) return true;
         const auto origin = input->sort ? std::optional<Vec3>(input->player) : std::nullopt;
         worker_job::start(g_filter_work, std::move(*input), &filter_worker::build_categories,
-            [entities, generation, map_id, continued_map, continued_x, continued_y, origin](Categories filtered) {
+            [entities, generation, map_id, continued_map, continued_x, continued_y, origin, captured_at](Categories filtered) {
                 if (generation != g_filter_generation || map_id != current_map_id_or_user_data()) return;
                 auto result = std::make_shared<Categories>(std::move(filtered));
                 auto handles = std::make_shared<std::array<std::vector<EntityPtr>, 6>>(); // native owner registry only
                 frame::every_frame([entities, result, handles, named = size_t(0), ordered = size_t(0), view = size_t(0),
-                                    generation, map_id, continued_map, continued_x, continued_y, origin]() mutable {
+                                    generation, map_id, continued_map, continued_x, continued_y, origin, captured_at]() mutable {
                     if (generation != g_filter_generation) return false;
                     if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) {
                         cancel_filter(); return false;
@@ -624,6 +626,7 @@ void apply_filter() {
                     if (g_index >= static_cast<int>(filtered_view().size())) g_index = 0;
                     g_views_ready = true;
                     g_view_origin = origin;
+                    g_view_captured_at = captured_at;
                     g_filter_pending = false;
                     if (continued_current) {
                         save_selected_identifier();
@@ -726,6 +729,7 @@ void invalidate_map()
     for (auto& view : g_category_views) view.clear();
     g_views_ready = false;
     g_view_origin.reset();
+    g_view_captured_at = 0;
     g_exit_positions.clear();
     g_index = 0;
     g_last_scanned_map_id = -1;
@@ -950,6 +954,7 @@ EntityPtr current_entity()
 
 int current_index() { return g_index; }
 int count() { return static_cast<int>(filtered_view().size()); }
+double captured_at() { return g_view_captured_at; }
 
 std::vector<unity::Vec3> map_exit_positions()
 {

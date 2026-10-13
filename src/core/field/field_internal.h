@@ -250,6 +250,7 @@ Category category();
 EntityPtr current_entity();
 int current_index();
 int count();
+double captured_at(); // oldest read in the currently published row snapshot, QPC seconds
 std::vector<unity::Vec3> map_exit_positions();
 } // namespace scanner
 

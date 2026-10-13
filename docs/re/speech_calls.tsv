@@ -1,0 +1,353 @@
+source	line	API	policy
+src/core/battle/battle_command.cpp	125	ffpr::say	queued
+src/core/battle/battle_command.cpp	163	ffpr::say	interrupt
+src/core/battle/battle_command.cpp	204	ffpr::say	interrupt
+src/core/battle/battle_command.cpp	295	ffpr::say	interrupt
+src/core/battle/battle_item.cpp	119	ffpr::say	interrupt
+src/core/battle/battle_item.cpp	148	ffpr::say	interrupt
+src/core/battle/battle_magic.cpp	204	ffpr::say	interrupt
+src/core/battle/battle_magic.cpp	210	ffpr::say	interrupt
+src/core/battle/battle_message.cpp	154	ffpr::say	queued
+src/core/battle/battle_message.cpp	193	ffpr::say	queued
+src/core/battle/battle_message.cpp	201	ffpr::say	context expression
+src/core/battle/battle_message.cpp	206	ffpr::say	context expression
+src/core/battle/battle_message.cpp	277	ffpr::say	queued
+src/core/battle/battle_message.cpp	482	ffpr::say	queued
+src/core/battle/battle_party.cpp	95	ffpr::say	interrupt
+src/core/battle/battle_party.cpp	104	ffpr::say	interrupt
+src/core/battle/battle_party.cpp	137	ffpr::say	interrupt
+src/core/battle/battle_party.cpp	139	ffpr::say	interrupt
+src/core/battle/battle_party.cpp	145	ffpr::say	interrupt
+src/core/battle/battle_party.cpp	148	ffpr::say	interrupt
+src/core/battle/battle_result.cpp	371	ffpr::say	queued
+src/core/battle/rendered_feedback.cpp	23	ffpr::say	queued
+src/core/bestiary/bestiary_navigation.cpp	47	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	147	ffpr::say	queued
+src/core/bestiary/bestiary_patches.cpp	161	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	173	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	175	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	188	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	196	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	199	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	256	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	323	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	340	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	371	ffpr::say	queued
+src/core/bestiary/bestiary_patches.cpp	437	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	442	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	511	ffpr::say	interrupt
+src/core/bestiary/bestiary_patches.cpp	655	ffpr::say	interrupt
+src/core/dialogue/message_window.cpp	139	ffpr::say	queued
+src/core/dialogue/message_window.cpp	191	ffpr::say	interrupt
+src/core/dialogue/message_window.cpp	196	ffpr::say	interrupt
+src/core/dialogue/message_window.cpp	200	ffpr::say	interrupt
+src/core/dialogue/popup.cpp	225	ffpr::say	interrupt
+src/core/dialogue/popup.cpp	249	ffpr::say	interrupt
+src/core/dialogue/popup.cpp	533	ffpr::say	interrupt
+src/core/dialogue/popup.cpp	586	ffpr::say	interrupt
+src/core/dialogue/scroll_message.cpp	60	ffpr::say	queued
+src/core/dialogue/scroll_message.cpp	84	ffpr::say	context expression
+src/core/dialogue/scroll_message.cpp	100	ffpr::say	queued
+src/core/dialogue/title.cpp	130	ffpr::say	interrupt
+src/core/extras/gallery.cpp	93	ffpr::say	queued
+src/core/extras/gallery.cpp	115	ffpr::say	interrupt
+src/core/extras/gallery.cpp	141	ffpr::say	interrupt
+src/core/extras/gallery.cpp	176	ffpr::say	interrupt
+src/core/extras/music_player.cpp	161	ffpr::say	queued
+src/core/extras/music_player.cpp	185	ffpr::say	interrupt
+src/core/extras/music_player.cpp	237	ffpr::say	interrupt
+src/core/extras/music_player.cpp	251	ffpr::say	interrupt
+src/core/extras/music_player.cpp	267	ffpr::say	interrupt
+src/core/extras/music_player.cpp	272	ffpr::say	queued
+src/core/field/baked_nav.cpp	1476	ffpr::say	queued
+src/core/field/condition_feedback.cpp	27	ffpr::say	queued
+src/core/field/entity_nav.cpp	50	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	174	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	203	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	204	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	208	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	224	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	250	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	255	ffpr::say	interrupt
+src/core/field/entity_nav.cpp	260	ffpr::say_sequence	interrupt
+src/core/field/entity_scanner.cpp	685	ffpr::say	default interrupt
+src/core/field/puzzle_guide.cpp	134	ffpr::say	context expression
+src/core/field/puzzle_guide.cpp	141	ffpr::say	default interrupt
+src/core/field/puzzle_guide.cpp	156	ffpr::say	interrupt
+src/core/field/puzzle_guide.cpp	159	ffpr::say	interrupt
+src/core/field/puzzle_guide.cpp	172	ffpr::say	interrupt
+src/core/field/puzzle_guide.cpp	191	ffpr::say	interrupt
+src/core/field/puzzle_guide.cpp	197	ffpr::say	interrupt
+src/core/fieldnav/autowalk.cpp	95	ffpr::say	queued
+src/core/fieldnav/autowalk.cpp	123	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	140	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	150	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	151	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	152	ffpr::say	queued
+src/core/fieldnav/autowalk.cpp	185	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	195	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	219	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	247	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	252	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	256	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	265	ffpr::say	default interrupt
+src/core/fieldnav/autowalk.cpp	295	ffpr::say	default interrupt
+src/core/fieldnav/fieldnav_util.cpp	51	ffpr::say	default interrupt
+src/core/fieldnav/fieldnav_util.cpp	56	ffpr::say	default interrupt
+src/core/fieldnav/map_transition.cpp	175	ffpr::say	queued
+src/core/fieldnav/move_state.cpp	103	ffpr::say	interrupt
+src/core/fieldnav/teleport.cpp	34	ffpr::say	interrupt
+src/core/fieldnav/teleport.cpp	40	ffpr::say	interrupt
+src/core/fieldnav/teleport.cpp	45	ffpr::say	interrupt
+src/core/fieldnav/teleport.cpp	56	ffpr::say	interrupt
+src/core/fieldnav/teleport.cpp	63	ffpr::say	interrupt
+src/core/fieldnav/teleport.cpp	66	ffpr::say	interrupt
+src/core/fieldnav/vehicle_landing.cpp	49	ffpr::say	queued
+src/core/fieldnav/vehicle_landing.cpp	114	ffpr::say	interrupt
+src/core/fieldnav/vehicle_landing.cpp	123	ffpr::say	interrupt
+src/core/fieldnav/vehicle_landing.cpp	157	ffpr::say	interrupt
+src/core/fieldnav/waypoint_controller.cpp	37	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	43	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	54	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	60	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	71	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	82	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	92	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	103	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	110	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	117	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	123	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	133	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	139	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	150	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	160	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	171	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	173	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	184	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	197	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	199	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	213	ffpr::say	default interrupt
+src/core/fieldnav/waypoint_controller.cpp	224	ffpr::say	default interrupt
+src/core/input/controller_router.cpp	102	ffpr::say	interrupt
+src/core/input/controller_router.cpp	104	ffpr::say	interrupt
+src/core/input/controller_router.cpp	106	ffpr::say	interrupt
+src/core/input/controller_router.cpp	110	ffpr::say	interrupt
+src/core/input/controller_router.cpp	112	ffpr::say	queued
+src/core/input/controller_router.cpp	122	ffpr::say	interrupt
+src/core/input/controller_router.cpp	145	ffpr::say	interrupt
+src/core/input/controller_router.cpp	148	ffpr::say	interrupt
+src/core/input/controller_router.cpp	188	ffpr::say	interrupt
+src/core/input/controller_router.cpp	427	ffpr::say	interrupt
+src/core/input/game_toggle_announcer.cpp	85	ffpr::say	interrupt
+src/core/input/game_toggle_announcer.cpp	86	ffpr::say	interrupt
+src/core/input/game_toggle_announcer.cpp	97	ffpr::say	interrupt
+src/core/input/game_toggle_announcer.cpp	126	ffpr::say	interrupt
+src/core/input/game_toggle_announcer.cpp	154	ffpr::say	interrupt
+src/core/input/global_hotkeys.cpp	45	ffpr::say	default interrupt
+src/core/input/global_hotkeys.cpp	63	ffpr::say	default interrupt
+src/core/input/global_hotkeys.cpp	78	ffpr::say	interrupt
+src/core/input/global_hotkeys.cpp	92	ffpr::say	interrupt
+src/core/input/input_manager.cpp	324	ffpr::say	interrupt
+src/core/input/mod_actions.cpp	55	ffpr::say	interrupt
+src/core/input/mod_actions.cpp	58	ffpr::say	interrupt
+src/core/input/mod_actions.cpp	103	ffpr::say	default interrupt
+src/core/input/mod_actions.cpp	125	ffpr::say	default interrupt
+src/core/menus/equip_menu.cpp	80	ffpr::say	queued
+src/core/menus/equip_menu.cpp	251	ffpr::say	interrupt
+src/core/menus/equip_menu.cpp	258	ffpr::say	context expression
+src/core/menus/equip_menu.cpp	316	ffpr::say	interrupt
+src/core/menus/equip_menu.cpp	340	ffpr::say	interrupt
+src/core/menus/item_details.cpp	170	ffpr::say	interrupt
+src/core/menus/item_details.cpp	182	ffpr::say	interrupt
+src/core/menus/item_details.cpp	185	ffpr::say	interrupt
+src/core/menus/item_details.cpp	235	ffpr::say	interrupt
+src/core/menus/item_menu.cpp	142	ffpr::say	interrupt
+src/core/menus/item_menu.cpp	158	ffpr::say	interrupt
+src/core/menus/magic_menu_ff1.cpp	119	ffpr::say	interrupt
+src/core/menus/magic_menu_ff1.cpp	125	ffpr::say	interrupt
+src/core/menus/magic_menu_ff1.cpp	280	ffpr::say	interrupt
+src/core/menus/magic_menu_state.cpp	105	ffpr::say	interrupt
+src/core/menus/magic_menu_state.cpp	108	ffpr::say	interrupt
+src/core/menus/use_feedback.cpp	74	ffpr::say	queued
+src/core/say.cpp	24	speech::say	context expression
+src/core/say.cpp	33	speech::say_parts	context expression
+src/core/say.cpp	43	speech::say_sequence	context expression
+src/core/shop/shop_magic.cpp	115	ffpr::say	interrupt
+src/core/shop/shop_magic.cpp	155	ffpr::say	interrupt
+src/core/shop/shop_party.cpp	106	ffpr::say	interrupt
+src/core/shop/shop_patches.cpp	147	ffpr::say	interrupt
+src/core/shop/shop_patches.cpp	162	ffpr::say	interrupt
+src/core/shop/shop_patches.cpp	277	ffpr::say	interrupt
+src/core/shop/shop_patches.cpp	303	ffpr::say	interrupt
+src/core/shop/shop_tracker.cpp	181	ffpr::say	interrupt
+src/core/status/config_menu.cpp	174	ffpr::say	interrupt
+src/core/status/config_menu.cpp	249	ffpr::say	interrupt
+src/core/status/config_menu.cpp	285	ffpr::say	interrupt
+src/core/status/config_menu.cpp	302	ffpr::say	interrupt
+src/core/status/config_menu.cpp	324	ffpr::say	interrupt
+src/core/status/config_menu.cpp	469	ffpr::say	interrupt
+src/core/status/config_menu.cpp	716	ffpr::say	interrupt
+src/core/status/config_menu.cpp	724	ffpr::say	interrupt
+src/core/status/config_menu.cpp	827	ffpr::say	interrupt
+src/core/status/status_menu.cpp	139	ffpr::say	interrupt
+src/core/system/command_bar.cpp	335	ffpr::say	interrupt
+src/core/system/key_help.cpp	70	ffpr::say	interrupt
+src/core/system/key_help.cpp	157	ffpr::say	interrupt
+src/core/system/menu_text_discovery.cpp	163	ffpr::say	default interrupt
+src/core/system/save_load.cpp	360	ffpr::say	interrupt
+src/core/ui/confirmation_dialog.cpp	53	ffpr::say	interrupt
+src/core/ui/confirmation_dialog.cpp	93	ffpr::say	interrupt
+src/core/ui/confirmation_dialog.cpp	124	ffpr::say_sequence	interrupt
+src/core/ui/mod_menu.cpp	255	ffpr::say_sequence	interrupt
+src/core/ui/mod_menu.cpp	385	ffpr::say	context expression
+src/core/ui/mod_menu.cpp	394	ffpr::say	interrupt
+src/core/ui/mod_menu.cpp	491	ffpr::say_sequence	interrupt
+src/core/ui/mod_menu.cpp	503	ffpr::say	interrupt
+src/core/ui/mod_menu.cpp	514	ffpr::say_sequence	interrupt
+src/core/ui/review_buffer.cpp	35	ffpr::say	interrupt
+src/core/ui/review_buffer.cpp	101	ffpr::say_parts	interrupt
+src/core/ui/review_buffer.cpp	135	ffpr::say	queued
+src/core/ui/review_buffer.cpp	137	ffpr::say	queued
+src/core/ui/review_buffer.cpp	170	ffpr::say	queued
+src/core/ui/review_buffer.cpp	175	ffpr::say	queued
+src/core/ui/review_buffer.cpp	178	ffpr::say	queued
+src/core/ui/text_input.cpp	44	ffpr::say	interrupt
+src/core/ui/text_input.cpp	106	ffpr::say	interrupt
+src/core/ui/text_input.cpp	128	ffpr::say	interrupt
+src/core/ui/text_input.cpp	136	ffpr::say	interrupt
+src/core/ui/text_input.cpp	143	ffpr::say	interrupt
+src/core/ui/text_input.cpp	150	ffpr::say	interrupt
+src/core/ui/text_input.cpp	156	ffpr::say	interrupt
+src/core/ui/text_input.cpp	232	ffpr::say_sequence	interrupt
+src/dllmain.cpp	89	ffpr::say	queued
+src/dllmain.cpp	165	ffpr::say	interrupt
+src/games/ff1/job_selection.cpp	113	ffpr::say	default interrupt
+src/games/ff1/new_game.cpp	299	ffpr::say	default interrupt
+src/games/ff1/new_game.cpp	329	ffpr::say	default interrupt
+src/games/ff1/new_game.cpp	354	ffpr::say	queued
+src/games/ff1/new_game.cpp	377	ffpr::say	queued
+src/games/ff1/new_game.cpp	385	ffpr::say	default interrupt
+src/games/ff1/new_game.cpp	393	ffpr::say	default interrupt
+src/games/ff1/puzzle.cpp	101	ffpr::say	interrupt
+src/games/ff1/puzzle.cpp	112	ffpr::say	interrupt
+src/games/ff2/battle_magic.cpp	151	ffpr::say	interrupt
+src/games/ff2/battle_magic.cpp	159	ffpr::say	interrupt
+src/games/ff2/game_info.cpp	32	ffpr::say	interrupt
+src/games/ff2/keywords.cpp	298	ffpr::say	queued
+src/games/ff2/keywords.cpp	320	ffpr::say	interrupt
+src/games/ff2/keywords.cpp	334	ffpr::say	interrupt
+src/games/ff2/keywords.cpp	374	ffpr::say	interrupt
+src/games/ff2/keywords.cpp	408	ffpr::say	interrupt
+src/games/ff2/keywords.cpp	426	ffpr::say	interrupt
+src/games/ff2/magic_menu.cpp	241	ffpr::say	interrupt
+src/games/ff2/magic_menu.cpp	266	ffpr::say	interrupt
+src/games/ff2/magic_menu.cpp	303	ffpr::say	interrupt
+src/games/ff2/magic_menu.cpp	498	ffpr::say	interrupt
+src/games/ff2/new_game.cpp	144	ffpr::say	default interrupt
+src/games/ff2/new_game.cpp	152	ffpr::say	default interrupt
+src/games/ff2/new_game.cpp	177	ffpr::say	default interrupt
+src/games/ff2/new_game.cpp	195	ffpr::say	context expression
+src/games/ff2/new_game.cpp	203	ffpr::say	default interrupt
+src/games/ff2/shop_command.cpp	137	ffpr::say	default interrupt
+src/games/ff3/battle_magic.cpp	102	ffpr::say	interrupt
+src/games/ff3/battle_magic.cpp	119	ffpr::say	interrupt
+src/games/ff3/event_item_select.cpp	79	ffpr::say	interrupt
+src/games/ff3/job_menu.cpp	140	ffpr::say	interrupt
+src/games/ff3/line_fade.cpp	50	ffpr::say	queued
+src/games/ff3/magic_menu.cpp	154	ffpr::say	interrupt
+src/games/ff3/magic_menu.cpp	166	ffpr::say	interrupt
+src/games/ff3/magic_menu.cpp	204	ffpr::say	interrupt
+src/games/ff3/magic_menu.cpp	253	ffpr::say	interrupt
+src/games/ff3/magic_menu.cpp	396	ffpr::say	interrupt
+src/games/ff3/movement_speech.cpp	126	ffpr::say	interrupt
+src/games/ff3/movement_speech.cpp	140	ffpr::say	interrupt
+src/games/ff3/movement_speech.cpp	151	ffpr::say	interrupt
+src/games/ff3/new_game.cpp	131	ffpr::say	default interrupt
+src/games/ff3/new_game.cpp	150	ffpr::say	default interrupt
+src/games/ff3/new_game.cpp	167	ffpr::say	queued
+src/games/ff3/new_game.cpp	175	ffpr::say	default interrupt
+src/games/ff3/new_game.cpp	181	ffpr::say	default interrupt
+src/games/ff4/ability_menu.cpp	93	ffpr::say	interrupt
+src/games/ff4/ability_menu.cpp	136	ffpr::say	interrupt
+src/games/ff4/ability_menu.cpp	179	ffpr::say	interrupt
+src/games/ff4/battle_abilities.cpp	81	ffpr::say	interrupt
+src/games/ff4/battle_abilities.cpp	97	ffpr::say	interrupt
+src/games/ff4/battle_abilities.cpp	100	ffpr::say	interrupt
+src/games/ff4/battle_targets.cpp	51	ffpr::say	interrupt
+src/games/ff4/battle_targets.cpp	63	ffpr::say	interrupt
+src/games/ff4/naming.cpp	95	ffpr::say	interrupt
+src/games/ff4/naming.cpp	114	ffpr::say	interrupt
+src/games/ff4/naming.cpp	131	ffpr::say	interrupt
+src/games/ff4/party_setting.cpp	74	ffpr::say	interrupt
+src/games/ff4/party_setting.cpp	125	ffpr::say	interrupt
+src/games/ff4/party_setting.cpp	161	ffpr::say	interrupt
+src/games/ff4/party_setting.cpp	195	ffpr::say	interrupt
+src/games/ff4/timers.cpp	123	ffpr::say	interrupt
+src/games/ff4/timers.cpp	130	ffpr::say	interrupt
+src/games/ff4/vehicles.cpp	70	ffpr::say	interrupt
+src/games/ff4/vehicles.cpp	77	ffpr::say	interrupt
+src/games/ff4/vehicles.cpp	97	ffpr::say	interrupt
+src/games/ff5/battle_target.cpp	62	ffpr::say	default interrupt
+src/games/ff5/battle_target.cpp	71	ffpr::say	default interrupt
+src/games/ff5/ff5_mod.cpp	33	ffpr::say	default interrupt
+src/games/ff5/ff5_mod.cpp	41	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	371	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	424	ffpr::say	context expression
+src/games/ff5/job_ability.cpp	437	ffpr::say	context expression
+src/games/ff5/job_ability.cpp	454	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	460	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	494	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	509	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	518	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	555	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	572	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	587	ffpr::say	default interrupt
+src/games/ff5/job_ability.cpp	611	ffpr::say	default interrupt
+src/games/ff5/naming.cpp	114	ffpr::say	interrupt
+src/games/ff5/naming.cpp	132	ffpr::say	interrupt
+src/games/ff5/naming.cpp	149	ffpr::say	interrupt
+src/games/ff5/timers.cpp	84	ffpr::say	interrupt
+src/games/ff5/timers.cpp	87	ffpr::say	interrupt
+src/games/ff5/timers.cpp	171	ffpr::say	interrupt
+src/games/ff5/timers.cpp	183	ffpr::say	interrupt
+src/games/ff6/ability_espers.cpp	161	ffpr::say	default interrupt
+src/games/ff6/ability_espers.cpp	263	ffpr::say	default interrupt
+src/games/ff6/ability_menu.cpp	221	ffpr::say	default interrupt
+src/games/ff6/ability_menu.cpp	265	ffpr::say	default interrupt
+src/games/ff6/ability_menu.cpp	300	ffpr::say	default interrupt
+src/games/ff6/ability_menu.cpp	328	ffpr::say	default interrupt
+src/games/ff6/ability_menu.cpp	361	ffpr::say	default interrupt
+src/games/ff6/ability_menu.cpp	391	ffpr::say	default interrupt
+src/games/ff6/airship.cpp	174	ffpr::say	context expression
+src/games/ff6/airship.cpp	193	ffpr::say	context expression
+src/games/ff6/airship.cpp	256	ffpr::say	default interrupt
+src/games/ff6/airship.cpp	261	ffpr::say	default interrupt
+src/games/ff6/airship.cpp	271	ffpr::say	default interrupt
+src/games/ff6/airship.cpp	274	ffpr::say	default interrupt
+src/games/ff6/battle_abilities.cpp	128	ffpr::say	interrupt
+src/games/ff6/battle_abilities.cpp	202	ffpr::say	interrupt
+src/games/ff6/battle_items.cpp	192	ffpr::say	interrupt
+src/games/ff6/battle_items.cpp	221	ffpr::say	interrupt
+src/games/ff6/battle_message.cpp	46	ffpr::say	queued
+src/games/ff6/battle_targets.cpp	60	ffpr::say	interrupt
+src/games/ff6/battle_targets.cpp	67	ffpr::say	interrupt
+src/games/ff6/coliseum.cpp	180	ffpr::say	interrupt
+src/games/ff6/coliseum.cpp	255	ffpr::say	interrupt
+src/games/ff6/coliseum.cpp	315	ffpr::say	interrupt
+src/games/ff6/coliseum.cpp	349	ffpr::say	interrupt
+src/games/ff6/formation_row.cpp	75	ffpr::say	interrupt
+src/games/ff6/item_detail.cpp	378	ffpr::say	interrupt
+src/games/ff6/item_equip.cpp	121	ffpr::say	interrupt
+src/games/ff6/item_equip.cpp	171	ffpr::say	interrupt
+src/games/ff6/opera.cpp	55	ffpr::say	default interrupt
+src/games/ff6/opera.cpp	74	ffpr::say	default interrupt
+src/games/ff6/opera.cpp	85	ffpr::say	default interrupt
+src/games/ff6/orderly.cpp	72	ffpr::say	interrupt
+src/games/ff6/party_setting.cpp	94	ffpr::say	interrupt
+src/games/ff6/party_setting.cpp	145	ffpr::say	interrupt
+src/games/ff6/party_setting.cpp	182	ffpr::say	interrupt
+src/games/ff6/status_list.cpp	72	ffpr::say	interrupt
+src/games/ff6/timers.cpp	83	ffpr::say	interrupt
+src/games/ff6/timers.cpp	86	ffpr::say	interrupt
+src/games/ff6/timers.cpp	176	ffpr::say	interrupt
+src/games/ff6/timers.cpp	188	ffpr::say	interrupt
