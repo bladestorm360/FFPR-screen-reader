@@ -1,5 +1,21 @@
 # Native FFPR durable memory
 
+- October 13 subsequent follow-up deployed/hash-verified in all six:
+  `E3F6C174CAE0FE65D969E3258B72936035EBA579BE051084B1BBB0845D0602BE`. This is the current DLL, superseding records below.
+  Canonical build (7,077 names/zero missing, zero undefined wiring), all regressions
+  and isolated smoke pass. Prism unchanged; no game launch/probe. Sol alone.
+  Slot labels and displayed Favored Hand are
+  mandatory with both Autodetail states; I remains the current native panel, no slot
+  character deltas. Verbose/Brief gameplay confirmed; Stat delta detail moved to Speech
+  preserving saved values. Current map retains opened remote chests with known copied
+  native flags. FF2 scripted/message NPCs bypass the overbroad Wyvern placeholder name
+  filter, while keyword objects keep Event classification.
+  [Source/evidence and validation](docs/re/MENU_DETAILS.md#subsequent-slotsettingstreasurewyvern-correction-october-13).
+  User also reports FF2 Deist-to-world loading stall. Dispatcher posts/readers now share
+  an elapsed budget with fair continuation; cancelled owned results retire on helpers.
+  Native/load versus mod timing is logged; actual nine-second symptom is not yet proven
+  resolved. [Audit, mechanism and evidence](docs/re/THREADING.md#large-map-loading-dispatcher-follow-up-october-13).
+
 - October 13 equipment/results/party/vehicle follow-up deployed/hash-verified in all six:
   `B09ED487633FF7075C63480673D050A231C0635E7D511345DA48CCA715BE21E6`. Supersedes earlier DLLs below.
   Slot/candidate/shop Autodetail and live-panel I, comparison arrow buffers, all-six

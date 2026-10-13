@@ -140,6 +140,9 @@ void initialize()
     v.push_back(toggle(L"Auto Detail", p::kAutoDetail, p::kAutoDetailDefault,
                        L"On. Reads displayed descriptions and current information buffers after their titles, including status and battle results.",
                        L"Off. Use the I key to read descriptions on demand."));
+    v.push_back(enumeration(L"Stat delta detail", {L"Verbose", L"Brief"},
+                            p::kStatDeltaMode, p::kStatDeltaModeDefault, p::kStatDeltaModeMax,
+                            L"Stat delta detail help"));
     v.push_back(toggle(L"Status damage", p::kStatusDamage, p::kStatusDamageDefault,
                        L"Status damage on", L"Status damage off"));
     v.push_back(toggle(L"Spoil treasure chest contents", p::kSpoilTreasureChestContents,
@@ -217,9 +220,6 @@ void initialize()
     v.push_back(toggle(L"Battle results: changed stats", p::kAnnounceResultStatChanges, p::kAnnounceResultStatChangesDefault,
                        L"On. Announces only the displayed stats that changed on each battle growth page. Arrows still review the full table.",
                        L"Off. Changed stats remain available with I and arrow review."));
-    v.push_back(enumeration(L"Stat delta detail", {L"Verbose", L"Brief"},
-                            p::kStatDeltaMode, p::kStatDeltaModeDefault, p::kStatDeltaModeMax,
-                            L"Stat delta detail help"));
 
     // EXP counter remains conditional because FF2 has no experience points.
     if (!game::is(game::Id::FF2)) {

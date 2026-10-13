@@ -344,3 +344,63 @@ FF1 results reading, pathfinding responsiveness and smooth battle transitions no
 have the user's October 13 confirmation above. FF2 first-page speech, unreported
 SDL/controller/speech-order cases and modded-versus-unmodded numeric same-save timings
 remain user-side. No game or runtime probe was run by the agent.
+
+## Large-map loading dispatcher follow-up, October 13
+
+User reports a large stall leaving FF2 Castle Deist for the world map, despite responsive
+navigation afterward. Read-only existing FF2 log records last Deist route output at
+247028.718, Entering World Map at 247037.781, then the ready world entity scan at
+247037.796 (38 live entries, 17.0 ms elapsed across frames). The roughly nine-second
+output gap precedes the scan; it does not identify which native/mod function consumed
+CPU, a worker wait, or an unmodded loading baseline. No agent game launch/probe.
+
+Static audit: SubSceneManagerMainGame.ChangeState prefix invalidates context; native
+ChangeState then executes; Player/Transport post-observation starts navigation only after
+native construction. FieldMap.StateInit and FieldPlayerKeyController.Init observations
+publish current instances after their originals. ChangeMap/FieldReady do not start a map
+scan. Prepared grid/JSON tables remain immutable worker data; no cold world-grid decoding
+or native MapRouteSearcher is introduced. Main publication uses TryAcquireSRWLock;
+background owner publication uses try-lock. Blocking waits remain on boot, data/speech/
+SDL/audio/file owners, outside game callbacks. Thread-affine native reads remain on owner.
+
+The dispatcher still had an aggregate work hole: each frame drained every ready post
+and pending callback, even though individual captures were bounded. Ready posts and
+owner readers now share a 0.5 ms elapsed dispatch allowance after the fixed input/audio
+observations. Half is reserved for readers, and the reader cursor rotates so a persistent
+capture cannot monopolize every frame. Leftover posts remain in FIFO order; readers run
+at most once per tick. This is an elapsed work bound, not a small fixed entity batch.
+It cannot preempt an already-running native read/callback; those retain their own bounded
+readiness/lifetime contracts. Fixed subscriber CPU and callback tails are measured separately
+from the nominal allowance. No worker lock/wait/drain barrier is added to the native route.
+
+worker_job now checks cancellation after computation as well as before it: an obsolete
+owned result is destroyed on its helper rather than unnecessarily posted for destruction
+on the game thread. Native callbacks remain in the owner registry and are never moved
+onto a worker with their engine pointers.
+
+FrameTiming logs mod dispatcher/subscriber CPU, original InputSystemManager.Update time,
+interval since the prior update, and owner-ready work counts when mod >=1 ms, native
+>=25 ms or interval >=250 ms. LoadTiming logs prefix, original ChangeState and post-observer
+CPU for each state transition. These diagnostics use the existing nonblocking logger;
+there is no speech deduplication, game sleep or runtime probing. Interval gaps can include
+other engine/render/OS work; native-update time excludes the rest of the frame. These
+boundaries avoid attributing the entire loading gap to asynchronous path computation.
+
+Actual-source frame fixtures add a 300-callback, synthetic 50-us work burst, native update
+continuation on each slice, preserved complete output and fairness; they also keep a worker
+publication lock held while native input and an owner-side post proceed. An owned result
+cancelled during blocked helper computation must be destroyed on that helper without
+owner publication. Existing blocked data/Compute/Navigation/speech/audio/file fixtures
+pass. The final synthetic burst's worst dispatch is 0.510 ms; its callbacks deliberately
+consume about 50 us each. Held worker publication lock permits 100 native updates and the
+owner-side post; a cancelled owned result dies on the helper. Existing scheduler lifetime,
+1,000 posts, blocked data/compute lanes and cancellation checks pass. All six actual-world
+vehicle worker cases and prepared category checks also pass; fake/native-owning calls on
+workers remain zero. These are offline/fake-native observations, not target-game callback,
+Unity frame, first-audible or comparable modded/unmodded loading measurements.
+
+Canonical build: 7,077 names/zero missing, zero undefined wiring, all regressions pass.
+Isolated DLL smoke and all-six deployment/hash verification pass:
+`E3F6C174CAE0FE65D969E3258B72936035EBA579BE051084B1BBB0845D0602BE`. Prism unchanged; no game launched/probed.
+The exact Deist-to-world loading symptom still requires user gameplay confirmation; no
+absolute zero-overhead or resolved nine-second gap claim is made from worker placement.

@@ -1480,7 +1480,7 @@ std::vector<RemoteObject> connected_objects_snapshot(int map_id, map_state::Reso
         for (const Floor& f : floors) {
             const baked::Grids& g = baked::grids(*f.submap);
             for (const baked::Object& o : g.objects) {
-                if (!state.active(*f.submap, o) || state.collected(*f.submap, o)) continue;
+                if (!state.active(*f.submap, o)) continue; // Current map includes opened chests
                 RemoteObject r;
                 r.map_id = f.map_id;
                 r.cell = Cell{o.layer, o.tx, o.ty};
@@ -1492,8 +1492,10 @@ std::vector<RemoteObject> connected_objects_snapshot(int map_id, map_state::Reso
                 case baked::ObjType::ShopNPC:
                     if (!(o.d & (4 | 8))) continue;   // neither script nor action: scenery (the live rule)
                     r.shop = o.type == baked::ObjType::ShopNPC;
+                    r.scripted = (o.d & 4) != 0;
                     break;
                 case baked::ObjType::TreasureBox:
+                    r.opened = state.treasure_opened(*f.submap, o);
                     r.content_id = o.chest_content_id();
                     break;
                 case baked::ObjType::SavePoint:

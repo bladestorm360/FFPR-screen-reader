@@ -276,7 +276,14 @@ Detection npc_detector(Context& c)
     if (r::mNonPlayerGetCanAction.get() && !ref::call<bool>(r::mNonPlayerGetCanAction, c.fe)) return skip();
     // FF2's vehicle spawn NPCs (the Dreadnought flying over the world map, the airship) have an
     // action but no script or message; the game's CanAction cannot tell (user, 2026-10-10).
-    if (placeholder(c)) return skip();
+    if (placeholder(c)) {
+        void* property = c.property();
+        const bool scripted = property && r::kPropertyEvent.is(property) && ref::rd<int32_t>(property, r::fEventScriptId) > 0;
+        const bool message = property && r::kPropertyTalk.is(property) && !ref::rd_str(property, r::fTalkMessageKey).empty();
+        // A ready, native-actionable NPC with a script/message is a talk target,
+        // including animals/monsters that share names with cutscene placeholders.
+        if (!scripted && !message) return skip();
+    }
 
     std::wstring name = entity_name_from_property(c.fe);
     if (name.empty() || name == L"NPC") name = clean_object_name(c.go_name, T(L"NPC"));
@@ -467,7 +474,7 @@ std::wstring remote_guard_base(const std::wstring& name)
 /// exits and warps without crossing a world map, from the baked data
 /// (baked_nav::connected_objects). Named as the live list names them, the floor's title after
 /// the name ("Potion (Kashuan Keep 2F)"); NPCs are numbered within their floor as on this one.
-/// Story groups and collected chests are projected from a copied native flag snapshot.
+/// Story groups and chest opened state are projected from a copied native flag snapshot.
 /// Formatting reads native names on the main thread in bounded batches.
 struct RemoteRow { baked_nav::RemoteObject object; std::wstring floor, name, destination; };
 struct RemoteInput { std::vector<RemoteRow> rows; std::wstring locale; };
@@ -487,7 +494,7 @@ struct RemoteBuilder {
             switch (object.type) {
             case baked::ObjType::NPC:
             case baked::ObjType::ShopNPC:
-                if (placeholder_fn && placeholder_fn(object.raw_name.c_str())) continue;
+                if (placeholder_fn && placeholder_fn(object.raw_name.c_str()) && !object.scripted) continue;
                 row.name = object.raw_name.empty() ? std::wstring() : translate_entity_name(object.raw_name);
                 break;
             case baked::ObjType::TreasureBox:
@@ -519,7 +526,9 @@ std::vector<EntityPtr> build_remote(RemoteInput& input) {
             entity->name = row.name.empty() || row.name == L"NPC" ? T(L"NPC") : std::move(row.name);
             base = remote_guard_base(entity->name); break;
         case baked::ObjType::TreasureBox:
-            entity->kind = Kind::TreasureChest; entity->name = row.name.empty() ? T(L"Treasure Chest") : std::move(row.name); break;
+            entity->kind = Kind::TreasureChest;
+            entity->opened_known = object.opened.has_value(); entity->opened = object.opened.value_or(false);
+            entity->name = row.name.empty() ? T(L"Treasure Chest") : std::move(row.name); break;
         case baked::ObjType::SavePoint: entity->kind = Kind::SavePoint; entity->name = T(L"Save Point"); break;
         case baked::ObjType::GotoMap:
             entity->kind = Kind::MapExit; entity->dest_map_id = object.dest_map_id; entity->dest_name = std::move(row.destination);

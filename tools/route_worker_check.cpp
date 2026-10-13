@@ -209,6 +209,42 @@ int main() {
         std::ifstream source("data/ff"+std::to_string(number)+"/maps.bin",std::ios::binary);
         std::string vehicle_bytes((std::istreambuf_iterator<char>(source)),{});
         expect(field::baked::load(vehicle_bytes.data(),vehicle_bytes.size()), "each game's actual vehicle grids load");
+        std::ifstream state_file("data/ff"+std::to_string(number)+"/mapstate.json",std::ios::binary);
+        std::string state_bytes((std::istreambuf_iterator<char>(state_file)),{});
+        json::Value chest_records; expect(json::parse(state_bytes,chest_records), "all-six actual saved chest records load");
+        field::map_state::Flags chest_flags;
+        for(auto& v:chest_flags.scenario) v=0;
+        for(auto& v:chest_flags.treasure) v=0;
+        for(auto& v:chest_flags.global) v=0;
+        bool remote_checked=false;
+        for(int index=0;index<field::baked::submap_count()&&!remote_checked;++index){
+            const auto* here=field::baked::submap_at(index);if(here->world||here->first_map_id<=0)continue;
+            std::vector<RemoteObject> closed;
+            field::map_state::Resolver closed_state(chest_flags,chest_records);
+            std::thread projection([&]{closed=connected_objects_snapshot(here->first_map_id,closed_state);});projection.join();
+            for(const auto& target:closed){
+                if(target.type!=field::baked::ObjType::TreasureBox||!target.opened.has_value())continue;
+                const auto* floor=field::baked::submap_by_map_id(target.map_id);if(!floor)continue;
+                const auto* record=chest_records.get(field::baked::name_of(*floor));
+                const auto* records=record?record->get(L"treasures"):nullptr;if(!records)continue;
+                int bit=-1;
+                for(const auto& object:field::baked::grids(*floor).objects){
+                    if(object.type!=target.type||object.tx!=target.cell.x||object.ty!=target.cell.y||field::baked::str(object.group)!=target.group)continue;
+                    for(const auto& row:records->arr){const auto& r=row.arr;if(r.size()>=3&&static_cast<int>(r[0].n)==object.entity_id()&&r[1].s==target.group)bit=static_cast<int>(r[2].n);}
+                    break;
+                }
+                if(bit<0||bit>=1024)continue;
+                auto updated=chest_flags;updated.treasure[static_cast<size_t>(bit)]=1;
+                field::map_state::Resolver open_state(updated,chest_records);
+                std::vector<RemoteObject> opened;
+                std::thread reprojection([&]{opened=connected_objects_snapshot(here->first_map_id,open_state);});reprojection.join();
+                bool retained=false;
+                for(const auto& row:opened)if(row.map_id==target.map_id&&row.cell==target.cell&&row.type==target.type&&row.group==target.group){retained=row.opened==std::optional<bool>(true);break;}
+                expect(!*target.opened&&retained,"Current map retains opened other-floor chests and copies the saved state on its worker");
+                remote_checked=true;break;
+            }
+        }
+        expect(remote_checked,"each game exercises an actual connected other-floor chest");
         for(int index=0; index<field::baked::submap_count(); ++index) {
             const auto* map=field::baked::submap_at(index);
             if(!map->world) continue;

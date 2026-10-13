@@ -33,6 +33,10 @@ std::vector<Sub> g_subs;
 std::vector<Pending> g_tasks;
 std::vector<Pending> g_adding;          // tasks queued while the tick runs
 std::vector<Task> g_posted;             // cross-thread
+std::vector<Task> g_ready_posts;        // owner-only backlog, never shared with workers
+size_t g_post_cursor = 0;
+size_t g_task_cursor = 0;
+constexpr double kDispatchSeconds = 0.0005; // shared elapsed budget, no fixed entry cap
 SRWLOCK g_post_lock = SRWLOCK_INIT;
 bool g_in_tick = false;
 bool g_live = false;
@@ -54,24 +58,34 @@ void run_tick()
     for (const Sub& s : g_subs)
         hooks::guarded(s.label, [&] { s.fn(); });
 
-    {
-        std::vector<Task> posted;
-        // A producer may be appending. Skip this handoff until the next tick;
-        // native input/game processing must never wait for a worker's lock.
+    // Native observations above retain their own bounded contracts. Ready jobs
+    // share one elapsed allowance instead of each draining a full batch. Reserve
+    // half for pending native-owner readers so a post burst cannot starve them.
+    const double deadline = now() + kDispatchSeconds;
+    const double post_deadline = deadline - kDispatchSeconds / 2;
+    if (g_post_cursor == g_ready_posts.size()) {
+        g_ready_posts.clear(); g_post_cursor = 0;
+        // A producer may be appending. Never wait for its lock on the game thread.
         if (TryAcquireSRWLockExclusive(&g_post_lock)) {
-            posted.swap(g_posted);
+            g_ready_posts.swap(g_posted);
             ReleaseSRWLockExclusive(&g_post_lock);
         }
-        for (Task& t : posted) hooks::guarded("frame.post", [&] { t(); });
+    }
+    while (g_post_cursor < g_ready_posts.size() && now() < post_deadline) {
+        Task task = std::move(g_ready_posts[g_post_cursor++]);
+        hooks::guarded("frame.post", [&] { if (task) task(); });
     }
 
     const double t_now = now();
-    for (size_t i = 0; i < g_tasks.size();) {
-        Pending& p = g_tasks[i];
+    size_t remaining = g_tasks.size();
+    // Rotate the start position: a long-lived capture cannot monopolize every
+    // frame, and each eligible reader still runs at most once per tick.
+    while (remaining && !g_tasks.empty() && now() < deadline) {
+        --remaining;
+        if (g_task_cursor >= g_tasks.size()) g_task_cursor = 0;
+        Pending& p = g_tasks[g_task_cursor];
         bool done = p.cancelled;
         if (!done && p.step) {
-            // Move, rather than copy: mutable captures are the reader's state across frames.
-            // Keep the executing closure alive even if it cancels itself.
             Step step = std::move(p.step);
             bool again = hooks::guarded_r(p.label.c_str(), false, [&] { return step(); });
             done = p.cancelled || !again || --p.frames_left <= 0;
@@ -79,14 +93,13 @@ void run_tick()
             if (again && p.frames_left <= 0)
                 LOGF("frame: stopped %s after its frame budget", p.label.c_str());
         } else if (!done && ((p.due_frame && g_frame >= p.due_frame) || (p.due_time > 0 && t_now >= p.due_time))) {
-            Task t = std::move(p.task);
-            done = true;
-            g_tasks.erase(g_tasks.begin() + static_cast<std::ptrdiff_t>(i));
-            hooks::guarded(t ? "frame.task" : "frame.empty", [&] { if (t) t(); });
+            Task task = std::move(p.task);
+            g_tasks.erase(g_tasks.begin() + static_cast<std::ptrdiff_t>(g_task_cursor));
+            hooks::guarded(task ? "frame.task" : "frame.empty", [&] { if (task) task(); });
             continue;
         }
-        if (done) g_tasks.erase(g_tasks.begin() + static_cast<std::ptrdiff_t>(i));
-        else ++i;
+        if (done) g_tasks.erase(g_tasks.begin() + static_cast<std::ptrdiff_t>(g_task_cursor));
+        else ++g_task_cursor;
     }
 
     g_in_tick = false;
@@ -105,8 +118,20 @@ void d_Update(void* self, const void* mi)
         speech::request_load();
         sound::initialize(); // only signals the dedicated SDL owner
     }
+    const double before = now();
+    static double previous = 0;
+    const double gap_ms = previous ? (before - previous) * 1000 : 0;
+    previous = before;
     hooks::guarded("frame.tick", [] { run_tick(); });
+    const double native_started = now();
     o_Update(self, mi);
+    const double finished = now();
+    const double mod_ms = (native_started - before) * 1000;
+    const double native_ms = (finished - native_started) * 1000;
+    if (mod_ms >= 1 || native_ms >= 25 || gap_ms >= 250)
+        LOGF("[FrameTiming] frame %llu: mod %.3f ms, native %.3f ms, interval %.3f ms, %zu owner tasks, %zu ready posts",
+            static_cast<unsigned long long>(g_frame), mod_ms, native_ms, gap_ms,
+            g_tasks.size() + g_adding.size(), g_ready_posts.size() - g_post_cursor);
 }
 
 } // namespace
@@ -198,6 +223,6 @@ void post(Task t)
     ReleaseSRWLockExclusive(&g_post_lock);
 }
 
-int pending() { return static_cast<int>(g_tasks.size() + g_adding.size()); }
+int pending() { return static_cast<int>(g_tasks.size() + g_adding.size() + g_ready_posts.size() - g_post_cursor); }
 
 } // namespace frame

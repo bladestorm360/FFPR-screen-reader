@@ -1,7 +1,7 @@
 # Equipment, shops and result detail follow-up, October 13
 
 Implemented, offline-verified and deployed/hash-verified in all six games.
-Gameplay confirmation for these changes remains pending.
+The user confirmed Verbose/Brief modes work on October 13. Other new follow-up cases remain pending.
 Sol owns implementation, native investigation and verification. No game was launched or probed.
 
 ## User screenshot evidence: FF2
@@ -31,8 +31,11 @@ Mythril Sword; Arms None, Head Gold Hairpin, Body Silver Cuirass. Current charac
 stats are Attack 33, Defense 21, Magic Defense 39%, Accuracy 68%, Evasion 59%, Magic
 Interference 56. There are no proposed values or arrows here. Its bottom item panel
 shows Attack +7, Accuracy +65, Evasion +2, Magic Interference +5. Slot focus must never
-announce character comparisons: name only with Autodetail off; name plus current bottom
-panel with it on; I reads that panel in either case.
+announce character comparisons: slot label plus item name with Autodetail off; those plus
+current bottom panel with it on; I reads that panel in either case. The user's subsequent
+screenshot shows R. Hand, L. Hand (Favored Hand), Arms, Head and Body as rendered text.
+The displayed Favored Hand qualification belongs in the automatic slot readout in both
+Autodetail states, including when both hands contain the same weapon.
 
 Layout: the left menu has Items, Magic, Equip, Status, Formation, Key Terms,
 Configuration, Quick Save, Save, Load. The top equipment commands are Equip, Optimal,
@@ -44,7 +47,9 @@ The comparison is below those panels; the switchable information panel is beneat
 ## Reader ownership and controls
 
 - EquipmentInfoWindowController.SelectContent owns slot focus; set Focus::Slot before
-  the original and read the rendered equipTextView.nameText after it. Native nested
+  the original and read the rendered partText, optionText and equipTextView.nameText after
+  it. FF5/FF6's displayed bothHandsText is also retained; hidden qualifications are omitted.
+  Native nested
   EquipmentStatusController.SetDifferenceData callbacks cannot disclose deltas here.
 - Replacement SelectContent / SetDifferenceData captures bounded rendered comparisons
   into the shared Information buffer. Arrows review it; WASD keeps native selection.
@@ -89,7 +94,7 @@ is hidden; cycles skip those empty slots. Party row count is bounded to nine.
 - Speech / Status damage: persistent default on. Only a preference check was added to
   the established deferred, visible field-damage producer. No new cooldown, content
   deduplication, damage suppression or eligibility guard was introduced.
-- Battle / Stat delta detail: persistent Verbose (0, default) / Brief (1). Verbose
+- Speech / Stat delta detail: persistent Verbose (0, default) / Brief (1). Verbose
   retains before/after readings; Brief uses gains/losses from complete rendered
   numbers and their visible units, retaining character/hand/weapon identity. FF2
   EvasionRate/AbilityDefense tables use the primary percentage plus a secondary
@@ -107,7 +112,9 @@ unopened rewards. Native live treasure detection and remote baked naming formerl
 contents. Default-off Speech / Spoil treasure chest contents now gates both name
 resolution paths. Entity::display_name also masks cached chest names immediately when
 off; selected route/beacon target names use that method. Live opened/unopened state,
-remote floor names, native collected/story filtering and distinct chest identities remain.
+remote floor names, native story filtering and distinct chest identities remain. Current
+map now retains collected other-floor chests and labels their opened state from the copied
+native treasure flags. Missing flag/mapping stays unspecified, rather than Unopened.
 Opting in permits the actual derived PropertyTresureBox.ContentId and baked ContentId
 names; it does not authorize unrelated hidden information.
 
@@ -147,3 +154,60 @@ not comparable target-game/unmodded baselines or audible/Unity callback timings.
 universal microsecond response claim is made; native capture, worker queue and audible
 response remain distinct. The user has already confirmed prior pathfinding responsiveness
 and smooth battle transitions; this does not confirm new automated vehicle controls.
+
+## Subsequent slot/settings/treasure/Wyvern correction, October 13
+
+User gameplay evidence confirms Verbose and Brief modes work; the setting moved from
+Battle to Speech because it also governs equipment comparisons. StatDeltaMode key,
+options, default and setting-change handlers are unchanged; saved Brief stays Brief.
+Actual-source modal fixtures check the single Speech entry and saved preference in all six.
+
+The previous item-name-only slot policy omitted rendered labels. The new native owner
+read captures partText and optionText in all six, plus bothHandsText in FF5/FF6, before
+the item name. Render eligibility owns Favored Hand and both-hands qualifications.
+Autodetail adds only the current native item panel; I remains panel-only. Existing slot
+comparison exclusion and hidden nested-preview guards remain. Actual-source fixtures
+cover all five supplied slot labels, identical hand items, visible/hidden Favored Hand,
+both-hands labels, both Autodetail states, I/page toggles and no slot deltas.
+
+RemoteObject now carries optional opened state from Resolver::treasure_opened, matched
+by baked map/entity ID/story group to the extracted native GetFlag treasure bit. The
+already-owned flag snapshot enters the Navigation worker; no extra native traversal,
+worker engine read or synchronous pathfinder operation is added. Current map used to
+exclude collected remote chests entirely; it now retains and labels them. Unknown state
+retains the generic chest name; content disclosure remains independently default off.
+Live FieldTresureBox.isOpen continues to own same-floor state. All-six real bake/flag
+fixtures exercise zero, set and unavailable bits; real connected-floor projection checks
+retain an opened chest on every game without native worker access.
+
+FF2's raw-name placeholder policy excluded every 飛竜/Wyvern, including actual NPCs.
+The extracted Deist room is Map_30061_5, map master 180: active native NPCs have action 2
+and script IDs 189 (sc_e_0166) or 65 (sc_e_0050). The matching extracted scripts contain
+3 and 5 Msg commands respectively. An actionable FieldNonPlayer with a script or direct
+message now bypasses the name-only placeholder filter; native CanAction, active scene,
+vehicle, lifetime and story-group gates remain. Remote NPC projection carries the existing
+baked script flag for the same positive inclusion. Scriptless/message-less Wyvern vehicle
+and cutscene placeholders remain excluded. Classification does not inspect future dialogue
+text or disclose it before interaction.
+
+Sunfire's 太陽の炎トリガー用 is a native Entity with script 38 (sc_e_0034), Goddess's Bell's
+女神のベルトリガー用 is Entity with script 29 (sc_e_0028). Both scripts contain Msg, but those
+objects retain the Event category and safe approved object labels; dialogue alone does not
+turn objects into NPCs. Actual-source scanner fixtures cover scripted/message-only Wyvern,
+non-actionable NPCs, placeholder exclusion, keyword objects and remote naming/conversion.
+The source/script JSONL and matching masters remain in ../tools/mapdump; no runtime probe.
+
+Sol implemented and reviewed this narrow follow-up independently; no new delegation.
+Final follow-up canonical build passes: 7,077 native names, zero missing; 122 used/327
+defined action/query names, zero undefined. All actual-source checks pass, including
+all-six connected-floor state, 1,886 saved chest mappings (8 unmapped chests stay unknown),
+slot/favored-hand/detail behavior, Speech setting persistence and the Wyvern/keyword rules.
+The matching FF2 metadata confirms PropertyNpc -> PropertyTalk -> PropertyEvent, so
+script/message reads use actual inherited field ownership. Initial fake-native fixtures
+omitted the property/getter contract and supplied the wrong keyword-object name; corrected
+fixtures now pass. A missing timing-header include and a move-only fixture result were also
+caught and repaired before deployment; the production handoff retains copyable owned data.
+Isolated smoke passes all 47 exports/forwarding/boot/logger checks. All six deployments
+match SHA-256 `E3F6C174CAE0FE65D969E3258B72936035EBA579BE051084B1BBB0845D0602BE`.
+Prism was verified read-only and unchanged; no game was launched or probed.
+[Loading dispatcher evidence and remaining Deist retest](THREADING.md#large-map-loading-dispatcher-follow-up-october-13).

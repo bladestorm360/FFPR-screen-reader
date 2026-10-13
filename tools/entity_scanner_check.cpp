@@ -7,10 +7,19 @@
 #include <cstdio>
 #include <cstring>
 #include "../src/core/field/entity_scanner.cpp"
+#define contains ff2_placeholder_contains
+#include "../src/games/ff2/module.cpp"
+#undef contains
 namespace fixture {
 const DWORD owner = GetCurrentThreadId();
 int wrong_owner = 0, map = 1, next_task = 0;
 bool ready = true;
+struct TalkProperty { int script = 65; std::wstring name = L"飛竜", message; } talk;
+struct Actor { void* property = &talk; } npc, object;
+bool can_action = true;
+void native();
+bool get_can_action(void*, const void*) { native(); return can_action; }
+
 unity::Vec3 pose{};
 struct Controller { void* player = reinterpret_cast<void*>(1); } controller;
 struct Task { frame::Step step; std::string label; };
@@ -40,12 +49,17 @@ Class::Class(const char* n, const char* c, uint8_t g, const char* a) : ns(n), na
 Field::Field(Class& c, const char* n, const char* a) : cls(c), name(n), alt(a) {}
 Method::Method(Class& c, const char* n, int a) : cls(c), name(n), argc(a) {}
 il2cpp::Class* Class::get() { fixture::native(); return nullptr; }
-bool Class::is(void*) { fixture::native(); return false; }
-int32_t Field::get() { fixture::native(); return std::strcmp(name, "fieldPlayer") == 0 ? 0 : -1; }
-il2cpp::Method* Method::get() { fixture::native(); return nullptr; }
-void* Method::ptr() { fixture::native(); return nullptr; }
+bool Class::is(void* p) { fixture::native();
+ if(p==&fixture::npc)return std::strcmp(name,"FieldNonPlayer")==0;
+ if(p==&fixture::object)return std::strcmp(name,"EventTriggerEntity")==0;
+ if(p==&fixture::talk)return std::strcmp(name,"PropertyEvent")==0||std::strcmp(name,"PropertyTalk")==0;
+ return false;
+}
+int32_t Field::get() { fixture::native(); return std::strcmp(name,"fieldPlayer")==0||std::strcmp(name,"<Property>k__BackingField")==0?0:std::strcmp(name,"<ScriptId>k__BackingField")==0?offsetof(fixture::TalkProperty,script):-1; }
+il2cpp::Method* Method::get() { fixture::native(); return std::strcmp(name,"get_CanAction")==0?reinterpret_cast<il2cpp::Method*>(1):nullptr; }
+void* Method::ptr() { fixture::native(); return std::strcmp(name,"get_CanAction")==0?reinterpret_cast<void*>(&fixture::get_can_action):nullptr; }
 std::wstring str(void*) { fixture::native(); return {}; }
-std::wstring rd_str(void*, Field&) { fixture::native(); return {}; }
+std::wstring rd_str(void* p, Field& f) { fixture::native();if(p!=&fixture::talk)return {};return std::strcmp(f.name,"<MessageKey>k__BackingField")==0?fixture::talk.message:fixture::talk.name; }
 void* instance(Class&) { fixture::native(); return nullptr; }
 void call_failed_note(const char*) {}
 void* new_str(const std::wstring&) { fixture::native(); return nullptr; }
@@ -86,7 +100,7 @@ bool post(std::function<void()> task, Lane lane) {
 }
 namespace hooks { void note_fault(const char*) { std::abort(); } }
 namespace log_ { void write(const char*, ...) {} }
-namespace game { const Flags& flags() { static Flags value; return value; } const char* key() { return "ff2"; } }
+namespace game { const Flags& flags() { static Flags value; static bool configured=(kFF2Module.configure(value),true); return value; } const char* key() { return "ff2"; } }
 namespace settings {
 int get_int(const char*, int fallback) { return fallback; }
 bool get_bool(const char*, bool fallback) { return fallback; }
@@ -122,7 +136,7 @@ std::wstring vehicle_name_from_property(const std::wstring&, const std::wstring&
 int vehicle_type_from_name(const std::wstring&) { fixture::native(); return 0; }
 bool treasure_opened(void*) { fixture::native(); return false; }
 std::wstring treasure_contents(void*) { fixture::native(); return {}; }
-std::wstring entity_name_from_property(void*) { fixture::native(); return {}; }
+std::wstring entity_name_from_property(void* p) { fixture::native(); return p==&fixture::npc?L"Wyvern":L""; }
 std::wstring clean_object_name(const std::wstring& name, const std::wstring&) { return name; }
 std::wstring safe_event_label(void*, const std::wstring& name) { fixture::native(); return name; }
 std::wstring resolve_map_name(int) { fixture::native(); return {}; }
@@ -150,6 +164,16 @@ int main() {
     using namespace field;
     int failures = 0;
     auto expect = [&](bool ok, const char* reason) { if (!ok) { ++failures; std::printf("FAIL %s\n", reason); } };
+    Context talk; talk.fe=&fixture::npc; talk.go_name=L"Wyvern"; talk.go_lower=L"wyvern";
+    for(int script:{65,189}){fixture::talk.script=script;auto result=npc_detector(talk);expect(result.result==Result::Detected&&result.entity->kind==Kind::NPC&&result.entity->name==L"Wyvern","native-actionable Deist Wyvern dialogue scripts are NPC targets despite placeholder name");}
+    fixture::talk.script=0;fixture::talk.message=L"VisibleDialogueKey";
+    expect(npc_detector(talk).result==Result::Detected,"message-only animal NPC bypasses the placeholder name filter");
+    fixture::talk.message.clear();expect(npc_detector(talk).result==Result::Skip,"scriptless/message-less cutscene or vehicle NPC remains excluded");
+    fixture::talk.script=65;fixture::can_action=false;expect(npc_detector(talk).result==Result::Skip,"native CanAction still owns interactability");fixture::can_action=true;
+    for(const auto* name:{L"太陽の炎トリガー用",L"女神のベルトリガー用"}){fixture::talk.name=name;Context object;object.fe=&fixture::object;object.is_event_trigger=true;object.go_name=name;object.go_lower=text::lower(name);expect(npc_detector(object).result==Result::NotHandled,"keyword objects are not reclassified as NPCs by dialogue");auto event=event_trigger_detector(object);expect(event.result==Result::Detected&&event.entity->kind==Kind::Event,"keyword objects retain the event interaction category");}
+    RemoteInput remote;RemoteRow row;row.object.type=baked::ObjType::NPC;row.object.map_id=180;row.object.raw_name=L"飛竜";row.object.scripted=true;row.name=L"Wyvern";row.floor=L"Castle Deist: Wyvern's Room";remote.rows.push_back(row);
+    auto built=build_remote(remote);expect(built.size()==1&&built[0]->kind==Kind::NPC&&built[0]->name==L"Wyvern","scripted Wyvern remains an NPC target across floors");
+    RemoteBuilder scripted({row.object});scripted.step();expect(scripted.input.rows.size()==1,"remote name capture accepts scripted Wyvern despite placeholder filter");row.object.scripted=false;RemoteBuilder marker({row.object});marker.step();expect(marker.input.rows.empty(),"remote cutscene Wyvern without interaction script remains excluded");
     g_last_scanned_map_id = fixture::map;
     for (int i = 0; i < 2000; ++i) {
         auto entity = std::make_shared<Entity>(); entity->kind = i % 2 ? Kind::NPC : Kind::MapExit;

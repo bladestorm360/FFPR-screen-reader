@@ -9,6 +9,7 @@
 #include <vector>
 #include "map_transition.h"
 #include "../core.h"
+#include "../frame.h"
 #include "../hooks.h"
 #include "../log.h"
 #include "../modtext.h"
@@ -180,17 +181,23 @@ ChangeState_t o_ChangeState = nullptr;
 
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
+    const double started = frame::now();
     if (state == kStateChangeMap) {
         events::fire(events::Kind::MapChanging);
         g_needs_map_scan = true;
         ::field::scanner::invalidate_map();
     }
+    const double native_started = frame::now();
     o_ChangeState(self, state, mi);
+    const double observed = frame::now();
     hooks::guarded("MapTransition.ChangeState", [&] {
         // Never scan/name the incoming map while ChangeMap/FieldReady constructs it.
         if (state == kStatePlayer || state == kStateTransport)
             check_map_transition();
     });
+    LOGF("[LoadTiming] state %d: prefix %.3f ms, native %.3f ms, observer %.3f ms",
+        state, (native_started - started) * 1000, (observed - native_started) * 1000,
+        (frame::now() - observed) * 1000);
 }
 
 int install()

@@ -9,6 +9,7 @@
 
 namespace fixture {
 bool focused = true;
+int game_id = 2;
 bool keys[256]{};
 int key_reads = 0;
 uint64_t tick = 1;
@@ -43,7 +44,7 @@ double now() { return fixture::tick / 60.0; }
 void subscribe(void (*)(), const char*) {}
 void after_seconds(double, Task task, const char*) { fixture::pending.push_back(std::move(task)); }
 }
-namespace game { Id current() { return Id::FF2; } }
+namespace game { Id current() { return static_cast<Id>(fixture::game_id); } }
 namespace input { bool game_window_focused() { return fixture::focused; } }
 namespace modtext { std::wstring T(std::wstring_view key) { return std::wstring(key); } }
 namespace ffpr {
@@ -86,6 +87,23 @@ int main()
         fixture::keys[key] = false; tick();
     };
 
+    fixture::values[ui::prefs::kStatDeltaMode] = 1;
+    for (int n = 1; n <= 6; ++n) {
+        fixture::game_id = n; ui::mod_menu::initialize();
+        std::wstring section; int modes = 0;
+        for (const auto& item : ui::mod_menu::st().items) {
+            if (item.kind == ui::mod_menu::Kind::Header) section = item.name;
+            if (!item.key || std::string(item.key) != ui::prefs::kStatDeltaMode) continue;
+            ++modes;
+            expect(section == L"Speech" && item.kind == ui::mod_menu::Kind::Enum &&
+                   item.options.size() == 2 && std::wstring(item.options[0]) == L"Verbose" &&
+                   std::wstring(item.options[1]) == L"Brief" && item.int_def == 0 && item.int_max == 1,
+                   "all-six Stat delta detail is in Speech with unchanged options/defaults");
+        }
+        expect(modes == 1 && ui::prefs::stat_delta_mode() == 1,
+               "moving the setting preserves the saved Brief preference without duplicate entries");
+    }
+    fixture::values.clear(); fixture::game_id = 2;
     ui::mod_menu::initialize();
     fixture::keys[VK_F8] = true;
     ui::mod_menu::open();

@@ -23,7 +23,7 @@ public:
     explicit Resolver(Flags flags, const json::Value& records) : flags_(std::move(flags)), records_(records) {}
     // Unknown variants are excluded from destinations and included as possible obstacles.
     bool active(const baked::Submap& sm, const baked::Object& object, bool obstacle = false);
-    bool collected(const baked::Submap& sm, const baked::Object& object) const;
+    std::optional<bool> treasure_opened(const baked::Submap& sm, const baked::Object& object) const;
     bool known(const baked::Submap& sm);
 private:
     Selection selection(const baked::Submap& sm);

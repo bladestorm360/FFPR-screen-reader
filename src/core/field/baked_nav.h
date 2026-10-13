@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <optional>
 #include "field_api.h"
 #include "baked_router.h"
 #include "route_progress.h"
@@ -123,8 +124,10 @@ struct RemoteObject {
     std::wstring raw_name;
     std::wstring group;             // the object's Tiled group ("entity_default" or an "ev_e_N" variant)
     int content_id = 0;             // TreasureBox: its contents
+    std::optional<bool> opened;     // TreasureBox: copied native save flag; absent when unknown
     int dest_map_id = 0;            // GotoMap: where it leads (never a floor of this group)
     bool shop = false;              // ShopNPC
+    bool scripted = false;          // NPC/ShopNPC: an interaction script, not a name-only placeholder
 };
 /// The objects of every sub-map connected to the current one through exits and warps without
 /// crossing a world map (a dungeon's floors, a town's houses and castle), in breadth-first

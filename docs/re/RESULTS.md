@@ -408,7 +408,7 @@ changed-stat announcement switch. Native job-mastery message fields receive the 
 treatment; no message-text heuristic/deduplication was added. Visible native phase and
 owner generations still govern collection; no later rewards are read early.
 
-Battle / Stat delta detail defaults to Verbose. Brief formats only gains/losses from
+Speech / Stat delta detail defaults to Verbose. Brief formats only gains/losses from
 rendered before/after numbers, with their native units; FF2 primary EvasionRate and
 AbilityDefense percentages and secondary count/multiplier changes are independent.
 Example 51x2% -> 55x2% becomes Evasion: gained 4%; a secondary-only count gain uses x.

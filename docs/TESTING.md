@@ -11,8 +11,8 @@ before continuing the earlier FF2 results checks when progression permits.
 
 Initial user report after deployment (`a2f3b81`, DLL
 `AF4C94F08AF9D8F30C8E534279B2D225BC902746269DC721485709DFC7498DB7`):
-the table also incorporates the subsequent retest after `4013355` (current DLL
-`473F868AB8BCDBE5CC91F4FB41F654C9674ECDB88521F087E50B6DBD0BD31FD4`).
+the table also incorporates subsequent FF2 ship/results and Verbose/Brief retests.
+The latest follow-up DLL/deployment is recorded in [MENU_DETAILS.md](re/MENU_DETAILS.md).
 
 | Feature | Gameplay status |
 | --- | --- |
@@ -21,6 +21,7 @@ the table also incorporates the subsequent retest after `4013355` (current DLL
 | FF1 battle-results buffer reading | Confirmed by the user: reads correctly. Specific Autodetail/input/detail cases were not separately enumerated. |
 | FF2 battle-results buffer | User's later example includes character, hand, weapon type, skill level and progress. Screenshot confirms hand headings, icon type, level numeral and bar are displayed. Phase-wide I and other phase/control cases remain unconfirmed. |
 | FF2 boarded ship routing | Subsequent user retest confirms ship pathfinding and boarding/disembarking across vehicle/foot route legs work. Other vehicles remain untested; no numerical timing or every loaded-save/story case is implied. |
+| Verbose/Brief stat deltas | User confirms both work during the FF2 testing session. Setting relocation to Speech is subsequently implemented/offline verified; other games are not directly gameplay confirmed. |
 | FF3–FF6 battle-results buffers | Expected by the user to work through the shared implementation; direct gameplay confirmation pending. |
 
 These confirmations supersede earlier blanket pending statements for the reported
@@ -577,16 +578,20 @@ with fake owners/SDK. These are not measurements of real visible-to-audible deli
 The complete follow-up is built, smoke-tested, deployed and hash-verified in all six.
 No game was launched/probed by the agent. Prior user confirmations of fast pathfinding,
 smooth battle transitions, FF1 result review and FF2 ship/cross-vehicle route directions
-remain documented separately. The following new behavior needs gameplay confirmation.
+remain documented separately. The user now confirms Verbose and Brief modes work.
+Slot-label restoration, settings relocation, remote chest state and Wyvern inclusion still
+need gameplay confirmation; other outstanding checks below remain applicable.
 Test these first when progression permits; vehicle/learning opportunities need not delay
 unrelated play. [Offline evidence and screenshot explanation](re/MENU_DETAILS.md).
 
 1. Leave Speech / Spoil treasure chest contents off (default). Browse local and other-
    floor chests: hear Treasure Chest, floor/location and opened/unopened state where
-   applicable, with no reward names. Opening a chest may still read the game's reward
+   applicable, with no reward names. Current map must retain opened chests on other floors
+   and indicate their saved state where known. Opening a chest may still read the game's reward
    message. The explicit spoil setting on permits contents; turn it off again to restore
    generic labels immediately.
-2. With Autodetail off, equipment slots/candidates and shop items speak the item name.
+2. With Autodetail off, equipment slots speak the slot label (including displayed Favored
+   Hand) and item name; candidates and shop items speak the item name.
    I/right-stick up reads the current information panel. Toggle native Q/X/Square, then
    use I: raw item bonuses and description must follow that page. Slots never read
    character deltas. In a replacement chooser, arrows review comparisons; WASD changes
@@ -597,7 +602,7 @@ unrelated play. [Offline evidence and screenshot explanation](re/MENU_DETAILS.md
 3. During an FF2 character's command turn, H reads that character's displayed vitals;
    1–4 reads each party slot. Results with Autodetail off must still announce actual
    level-up/learned-spell/ability messages and retain them in the buffer. I from any row
-   reads every current-phase delta. Switch Battle / Stat delta detail to Brief: gains/
+   reads every current-phase delta. Switch Speech / Stat delta detail to Brief: gains/
    losses replace before/after values in automatic speech and review. Verbose restores
    the full comparison. Native learning messages remain automatic in both modes.
 4. When field status damage occurs, Speech / Status damage on (default) announces it.
@@ -610,8 +615,26 @@ unrelated play. [Offline evidence and screenshot explanation](re/MENU_DETAILS.md
    land using native Back. Manual movement, menus, battle and focus loss must release
    the walker. Do not count prior path-direction confirmation as this automation test.
 
-Failure symptoms to report: reward names with spoil off; slot character comparisons;
+6. FF2 Castle Deist: Wyvern's Room: NPC category must list Wyvern. Current map should
+   also include it from another connected floor when the story makes it available. Follow
+   the route and confirm to talk normally. Sunfire and Goddess's Bell keep their object/
+   Event classification and native keyword interaction when progression permits.
+
+Failure symptoms to report: reward names with spoil off; missing remote opened state;
+missing Wyvern; missing slot/Favored Hand labels; slot character comparisons;
 I ignoring the native page; arrows changing the item; missing automatic learning/gains;
 wrong/absent party member; repeated before/after in Brief; silent/native-wrong boarding,
 landing or motion after cancellation. Other vehicles, story restrictions and target-game
 callback/first-audible timings remain unmeasured.
+
+## FF2 Deist-to-world loading retest, October 13
+
+The completed follow-up is deployed/hash-verified in all six, with all offline checks
+and isolated smoke passing; no game was launched/probed. Leave Castle Deist for the world map
+as in the reported stall. The game should finish its native transition without waiting
+for queued mod work. Once ready, category/destination inputs should remain prompt and
+ship/walking routes should still work. Report whether the long pause recurs; Sol will
+read FrameTiming/LoadTiming in the ordinary mod log to separate mod work, native state
+processing and frame gaps. No user code review, timing tools or visual check is required.
+Offline callback budgets, held-worker-lock/native continuation and stale-result disposal
+checks are separate from this gameplay confirmation.

@@ -35,7 +35,7 @@ int main()
         for (auto& v : flags.treasure) v = 0;
         for (auto& v : flags.global) v = 0;
         map_state::Resolver resolver(flags, records);
-        int known = 0, unknown = 0, solid = 0;
+        int known = 0, unknown = 0, solid = 0, known_chests = 0, unknown_chests = 0;
         for (int i = 0; i < baked::submap_count(); ++i) {
             const auto& sm = *baked::submap_at(i);
             resolver.known(sm) ? ++known : ++unknown;
@@ -43,6 +43,32 @@ int main()
             request.submap = &sm;
             map_state::add_obstacles(resolver, sm, request);
             for (const auto& o : baked::grids(sm).objects) {
+                if (o.type == baked::ObjType::TreasureBox) {
+                    const auto opened = resolver.treasure_opened(sm, o);
+                    if (opened) {
+                        ++known_chests;
+                        expect(!*opened, "zero saved flag means unopened chest");
+                        const auto* record = records.get(baked::name_of(sm));
+                        const auto* chests = record ? record->get(L"treasures") : nullptr;
+                        bool matched = false;
+                        if (chests) for (const auto& row : chests->arr) {
+                            const auto& r = row.arr;
+                            if (r.size() < 3 || static_cast<int>(r[0].n) != o.entity_id() || r[1].s != baked::str(o.group)) continue;
+                            const int bit = static_cast<int>(r[2].n);
+                            if (bit < 0 || bit >= 1024) continue;
+                            auto changed = flags; changed.treasure[static_cast<size_t>(bit)] = 1;
+                            map_state::Resolver collected(changed, records);
+                            expect(collected.treasure_opened(sm, o) == std::optional<bool>(true),
+                                   "matching copied saved bit means opened chest on any floor");
+                            changed.treasure[static_cast<size_t>(bit)].reset();
+                            map_state::Resolver missing(changed, records);
+                            expect(!missing.treasure_opened(sm, o).has_value(),
+                                   "unavailable saved bit remains unknown rather than unopened");
+                            matched = true; break;
+                        }
+                        expect(matched, "known chest state is backed by matching entity and story-group flag record");
+                    } else ++unknown_chests;
+                }
                 if (!resolver.active(sm, o, true)) continue;
                 if ((o.type != baked::ObjType::NPC && o.type != baked::ObjType::ShopNPC) || !(o.d & 1)) continue;
                 ++solid;
@@ -67,6 +93,8 @@ int main()
                 expect(before.cells == after.cells, "a battle leaves permanent captain obstacles intact");
             }
         }
+        expect(known_chests > 0, "each game has verified saved chest flags");
+        std::printf("FF%d: %d saved chest mappings verified; %d unmapped chests remain unknown\n", n, known_chests, unknown_chests);
         std::printf("FF%d: %d known, %d conservative maps; %d solid NPC checks; all grids decoded %.1f ms offline\n",
                     n, known, unknown, solid, decode_ms);
     }

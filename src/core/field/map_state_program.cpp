@@ -110,20 +110,22 @@ bool Resolver::active(const baked::Submap& sm, const baked::Object& object, bool
     return selected.known ? group == selected.group : obstacle;
 }
 bool Resolver::known(const baked::Submap& sm) { return selection(sm).known; }
-bool Resolver::collected(const baked::Submap& sm, const baked::Object& object) const
+std::optional<bool> Resolver::treasure_opened(const baked::Submap& sm, const baked::Object& object) const
 {
-    if (object.type != baked::ObjType::TreasureBox) return false;
+    if (object.type != baked::ObjType::TreasureBox) return {};
     const auto* record = records_.get(baked::name_of(sm));
     const auto* chests = record ? record->get(L"treasures") : nullptr;
-    if (!chests) return false;
+    if (!chests) return {};
     for (const auto& v : chests->arr) {
         const auto& r = v.arr;
         if (r.size() < 3 || number(r[0]) != object.entity_id() || r[1].s != baked::str(object.group)) continue;
         // Native MapUIManager.GetFlag uses flag_id/256 and flag_id%256 directly.
         const int bit = number(r[2]);
-        return bit >= 0 && bit < 1024 && flags_.treasure[static_cast<size_t>(bit)].value_or(0) != 0;
+        if (bit < 0 || bit >= 1024) return {};
+        const auto value = flags_.treasure[static_cast<size_t>(bit)];
+        return value ? std::optional<bool>(*value != 0) : std::nullopt;
     }
-    return false;
+    return {};
 }
 void add_obstacles(Resolver& resolver, const baked::Submap& sm, baked_route::Request& request, bool gates)
 {

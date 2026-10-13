@@ -290,10 +290,10 @@ bool Entity::is_opened() const
 
 std::wstring Entity::display_name() const
 {
-    // Another floor: whether the chest is opened is not known from here; the name alone.
+    // Remote chests use copied save flags; unknown state must not become Unopened.
     const auto chest_name = kind == Kind::TreasureChest && !ui::prefs::spoil_treasure_chest_contents_enabled()
         ? T(L"Treasure Chest") : name;
-    if (remote() && kind == Kind::TreasureChest) return chest_name;
+    if (remote() && kind == Kind::TreasureChest && !opened_known) return chest_name;
     switch (kind) {
     case Kind::TreasureChest:
         return TF(is_opened() ? L"Opened {0}" : L"Unopened {0}", {chest_name});

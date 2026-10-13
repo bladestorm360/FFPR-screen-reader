@@ -57,6 +57,9 @@ bool start(Owner& owner, Snapshot snapshot, Work work, Publish publish,
         std::optional<Result> result;
         try { result.emplace(work(snapshot)); }
         catch (...) { result.emplace(); } // owner continuation still retires its callback
+        // Cancellation during computation also retires the owned snapshot/result
+        // here. Do not enqueue a large obsolete result for game-thread destruction.
+        if (epoch->load() != generation) return;
         frame::post([id, epoch, generation, result = std::move(*result)]() mutable {
             auto callback = R::callbacks.find(id);
             if (callback == R::callbacks.end()) return;

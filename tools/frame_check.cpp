@@ -20,6 +20,14 @@ namespace speech { void request_load() {} }
 namespace log_ { void write(const char*, ...) {} }
 namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
 
+namespace fixture {
+int native_calls = 0;
+DWORD main_thread = GetCurrentThreadId();
+HANDLE destroyed = nullptr;
+std::atomic<bool> destroyed_on_main{false};
+void destroy(int* value) { destroyed_on_main=GetCurrentThreadId()==main_thread;delete value;SetEvent(destroyed); }
+void update(void*, const void*) { ++native_calls; }
+}
 int main()
 {
     background::prepare();
@@ -73,8 +81,9 @@ int main()
         });
     });
     for (auto& t : producers) t.join();
-    frame::run_tick();
-    expect(delivered == 1000 && !wrong_thread, "all cross-thread posts run exactly once on the dispatcher thread");
+    const double posts_by = frame::now() + 5;
+    while (delivered < 1000 && frame::now() < posts_by) frame::run_tick();
+    expect(delivered == 1000 && !wrong_thread, "bounded continuation delivers all cross-thread posts exactly once on the dispatcher thread");
     expect(frame::pending() == 0, "finished/cancelled tasks leave no retained queue entries");
     std::atomic<bool> worker_started = false;
     std::atomic<int> worker_priority = 0;
@@ -125,6 +134,49 @@ int main()
     for (int i = 0; i < 100; ++i) { frame::run_tick(); std::this_thread::yield(); }
     expect(result == 14, "phase cancellation cannot publish an obsolete job");
     CloseHandle(entered); CloseHandle(unblock); CloseHandle(returned);
+    // A ready-result burst must not keep native input inside the mod dispatcher.
+    // Synthetic 50-us owner callbacks make the old unbounded 150-post drain decisive.
+    int posted_burst = 0, due_burst = 0;
+    auto short_work = [] { const double until = frame::now() + .00005; while (frame::now() < until) {} };
+    std::thread burst([&] { for (int i = 0; i < 150; ++i) frame::post([&, short_work] { short_work(); ++posted_burst; }); });
+    burst.join();
+    for (int i = 0; i < 150; ++i) frame::next_frame([&, short_work] { short_work(); ++due_burst; }, "Load.Burst");
+    frame::o_Update = &fixture::update;
+    frame::d_Update(nullptr, nullptr);
+    expect(fixture::native_calls == 1 && posted_burst > 0 && posted_burst < 150 && due_burst > 0 && due_burst < 150,
+           "native update proceeds while both publication and owner-reader bursts remain pending");
+    double largest_ms = 0;
+    const double burst_by = frame::now() + 5;
+    while ((posted_burst < 150 || due_burst < 150) && frame::now() < burst_by) {
+        const double started = frame::now(); frame::d_Update(nullptr, nullptr);
+        largest_ms = std::max(largest_ms, (frame::now() - started) * 1000);
+    }
+    expect(posted_burst == 150 && due_burst == 150 && frame::pending() == 0,
+           "fair bounded dispatcher preserves every burst callback without starving either queue");
+    HANDLE locked = CreateEventW(nullptr,TRUE,FALSE,nullptr), unlock = CreateEventW(nullptr,TRUE,FALSE,nullptr);
+    std::atomic<bool> lock_active{false};
+    std::thread lock_owner([&]{AcquireSRWLockExclusive(&frame::g_post_lock);lock_active=true;SetEvent(locked);WaitForSingleObject(unlock,5000);lock_active=false;ReleaseSRWLockExclusive(&frame::g_post_lock);});
+    expect(WaitForSingleObject(locked,5000)==WAIT_OBJECT_0,"worker holds publication lock for a decisive nonblocking check");
+    int owner_post=0;const int native_before=fixture::native_calls;
+    frame::post([&]{++owner_post;});
+    for(int i=0;i<100;++i)frame::d_Update(nullptr,nullptr);
+    expect(lock_active&&owner_post==1&&fixture::native_calls==native_before+100,
+           "native update and owner-side post proceed while a worker holds the publication lock");
+    SetEvent(unlock);lock_owner.join();CloseHandle(locked);CloseHandle(unlock);
+
+    fixture::destroyed=CreateEventW(nullptr,TRUE,FALSE,nullptr);
+    HANDLE owned_entered=CreateEventW(nullptr,TRUE,FALSE,nullptr),owned_release=CreateEventW(nullptr,TRUE,FALSE,nullptr);
+    using Owned=std::shared_ptr<int>;
+    expect(worker_job::start(owner,42,[=](int value){SetEvent(owned_entered);WaitForSingleObject(owned_release,5000);return Owned(new int(value),&fixture::destroy);},
+        [&](Owned){result=-2;}),"owned cancelled-result job accepted");
+    expect(WaitForSingleObject(owned_entered,5000)==WAIT_OBJECT_0,"owned job computes on helper");
+    owner.cancel();SetEvent(owned_release);
+    expect(WaitForSingleObject(fixture::destroyed,5000)==WAIT_OBJECT_0&&!fixture::destroyed_on_main,
+           "result cancelled during computation is destroyed on its helper without game-thread publication");
+    frame::d_Update(nullptr,nullptr);expect(result==14,"cancelled owned result cannot publish stale output");
+    CloseHandle(owned_entered);CloseHandle(owned_release);CloseHandle(fixture::destroyed);
+    std::printf("Loading burst: 300 synthetic 50-us callbacks across %d native updates; worst dispatch %.3f ms offline\n",
+                fixture::native_calls, largest_ms);
     std::printf("%s: scheduler state/lifetime, 1000 posts, nonblocking data worker; %d failures\n", failures ? "FAIL" : "PASS", failures);
     return failures ? 1 : 0;
 }

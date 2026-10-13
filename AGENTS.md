@@ -72,7 +72,8 @@ See `docs/re/RESULTS.md` for evidence, controls, validation and remaining gamepl
 
 Settings use exactly Speech, Navigation audio, Battle submenus, followed by Close Menu;
 volumes sit beside their audio setting and battle results settings belong to Battle (user,
-2026-10-12). Preserve direct F8 keyboard entry and controller mode/context input ownership.
+2026-10-12). Stat delta detail belongs to Speech because it also governs equipment comparisons
+(user correction, 2026-10-13). Preserve direct F8 keyboard entry and controller mode/context input ownership.
 All mod modal keyboard input requires active game-window focus, with held-key seeding on
 return. Never add keyboard mod mode. Navigation must cancel at battle transition, preserve
 live story gates and map state, route between floors to each transition, and explain blocked

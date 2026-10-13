@@ -187,6 +187,7 @@ struct Entity {
     std::wstring name;
     std::wstring converted_name;   // name as converted; NPCs are renumbered from it each scan
     bool opened = false;           // TreasureChest: state when converted (fallback)
+    bool opened_known = true;      // Remote chest: false if save flag/mapping is unavailable
     std::wstring asset;            // NPC
     bool shop = false;             // NPC
     int dest_map_id = -1;          // MapExit

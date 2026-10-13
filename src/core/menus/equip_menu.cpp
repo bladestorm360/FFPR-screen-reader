@@ -202,6 +202,14 @@ void d_EquipInfoSelectContent(void* self, void* cursor, const void* mi)
         void* view = unity::list_at(list, index);
         auto name = displayed::text_field(displayed::field(view, "equipTextView"), "nameText");
         if (name.empty()) return;
+        // Native localized labels and qualifications are part of the slot readout
+        // even with Autodetail off. Hidden qualifications must not be inferred.
+        std::vector<std::wstring> labels{displayed::text_field(view, "partText"),
+                                         displayed::text_field(view, "optionText")};
+        if (game::is(game::Id::FF5) || game::is(game::Id::FF6))
+            labels.push_back(displayed::text_field(view, "bothHandsText"));
+        auto label = text::join(labels, L" ");
+        if (!label.empty()) name = std::move(label) + L": " + name;
         g_focus = Focus::Slot;
         clear_comparison();
         activate_equip_menu();
