@@ -134,5 +134,17 @@ README formats; all credits are retained. Feature behavior matches the user-conf
 - DLL SHA256: `868dda2a88ab6382cf90dfe4e6b8d9e939b2eef0cfd1cef57abb26776bcca273`.
 - ZIP SHA256: `c1e595403df3789e11a4fe2ace20217c075709c873bda739a723dc1aec8efb17`.
 
-Publication is pending the verified source push/tag, draft asset download/hash check and
-public release verification. Sol owns this work independently; no delegation.
+Published [V0.9](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/tag/v0.9)
+at 2026-10-13 21:05:47 UTC. The annotated v0.9 tag resolves locally and remotely to release
+source commit `8f40fad8ce999e5b459e68c3181e376b05217ff2`, pushed to master before upload.
+GitHub's asset name normalizes spaces to periods:
+[Final.Fantasy.Pixel.Master.Core.Screen.Reader.V0.9.zip](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/download/v0.9/Final.Fantasy.Pixel.Master.Core.Screen.Reader.V0.9.zip).
+The folder inside the ZIP retains the exact requested release name.
+
+The draft asset was downloaded and its SHA256 matched the verified local archive before
+publication. Public release API verification confirms draft=false, prerelease=false,
+uploaded asset state, the matching 4,085,836-byte size and SHA256 digest, and the final
+v0.9 download URL. Repository identity remains R_kgDOVFGmTg and visibility remains public.
+The release was marked Latest. Sol completed implementation/review/verification and
+publication independently; no delegation. Final publication records are committed/pushed
+after the release source tag without changing the tagged code or distributed bytes.

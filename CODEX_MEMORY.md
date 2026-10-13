@@ -7,8 +7,11 @@
   excluding repository renaming. Fresh canonical build/all offline checks and isolated
   smoke pass; rebuilt 20-file complete ZIP includes the repaired README source URL.
   [Current release hashes, procedure and rename recovery](docs/release.md#v09-rebuilt-package-and-publication-october-13).
-  Publication is pending source/tag push and uploaded-asset verification. No game
-  launch, deployment, dependency change or delegation.
+  Published [V0.9](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/tag/v0.9)
+  from tag/source commit 8f40fad8ce999e5b459e68c3181e376b05217ff2. Downloaded draft ZIP
+  SHA256 matched local before publication; public API asset/digest/size verified.
+  All source and final publication records are committed/pushed. No game launch,
+  deployment, dependency change or delegation.
 
 - October 13 user confirms Deist-to-world transition lag seems fixed, accepts it for
   release, and requests Final Fantasy Pixel Master Core Screen Reader V0.9. Prepared
