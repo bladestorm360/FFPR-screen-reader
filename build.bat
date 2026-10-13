@@ -61,6 +61,16 @@ if errorlevel 1 (
     echo Autowalk check FAILED - see build_check\autowalk_report.txt
     exit /b 1
 )
+"out\checks\autowalk_native_check.exe" > build_check\autowalk_native_report.txt 2>&1
+if errorlevel 1 (
+    echo Autowalk native input check FAILED - see build_check\autowalk_native_report.txt
+    exit /b 1
+)
+"out\checks\equipment_party_check.exe" > build_check\equipment_party_report.txt 2>&1
+if errorlevel 1 (
+    echo Equipment and party check FAILED - see build_check\equipment_party_report.txt
+    exit /b 1
+)
 "out\checks\mapstate_check.exe" > build_check\mapstate_report.txt 2>&1
 if errorlevel 1 (
     echo Map-state check FAILED - see build_check\mapstate_report.txt

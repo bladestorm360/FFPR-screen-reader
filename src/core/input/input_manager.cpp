@@ -266,6 +266,7 @@ Context determine_context(bool on_demand)
     if (queries::is("KeyHelpReader.IsScreenActive")) return Context::KeyHelp;
     if (both("StatusNavigationTracker.IsNavigationActive", "StatusNavigationTracker.ValidateState")) return Context::Status;
     if (both("BestiaryNavigationTracker.IsNavigationActive", "BestiaryNavigationTracker.ValidateState")) return Context::BestiaryDetail;
+    if (queries::is("ReviewBuffer.IsInformation")) return Context::Information;
     if (queries::is("BattleStateHelper.IsInBattle")) return Context::Battle;
     // The shop (its tracker validates the controller's state each time): the number row reads
     // the party panel's equipment comparison. Global keys still match in this context.

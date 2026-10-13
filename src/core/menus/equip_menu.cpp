@@ -4,7 +4,6 @@
 // below exists in each dump.cs).
 #include "menus_internal.h"
 #include "../core.h"
-#include "../dedup.h"
 #include "../displayed_ui.h"
 #include "../frame.h"
 #include "../hooks.h"
@@ -16,7 +15,10 @@
 #include "../unity.h"
 #include "../field/object_cache.h"
 #include "../ui/review_buffer.h"
-#include "../displayed_ui.h"
+#include "../ui/preferences.h"
+#include "../field/capture_budget.h"
+#include <climits>
+#include <memory>
 
 namespace ffpr::menus {
 namespace {
@@ -27,18 +29,7 @@ ref::Method mEquipWindowSetActive{kEquipmentWindowController, "SetActive", 1};
 
 ref::Class  kEquipmentInfoWindowController{"Last.UI.KeyInput", "EquipmentInfoWindowController"};
 ref::Field  fEquipInfoContentList{kEquipmentInfoWindowController, "contentList"};
-ref::Field  fEquipInfoTargetIndex{kEquipmentInfoWindowController, "targetIndex"};
-ref::Field  fEquipInfoView{kEquipmentInfoWindowController, "view"};
 ref::Method mEquipInfoSelectContent{kEquipmentInfoWindowController, "SelectContent", 1};
-
-ref::Class  kEquipmentInfoContentView{"Last.UI.KeyInput", "EquipmentInfoContentView"};
-ref::Field  fEquipContentPartText{kEquipmentInfoContentView, "partText"};
-ref::Field  fEquipContentSlot{kEquipmentInfoContentView, "<Slot>k__BackingField"};
-ref::Field  fEquipContentData{kEquipmentInfoContentView, "<Data>k__BackingField"};
-
-ref::Class  kEquipmentInfoWindowView{"Last.UI.KeyInput", "EquipmentInfoWindowView"};
-ref::Field  fEquipInfoViewNameText{kEquipmentInfoWindowView, "nameText"};
-ref::Field  fEquipInfoViewJobNameText{kEquipmentInfoWindowView, "jobNameText"};
 
 ref::Class  kEquipmentSelectWindowController{"Last.UI.KeyInput", "EquipmentSelectWindowController"};
 ref::Field  fEquipSelectContentDataList{kEquipmentSelectWindowController, "contentDataList"};
@@ -52,33 +43,71 @@ ref::Method mDifference{kEquipmentStatus, "SetDifferenceData", 3};
 using Difference = void (*)(void*, void*, void*, int32_t, const void*);
 Difference o_difference;
 unsigned g_comparison_generation = 0;
+enum class Focus { None, Slot, Candidate };
+Focus g_focus = Focus::None;
+void* g_comparison_owner = nullptr;
+std::wstring g_candidate_name;
+int g_selecting = 0;
+struct SelectionScope {
+    SelectionScope() { ++g_selecting; }
+    ~SelectionScope() { --g_selecting; }
+};
 
-void d_difference(void* self, void* data, void* item, int32_t slot, const void* mi)
+void clear_comparison()
 {
     ++g_comparison_generation;
     frame::cancel_label("Equipment.Comparison");
-    if (ui::review::owns(self)) ui::review::clear();
+    if (ui::review::owns(g_comparison_owner)) ui::review::clear();
+    g_comparison_owner = nullptr;
+}
+
+void capture_comparison(void* self, bool announce = true)
+{
+    if (g_focus != Focus::Candidate || !kEquipmentStatus.is(self) || !displayed::container_visible(self)) return;
+    void* window = field::cache::get(kEquipmentWindowController);
+    if (displayed::field(window, "statusController") != self ||
+        !displayed::container_visible(displayed::field(displayed::field(window, "selectWindowController"), "view"))) return;
+    const int restore = !announce && ui::review::owns(self) ? ui::review::index() : 0;
+    clear_comparison();
+    g_comparison_owner = self;
+    const auto generation = g_comparison_generation;
+    ui::review::Options options;
+    options.announce = announce;
+    options.restore_index = restore;
+    options.domain = ui::review::Domain::Information;
+    options.include_headline = true;
+    options.details_action = "EquipDetailsAnnouncer.AnnounceCurrentItemDetails";
+    options.brief_details = ui::prefs::stat_delta_mode() == 1;
+    ui::review::begin(self, g_candidate_name, std::move(options));
+    struct Capture { int index = 0; std::vector<std::wstring> rows, gains; };
+    auto capture = std::make_shared<Capture>();
+    frame::every_frame([self, generation, capture, restore] {
+        if (generation != g_comparison_generation || g_focus != Focus::Candidate ||
+            !detail::equip_menu_active() || !displayed::container_visible(self)) return false;
+        void* list = displayed::field(self, "contentList");
+        const int count = unity::list_count(list);
+        if (count <= 0 || count > 64) { clear_comparison(); return false; }
+        field::CaptureBudget budget;
+        while (capture->index < count && budget.available()) {
+            auto row = displayed::comparison_reading(displayed::field(unity::list_at(list, capture->index++), "view"));
+            if (!row.line.empty()) {
+                if (row.changed) capture->gains.push_back(row.line);
+                capture->rows.push_back(std::move(row.line));
+            }
+        }
+        if (capture->index < count) return true;
+        auto panel = detail::equip_description_from_ui();
+        if (!panel.empty()) { capture->gains.push_back(panel); capture->rows.push_back(std::move(panel)); }
+        ui::review::replace_lines(std::move(capture->rows), restore, std::move(capture->gains));
+        return false;
+    }, "Equipment.Comparison", INT_MAX);
+}
+
+void d_difference(void* self, void* data, void* item, int32_t slot, const void* mi)
+{
     o_difference(self, data, item, slot, mi);
     hooks::guarded("Equipment.DisplayedComparison", [self] {
-        const unsigned generation = ++g_comparison_generation;
-        frame::cancel_label("Equipment.Comparison");
-        frame::next_frame([self, generation] {
-            if (generation != g_comparison_generation || !detail::equip_menu_active() || !displayed::visible(self)) return;
-            std::vector<std::wstring> rows;
-            void* list = displayed::field(self, "contentList");
-            for (int i = 0; i < unity::list_count(list); ++i) {
-                auto line = displayed::comparison(displayed::field(unity::list_at(list, i), "view"));
-                if (!line.empty()) rows.push_back(std::move(line));
-            }
-            auto description = detail::equip_description_from_ui();
-            auto comparisons = text::join(rows, L". ");
-            if (!description.empty()) rows.push_back(std::move(description));
-            ui::review::Options options;
-            options.domain = ui::review::Domain::Information;
-            options.announce = false;
-            ui::review::show(self, {}, std::move(rows), options);
-            if (!comparisons.empty()) ffpr::say(comparisons, false);
-        }, "Equipment.Comparison");
+        if (g_focus == Focus::Candidate) capture_comparison(self);
     });
 }
 
@@ -86,12 +115,17 @@ ref::Class  kEquipmentDescriptionWindowController{"Last.UI.KeyInput", "Equipment
 ref::Field  fEquipDescWindowView{kEquipmentDescriptionWindowController, "view"};
 ref::Class  kEquipmentDescriptionWindowView{"Last.UI.KeyInput", "EquipmentDescriptionWindowView"};
 ref::Field  fEquipDescViewDescriptionText{kEquipmentDescriptionWindowView, "descriptionText"};
-
-ref::Class  kEquipUtility{"Last.Systems", "EquipUtility"};
-ref::Method mGetSlotMessageId{kEquipUtility, "GetSlotMessageId", 1};
-
-ref::Class  kOwnedItemData{"Last.Data.User", "OwnedItemData"};
-ref::Method mOwnedItemGetName{kOwnedItemData, "get_Name", 0};
+ref::Method mDescription{kEquipmentDescriptionWindowController, "SetDescriptionText", 2};
+using Description = void (*)(void*, void*, bool, const void*);
+Description o_description;
+void d_description(void* self, void* text, bool parameter, const void* mi) {
+    o_description(self, text, parameter, mi);
+    hooks::guarded("Equipment.InformationPage", [self] {
+        if (g_selecting || g_focus != Focus::Candidate ||
+            displayed::field(field::cache::get(kEquipmentWindowController), "descriptionController") != self) return;
+        capture_comparison(g_comparison_owner, false);
+    });
+}
 
 ref::Class  kEquipItemListContentData{"Last.UI", "ItemListContentData"};
 ref::Field  fEquipItemDataName{kEquipItemListContentData, "<Name>k__BackingField"};
@@ -100,16 +134,8 @@ ref::Field  fEquipItemDataName{kEquipItemListContentData, "<Name>k__BackingField
 constexpr int STATE_NONE = 0;
 constexpr int STATE_COMMAND = 1;   // Command bar (Equip/Optimal/Remove All)
 
-// EquipSlotType (identical in all five games).
-constexpr int SLOT1 = 1, SLOT2 = 2, SLOT3 = 3, SLOT4 = 4, SLOT5 = 5, SLOT6 = 6;
-
-// EquipMenuState.EnteredFromShop: restore the shop state when the equipment menu closes.
+// Restore the native shop when returning from its equipment submenu.
 bool g_entered_from_shop = false;
-// EquipMenuState.LastTargetIndex (the party member, changes only on LB/RB) is the dedup context
-// "Equip.Character". It is reset only with the equip state, as LastTargetIndex was; this flag is
-// "LastTargetIndex >= 0" (a previous member exists, so a change is a switch).
-constexpr const char* kCtxCharacter = "Equip.Character";
-bool g_have_target = false;
 
 void set_equip_active(bool active)
 {
@@ -148,25 +174,6 @@ bool should_suppress()
     return true;
 }
 
-/// EquipMenuState.GetSlotName: the game's slot name, else the English fallback.
-std::wstring slot_name(int slot)
-{
-    std::wstring id = ref::str(ref::call_static<void*>(mGetSlotMessageId, static_cast<int32_t>(slot)));
-    if (!id.empty()) {
-        std::wstring localized = detail::message(id, true);
-        if (!detail::blank(localized)) return localized;
-    }
-    switch (slot) {
-    case SLOT1: return T(L"Right Hand");
-    case SLOT2: return T(L"Left Hand");
-    case SLOT3: return T(L"Head");
-    case SLOT4: return T(L"Body");
-    case SLOT5: return T(L"Accessory");
-    case SLOT6: return T(L"Accessory 2");
-    default: return TF(L"Slot {0}", {text::num(slot)});
-    }
-}
-
 /// Capture the shop context BEFORE other states are cleared, then claim the menu.
 void activate_equip_menu()
 {
@@ -182,80 +189,28 @@ InfoSelectContent_t o_EquipInfoSelectContent;
 
 void d_EquipInfoSelectContent(void* self, void* cursor, const void* mi)
 {
-    o_EquipInfoSelectContent(self, cursor, mi);
+    if (kEquipmentInfoWindowController.is(self) && displayed::container_visible(displayed::field(self, "view"))) {
+        g_focus = Focus::Slot;
+        clear_comparison(); // before nested native stat updates; slot view has no deltas
+    }
+    { SelectionScope scope; o_EquipInfoSelectContent(self, cursor, mi); }
     hooks::guarded("EquipmentInfoWindowController.SelectContent", [&] {
-        // Don't set IsActive before the data is validated: setting it early causes suppression
-        // during menu transitions.
-        if (!cursor) return;
-        int index = ui::cursor_index(cursor);
-
-        void* content_list = ref::rd<void*>(self, fEquipInfoContentList);
-        int count = unity::list_count(content_list);
-        if (count <= 0) {
-            LOGF("[Equipment Slot] contentList is null or empty");
-            return;
-        }
-        if (index < 0 || index >= count) {
-            LOGF("[Equipment Slot] Index %d out of range (count=%d)", index, count);
-            return;
-        }
-        void* view = unity::list_at(content_list, index);
-        if (!view) {
-            LOGF("[Equipment Slot] Content view is null");
-            return;
-        }
-
-        // Slot name from partText, else the localized slot name.
-        std::wstring slot;
-        if (void* part = ref::rd<void*>(view, fEquipContentPartText)) slot = unity::ui_text(part);
-        if (detail::blank(slot)) slot = slot_name(ref::rd<int32_t>(view, fEquipContentSlot));
-
-        // Equipped item name (stats are behind the I key).
-        std::wstring equipped;
-        if (void* data = ref::rd<void*>(view, fEquipContentData)) equipped = ref::call_str(mOwnedItemGetName, data);
-
-        std::wstring announcement;
-        if (!detail::blank(slot)) announcement = slot;
-        if (!detail::blank(equipped)) {
-            if (!detail::blank(announcement)) announcement += L": " + equipped;
-            else announcement = equipped;
-        } else {
-            announcement += L": " + T(L"Empty");
-        }
-        if (detail::blank(announcement)) return;
-
-        // Strip icon markup (e.g. <ic_knife>).
-        announcement = detail::strip_icon(announcement);
-
-        // AutoDetail: append stats/description for the equipped item.
-        if (detail::auto_detail()) {
-            std::wstring extra = detail::equip_description_from_ui();
-            if (!detail::blank(extra)) announcement = announcement + L": " + extra;
-        }
-
+        if (!kEquipmentInfoWindowController.is(self) || !cursor) return;
+        void* list = ref::rd<void*>(self, fEquipInfoContentList);
+        const int index = ui::cursor_index(cursor);
+        if (index < 0 || index >= unity::list_count(list)) return;
+        void* view = unity::list_at(list, index);
+        auto name = displayed::text_field(displayed::field(view, "equipTextView"), "nameText");
+        if (name.empty()) return;
+        g_focus = Focus::Slot;
+        clear_comparison();
         activate_equip_menu();
-
-        // Character switch via targetIndex (changes only on RB/LB): name and job first.
-        bool character_switched = false;
-        int target_index = ref::rd<int32_t>(self, fEquipInfoTargetIndex);
-        if (dedup::index(kCtxCharacter, target_index, dedup::Scope::Session)) {
-            character_switched = g_have_target;
-            g_have_target = true;
-            if (character_switched) {
-                if (void* info_view = ref::rd<void*>(self, fEquipInfoView)) {
-                    std::wstring name = unity::ui_text(ref::rd<void*>(info_view, fEquipInfoViewNameText));
-                    std::wstring job = unity::ui_text(ref::rd<void*>(info_view, fEquipInfoViewJobNameText));
-                    if (!detail::blank(name)) {
-                        std::wstring who = name;
-                        if (!detail::blank(job)) who += L", " + job;
-                        ffpr::say(who, true);
-                    }
-                }
-            }
+        std::vector<std::wstring> parts{std::move(name)};
+        if (detail::auto_detail()) {
+            auto panel = detail::equip_description_from_ui();
+            if (!panel.empty()) parts.push_back(std::move(panel));
         }
-
-        // Position last, after AutoDetail. After a switch, queue the slot behind the name.
-        ffpr::say(ui::menu_position(announcement, index, count), !character_switched);
+        ffpr::say_sequence(std::move(parts), true);
     });
 }
 
@@ -266,15 +221,16 @@ SetActive_t o_EquipWindowSetActive;
 
 void d_EquipWindowSetActive(void* self, bool is_active, const void* mi)
 {
+    // Native SetActive can announce its initial slot before returning.
+    if (is_active && kEquipmentWindowController.is(self)) field::cache::register_object(kEquipmentWindowController, self);
     o_EquipWindowSetActive(self, is_active, mi);
     hooks::guarded("EquipmentWindowController.SetActive", [&] {
         if (!kEquipmentWindowController.is(self)) return;
         if (is_active) field::cache::register_object(kEquipmentWindowController, self);
         else if (field::cache::get(kEquipmentWindowController) == self) field::cache::clear(kEquipmentWindowController);
         if (is_active) return;
-        ++g_comparison_generation;
-        frame::cancel_label("Equipment.Comparison");
-        if (ui::review::domain() == ui::review::Domain::Information) ui::review::clear();
+        g_focus = Focus::None;
+        clear_comparison();
         bool restore_shop = g_entered_from_shop;   // captured before the reset clears it
         clear_state();
         if (restore_shop) detail::shop_set_menu_active();
@@ -288,9 +244,14 @@ SelectSelectContent_t o_EquipSelectSelectContent;
 
 void d_EquipSelectSelectContent(void* self, void* cursor, int32_t type, const void* mi)
 {
-    o_EquipSelectSelectContent(self, cursor, type, mi);
+    if (kEquipmentSelectWindowController.is(self) && displayed::container_visible(displayed::field(self, "view"))) {
+        g_focus = Focus::Candidate;
+        clear_comparison();
+    }
+    { SelectionScope scope; o_EquipSelectSelectContent(self, cursor, type, mi); }
     hooks::guarded("EquipmentSelectWindowController.SelectContent", [&] {
-        if (!cursor) return;
+        if (!kEquipmentSelectWindowController.is(self) || !cursor ||
+            !displayed::container_visible(displayed::field(self, "view"))) return;
         int index = ui::cursor_index(cursor);
 
         void* list = ref::rd<void*>(self, fEquipSelectContentDataList);
@@ -305,15 +266,11 @@ void d_EquipSelectSelectContent(void* self, void* cursor, int32_t type, const vo
         if (detail::blank(name)) name = T(L"Remove");
         name = detail::strip_icon(name);
 
-        // Name only; AutoDetail appends what the I key reads.
-        std::wstring announcement = name;
-        if (detail::auto_detail()) {
-            std::wstring extra = detail::equip_description_from_ui();
-            if (!detail::blank(extra)) announcement = name + L": " + extra;
-        }
-
+        g_focus = Focus::Candidate; // outer focus wins after nested native preview updates
         activate_equip_menu();
-        ffpr::say(ui::menu_position(announcement, index, count), true);
+        g_candidate_name = name;
+        ffpr::say(name, true);
+        capture_comparison(displayed::field(self, "statusController"));
     });
 }
 
@@ -344,12 +301,10 @@ int install()
 {
     // EquipMenuState's static constructor.
     menu_state::register_reset(menu_state::EQUIP_MENU, [] {
-        ++g_comparison_generation;
-        frame::cancel_label("Equipment.Comparison");
-        if (ui::review::domain() == ui::review::Domain::Information) ui::review::clear();
+        g_focus = Focus::None;
+        clear_comparison();
         g_entered_from_shop = false;
-        g_have_target = false;
-        dedup::reset(kCtxCharacter);
+        g_candidate_name.clear();
     });
 
     queries::define("EquipMenuState.IsActive", [] { return detail::equip_menu_active(); });
@@ -358,6 +313,10 @@ int install()
     actions::define("EquipMenuState.ClearState", [] { clear_state(); });
     actions::define("EquipMenuState.ResetState", [] { clear_state(); });
     actions::define("EquipDetailsAnnouncer.AnnounceCurrentItemDetails", [] { announce_current_item_details(); });
+    actions::define("Settings.Changed.StatDeltaMode", [] {
+        if (g_focus == Focus::Candidate) capture_comparison(g_comparison_owner, false);
+        actions::run("BattleResult.RebuildStatDeltas");
+    });
 
     int n = 0;
     n += hooks::attach(mEquipInfoSelectContent, &d_EquipInfoSelectContent, &o_EquipInfoSelectContent) ? 1 : 0;
@@ -365,6 +324,7 @@ int install()
     n += hooks::attach(mEquipSelectSelectContent, &d_EquipSelectSelectContent, &o_EquipSelectSelectContent) ? 1 : 0;
     n += hooks::attach(mEquipCommandSetFocus, &d_EquipCommandSetFocus, &o_EquipCommandSetFocus) ? 1 : 0;
     n += hooks::attach(mDifference, &d_difference, &o_difference) ? 1 : 0;
+    n += hooks::attach(mDescription, &d_description, &o_description) ? 1 : 0;
     return n;
 }
 

@@ -571,3 +571,47 @@ symptom remains; the user does not need to inspect hook counts or code. Offline 
 reproduce old slot-31 allocation failure and pass 384 constrained/512 spacious hooks,
 actual loaded-state observers, explicit vehicle queries and actual title/speech pipeline
 with fake owners/SDK. These are not measurements of real visible-to-audible delivery.
+
+## Equipment, gains, warnings, chest labels and autowalk retest, October 13
+
+The complete follow-up is built, smoke-tested, deployed and hash-verified in all six.
+No game was launched/probed by the agent. Prior user confirmations of fast pathfinding,
+smooth battle transitions, FF1 result review and FF2 ship/cross-vehicle route directions
+remain documented separately. The following new behavior needs gameplay confirmation.
+Test these first when progression permits; vehicle/learning opportunities need not delay
+unrelated play. [Offline evidence and screenshot explanation](re/MENU_DETAILS.md).
+
+1. Leave Speech / Spoil treasure chest contents off (default). Browse local and other-
+   floor chests: hear Treasure Chest, floor/location and opened/unopened state where
+   applicable, with no reward names. Opening a chest may still read the game's reward
+   message. The explicit spoil setting on permits contents; turn it off again to restore
+   generic labels immediately.
+2. With Autodetail off, equipment slots/candidates and shop items speak the item name.
+   I/right-stick up reads the current information panel. Toggle native Q/X/Square, then
+   use I: raw item bonuses and description must follow that page. Slots never read
+   character deltas. In a replacement chooser, arrows review comparisons; WASD changes
+   the chosen item. Normal pad selection remains native; mod-mode pad/shoulders review.
+   Autodetail on adds slot/shop panels and candidate comparisons. If Items -> equipment
+   details is available, its extra displayed stats, abilities and highlighted elements
+   should be in the buffer too; gray elements must not be announced as properties.
+3. During an FF2 character's command turn, H reads that character's displayed vitals;
+   1–4 reads each party slot. Results with Autodetail off must still announce actual
+   level-up/learned-spell/ability messages and retain them in the buffer. I from any row
+   reads every current-phase delta. Switch Battle / Stat delta detail to Brief: gains/
+   losses replace before/after values in automatic speech and review. Verbose restores
+   the full comparison. Native learning messages remain automatic in both modes.
+4. When field status damage occurs, Speech / Status damage on (default) announces it.
+   Turn it off: warnings stop while the game's damage/flash continues. On restores all
+   valid warnings, with no new cooldown or text suppression.
+5. Enable Autowalk. Request a route from a ship to a land destination: it should advance
+   through the shore tile and keep walking. From land, a route requiring a parked ship
+   should walk aboard and later disembark. Repeat with controller LT. Explicit-mount
+   vehicles use native Confirm; FF6 airship should move with either camera heading and
+   land using native Back. Manual movement, menus, battle and focus loss must release
+   the walker. Do not count prior path-direction confirmation as this automation test.
+
+Failure symptoms to report: reward names with spoil off; slot character comparisons;
+I ignoring the native page; arrows changing the item; missing automatic learning/gains;
+wrong/absent party member; repeated before/after in Brief; silent/native-wrong boarding,
+landing or motion after cancellation. Other vehicles, story restrictions and target-game
+callback/first-audible timings remain unmeasured.

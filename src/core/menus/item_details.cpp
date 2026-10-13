@@ -177,7 +177,7 @@ void announce_current_description()
     std::wstring description;
     if (void* view = displayed::field(field::cache::get(kItemWindowOwner), "view"))
         if (void* text_component = ref::rd<void*>(view, fItemWindowViewDescriptionText))
-            description = unity::ui_text(text_component);
+            description = displayed::text(text_component);
     if (detail::blank(description)) {
         ffpr::say(T(L"No description"), true);
         return;

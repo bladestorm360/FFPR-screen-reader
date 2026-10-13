@@ -51,6 +51,8 @@ std::map<std::string, std::function<bool()>> queries;
 std::vector<std::wstring> spoken;
 std::vector<input::Key> bound;
 bool changed_stats = false;
+int delta_mode = 0;
+int panel_reads = 0;
 bool detail = false, suppress = false, pad = false;
 bool keys[static_cast<int>(input::Key::Count)]{};
 bool buttons[input::kButtonCount]{}, released[input::kButtonCount]{};
@@ -138,10 +140,10 @@ namespace queries {
 void define(const char* key, std::function<bool()> fn) { fixture::queries[key] = std::move(fn); }
 bool is(const char* key) { auto i = fixture::queries.find(key); return i != fixture::queries.end() && i->second(); }
 }
-namespace actions { void define(const char*, Fn) {} }
+namespace actions { void define(const char*, Fn) {} bool run(const char*) { ++fixture::panel_reads; return true; } }
 namespace events { void on(Kind, Handler) {} }
 namespace game { Id current() { return fixture::game_id; } }
-namespace settings { int get_int(const char*, int def) { return def; } bool get_bool(const char* key, bool def) { return std::string(key) == "AnnounceResultStatChanges" ? fixture::changed_stats : std::string(key) == "AutoDetail" ? fixture::detail : std::string(key) == "ExpCounter" ? false : def; } }
+namespace settings { int get_int(const char* key, int def) { return std::string(key) == "StatDeltaMode" ? fixture::delta_mode : def; } bool get_bool(const char* key, bool def) { return std::string(key) == "AnnounceResultStatChanges" ? fixture::changed_stats : std::string(key) == "AutoDetail" ? fixture::detail : std::string(key) == "ExpCounter" ? false : def; } }
 namespace ffpr {
 void say(std::wstring_view s, bool) { fixture::spoken.emplace_back(s); }
 void say_parts(std::vector<std::wstring> parts, bool) { fixture::spoken.emplace_back(text::join(parts, L". ")); }
@@ -221,6 +223,8 @@ bool lstick_left_held() { return false; } bool lstick_right_held() { return fals
 }
 }
 
+namespace ffpr::fieldnav::autowalk { bool virtual_key(int, bool) { return false; } bool virtual_input_active() { return false; } }
+
 int main()
 {
     background::prepare();
@@ -258,7 +262,7 @@ int main()
         d_points(&menu, nullptr);
         expect(queries::is("ReviewBuffer.IsResults") && !ui::review::active(), "native results owns context before buffer readiness");
         tick();
-        expect(spoken.front() == (n == 2 ? L"Battle results. Gil obtained 50" : L"Battle results. EXP obtained 120. Gil obtained 50"), "only totals in points headline");
+        expect(spoken.front().starts_with(n == 2 ? L"Battle results. Gil obtained 50" : L"Battle results. EXP obtained 120. Gil obtained 50") && contains(L"Cure learned") && contains(L"Job level 2"), "totals and displayed learning/level gains are essential in both Autodetail states");
         expect(!contains(L"Firion EXP"), "animated member details wait for completion and Autodetail");
         steps[n - 1](&members, nullptr); tick();
         expect(!contains(L"Firion EXP"), "partial native animation completion keeps details deferred");
@@ -266,24 +270,24 @@ int main()
         expect(contains(L"Firion EXP") == (automatic && n != 2), "final member details follow Autodetail");
         if (n != 1 && n != 3) {
             spoken.clear(); d_skill_page(&skill, nullptr); tick();
-            expect(contains(L"Cure") == automatic && contains(L"Gil obtained"), "combined skill paging announces totals and follows Autodetail for details");
+            expect(contains(L"Cure") && contains(L"Gil obtained"), "combined skill paging announces displayed learning independently of Autodetail");
         }
         spoken.clear(); ui::review::first(); ui::review::next();
         if (n != 2) ui::review::next();
         expect(spoken == (n == 2 ? std::vector<std::wstring>({L"Battle results", L"Gil obtained 50"}) :
             std::vector<std::wstring>({L"Battle results", L"EXP obtained 120", L"Gil obtained 50"})), "title and real game totals are navigable");
         spoken.clear(); d_status(&menu, nullptr); tick();
-        expect(spoken.front() == L"Firion level 2", "growth headline excludes descendant stat table");
+        expect(spoken.front().starts_with(L"Firion level 2") && contains(L"Job level 2"), "growth entry retains essential level gains without speaking optional stats");
         expect(contains(L"Strength") == automatic, "growth stats follow Autodetail");
         spoken.clear(); d_items(&menu, nullptr); tick();
         expect(spoken.front() == L"Items obtained" && contains(L"Gil 10") == automatic, "individual drops follow Autodetail");
         spoken.clear(); ui::review::details();
         expect(contains(L"Potion") && !contains(L"Strength") && !contains(L"EXP 60"), "manual details contains only current phase");
         spoken.clear(); d_learning(&menu, nullptr); tick();
-        expect(spoken.front() == L"Learned abilities" && contains(L"Cure") == automatic, "learning phase honors Autodetail");
+        expect(spoken.front().starts_with(L"Learned abilities") && contains(L"Cure"), "learning phase always announces displayed learned abilities");
         spoken.clear(); d_ability(&menu, nullptr); tick();
-        expect(spoken.front() == (n == 2 ? L"Battle results. Gil obtained 50" : L"Ability and job level gains") && contains(L"Job level 2") == automatic, "ability/job phase honors Autodetail and FF2 combines gil/weapons");
-        if (n == 2) { spoken.clear(); d_skill_levels(&point, nullptr); tick(); expect(spoken.front() == L"Battle results. Gil obtained 50" && contains(L"Cure") == automatic, "FF2 weapon phase follows native entry"); }
+        expect(spoken.front().starts_with(n == 2 ? L"Battle results. Gil obtained 50" : L"Ability and job level gains") && contains(L"Job level 2"), "ability/job phase honors Autodetail and FF2 combines gil/weapons");
+        if (n == 2) { spoken.clear(); d_skill_levels(&point, nullptr); tick(); expect(spoken.front().starts_with(L"Battle results. Gil obtained 50") && contains(L"Cure"), "FF2 weapon phase follows native entry"); }
         d_close(&menu, nullptr);
         expect(!queries::is("ReviewBuffer.IsResults") && !ui::review::active(), "close releases context and page");
     }
@@ -309,6 +313,7 @@ int main()
     // A later native phase invalidates old pending reads.
     result_reset_state(); spoken.clear(); d_points(&menu, nullptr); d_items(&menu, nullptr); tick();
     expect(!contains(L"EXP obtained"), "phase changes cancel obsolete reads");
+    skill.visible = false;
     // Full growth rows stay navigable; I and the new toggle use only changed rows.
     begin_phase(&menu, ResultPhase::Status);
     Node unchanged, rate, unchanged_view, rate_view;
@@ -449,6 +454,7 @@ int main()
     before_points[0] = 859; after_points[0] = 860; gauge.fill = 1; skill_view.text["levelText"] = L"16";
     displayed::d_setting(860, nullptr, &gauge, nullptr); displayed::d_color(&skill_content, &before_data, &after_data, nullptr);
     expect(displayed::skill_change(&skill_content).find(L"gained 1%") != std::wstring::npos, "cap fill is not an extra hundred percent gain");
+    delta_mode = 1; expect(displayed::skill_change(&skill_content) == L"Sword: gained 1%", "Brief weapon progress keeps type and gain without before/after levels"); delta_mode = 0;
     gauge.visible = false; expect(displayed::skill_change(&skill_content).empty(), "hidden weapon gauge cannot expose a delta");
     gauge.visible = true; gauge.fill = .3f; expect(displayed::skill_change(&skill_content).empty(), "different rendered gauge cannot expose a stale snapshot");
     gauge.fill = 1; game_id = game::Id::FF1; expect(displayed::skill_change(&skill_content).empty(), "weapon delta service is FF2-only");
@@ -556,6 +562,50 @@ int main()
     buttons[input::kSouth] = false; pad = false;
     result_reset_state(); native_result = true; keys[static_cast<int>(input::Key::UpArrow)] = true;
     native_calls = 0; expect(all_checks() && native_calls == 10, "review input ownership releases outside results");
+    delta_mode = 1;
+    rate_view.text = {{"categoryText", L"Evasion"}, {"beforValueText", L"51"}, {"afterValueText", L"55"},
+        {"beforeMultipleSymbolText", L"x"}, {"afterMultipleSymbolText", L"x"}, {"beforePercentValueText", L"2"},
+        {"afterPercentValueText", L"2"}, {"beforePercentSymbolText", L"%"}, {"afterPercentSymbolText", L"%"}};
+    expect(displayed::comparison(&rate_view) == L"Evasion: gained 4%", "Brief uses only rendered gain and visible percentage unit");
+    rate_view.text["afterValueText"] = L"47";
+    expect(displayed::comparison(&rate_view) == L"Evasion: lost 4%", "Brief losses preserve direction without before/after values");
+    rate_view.text["afterValueText"] = L"51"; rate_view.text["afterPercentValueText"] = L"3";
+    expect(displayed::comparison(&rate_view) == L"Evasion: gained 1x", "Brief includes secondary-only native multiplier changes");
+    rate_view.text["afterPercentValueText"] = L"2";
+    expect(displayed::comparison(&rate_view) == L"Evasion: No change", "Brief unchanged rows remain reviewable");
+    rate_view.text["afterValueText"] = L"55";
+    stat_view.text["afterValueText"] = L"11";
+    status.fields["contentList"] = &full_stats; skill.visible = false;
+    begin_phase(&menu, ResultPhase::Status); detail = true; changed_stats = false; spoken.clear();
+    status_rows(&status); tick();
+    expect(contains(L"Strength: gained 1") && contains(L"Evasion: gained 4%") && !contains(L"Agility") && !contains(L" to "),
+        "Brief Autodetail announces gains once, excluding unchanged rows and before/after numbers");
+    detail = false; skill.visible = true; level.row = L"Leila Sword leveled up!"; spoken.clear();
+    status_rows(&status); tick();
+    expect(contains(L"Leila Sword leveled up!") && !contains(L"Strength"), "actual level-gain messages ignore both optional-detail toggles");
+    spoken.clear(); ui::review::first(); ui::review::next(); ui::review::next();
+    expect(contains(L"Leila Sword leveled up!"), "automatically announced level gain is retained in the current buffer");
+    skill.visible = false;
+    result_reset_state();
+    delta_mode = 0;
+    ui::review::Options information;
+    information.domain = ui::review::Domain::Information; information.details_action = "CurrentPanel";
+    information.include_headline = true; detail = false; spoken.clear();
+    ui::review::begin(&status, L"Spear", information);
+    for (auto key : {input::Key::UpArrow, input::Key::DownArrow, input::Key::LeftArrow, input::Key::RightArrow, input::Key::I}) {
+        std::fill(std::begin(keys), std::end(keys), false); keys[static_cast<int>(key)] = true; native_calls = 0;
+        expect(!all_checks() && native_calls == 0, "Information arrows/I are owned before all native input entry points");
+    }
+    std::fill(std::begin(keys), std::end(keys), false); keys[static_cast<int>(input::Key::W)] = true; native_calls = 0;
+    expect(all_checks() && native_calls == 10, "WASD stays native in the comparison context");
+    std::fill(std::begin(keys), std::end(keys), false);
+    ui::review::details();
+    expect(panel_reads == 1 && spoken.empty(), "I reads current native panel immediately during comparison capture");
+    ui::review::next(); ui::review::replace_lines({L"Attack: gained 4", L"Evasion: lost 6%"}, 0); tick(); tick();
+    expect(contains(L"Attack: gained 4") && !contains(L"Evasion"), "pending arrow input replays after capture; Autodetail off adds no automatic table");
+    spoken.clear(); ui::review::details();
+    expect(panel_reads == 2 && spoken.empty(), "I remains independent of comparison buffer after assembly");
+    ui::review::clear();
     std::printf("Results: all-six phase/Autodetail/lifecycle and 10 native input entry points: %d failures\n", failures);
     return failures ? 1 : 0;
 }

@@ -36,6 +36,8 @@ inline constexpr const char* kAutowalk = "Autowalk";
 inline constexpr const char* kSpeakAutowalkPath = "SpeakAutowalkPath";
 inline constexpr const char* kBeaconWithDirections = "BeaconWithDirections";
 inline constexpr const char* kAutoDetail = "AutoDetail";                    // Auto Announcement Detail
+inline constexpr const char* kStatusDamage = "StatusDamage";                // Status Damage Announcements
+inline constexpr const char* kSpoilTreasureChestContents = "SpoilTreasureChestContents";
 inline constexpr const char* kStickClickNormalization = "StickClickNormalization"; // Stick Click Normalization
 inline constexpr const char* kAnnounceOnBeaconRestart = "AnnounceOnBeaconRestart"; // Announce Destination on Beacon Restart
 inline constexpr const char* kMenuPositionAnnouncements = "MenuPositionAnnouncements"; // Menu Position Announcements
@@ -50,6 +52,7 @@ inline constexpr const char* kEnemyHPDisplay = "EnemyHPDisplay";            // E
 // new default once). 0 = Total only, 1 = With hit count ("14x1552 damage").
 inline constexpr const char* kMultiHitDamage = "MultiHitDamage";            // Multi-hit Damage
 inline constexpr const char* kAnnounceResultStatChanges = "AnnounceResultStatChanges";
+inline constexpr const char* kStatDeltaMode = "StatDeltaMode";             // Stat delta detail: 0 Verbose, 1 Brief
 // FF5's entries (FF5 PreferencesManager), kept by their MelonPreferences names.
 inline constexpr const char* kLandingPings = "LandingPings";                // Landing Pings
 inline constexpr const char* kLandingPingVolume = "LandingPingVolume";      // Landing Ping Volume (0-100)
@@ -66,6 +69,8 @@ inline constexpr bool kAutowalkDefault = false;
 inline constexpr bool kSpeakAutowalkPathDefault = false;
 inline constexpr bool kBeaconWithDirectionsDefault = false;
 inline constexpr bool kAutoDetailDefault = false;
+inline constexpr bool kStatusDamageDefault = true;
+inline constexpr bool kSpoilTreasureChestContentsDefault = false;
 inline constexpr bool kStickClickNormalizationDefault = false;
 inline constexpr bool kAnnounceOnBeaconRestartDefault = false;
 inline constexpr bool kMenuPositionAnnouncementsDefault = false;
@@ -78,6 +83,7 @@ inline constexpr int kExpCounterVolumeDefault = 50;
 inline constexpr int kEnemyHPDisplayDefault = 0;
 inline constexpr int kMultiHitDamageDefault = 1;
 inline constexpr bool kAnnounceResultStatChangesDefault = true;
+inline constexpr int kStatDeltaModeDefault = 0;
 inline constexpr bool kLandingPingsDefault = false;
 inline constexpr int kLandingPingVolumeDefault = 50;
 inline constexpr bool kEnemyLettersDefault = false;
@@ -87,6 +93,7 @@ inline constexpr int kVolumeMin = 0;
 inline constexpr int kVolumeMax = 100;
 inline constexpr int kEnemyHPDisplayMax = 2;
 inline constexpr int kMultiHitDamageMax = 1;
+inline constexpr int kStatDeltaModeMax = 1;
 inline constexpr int kPathfindingFilterModeDefault = kFilterCurrentMap;
 inline constexpr int kPathfindingFilterModeMax = 2;
 /// The spoken names of the three modes, mod-text keys in mode order.
@@ -111,6 +118,8 @@ inline bool autowalk_enabled() { return settings::get_bool(kAutowalk, kAutowalkD
 inline bool speak_autowalk_path_enabled() { return settings::get_bool(kSpeakAutowalkPath, kSpeakAutowalkPathDefault); }
 inline bool beacon_with_directions_enabled() { return settings::get_bool(kBeaconWithDirections, kBeaconWithDirectionsDefault); }
 inline bool auto_detail_enabled() { return settings::get_bool(kAutoDetail, kAutoDetailDefault); }
+inline bool status_damage_enabled() { return settings::get_bool(kStatusDamage, kStatusDamageDefault); }
+inline bool spoil_treasure_chest_contents_enabled() { return settings::get_bool(kSpoilTreasureChestContents, kSpoilTreasureChestContentsDefault); }
 inline bool stick_click_normalization_enabled() { return settings::get_bool(kStickClickNormalization, kStickClickNormalizationDefault); }
 inline bool announce_on_beacon_restart_enabled() { return settings::get_bool(kAnnounceOnBeaconRestart, kAnnounceOnBeaconRestartDefault); }
 inline bool menu_position_announcements_enabled() { return settings::get_bool(kMenuPositionAnnouncements, kMenuPositionAnnouncementsDefault); }
@@ -129,6 +138,7 @@ inline int landing_ping_volume() { return settings::get_int(kLandingPingVolume, 
 inline int enemy_hp_display() { return settings::get_int(kEnemyHPDisplay, kEnemyHPDisplayDefault); }
 /// FF1 PreferencesManager.DamageDisplay (stored as MultiHitDamage).
 inline int damage_display() { return settings::get_int(kMultiHitDamage, kMultiHitDamageDefault); }
+inline int stat_delta_mode() { return settings::get_int(kStatDeltaMode, kStatDeltaModeDefault); }
 
 // --- value setters (FF1: clamp, then save) --------------------------------------------------
 /// FF1 SetIntPreference.

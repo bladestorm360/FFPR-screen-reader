@@ -216,6 +216,11 @@ std::wstring resolve_map_name(int dest_map_id)
 std::wstring treasure_contents(void* property)
 {
     if (!property) return L"";
+    // Explicit opt-in path. The actual derived chest property has ContentId;
+    // the historical base PropertyEntity reflection below never found it.
+    static ref::Class chest{"Last.Map", "PropertyTresureBox"};
+    static ref::Field content{chest, "<ContentId>k__BackingField"};
+    if (chest.is(property)) return resolve_item_name(ref::rd<int32_t>(property, content));
     // GilAmount / ContentId / ItemId / ContentsId / RewardId / itemId are not members of
     // PropertyEntity in any of the five games, which is the type FF1's reflection searched.
     il2cpp::Class* k = r::kPropertyEntity.get();

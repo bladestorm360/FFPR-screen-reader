@@ -65,7 +65,8 @@ std::vector<baked_route::Cell> goal_cells(void* map_handle, unity::Vec3 target);
 using Phase = route_progress::Phase;
 std::wstring describe(const std::vector<Phase>& phases, bool full = false);
 /// Recheck a single autowalk edge against current NPCs, story gates and movement rules.
-bool walk_edge(void* map_handle, void* player, const baked_route::Cell& from, const baked_route::Cell& to, bool goal_edge);
+bool walk_edge(void* map_handle, void* player, const baked_route::Cell& from, const baked_route::Cell& to, bool goal_edge,
+               route_progress::VehicleAction vehicle_action = route_progress::VehicleAction::None, int transportation_id = 0);
 
 /// Forget the cached reachability flood (a scan or a map change).
 void invalidate();

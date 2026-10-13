@@ -14,6 +14,7 @@
 #include "../core.h"
 #include "../hooks.h"
 #include "../refs.h"
+#include "../fieldnav/autowalk.h"
 
 namespace input {
 namespace {
@@ -33,6 +34,14 @@ bool g_owned_buttons[kButtonCount]{};
 bool native_input_blocked()
 {
     if (suppress_game_input()) return true;
+    if (queries::is("ReviewBuffer.IsInformation")) {
+        // Arrows review the copied comparison. WASD, native confirm/cancel and
+        // the description/page toggle keep their ordinary menu ownership.
+        for (Key k : {Key::UpArrow, Key::DownArrow, Key::LeftArrow, Key::RightArrow, Key::I})
+            if (key_in_use(k)) return true;
+        for (int i = 0; i < kButtonCount; ++i)
+            if (g_owned_buttons[i] && (button_held(i) || button_released(i))) return true;
+    }
     if (!queries::is("ReviewBuffer.IsResults")) return false;
     for (Key k : {Key::UpArrow, Key::DownArrow, Key::LeftArrow, Key::RightArrow,
                   Key::W, Key::S, Key::A, Key::D, Key::I, Key::F7, Key::F8, Key::F5})
@@ -170,21 +179,21 @@ bool postfix(bool result, F&& sdl)
 bool d_GetKeyDown(void* self, int32_t type, const void* mi)
 {
     if (native_input_blocked()) return false; // before native key checks or side effects
-    const bool r = o_GetKeyDown(self, type, mi);
+    const bool r = o_GetKeyDown(self, type, mi) || ffpr::fieldnav::autowalk::virtual_key(type);
     return hooks::guarded_r("InputPassthrough.GetKeyDown", r, [&] { return postfix(r, [&] { return sdl_key_down(type); }); });
 }
 
 bool d_GetKey(void* self, int32_t type, const void* mi)
 {
     if (native_input_blocked()) return false;
-    const bool r = o_GetKey(self, type, mi);
+    const bool r = o_GetKey(self, type, mi) || ffpr::fieldnav::autowalk::virtual_key(type);
     return hooks::guarded_r("InputPassthrough.GetKey", r, [&] { return postfix(r, [&] { return sdl_key_held(type); }); });
 }
 
 bool d_GetKeyUp(void* self, int32_t type, const void* mi)
 {
     if (native_input_blocked()) return false;
-    const bool r = o_GetKeyUp(self, type, mi);
+    const bool r = o_GetKeyUp(self, type, mi) || ffpr::fieldnav::autowalk::virtual_key(type, true);
     return hooks::guarded_r("InputPassthrough.GetKeyUp", r, [&] { return postfix(r, [&] { return sdl_key_released(type); }); });
 }
 
@@ -230,25 +239,29 @@ bool result_listener_passthrough(bool native, int32_t device, F&& read_sdl)
 {
     // Preserve other native screens. Results need SDL too because this caller
     // bypasses the manager, and Unity gamepad devices are disabled by the mod.
-    if (native || !queries::is("ReviewBuffer.IsResults") || (device != 1 && device != 3)) return native;
+    if (native || (!queries::is("ReviewBuffer.IsResults") && !queries::is("ReviewBuffer.IsInformation")) ||
+        (device != 1 && device != 3)) return native;
     return gamepad_available() && read_sdl();
 }
 bool d_listener_down(void* self, void* key, int32_t device, bool mouse, bool ignore, const void* mi)
 {
     if (native_input_blocked()) return false;
-    const bool r = o_listener_down(self, key, device, mouse, ignore, mi);
+    const bool r = o_listener_down(self, key, device, mouse, ignore, mi) ||
+        (ffpr::fieldnav::autowalk::virtual_input_active() && ffpr::fieldnav::autowalk::virtual_key(listener_action(key)));
     return result_listener_passthrough(r, device, [&] { return sdl_key_down(listener_action(key)); });
 }
 bool d_listener_held(void* self, void* key, int32_t device, bool ignore, const void* mi)
 {
     if (native_input_blocked()) return false;
-    const bool r = o_listener_held(self, key, device, ignore, mi);
+    const bool r = o_listener_held(self, key, device, ignore, mi) ||
+        (ffpr::fieldnav::autowalk::virtual_input_active() && ffpr::fieldnav::autowalk::virtual_key(listener_action(key)));
     return result_listener_passthrough(r, device, [&] { return sdl_key_held(listener_action(key)); });
 }
 bool d_listener_up(void* self, void* key, int32_t device, bool ignore, const void* mi)
 {
     if (native_input_blocked()) return false;
-    const bool r = o_listener_up(self, key, device, ignore, mi);
+    const bool r = o_listener_up(self, key, device, ignore, mi) ||
+        (ffpr::fieldnav::autowalk::virtual_input_active() && ffpr::fieldnav::autowalk::virtual_key(listener_action(key), true));
     return result_listener_passthrough(r, device, [&] { return sdl_key_released(listener_action(key)); });
 }
 bool d_any_held(void* self, int32_t device, const void* mi)

@@ -7,6 +7,7 @@
 #include "text.h"
 #include "unity.h"
 #include "battle/battle_util.h"
+#include "ui/preferences.h"
 #include <cmath>
 #include <map>
 
@@ -87,6 +88,8 @@ std::wstring skill_change(void* content)
     const auto gain = skill_progress::gain(it->second.before, it->second.after);
     const auto name = skill_name(content);
     if (!gain || *gain <= 0 || name.empty()) return {};
+    if (ui::prefs::stat_delta_mode() == 1)
+        return TF(L"{0}: gained {1}", {name, text::num(*gain) + L"%"});
     return TF(L"{0}: level {1} at {2}% to level {3} at {4}%, gained {5}%",
         {name, text::num(it->second.before.level), text::num(it->second.before.percent()),
          text::num(it->second.after.level), text::num(it->second.after.percent()), text::num(*gain)});

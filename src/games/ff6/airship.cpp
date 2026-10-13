@@ -223,6 +223,7 @@ void d_SwitchInputEnable(void* self, bool enable, const void* mi)
         if (!kAirshipController.is(self)) return;
         g_airship = self;
         if (!enable) return;
+        field::cache::register_object(kFieldPlayerController, self);
         void* fc = field_controller();
         if (!fc) return;
         bool spoke = check_altitude(fc);

@@ -58,6 +58,7 @@ constexpr int STATE_USE_SELECT = 2;       // Item list for Use
 constexpr int STATE_IMPORTANT_SELECT = 3; // Key Items list
 constexpr int STATE_ORGANIZE_SELECT = 4;  // Sort list
 constexpr int STATE_TARGET_SELECT = 5;    // Target selection
+constexpr int STATE_EQUIPMENT = 7;
 
 // ItemMenuState.LastSelectedItem, kept as the values the detail keys read: the row object itself
 // is rebuilt with every list update, so its pointer is not kept.
@@ -103,7 +104,7 @@ bool should_suppress()
             return false;
         }
         if (state == STATE_USE_SELECT || state == STATE_IMPORTANT_SELECT ||
-            state == STATE_ORGANIZE_SELECT || state == STATE_TARGET_SELECT)
+            state == STATE_ORGANIZE_SELECT || state == STATE_TARGET_SELECT || state == STATE_EQUIPMENT)
             return true;
     }
     // Fallback: clear state if we can't determine.

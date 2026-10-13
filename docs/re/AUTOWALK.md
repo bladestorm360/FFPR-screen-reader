@@ -137,3 +137,50 @@ slow fades/input disable, expected/unexpected maps, cancellation and a route tha
 to its starting floor. A real baked GotoMap → matching PointIn → interactible route is
 also replayed in every game, in addition to the existing 2,292 sampled map routes.
 All passed. Native facing and actual multi-floor gameplay still await user confirmation.
+
+## Vehicle action follow-up, October 13
+
+The user now explicitly authorizes automatic boarding/disembarking/landing through
+native input, including controller navigation requests. This supersedes the earlier
+manual vehicle boundary above; unrelated interaction confirms remain manual.
+
+Phase metadata carries VehicleAction and transportation identity/facing, separately
+from translated speech. Ship/water-craft legs include the adjacent boarding cell and
+extra shore tile. The follower emits ordinary input for WalkOn/WalkOff boundaries;
+walk_edge retains native collision and checks the baked ride/foot/landing rules.
+No world/transform/mechanics or grid writes occur.
+
+Explicit boarding/landing queues one native Confirm frame; FF6 plane/special-plane
+landing uses Back. Input manager and listener routes receive the same pulse. Obsolete
+or unsafe requests release it; the confirmed native transportation id and input-ready
+controller own continuation, with a bounded 10-second failed-action wait. Automatic
+vehicle transitions tolerate native input handoff and verify the resulting mode before
+continuing. On-foot/owned automatic-content modes are valid walking continuations.
+
+FF6 FieldPlayerKeyAirshipController.LateUpdateObserveInput 0x5F3FD0 uses its cardinal
+branch when isDownPageUp or both isDownShiftDown/isDownShiftUp are set. OnKey(2/3)
+and OnKeyUp(2/3), RVAs 0x5F4610/0x5F45B0, are the native shoulder input callbacks.
+Autowalk supplies both only during the original update, restoring pre-existing holds.
+OnTouchPadCallback 0x5F4670 receives the common InputDevice axis and stores it.
+MoveToAxis 0x5F4330 rotates that axis by the native bird-camera angle, normalizes it
+and submits one 16-unit movement to the native entity; autowalk supplies the inverse
+rotation and waits for native IsMoving completion. It never calls MoveToAxis directly.
+SwitchInputEnable also registers the current flight controller in the shared player cache.
+
+Local bounded exports: ignored build_check/re/ff6_equipment_party_airship.txt and
+ffN_vehicle_input.txt, in addition to existing ffN_movement_calls.txt. Native behavior,
+not merely class presence, established these inputs/geometry. Native input pulses are
+inactive outside their exact frame/release frame; listener names are not read for this
+purpose while autowalk has no pulse. All engine pointers remain on the native owner.
+
+Existing Backslash/P and controller LT entity requests share Mod.NavigateToEntity;
+Slash and waypoint LT share WaypointHandler.PathfindToCurrentWaypoint. Autowalk mode
+selects the walker in those common actions; controller input does not have a separate
+route policy. Gameplay timing and untested vehicle/story cases remain user-side.
+
+Final canonical build, all-six 2,292 baked route replays, route-worker and actual-native-
+input fixtures pass. Exact planned action cells prevent stale-route confirms; unexpected
+vehicle identities cannot resume a ride. Installed/hash-verified in all six games with
+the menu/results follow-up recorded in MENU_DETAILS.md. New automated boarding/landing,
+FF6 flight and controller handback remain gameplay-unconfirmed. Existing user confirmation
+of FF2 ship routing and cross-vehicle path directions is not autowalk confirmation.

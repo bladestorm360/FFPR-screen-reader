@@ -263,7 +263,7 @@ Detection treasure_detector(Context& c)
     }
     if (!hit) return not_handled();
     bool opened = treasure_opened(c.fe);
-    std::wstring contents = treasure_contents(c.property());
+    std::wstring contents = ui::prefs::spoil_treasure_chest_contents_enabled() ? treasure_contents(c.property()) : std::wstring();
     EntityPtr e = make(Kind::TreasureChest, c, !contents.empty() ? contents : T(L"Treasure Chest"));
     e->opened = opened;
     return detected(e);
@@ -491,7 +491,7 @@ struct RemoteBuilder {
                 row.name = object.raw_name.empty() ? std::wstring() : translate_entity_name(object.raw_name);
                 break;
             case baked::ObjType::TreasureBox:
-                if (object.content_id > 0) row.name = resolve_item_name(object.content_id);
+                if (ui::prefs::spoil_treasure_chest_contents_enabled() && object.content_id > 0) row.name = resolve_item_name(object.content_id);
                 break;
             case baked::ObjType::GotoMap: row.destination = resolve_map_name(object.dest_map_id); break;
             case baked::ObjType::SavePoint: break;

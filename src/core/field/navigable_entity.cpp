@@ -12,6 +12,7 @@
 #include "../game.h"
 #include "../modtext.h"
 #include "../text.h"
+#include "../ui/preferences.h"
 
 namespace field {
 namespace {
@@ -290,10 +291,12 @@ bool Entity::is_opened() const
 std::wstring Entity::display_name() const
 {
     // Another floor: whether the chest is opened is not known from here; the name alone.
-    if (remote() && kind == Kind::TreasureChest) return name;
+    const auto chest_name = kind == Kind::TreasureChest && !ui::prefs::spoil_treasure_chest_contents_enabled()
+        ? T(L"Treasure Chest") : name;
+    if (remote() && kind == Kind::TreasureChest) return chest_name;
     switch (kind) {
     case Kind::TreasureChest:
-        return TF(is_opened() ? L"Opened {0}" : L"Unopened {0}", {name});
+        return TF(is_opened() ? L"Opened {0}" : L"Unopened {0}", {chest_name});
     case Kind::NPC:
         return shop ? name + L" (" + T(L"shop") + L")" : name;
     case Kind::Vehicle: {

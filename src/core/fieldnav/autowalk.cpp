@@ -19,6 +19,14 @@ ref::Class kInputDevice{"", "InputDevice"};
 ref::Method mInputAxis{kInputDevice, "get_InputAxis", 0};
 ref::Class kController{"Last.Map", "FieldPlayerController"};
 ref::Class kKeyController{"Last.Map", "FieldPlayerKeyController"};
+ref::Class kAirshipController{"Last.Map", "FieldPlayerKeyAirshipController", game::kFF6};
+ref::Method mAirshipUpdate{kAirshipController, "LateUpdateObserveInput", 0};
+ref::Method mAirshipKey{kAirshipController, "OnKey", 1}, mAirshipKeyUp{kAirshipController, "OnKeyUp", 1};
+ref::Field fShiftUp{kAirshipController, "isDownShiftUp"}, fShiftDown{kAirshipController, "isDownShiftDown"};
+ref::Class kFieldMap{"", "FieldMap", game::kFF6};
+ref::Field fFieldController{kFieldMap, "fieldController"};
+ref::Class kFieldController{"Last.Map", "FieldController", game::kFF6};
+ref::Method mRotation{kFieldController, "GetZAxisRotateBirdCamera", 0};
 ref::Field fInputEnable{kController, "<InputEnable>k__BackingField"};
 ref::Field fPlayer{kController, "fieldPlayer"};
 ref::Class kEntity{"Last.Entity.Field", "FieldEntity"};
@@ -38,6 +46,14 @@ double g_progress_at = 0;
 Cell g_last_cell;
 bool g_have_cell = false;
 bool g_lt_was_held = false;
+VehicleAction g_vehicle_action = VehicleAction::None;
+int g_vehicle_id = 0, g_key_action = -1;
+uint64_t g_key_frame = 0;
+double g_vehicle_deadline = 0;
+double g_boundary_deadline = 0;
+Cell g_boundary_target;
+VehicleAction g_boundary_action = VehicleAction::None;
+int g_boundary_vehicle = 0;
 const void* g_entity_identity = nullptr; // identity only, never dereferenced
 int g_entity_map = 0;
 
@@ -57,15 +73,15 @@ bool context_ok()
 bool controller_ok(void* player)
 {
     void* pc = field::cache::get_or_refresh(kController);
-    return player && pc && unity::active_in_hierarchy(pc) && kKeyController.is(pc)
+    return player && pc && unity::active_in_hierarchy(pc) && (kKeyController.is(pc) || kAirshipController.is(pc))
         && ref::rd<void*>(pc, fPlayer) == player && ref::rd<bool>(pc, fInputEnable);
 }
 
 bool player_cell(void* map, void* pl, Cell& cell)
 {
     if (field::baked_nav::player_cell(map, pl, cell)) return true;
-    // Native searcher points have no dependable layer. On an unbaked map compare x/y;
-    // native collision and stairs own the actual layer, while the fallback carries -1.
+    // During native vehicle handoff the layer can be temporarily unavailable. Use
+    // the current baked dimensions and last verified layer; walk_edge still requires a bake.
     if (g_width <= 0 || g_height <= 0) return false;
     const auto pos = unity::local_position(unity::transform(pl));
     cell.x = static_cast<int>(std::floor(g_width * .5f + pos.x / 16.f));
@@ -103,7 +119,21 @@ unity::Vec2 axis(unity::Vec2 native)
     }
     if (!safe_context()) { cancel(); return native; }
     if (g_transition.waiting()) return native;
+    if (g_vehicle_action != VehicleAction::None) {
+        const auto vehicle = field::current_vehicle();
+        const bool boarded = vehicle.valid && vehicle.id == g_vehicle_id;
+        const bool completed = g_vehicle_action == VehicleAction::ConfirmBoard ? boarded :
+            vehicle.valid && (vehicle.type == 1 || vehicle.type == 5);
+        if (completed && context_ok() && controller_ok(field::player())) {
+            g_route->complete_vehicle_action(); g_vehicle_action = VehicleAction::None;
+            g_progress_at = frame::now(); g_have_cell = false;
+        } else {
+            if (frame::now() > g_vehicle_deadline) { cancel(); ffpr::say(T(L"Autowalk blocked")); }
+            return {};
+        }
+    }
     if (!context_ok()) {
+        if (g_boundary_deadline > frame::now()) return {};
         if (g_has_goal && g_exit_approach && g_transition.begin(frame::now())) return native;
         cancel(); return native;
     }
@@ -112,6 +142,7 @@ unity::Vec2 axis(unity::Vec2 native)
     if (pl && map && unity::alive(pl) && field::current_map_id() == g_map && !controller_ok(pl)
         && g_has_goal && g_exit_approach && g_transition.begin(frame::now())) return native;
     if (!pl || !map || !unity::alive(pl) || !controller_ok(pl) || field::current_map_id() != g_map) {
+        if (pl && map && field::current_map_id() == g_map && g_boundary_deadline > frame::now()) return {};
         cancel(); return native;
     }
     if (g_has_goal && g_goal->map_id == g_map && g_entity_map == g_map && g_entity_identity) {
@@ -131,21 +162,50 @@ unity::Vec2 axis(unity::Vec2 native)
     }
     Cell at;
     if (!player_cell(map, pl, at)) { cancel(); return native; }
+    if (g_boundary_deadline > 0 && at == g_boundary_target) {
+        const auto vehicle = field::current_vehicle();
+        const bool correct = vehicle.valid && (g_boundary_action == VehicleAction::WalkOn
+            ? vehicle.id == g_boundary_vehicle : vehicle.type == 1 || vehicle.type == 5);
+        g_boundary_deadline = 0;
+        if (!correct) { cancel(); ffpr::say(T(L"Autowalk stopped. Route changed.")); return {}; }
+    }
     if (!g_have_cell || !(at == g_last_cell)) {
         g_last_cell = at; g_have_cell = true; g_progress_at = frame::now();
     }
     const Step step = g_route->next(at);
     if (step.result == Result::Move) {
-        if (frame::now() - g_progress_at > 2.0 || !field::baked_nav::walk_edge(map, pl, at, step.next, step.goal_edge)) {
+        if (frame::now() - g_progress_at > 2.0 || !field::baked_nav::walk_edge(map, pl, at, step.next, step.goal_edge,
+            step.vehicle_action, step.transportation_id)) {
             cancel(); ffpr::say(T(L"Autowalk blocked")); return {};
         }
         g_exit_approach = step.goal_edge && g_next_map > 0;
-        return {static_cast<float>(step.x), static_cast<float>(step.y)};
+        if (step.vehicle_action == VehicleAction::WalkOn || step.vehicle_action == VehicleAction::WalkOff) {
+            g_boundary_deadline = frame::now() + 10.0;
+            g_boundary_target = step.next; g_boundary_action = step.vehicle_action; g_boundary_vehicle = step.transportation_id;
+        }
+        unity::Vec2 wanted{static_cast<float>(step.x), static_cast<float>(step.y)};
+        if (game::is(game::Id::FF6) && kAirshipController.is(field::cache::get(kController))) {
+            void* fc = ref::rd<void*>(field::cache::get(kFieldMap), fFieldController);
+            const float angle = fc ? ref::call<float>(mRotation, fc) : NAN;
+            if (!std::isfinite(angle)) { cancel(); return {}; }
+            const float radians = angle * 0.017453292519943295f;
+            // Native MoveToAxis rotates its input by the bird camera angle.
+            wanted = {wanted.x * std::cos(radians) + wanted.y * std::sin(radians),
+                      -wanted.x * std::sin(radians) + wanted.y * std::cos(radians)};
+        }
+        return wanted;
     }
     if (step.result == Result::Arrived && g_next_map > 0 && g_has_goal) {
         g_transition.begin(frame::now()); return {};
     }
     const bool faced = step.face_direction >= 0 && field::face_player(pl, step.face_direction);
+    if (step.result == Result::Action && step.vehicle_action != VehicleAction::None) {
+        if (step.face_direction >= 0 && !faced) { cancel(); ffpr::say(T(L"Autowalk blocked")); return {}; }
+        g_vehicle_action = step.vehicle_action; g_vehicle_id = step.transportation_id;
+        g_key_action = step.vehicle_action == VehicleAction::BackLand ? 1 : 0;
+        g_key_frame = frame::count(); g_vehicle_deadline = frame::now() + 10.0;
+        return {};
+    }
     cancel();
     if (step.result == Result::OffRoute) ffpr::say(T(L"Autowalk stopped. Route changed."));
     else if (step.result == Result::Action) ffpr::say(T(L"Autowalk stopped") + L", " + step.instruction);
@@ -161,9 +221,29 @@ unity::Vec2 d_InputAxis(void* self, const void* mi)
     catch (...) { cancel(); ref::call_failed_note("Autowalk.InputAxis"); return native; }
 }
 
+using AirshipUpdate = void (*)(void*, const void*);
+AirshipUpdate o_airship_update;
+void d_airship_update(void* self, const void* mi)
+{
+    // Only the native input route is changed. Both shoulder inputs select the
+    // game's cardinal-movement branch; its collision, speed and animation remain native.
+    const bool driving = g_active && context_ok() && kAirshipController.is(self) && controller_ok(field::player());
+    const bool up = driving && !ref::rd<bool>(self, fShiftUp);
+    const bool down = driving && !ref::rd<bool>(self, fShiftDown);
+    if (up) ref::call<void>(mAirshipKey, self, int32_t{2});
+    if (down) ref::call<void>(mAirshipKey, self, int32_t{3});
+    o_airship_update(self, mi);
+    if (unity::alive(self)) {
+        if (up) ref::call<void>(mAirshipKeyUp, self, int32_t{2});
+        if (down) ref::call<void>(mAirshipKeyUp, self, int32_t{3});
+    }
+}
+
 int install()
 {
     g_hooked = mIsMoving.ptr() && hooks::attach(mInputAxis, &d_InputAxis, &o_InputAxis);
+    const bool flight_hooked = hooks::attach(mAirshipUpdate, &d_airship_update, &o_airship_update);
+    if (game::is(game::Id::FF6) && !flight_hooked) g_hooked = false;
     actions::define("Settings.Changed.Autowalk", [] { if (!ui::prefs::autowalk_enabled()) cancel(); });
     queries::define("Autowalk.IsActive", [] { return active(); });
     actions::define("Autowalk.Cancel", [] { cancel(); });
@@ -211,6 +291,7 @@ void cancel(bool announce)
     if (g_planning) field::baked_nav::cancel_requests();
     g_planning = false;
     g_active = false;
+    g_vehicle_action = VehicleAction::None; g_key_action = -1; g_key_frame = 0; g_boundary_deadline = 0;
     g_transition.clear();
     frame::cancel_label("Autowalk.");
     if (was_active) {
@@ -271,6 +352,9 @@ void input_updated()
     const bool lt_pressed = lt_held && !g_lt_was_held;
     g_lt_was_held = lt_held;
     if (!active()) return;
+    if (g_vehicle_action != VehicleAction::None && frame::now() > g_vehicle_deadline) {
+        cancel(); ffpr::say(T(L"Autowalk blocked")); return;
+    }
     if (!input::game_window_focused() || !ui::prefs::autowalk_enabled() || input::suppress_game_input()) {
         cancel(); return;
     }
@@ -293,8 +377,20 @@ void input_updated()
     if (g_planning && !g_active) return; // no native movement while worker plans
     if (g_transition.waiting()) {
         if (g_transition.expired(frame::now())) { cancel(); ffpr::say(T(L"Autowalk stopped. Route changed.")); }
-    } else if (!context_ok() || !controller_ok(field::player())) {
+    } else if (g_vehicle_action == VehicleAction::None && g_boundary_deadline <= frame::now() && (!context_ok() || !controller_ok(field::player()))) {
         if (!g_has_goal || !g_exit_approach || !g_transition.begin(frame::now())) cancel();
     }
+}
+bool virtual_key(int action, bool up)
+{
+    if (!virtual_input_active() || g_key_action != action || !safe_context()) return false;
+    const auto now = frame::count();
+    return up ? now == g_key_frame + 1 : now == g_key_frame;
+}
+bool virtual_input_active()
+{
+    if (!g_active || g_key_action < 0) return false;
+    const auto now = frame::count();
+    return now == g_key_frame || now == g_key_frame + 1;
 }
 }

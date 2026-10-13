@@ -6,6 +6,7 @@
 #include "../modtext.h"
 #include "../say.h"
 #include "../battle/battle.h"
+#include "../ui/preferences.h"
 
 namespace {
 ref::Class kDamage{"Last.Map", "ConditionDamage"};
@@ -23,7 +24,8 @@ bool d_execute(void* self, void* accessor, void* entity, int32_t x, int32_t y, c
         if (!result || fEffect.get() < 0 || !il2cpp::read_field<bool>(self, fEffect.get() + 4) ||
             !ref::rd<void*>(self, fAnimation) || !displayed::world_visible(entity)) return;
         frame::next_frame([entity] {
-            if (!ffpr::battle::in_battle() && queries::is("GameStatePatches.IsFieldPlayerState") && displayed::world_visible(entity))
+            if (ui::prefs::status_damage_enabled() && !ffpr::battle::in_battle() &&
+                queries::is("GameStatePatches.IsFieldPlayerState") && displayed::world_visible(entity))
                 ffpr::say(T(L"Status damage"), false);
         }, "Field.ConditionFlash");
     });

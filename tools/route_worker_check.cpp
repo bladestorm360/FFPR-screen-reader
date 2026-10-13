@@ -10,6 +10,7 @@
 namespace fixture {
 const DWORD native_owner = GetCurrentThreadId();
 std::atomic<int> wrong_owner{0};
+game::Id game_id = game::Id::FF2;
 void native() { if (GetCurrentThreadId() != native_owner) ++wrong_owner; }
 json::Value records;
 }
@@ -53,7 +54,7 @@ void cancel_label(const char*) { fixture::native(); }
 namespace background { bool post(std::function<void()>, Lane) { fixture::native(); return false; } }
 namespace ffpr { void say(std::wstring_view, bool) { fixture::native(); } }
 namespace ffpr::system { bool is_field_navigation_ready() { fixture::native(); return false; } }
-namespace game { const Flags& flags() { static Flags f; return f; } const char* key() { return "ff2"; } }
+namespace game { Id current() { return fixture::game_id; } const Flags& flags() { static Flags f; return f; } const char* key() { return "ff2"; } }
 namespace modtext {
 LocaleScope::LocaleScope(std::wstring) {}
 LocaleScope::~LocaleScope() {}
@@ -204,6 +205,7 @@ int main() {
     int vehicle_cases=0, no_landing=0;
     double worst_vehicle_ms=0, worst_vehicle_filter_ms=0;
     for(int number=1; number<=6; ++number) {
+        fixture::game_id=static_cast<game::Id>(number);
         std::ifstream source("data/ff"+std::to_string(number)+"/maps.bin",std::ios::binary);
         std::string vehicle_bytes((std::istreambuf_iterator<char>(source)),{});
         expect(field::baked::load(vehicle_bytes.data(),vehicle_bytes.size()), "each game's actual vehicle grids load");

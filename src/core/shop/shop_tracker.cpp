@@ -146,7 +146,7 @@ std::wstring description_from_ui()
         if (!view) return std::wstring();
         void* text_component = ref::rd<void*>(view, fDescriptionText);
         if (!text_component) return std::wstring();
-        return unity::ui_text(text_component);
+        return displayed::text(text_component);
     });
 }
 

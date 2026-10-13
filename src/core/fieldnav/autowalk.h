@@ -11,4 +11,7 @@ void start(const field::PathInfo& path, const field::baked_nav::MapGoal* goal = 
 void cancel(bool announce = false);
 /// Called after keyboard/SDL polling, before dispatch, even with no keyboard key pressed.
 void input_updated();
+/// Native input checks see a one-frame confirm/back press for a planned vehicle action.
+bool virtual_key(int action, bool up = false);
+bool virtual_input_active();
 }

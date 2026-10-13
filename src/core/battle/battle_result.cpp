@@ -133,7 +133,9 @@ std::vector<std::wstring> row_lines(void* controller, const char* list_field, bo
     std::vector<std::wstring> lines;
     if (!displayed::container_visible(controller)) return lines;
     void* list = displayed::field(controller, list_field);
-    for (int i = 0; i < unity::list_count(list); ++i) {
+    const int count = unity::list_count(list);
+    if (count < 0 || count > 128) return lines;
+    for (int i = 0; i < count; ++i) {
         void* content = unity::list_at(list, i);
         if (!displayed::container_visible(content)) continue;
         auto line = compare ? displayed::comparison(displayed::field(content, "view")) : displayed::skill_row(content);
@@ -206,7 +208,7 @@ std::vector<std::wstring> point_totals(void* self)
 }
 void append_skill_details(std::vector<std::wstring>& lines)
 {
-    // Combined native panels stay on this page, never in its automatic totals.
+    // Actual learning/level-up messages are essential, independent of Autodetail.
     void* skill = displayed::field(g_menu, "skillController");
     auto learned = row_lines(skill, "contentList");
     auto levels = row_lines(skill, "levelUpContentList");
@@ -217,7 +219,6 @@ std::vector<std::wstring> point_details(void* self)
 {
     auto lines = game::is(game::Id::FF2) ? std::vector<std::wstring>{} :
         row_lines(displayed::field(self, "characterListConteroller"), "contentList");
-    append_skill_details(lines);
     return lines;
 }
 void begin_phase(void* menu, ResultPhase phase)
@@ -243,7 +244,7 @@ void point_rows(void* self)
     g_point_animation_pending = !game::is(game::Id::FF2) &&
         unity::list_count(displayed::field(displayed::field(self, "characterListConteroller"), "performanceList")) > 0;
     later(self, [] { return T(L"Battle results"); }, [self] { return point_details(self); },
-          [self] { return point_totals(self); });
+          [self] { auto lines = point_totals(self); append_skill_details(lines); return lines; });
     // Counter audio follows native animation completion, never changes the game values.
     if (!game::is(game::Id::FF2) && settings::get_bool("ExpCounter", true)) {
         void* data = displayed::field(self, "targetData");
@@ -257,13 +258,38 @@ std::vector<std::wstring> growth_rows(void* self, bool changed_only)
 {
     std::vector<std::wstring> lines;
     void* list = displayed::field(self, "contentList");
-    for (int i = 0; i < unity::list_count(list); ++i) {
+    const int count = unity::list_count(list);
+    if (count < 0 || count > 64) return lines;
+    for (int i = 0; i < count; ++i) {
         void* content = unity::list_at(list, i);
         if (!displayed::container_visible(content)) continue;
-        auto reading = displayed::comparison_reading(displayed::field(content, "view"));
+        void* view = displayed::field(content, "view");
+        // Native job-mastery messages replace this row's numbers. They are
+        // essential messages, not an optional numeric comparison.
+        if (!displayed::text_field(view, "upperJobMasterText").empty() ||
+            !displayed::text_field(view, "lowerJobMasterText").empty()) continue;
+        auto reading = displayed::comparison_reading(view);
         if (reading.line.empty()) continue;
         if (!changed_only || reading.changed) lines.push_back(std::move(reading.line));
     }
+    return lines;
+}
+std::vector<std::wstring> growth_messages(void* self)
+{
+    std::vector<std::wstring> lines;
+    void* list = displayed::field(self, "contentList");
+    const int count = unity::list_count(list);
+    if (count < 0 || count > 64) return lines;
+    for (int i = 0; i < count; ++i) {
+        void* row = unity::list_at(list, i);
+        if (!displayed::container_visible(row)) continue;
+        void* view = displayed::field(row, "view");
+        for (const char* field : {"upperJobMasterText", "lowerJobMasterText"}) {
+            auto message = displayed::text_field(view, field);
+            if (!message.empty()) lines.push_back(std::move(message));
+        }
+    }
+    append_skill_details(lines);
     return lines;
 }
 void status_rows(void* self)
@@ -278,10 +304,10 @@ void status_rows(void* self)
         auto lines = growth_rows(self, false);
         auto bonus = displayed::pair(displayed::field(self, "view"), "magicStoneBonusText", "magicStoneBonusValueText");
         if (!bonus.empty()) lines.push_back(std::move(bonus));
-        append_skill_details(lines);
         return lines;
-    }, {}, [self](ui::review::Options& options) {
+    }, [self] { return growth_messages(self); }, [self](ui::review::Options& options) {
         options.brief = growth_rows(self, true);
+        options.brief_details = ui::prefs::stat_delta_mode() == 1;
         options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
     });
 }
@@ -300,7 +326,9 @@ std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = 
             if (!displayed::container_visible(skill)) continue;
             const auto rendered = displayed::skill_row(skill);
             if (rendered.empty()) continue;
-            auto line = changed_only ? displayed::skill_change(skill) : rendered;
+            auto line = changed_only || ui::prefs::stat_delta_mode() == 1 ? displayed::skill_change(skill) : rendered;
+            if (!changed_only && line.empty()) line = ui::prefs::stat_delta_mode() == 1 ?
+                displayed::skill_name(skill) + L": " + T(L"No change") : rendered;
             // Native FF2 SetData populates slot 0 from right-hand equipment and
             // slot 1 from left-hand equipment. Retain the displayed column labels.
             const auto hand = displayed::text_field(displayed::field(controller, "view"),
@@ -313,7 +341,7 @@ std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = 
 }
 void skills(void* self)
 {
-    later(self, [] { return g_skill_headline; }, [self] {
+    later(self, [] { return g_skill_headline; }, [] { return std::vector<std::wstring>{}; }, [self] {
         auto lines = row_lines(self, "contentList");
         auto levels = row_lines(self, "levelUpContentList");
         lines.insert(lines.end(), levels.begin(), levels.end());
@@ -330,18 +358,18 @@ void weapon_page(void* point)
     stop_exp_counter_if_playing();
     later(point, [] { return T(L"Battle results"); }, [point] {
         auto lines = ff2_weapon_rows(displayed::field(point, "skillLevelController"));
-        append_skill_details(lines);
         return lines;
     }, [point] {
         // This is the actual native weapon phase, not the preceding member panel.
         if (!displayed::container_visible(displayed::field(point, "skillLevelController")))
             return std::vector<std::wstring>{};
-        return point_totals(point);
+        auto lines = point_totals(point); append_skill_details(lines); return lines;
     }, [point](ui::review::Options& options) {
         void* controller = displayed::field(point, "skillLevelController");
         options.brief = ff2_weapon_rows(controller, true);
+        options.brief_details = ui::prefs::stat_delta_mode() == 1;
         options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
-        options.announce_brief_with_details = true;
+        options.announce_brief_with_details = !options.brief_details;
     });
 }
 
@@ -436,7 +464,7 @@ void d_skill_page(void* self, const void* mi) {
         else if (g_phase == ResultPhase::Points && ui::review::owns(g_point_owner)) {
             void* owner = g_point_owner;
             later(owner, [] { return T(L"Battle results"); }, [owner] { return point_details(owner); },
-                  [owner] { return point_totals(owner); });
+                  [owner] { auto lines = point_totals(owner); append_skill_details(lines); return lines; });
         } else if (g_phase == ResultPhase::Weapon && game::is(game::Id::FF2)) {
             weapon_page(g_point_owner);
         } else if (g_phase == ResultPhase::Status && ui::review::owns(g_status_owner)) {
@@ -489,6 +517,18 @@ int install() {
 #undef ATTACH_GAME
 #undef ATTACH
     actions::define("BattleResultPatches.ClearAllBattleMenuFlags", [] { result_clear_all_battle_states(); });
+    actions::define("BattleResult.RebuildStatDeltas", [] {
+        if (g_phase == ResultPhase::Status && displayed::container_visible(g_status_owner)) status_rows(g_status_owner);
+        else if (g_phase == ResultPhase::Weapon && displayed::container_visible(g_point_owner)) weapon_page(g_point_owner);
+        else return;
+        if (g_pending_page) {
+            auto configure = g_pending_page->configure;
+            g_pending_page->configure = [configure](ui::review::Options& options) {
+                if (configure) configure(options);
+                options.announce = false;
+            };
+        }
+    });
     // Native session ownership starts before any phase content/animation is ready.
     queries::define("ReviewBuffer.IsResults", [] { return g_phase != ResultPhase::None && unity::alive(g_menu); });
     return n;

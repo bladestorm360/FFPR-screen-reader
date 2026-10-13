@@ -37,6 +37,7 @@ void speak(std::wstring line) {
 }
 int install() {
     queries::define("ReviewBuffer.IsActive", [] { return active(); });
+    queries::define("ReviewBuffer.IsInformation", [] { return active() && domain() == Domain::Information; });
     actions::define("ReviewBuffer.Details", [] { details(); });
     actions::define("ReviewBuffer.Next", [] { next(); });
     actions::define("ReviewBuffer.Previous", [] { previous(); });
@@ -48,6 +49,10 @@ int install() {
     add_binding(Key::LeftArrow, Mod::None, Context::Results, "ReviewBuffer.First", "First displayed result line");
     add_binding(Key::RightArrow, Mod::None, Context::Results, "ReviewBuffer.Last", "Last displayed result line");
     add_binding(Key::I, Mod::None, Context::Results, "ReviewBuffer.Details", "Read displayed results");
+    add_binding(Key::DownArrow, Mod::None, Context::Information, "ReviewBuffer.Next", "Next displayed comparison line");
+    add_binding(Key::UpArrow, Mod::None, Context::Information, "ReviewBuffer.Previous", "Previous displayed comparison line");
+    add_binding(Key::LeftArrow, Mod::None, Context::Information, "ReviewBuffer.First", "First displayed comparison line");
+    add_binding(Key::RightArrow, Mod::None, Context::Information, "ReviewBuffer.Last", "Last displayed comparison line");
     events::on(events::Kind::BattleStart, [] { clear(); });
     events::on(events::Kind::BattleEnd, [] { clear(); });
     return 0;
@@ -134,7 +139,10 @@ void show_impl(void* owner, const std::wstring& headline, std::vector<std::wstri
             g_buffer = std::move(built.buffer); g_full_details = std::move(built.full);
             g_phase_changes = std::move(built.brief);
             if (g_options.announce) {
-                if (built.autodetail && !g_options.defer_details && !built.details.empty()) ffpr::say(built.details, false);
+                if (built.autodetail && !g_options.defer_details) {
+                    const auto& details = g_options.brief_details ? g_phase_changes : built.details;
+                    if (!details.empty()) ffpr::say(details, false);
+                }
                 if ((!built.autodetail || g_options.announce_brief_with_details) &&
                     g_options.announce_brief && !g_options.defer_details && !g_phase_changes.empty()) ffpr::say(g_phase_changes, false);
             }
@@ -151,19 +159,27 @@ void clear() {
     g_build_pending = false; g_replaying = false; g_executing_action = false; g_pending_actions.clear();
     g_owner = nullptr; g_buffer = {}; g_lines.clear(); g_headline.clear(); g_options = {}; g_full_details.clear(); g_phase_changes.clear();
 }
-void replace_lines(std::vector<std::wstring> lines, int restore_index) {
+void replace_lines(std::vector<std::wstring> lines, int restore_index, std::optional<std::vector<std::wstring>> brief) {
     const auto headline = g_headline;
     Options options = g_options;
     options.announce = g_build_pending && g_options.announce;
     options.restore_index = restore_index;
+    if (brief) options.brief = std::move(brief);
     show_impl(g_owner, headline, std::move(lines), options, true);
 }
 bool pending_action(void (*action)());
 void show(void* owner, const std::wstring& headline, std::vector<std::wstring> lines, Options options) {
     show_impl(owner, headline, std::move(lines), std::move(options), false);
 }
+void begin(void* owner, const std::wstring& headline, Options options) {
+    clear();
+    if (!displayed::container_visible(owner)) return;
+    g_owner = owner; g_domain = options.domain; g_headline = headline; g_options = std::move(options);
+    g_build_pending = true;
+}
 void details() {
     if (!active()) return;
+    if (!g_options.details_action.empty()) { actions::run(g_options.details_action.c_str()); return; }
     if (pending_action(&details)) return;
     if (g_options.brief) {
         // Explicit I/West repeats the automatic current-phase summary, regardless

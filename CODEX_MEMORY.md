@@ -1,5 +1,19 @@
 # Native FFPR durable memory
 
+- October 13 equipment/results/party/vehicle follow-up deployed/hash-verified in all six:
+  `B09ED487633FF7075C63480673D050A231C0635E7D511345DA48CCA715BE21E6`. Supersedes earlier DLLs below.
+  Slot/candidate/shop Autodetail and live-panel I, comparison arrow buffers, all-six
+  extra item details, native party-owner/focus H/slot queries, always-essential learning/
+  level gains, Verbose/Brief deltas, default-on status warnings and default-off chest
+  spoilers are implemented. Native vehicle actions/FF6 flight/controller LT share
+  autowalk policy. [Source, screenshot and final validation/delegation evidence](docs/re/MENU_DETAILS.md),
+  [vehicle ownership/actions](docs/re/AUTOWALK.md#vehicle-action-follow-up-october-13).
+  Canonical build: 7,077 names/zero missing; zero undefined wiring; actual-source regressions
+  and isolated DLL smoke pass. Prism unchanged; no game launch/probe. Sol reviewed/tested
+  bounded gpt-6-luna preferences/menu/translations. New gameplay cases remain pending:
+  [prioritized short checks](docs/TESTING.md#equipment-gains-warnings-chest-labels-and-autowalk-retest-october-13).
+
+
 - October 13 subsequent user retest confirms FF2 ship pathfinding and boarding/
   disembarking across route legs work; other vehicles remain untested. No numerical
   timing or every boarded-save/story case is implied. Screenshot review confirms

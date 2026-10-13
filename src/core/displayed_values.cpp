@@ -2,11 +2,34 @@
 #include "modtext.h"
 #include "text.h"
 #include "unity.h"
+#include "ui/preferences.h"
+#include <cwchar>
+#include <cstdlib>
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
 namespace displayed {
+namespace {
+// Parse only complete rendered numeric strings. Never recover hidden native parameters.
+std::optional<long long> number(const std::wstring& value)
+{
+    if (value.empty()) return {};
+    wchar_t* end = nullptr;
+    const auto result = std::wcstoll(value.c_str(), &end, 10);
+    return end != value.c_str() && *end == 0 && result >= -1000000000 && result <= 1000000000
+        ? std::optional<long long>(result) : std::nullopt;
+}
+std::wstring delta(const std::wstring& label, const std::wstring& before,
+                   const std::wstring& after, const std::wstring& unit)
+{
+    const auto first = number(before), last = number(after);
+    if (!first || !last || *first == *last) return {};
+    const auto difference = *last - *first;
+    return TF(difference > 0 ? L"{0}: gained {1}" : L"{0}: lost {1}",
+        {label, std::to_wstring(std::llabs(difference)) + unit});
+}
+}
 Comparison comparison_reading(void* view)
 {
     auto category = text_field(view, "categoryText");
@@ -19,6 +42,18 @@ Comparison comparison_reading(void* view)
     // the rate, only the multiplier, or both. An unchanged rate is not a gain.
     const bool changed = (!after.empty() && after != before) ||
         (!after_percent.empty() && after_percent != before_percent);
+    if (ui::prefs::stat_delta_mode() == 1 && !before.empty() && !after.empty()) {
+        const auto unit = text_field(view, "afterPercentSymbolText") + text_field(view, "afterValuePercentText");
+        std::vector<std::wstring> gains;
+        auto primary = delta(category, before, after, unit);
+        if (!primary.empty()) gains.push_back(std::move(primary));
+        auto multiple = text_field(view, "afterMultipleSymbolText");
+        auto rate = delta(category, before_percent, after_percent, multiple.empty() ? text_field(view, "afterPercentSymbolText") : multiple);
+        if (!rate.empty()) gains.push_back(std::move(rate));
+        if (!gains.empty()) return {::text::join(gains, L", "), changed};
+        if (!changed) return {category + (category.empty() ? L"" : L": ") + T(L"No change"), false};
+        // Non-numeric localized values retain the actual displayed comparison.
+    }
     if (!before_percent.empty()) before += text_field(view, "beforeMultipleSymbolText") +
         before_percent + text_field(view, "beforePercentSymbolText");
     if (!after_percent.empty()) after += text_field(view, "afterMultipleSymbolText") +

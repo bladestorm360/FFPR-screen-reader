@@ -19,6 +19,26 @@ ref::Class kCommands{"Last.UI.KeyInput", "BattleCommandSelectController"};
 ref::Field fActor{kCommands, "targetData"};
 void* g_party = nullptr;
 ref::Method mInitialize{kParty, "Initalize", 0};
+ref::Method mUpdate{kParty, "UpdateView", 2}, mFocus{kParty, "SetFocus", 2};
+void* g_focused_player = nullptr;
+using Update = void (*)(void*, void*, bool, const void*);
+Update o_update;
+void d_update(void* self, void* players, bool target, const void* mi) {
+    o_update(self, players, target, mi);
+    hooks::guarded("Battle.PartyViewOwner", [self] {
+        if (kParty.is(self)) { g_party = self; field::cache::register_object(kParty, self); }
+    });
+}
+Update o_focus;
+void d_focus(void* self, void* player, bool focused, const void* mi) {
+    o_focus(self, player, focused, mi);
+    hooks::guarded("Battle.PartyFocus", [=] {
+        if (!kParty.is(self)) return;
+        g_party = self; field::cache::register_object(kParty, self);
+        if (focused) g_focused_player = player;
+        else if (g_focused_player == player) g_focused_player = nullptr;
+    });
+}
 using Initialize = void (*)(void*, const void*);
 Initialize o_initialize;
 void d_initialize(void* self, const void* mi) {
@@ -35,16 +55,20 @@ std::vector<void*> rows()
 {
     std::vector<void*> out;
     if (!in_battle()) return out;
-    if (!displayed::visible(g_party)) g_party = field::cache::get(kParty);
-    if (!displayed::visible(g_party)) return out;
+    if (!displayed::container_visible(g_party)) g_party = field::cache::get(kParty);
+    if (!displayed::container_visible(g_party)) return out;
     // The game swaps its ordinary and target-select panels. Read whichever it displays.
     for (void* list : {ref::rd<void*>(g_party, fContents), ref::rd<void*>(g_party, fTargets)}) {
-        for (int i = 0; i < unity::list_count(list); ++i) {
+        const int count = unity::list_count(list);
+        if (count <= 0 || count > 9) continue;
+        std::vector<void*> slots(static_cast<size_t>(count));
+        bool any = false;
+        for (int i = 0; i < count; ++i) {
             void* row = unity::list_at(list, i);
             void* view = displayed::field(row, "view");
-            if (displayed::visible(view) && !displayed::text_field(view, "nameText").empty()) out.push_back(row);
+            if (displayed::container_visible(view) && !displayed::text_field(view, "nameText").empty()) { slots[i] = row; any = true; }
         }
-        if (!out.empty()) break;
+        if (any) { out = std::move(slots); break; }
     }
     return out;
 }
@@ -68,6 +92,7 @@ void* active_row(const std::vector<void*>& content)
     void* command = field::cache::get(kCommands);
     const bool choosing = menu_state::is_active(menu_state::BATTLE_COMMAND) || menu_state::is_active(menu_state::BATTLE_ITEM) ||
                           menu_state::is_active(menu_state::BATTLE_MAGIC) || menu_state::is_active(menu_state::BATTLE_TARGET);
+    if (!choosing && !g_execution_name.empty() && !g_execution_player) return nullptr;
     void* actor = choosing && unity::alive(command) ? ref::rd<void*>(command, fActor) : nullptr;
     if (actor) {
         const int id = character_id(actor);
@@ -84,6 +109,8 @@ void* active_row(const std::vector<void*>& content)
         if (choosing && owned && owned == current_actor()) return row;
     }
     for (void* row : content)
+        if (g_focused_player && displayed::field(row, "<TargetData>k__BackingField") == g_focused_player) return row;
+    for (void* row : content)
         if (displayed::visible(displayed::field(displayed::field(row, "view"), "focusImage"))) return row;
     return nullptr;
 }
@@ -91,7 +118,7 @@ void* active_row(const std::vector<void*>& content)
 void announce_slot(int slot)
 {
     const auto content = rows();
-    if (slot < 1 || slot > static_cast<int>(content.size())) return;
+    if (slot < 1 || slot > static_cast<int>(content.size()) || !content[slot - 1]) return;
     ffpr::say(read_row(content[slot - 1]), true);
 }
 
@@ -100,7 +127,10 @@ void cycle_party(int delta)
     const auto content = rows();
     if (content.empty()) return;
     const int count = static_cast<int>(content.size());
-    g_review_slot = g_review_slot < 0 ? (delta < 0 ? count - 1 : 0) : (g_review_slot + delta + count) % count;
+    for (int i = 0; i < count; ++i) {
+        g_review_slot = g_review_slot < 0 ? (delta < 0 ? count - 1 : 0) : (g_review_slot + delta + count) % count;
+        if (content[g_review_slot]) break;
+    }
     ffpr::say(read_row(content[g_review_slot]), true);
 }
 
@@ -118,9 +148,10 @@ int install()
                        "BattleParty.ActiveTurn", "Battle: announce active turn");
     actions::define("BattleParty.Next", [] { cycle_party(1); });
     actions::define("BattleParty.Previous", [] { cycle_party(-1); });
-    events::on(events::Kind::BattleStart, [] { g_party = nullptr; g_review_slot = -1; action_actor_finished(); });
-    events::on(events::Kind::BattleEnd, [] { g_party = nullptr; g_review_slot = -1; action_actor_finished(); });
-    return hooks::attach(mInitialize, &d_initialize, &o_initialize) ? 1 : 0;
+    events::on(events::Kind::BattleStart, [] { g_party = g_focused_player = nullptr; g_review_slot = -1; action_actor_finished(); });
+    events::on(events::Kind::BattleEnd, [] { g_party = g_focused_player = nullptr; g_review_slot = -1; action_actor_finished(); });
+    return (hooks::attach(mInitialize, &d_initialize, &o_initialize) ? 1 : 0) +
+        (hooks::attach(mUpdate, &d_update, &o_update) ? 1 : 0) + (hooks::attach(mFocus, &d_focus, &o_focus) ? 1 : 0);
 }
 core::Install s_install{"Battle.Party", &install, 110};
 }

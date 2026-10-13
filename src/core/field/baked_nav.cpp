@@ -604,10 +604,26 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
         p1.cells = leg1.cells;
         Phase p2;
         p2.cells = leg2.cells;
-        if (!riding) p2.action_before = TF(L"board the {0}", {name});
+        if (!riding) {
+            p2.action_before = TF(L"board the {0}", {name});
+            p2.transportation_id = v.transportation_id;
+            p2.vehicle_before = sails ? route_progress::VehicleAction::WalkOn : route_progress::VehicleAction::ConfirmBoard;
+            const auto approach = leg1.cells.back();
+            p2.action_cell = approach;
+            int dx = vcell.x - approach.x, dy = vcell.y - approach.y;
+            if (std::abs(dx) > 1) dx = dx > 0 ? -1 : 1;
+            if (std::abs(dy) > 1) dy = dy > 0 ? -1 : 1;
+            p2.vehicle_direction = dy < 0 ? 0 : dx > 0 ? 1 : dy > 0 ? 2 : 3;
+            if (sails) p2.cells.insert(p2.cells.begin(), approach);
+        }
         Phase p3;
         p3.cells = leg3.cells;
-        if (!sails || riding) p3.action_before = T(L"land");
+        p3.action_before = T(L"land");
+        p3.transportation_id = v.transportation_id;
+        p3.action_cell = stop;
+        p3.vehicle_before = sails ? route_progress::VehicleAction::WalkOff :
+            game::is(game::Id::FF6) && (row->type == 3 || row->type == 8) ?
+                route_progress::VehicleAction::BackLand : route_progress::VehicleAction::ConfirmLand;
         if (!riding) best.push_back(p1);
         best.push_back(p2);
         best.push_back(p3);
@@ -1353,7 +1369,8 @@ bool follow(void* map_handle, void* player, Vec3 target, TargetKind kind, Corner
     });
 }
 
-bool walk_edge(void* map_handle, void* player, const Cell& from, const Cell& to, bool goal_edge)
+bool walk_edge(void* map_handle, void* player, const Cell& from, const Cell& to, bool goal_edge,
+               route_progress::VehicleAction vehicle_action, int transportation_id)
 {
     const baked::Submap* sm = current_submap(map_handle);
     if (!sm) return false; // missing bake is a data bug; do not approve an unknown edge
@@ -1378,9 +1395,23 @@ bool walk_edge(void* map_handle, void* player, const Cell& from, const Cell& to,
     const Cell incoming{from.layer, to.x, to.y};
     const bool open = baked_route::open(req, g, to) ||
         (from.layer != to.layer && baked_route::open(req, g, incoming));
+    bool boundary = false;
+    const auto* transport = baked::transport(transportation_id);
+    if (sm->world && transport && std::abs(dx) + std::abs(dy) == 1) {
+        auto foot = req; foot.vehicle_group = foot.vehicle_type = foot.landing_group = 0;
+        if (vehicle_action == route_progress::VehicleAction::WalkOff && field::current_vehicle().id == transportation_id) {
+            boundary = baked::vehicle_open(g, transport->group, from.x, from.y) && baked_route::open(foot, g, to) &&
+                (transport->landing_group <= 0 || baked::group_lands(transport->landing_group, baked::attribute(g, to.x, to.y)));
+        } else if (vehicle_action == route_progress::VehicleAction::WalkOn) {
+            // The planned parked-vehicle edge was captured by the route worker.
+            // Native collision above still owns boarding availability; do not
+            // enumerate every live vehicle again on each input-axis callback.
+            boundary = baked_route::open(foot, g, from) && baked::vehicle_open(g, transport->group, to.x, to.y);
+        }
+    }
     // Native exit/town cells can be closed in the static grid and explicitly entered as a
     // route goal. Keep that planner rule only for the final edge; live gates still veto it.
-    return baked_route::direction_allowed(req, from, to) && (open || goal_edge);
+    return baked_route::direction_allowed(req, from, to) && (open || goal_edge || boundary);
 }
 
 // --- other floors (user, 2026-10-11) ---------------------------------------------------------

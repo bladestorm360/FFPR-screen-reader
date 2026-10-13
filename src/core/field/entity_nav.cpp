@@ -365,6 +365,7 @@ int install()
     // The toggles store the setting; the scanner reads the filter settings live, so the
     // reactions only re-apply the list as FF1's setters did.
     actions::define("Settings.Changed.PathfindingFilter", [] { scanner::invalidate_map(); scanner::scan_entities(); });
+    actions::define("Settings.Changed.SpoilTreasureChestContents", [] { scanner::invalidate_map(); scanner::scan_entities(); });
     actions::define("Settings.Changed.MapExitFilter", [] { scanner::reapply_filter(); });
     actions::define("Settings.Changed.ToLayerFilter", [] { scanner::set_filter_to_layer(true); });
 
@@ -407,7 +408,7 @@ Target selected()
         if (!e) return;
         t.valid = true;
         t.position = e->position();
-        t.name = e->name;
+        t.name = e->display_name();
         t.identity = e->game ? e->game : static_cast<const void*>(e.get());
         t.category = static_cast<int>(e->category());
         t.remote_map_id = e->remote_map_id;

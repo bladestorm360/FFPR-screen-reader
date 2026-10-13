@@ -399,3 +399,25 @@ This build is deployed/hash-verified in all six games:
 `FA433F55BD5743D3FFAA57450528E796C39FB875495BF329C5015E0F95A7D99E`.
 Isolated DLL smoke passes; Prism dependency checks were read-only. No game was launched
 or probed by the agent. [Current focused retest](../TESTING.md#current-ff2-results-and-vehicle-retest-october-13).
+
+## Essential gains and Verbose/Brief detail, October 13
+
+Displayed native learned-spell/ability and weapon/job level-up messages now live in
+essential summary lines and the review buffer, regardless of Autodetail or the optional
+changed-stat announcement switch. Native job-mastery message fields receive the same
+treatment; no message-text heuristic/deduplication was added. Visible native phase and
+owner generations still govern collection; no later rewards are read early.
+
+Battle / Stat delta detail defaults to Verbose. Brief formats only gains/losses from
+rendered before/after numbers, with their native units; FF2 primary EvasionRate and
+AbilityDefense percentages and secondary count/multiplier changes are independent.
+Example 51x2% -> 55x2% becomes Evasion: gained 4%; a secondary-only count gain uses x.
+Brief also applies to matching visible FF2 weapon progress and equipment comparison
+buffers/Autodetail. It leaves raw item-stat/description panels intact. Autodetail Brief
+speaks changed rows once; unchanged rows remain reviewable as No change. I/West still
+reads all current-phase changes, independent of cursor/automatic-summary preferences.
+
+Settings changes rebuild current comparisons without automatic replay. Extra item
+panels retain native page ownership for I. Actual-source all-six phase/visibility,
+learning/level-gain, Brief/Verbose and input tests pass; full build/smoke/all-six deployment
+record and pending gameplay checks are in [MENU_DETAILS.md](MENU_DETAILS.md).

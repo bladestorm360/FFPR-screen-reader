@@ -130,7 +130,8 @@ std::wstring command_name(int command_id)
     }
 }
 
-/// AnnounceFocusedItem: name and price (with AutoDetail, the description), cached for I and U.
+/// AnnounceFocusedItem: name, then current info panel with Autodetail. Price stays cached
+/// for native quantity/cost controls; I reads the currently toggled panel.
 /// Empty slots announce "Empty" but keep the cache, so those keys still describe the last real
 /// item while the cursor passes gaps in the sell inventory.
 void announce_focused_item(void* content, int index, int count)
@@ -139,7 +140,7 @@ void announce_focused_item(void* content, int index, int count)
     if (content) {
         void* icon_view = ref::rd<void*>(content, fItemIconTextView);
         void* name_text = icon_view ? ref::rd<void*>(icon_view, fIconNameText) : nullptr;
-        if (name_text) item_name = unity::ui_text(name_text);
+        if (name_text) item_name = displayed::text(name_text);
     }
     item_name = strip_icon_markup(item_name);
 
@@ -153,13 +154,12 @@ void announce_focused_item(void* content, int index, int count)
     int content_id = ref::rd<int32_t>(content, fItemContentId);
     set_last_item(item_name, price, content_id, resolve_shop_item_type(content_id));
 
-    std::wstring base = price.empty() ? item_name : item_name + L", " + price;
-    std::wstring announcement = base;
+    std::vector<std::wstring> parts{item_name};
     if (ui::prefs::auto_detail_enabled()) {
         std::wstring detail = description_from_ui();
-        if (!text::is_blank(detail)) announcement = base + L": " + detail;
+        if (!text::is_blank(detail)) parts.push_back(std::move(detail));
     }
-    ffpr::say(ui::menu_position(announcement, index, count), true);
+    ffpr::say_sequence(std::move(parts), true);
 }
 
 /// AnnounceFocusedFromList: the in-focus item (selectCursor.Index into productContentList).

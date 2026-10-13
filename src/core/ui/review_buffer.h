@@ -19,12 +19,19 @@ struct Options {
     std::optional<std::vector<std::wstring>> brief;
     bool announce_brief = false;
     bool announce_brief_with_details = false;
+    bool brief_details = false; // Brief mode uses gains for Autodetail too.
     int restore_index = 0;
     std::vector<int> groups;
+    // Native information panels can have their own independent page toggle.
+    // Manual I/West reads that current panel instead of the comparison buffer.
+    std::string details_action;
 };
+/// Claim input while an event-owned renderer snapshot is being captured.
+void begin(void* owner, const std::wstring& headline, Options options = {});
 void show(void* owner, const std::wstring& headline, std::vector<std::wstring> lines, Options options = {});
 void clear();
-void replace_lines(std::vector<std::wstring> lines, int restore_index);
+void replace_lines(std::vector<std::wstring> lines, int restore_index,
+                   std::optional<std::vector<std::wstring>> brief = std::nullopt);
 bool active();
 bool owns(void* owner);
 Domain domain();
