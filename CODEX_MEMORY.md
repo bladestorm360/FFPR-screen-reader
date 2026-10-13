@@ -1,11 +1,13 @@
 # Native FFPR durable memory
 
-- October 13 V0.9.1 preparation: exit fixes committed/pushed as `5354761` before
+- October 13 V0.9.1 published as Latest: exit fixes committed/pushed as `5354761` before
   version/README changes. Fresh canonical build/all offline checks and isolated
   smoke pass; verified complete 20-file/4,098,050-byte dependency ZIP prepared.
   [Release hashes, validation and publication record](docs/release.md#v091-preparation-and-publication-october-13).
-  Release publication follows the user's request. Installed games retain `24C1...`
-  below; no game launch/probe, deployment, dependency change or delegation.
+  Annotated v0.9.1/source `131235b` pushed; uploaded ZIP downloaded/hash-verified
+  before publication and public asset/digest/size verified. Source/publication
+  records are committed/pushed. Installed games retain `24C1...` below; no game
+  launch/probe, deployment, dependency change or delegation during preparation.
 
 - October 13 exit follow-up: regenerated all six bakes with native directional stair
   masks, FF6 MapRange room bounds and corrected FF6 puzzle coordinates. Restored
@@ -18,8 +20,7 @@
   `24C1EF06A7E7153CADB8249D0C8FEE06324FB6E46C751320C0CC97E037E692B5`.
   This is the current installed DLL, superseding older installation records below.
   Recovery copies are in `build_check/exit_recovery/`. No game launch/probe or
-  delegation. Public V0.9 unchanged. The user subsequently requests commit/push
-  and release 0.9.1 through the [release procedure](docs/release.md).
+  delegation. Fixes are committed/pushed and included in V0.9.1 above; V0.9 is preserved.
 
 - October 13 release finalization: GitHub/local source and named remote now use
   FFPRCore-Screen-Reader, preserving public user ownership, repository ID and master

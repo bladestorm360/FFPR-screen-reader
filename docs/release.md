@@ -190,5 +190,18 @@ changes remain offline verified with gameplay confirmation pending, including
 the explicitly listed [script/state limits](re/MAP_EXITS.md#offline-coverage-and-explicit-limits).
 Sol handled review/verification and release preparation independently.
 
-Tag/source and uploaded-asset publication verification will be recorded here after
-the verified local package is uploaded and published.
+Published [V0.9.1](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/tag/v0.9.1)
+at 2026-10-13 23:29:46 UTC and marked Latest. Annotated v0.9.1 resolves locally
+and remotely to release source commit `131235b93cd7becd583502af3fa3a936ddacd585`,
+pushed before upload. GitHub normalizes spaces in the asset name:
+[Final.Fantasy.Pixel.Master.Core.Screen.Reader.V0.9.1.zip](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/download/v0.9.1/Final.Fantasy.Pixel.Master.Core.Screen.Reader.V0.9.1.zip).
+The folder inside the archive retains the requested release name.
+
+Draft tag/title/source, one uploaded asset, size and digest were checked. The
+uploaded draft ZIP was downloaded into `build_check/v091_remote_verify/`; its
+SHA256 exactly matched the independently verified local ZIP before publication.
+Public API verification confirms draft=false, prerelease=false, the expected
+source/tag/download URL, uploaded asset state, matching 4,098,050-byte size and
+SHA256 digest, and Latest=v0.9.1. `v091_draft_verification.json` and
+`v091_public_release.json` retain these receipts. Final publication records follow
+the tagged release source without changing its code or distributed bytes.
