@@ -148,3 +148,47 @@ v0.9 download URL. Repository identity remains R_kgDOVFGmTg and visibility remai
 The release was marked Latest. Sol completed implementation/review/verification and
 publication independently; no delegation. Final publication records are committed/pushed
 after the release source tag without changing the tagged code or distributed bytes.
+
+## V0.9.1 preparation and publication, October 13
+
+The user requested committing/pushing the exit fixes, then preparing release 0.9.1.
+Fix commit `535476111b5f59e928f50e7d6a9eeb283b44fbed` was pushed to the existing
+FFPRCore-Screen-Reader master before release preparation. Remote ownership, public
+visibility, repository ID R_kgDOVFGmTg and the existing V0.9 release were verified;
+no V0.9.1 tag/release existed. V0.9 is preserved.
+
+Release name: Final Fantasy Pixel Master Core Screen Reader V0.9.1.
+The README retains the concise player controls/install/credits layout, updates the
+version and describes reachable world triggers and nearest-exit grouping. Its
+plain-text companion matches the final Markdown. All credits and pinned dependency
+versions remain. FILEVERSION/PRODUCTVERSION and both resource strings are 0.9.1.0;
+the boot stamp is V0.9.1. Feature behavior matches the exit-fix commit above.
+
+Canonical build and every included offline regression passed: 7,077 native-name
+checks/zero missing, 122 used/327 defined wiring names/zero undefined and 47/47 proxy
+exports. The South Figaro audit checks 178 exits with zero failures; 2,293 sampled
+autowalk routes pass. Isolated smoke passed export forwarding, normal boot and
+logger startup without crash/fastfail. PE metadata confirms x64, file/product
+0.9.1.0 and the correct product/description. No game was launched or probed.
+
+Prepared folder: releases/Final Fantasy Pixel Master Core Screen Reader V0.9.1.
+Archive: releases/Final Fantasy Pixel Master Core Screen Reader V0.9.1.zip.
+7-Zip created/tested the 4,098,050-byte, 20-file bundle. Independent validation passed
+CRC checks, the exact file list, folder/archive/source byte equality, README
+conversion, the complete checksum manifest, every locked Prism runtime/license
+hash, corresponding-source notice and x64/build-stamp checks.
+
+- DLL SHA256: `296720b643a3d2612a61128ae12333044f38d748e4e4eed833a064c7bf07cd8e`.
+- ZIP SHA256: `edca4f9c370437e89aa4e073bf1d54b50043d9ad29002034a2df5ae538d471a0`.
+
+Local evidence: `build_check/v091_build_console.txt`, `v091_smoke_console.txt`,
+`v091_version.json`, `v091_package_verification.json` and the independent verifier
+`verify_v091_package.py`. Installed games retain the preceding functional exit-fix
+DLL `24C1EF06A7E7153CADB8249D0C8FEE06324FB6E46C751320C0CC97E037E692B5`;
+release preparation does not deploy or install dependencies. The new navigation
+changes remain offline verified with gameplay confirmation pending, including
+the explicitly listed [script/state limits](re/MAP_EXITS.md#offline-coverage-and-explicit-limits).
+Sol handled review/verification and release preparation independently.
+
+Tag/source and uploaded-asset publication verification will be recorded here after
+the verified local package is uploaded and published.

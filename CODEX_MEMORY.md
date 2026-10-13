@@ -1,5 +1,12 @@
 # Native FFPR durable memory
 
+- October 13 V0.9.1 preparation: exit fixes committed/pushed as `5354761` before
+  version/README changes. Fresh canonical build/all offline checks and isolated
+  smoke pass; verified complete 20-file/4,098,050-byte dependency ZIP prepared.
+  [Release hashes, validation and publication record](docs/release.md#v091-preparation-and-publication-october-13).
+  Release publication follows the user's request. Installed games retain `24C1...`
+  below; no game launch/probe, deployment, dependency change or delegation.
+
 - October 13 exit follow-up: regenerated all six bakes with native directional stair
   masks, FF6 MapRange room bounds and corrected FF6 puzzle coordinates. Restored
   missing Karnak/Kaipo grids; world exits use exact reachable trigger tiles and

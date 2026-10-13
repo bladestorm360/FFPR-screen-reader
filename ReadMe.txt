@@ -1,4 +1,4 @@
-Final Fantasy Pixel Master Core Screen Reader V0.9
+Final Fantasy Pixel Master Core Screen Reader V0.9.1
 
 Purpose
 
@@ -6,16 +6,16 @@ Adds speech, menu and battle reading, pathfinding, optional autowalk and audio n
 
 Known Issues
 
-V0.9 is an early combined release. Some game-specific screens, vehicles and story situations still need further gameplay testing. Report missing or repeated speech with the game's ffpr_screen_reader.log and a short description of what happened.
+V0.9.1 is an early combined release. Some game-specific screens, vehicles and scripted map exits still need further gameplay testing. South Figaro house stairs and grouped world entrances have passed offline checks; gameplay confirmation is pending. Report missing or repeated speech with the game's ffpr_screen_reader.log and a short description of what happened.
 
 Install
 
-Requires 64-bit Windows, a Steam Pixel Remaster game and a running screen reader such as NVDA or JAWS. Prism 0.18.3 and SDL3 are included in this V0.9 bundle. MelonLoader, BepInEx, Python and separate dependency downloads are not required.
+Requires 64-bit Windows, a Steam Pixel Remaster game and a running screen reader such as NVDA or JAWS. Prism 0.18.3 and SDL3 are included in this V0.9.1 bundle. MelonLoader, BepInEx, Python and separate dependency downloads are not required.
 
 1. Close the game and extract the zip.
 2. Open the game's installation folder using Steam's Manage, Browse local files command. This is the folder containing FINAL FANTASY.exe, FINAL FANTASY II.exe, and so on.
 3. If an older screen reader is installed, remove its DLL from the game's Mods folder: FFI_ScreenReader.dll, FFII_ScreenReader.dll, FFIII_ScreenReader.dll, FFIV_ScreenReader.dll, FFV_ScreenReader.dll or FFVI_ScreenReader.dll, as appropriate. Keep your UserData folder.
-4. Open the extracted Final Fantasy Pixel Master Core Screen Reader V0.9 folder. Copy its contents into the game folder, including the .ffpr-deps folder. hid.dll and SDL3.dll must sit beside the game's EXE, and Prism must remain at .ffpr-deps/prism/prism.dll.
+4. Open the extracted Final Fantasy Pixel Master Core Screen Reader V0.9.1 folder. Copy its contents into the game folder, including the .ffpr-deps folder. hid.dll and SDL3.dll must sit beside the game's EXE, and Prism must remain at .ffpr-deps/prism/prism.dll.
 5. Start your screen reader, then the game. The title screen should speak. Repeat these steps for each game you use.
 
 The included license files should stay with the mod. Other mods' MelonLoader or BepInEx installations may remain; remove only the old screen reader DLL.
@@ -50,7 +50,7 @@ Mod
 - Shift+Backslash or Shift+P: cycle Current floor, Current map with vehicles, Current map.
 - Ctrl+Backslash or Ctrl+P: toggle the layer transition filter.
 - Backtick, above Tab: rescan the map.
-- Shift+M: toggle the map exit filter.
+- Shift+M: toggle the map exit filter, grouping exits by destination and preferring the nearest reachable entrance.
 - Ctrl+arrow: teleport north, south, west or east of the selected destination.
 - Shift+G: start or repeat the current puzzle-guide step.
 - Ctrl+G: stop the puzzle guide.
@@ -66,6 +66,8 @@ Mod
 - U: read who can equip the highlighted equipment.
 
 Current map includes connected dungeon/town floors. Chests use generic labels unless Speech / Spoil treasure chest contents is enabled; opened state is included when known.
+
+World map exit lists include reachable transition trigger tiles. The map exit filter updates the nearest entrance after movement; turn it off to browse individual reachable entrances.
 
 Waypoints (field only)
 
