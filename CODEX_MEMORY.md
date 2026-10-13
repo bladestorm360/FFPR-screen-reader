@@ -1,5 +1,15 @@
 # Native FFPR durable memory
 
+- October 13 release finalization: GitHub/local source and named remote now use
+  FFPRCore-Screen-Reader, preserving public user ownership, repository ID and master
+  history. Current root is D:/Games/Dev/Unity/FFPR/FFPRCore-Screen-Reader. Standard
+  prepare-release requests now include commit/push and verified GitHub publication,
+  excluding repository renaming. Fresh canonical build/all offline checks and isolated
+  smoke pass; rebuilt 20-file complete ZIP includes the repaired README source URL.
+  [Current release hashes, procedure and rename recovery](docs/release.md#v09-rebuilt-package-and-publication-october-13).
+  Publication is pending source/tag push and uploaded-asset verification. No game
+  launch, deployment, dependency change or delegation.
+
 - October 13 user confirms Deist-to-world transition lag seems fixed, accepts it for
   release, and requests Final Fantasy Pixel Master Core Screen Reader V0.9. Prepared
   the named local folder/7-Zip ZIP (20 files, 4,085,783 bytes), with hid.dll, SDL3,

@@ -7,7 +7,7 @@ confirmation remains user-side; no game was launched, controlled or probed.
 
 ## Source, package and ownership
 
-Active source is the shared native `ffpr-screen-reader` repository. All callers retain
+Active source is the shared native `FFPRCore-Screen-Reader` repository. All callers retain
 `ffpr::say`/`speech`, current preferences, manual review, Autodetail, event cancellation and
 game-specific presentation. Only the worker-owned backend adapter calls Prism. The original
 first-native-hook loading gate, fixed ring, settings-save worker, queue/interrupt policy

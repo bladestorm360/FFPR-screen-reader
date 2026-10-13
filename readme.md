@@ -186,5 +186,5 @@ Press Back/Select, then the action button. Simple actions return to normal mode;
 - Sam Lantinga and SDL contributors: SDL3; license included as SDL3_LICENSE.txt.
 - ethindp and Prism contributors: Prism 0.18.3 speech/braille support. Its upstream license and third-party notices are included under .ffpr-deps/prism/LICENSES.
 
-Mod source: https://github.com/bladestorm360/FFPR-screen-reader
+Mod source: https://github.com/bladestorm360/FFPRCore-Screen-Reader
 Prism source: https://github.com/ethindp/prism/tree/94329ebeccbaee7f70b3494a290c9dfaac0184ee

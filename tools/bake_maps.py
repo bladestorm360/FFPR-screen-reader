@@ -1,6 +1,6 @@
 """
 Bake one compact binary per game from the map dumps (tools/mapdump) for the native mod's
-baked-map router: ffpr-screen-reader/data/<game>/maps.bin, embedded in hid.dll as MAPS_FFN.
+baked-map router: FFPRCore-Screen-Reader/data/<game>/maps.bin, embedded in hid.dll as MAPS_FFN.
 
 Usage:
   python bake_maps.py <ff1|ff2|ff3|ff4|ff5|ff6|all> [--out <dir>] [--check]
@@ -52,7 +52,7 @@ d=ignore_route_link_object_id; OpenTrigger a=link_object_id c=entity_id; TelepoP
 a=goto_entity_id b=pointin_entity_id c=entity_id; CollisionEntity a=collision_type
 b=through_condition_type c=entity_id, name_str=target_transportation_ids; SavePoint
 c=entity_id; IgnoreRoute / MoveArea / NonEncountArea: the rect only.
-Read-only on the dumps. The C++ reader is ffpr-screen-reader/src/core/field/baked_map.cpp.
+Read-only on the dumps. The C++ reader is FFPRCore-Screen-Reader/src/core/field/baked_map.cpp.
 """
 import json
 import os

@@ -4,6 +4,15 @@ Active source for all six games is this repository, on `master`. FF1–FF5 belon
 
 Read `CODEX_MEMORY.md`, the shared `../../../AGENTS.md`, and `../../../codex/MODEL_POLICY.md`. Sol owns research, implementation, review and verification. Use Luna only for an economical bounded mechanical handoff; Astra only for the documented emergency criteria. Summarize any delegation, including outcome and remaining issues.
 
+Current repository identity, October 13: local `FFPRCore-Screen-Reader`, branch `master`,
+named remote `FFPRCore-Screen-Reader`, public user-owned
+https://github.com/bladestorm360/FFPRCore-Screen-Reader. The user explicitly requested this
+one-time rename with history preserved. For **prepare release X.X**, follow
+[docs/release.md](docs/release.md) through README/TXT, full dependency bundle, 7-Zip
+verification, commit/push and GitHub release publication. Do not repeat repository
+renaming as part of that workflow. Installed dependency receipt identifiers are stable
+compatibility data and are not repository names to migrate.
+
 Prism 0.18.3 x64 is the required current speech backend. Keep every reader behind say/speech
 and preserve speech/braille, queue/event identity, interruption, native readiness and worker
 ownership. No new Tolk call sites or speech deduplication. Use the committed prism.lock.json

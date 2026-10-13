@@ -108,7 +108,7 @@ For route failures, report the game, map, target and relevant story state.
    MelonLoader and BepInEx may stay (since 2026-10-07; see "With MelonLoader or BepInEx" below).
 3. Install the pinned Prism prerequisite separately once: `install_prism.bat ff1`
    (or ff2 … ff6, or no argument for all six). Unchanged verified installs perform zero writes.
-4. From `ffpr-screen-reader`: `deploy.bat ff1` (or ff2 … ff6, or no argument for all six).
+4. From `FFPRCore-Screen-Reader`: `deploy.bat ff1` (or ff2 … ff6, or no argument for all six).
    It checks Prism read-only, then copies only `hid.dll` and `SDL3.dll` into the game folder.
    Prism, licenses and its receipt are not copied or repaired by normal deployment.
 5. To undo: `uninstall.bat`, then restore the old DLL/dependencies before using an old
