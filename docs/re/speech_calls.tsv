@@ -48,7 +48,7 @@ src/core/dialogue/popup.cpp	586	ffpr::say	interrupt
 src/core/dialogue/scroll_message.cpp	60	ffpr::say	queued
 src/core/dialogue/scroll_message.cpp	84	ffpr::say	context expression
 src/core/dialogue/scroll_message.cpp	100	ffpr::say	queued
-src/core/dialogue/title.cpp	130	ffpr::say	interrupt
+src/core/dialogue/title.cpp	129	ffpr::say	interrupt
 src/core/extras/gallery.cpp	93	ffpr::say	queued
 src/core/extras/gallery.cpp	115	ffpr::say	interrupt
 src/core/extras/gallery.cpp	141	ffpr::say	interrupt

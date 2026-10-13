@@ -29,8 +29,12 @@
 #include <windows.h>
 #include "buffer.h"
 
-// Size of each memory block. (= page size of VirtualAlloc)
-#define MEMORY_BLOCK_SIZE 0x1000
+// [FFPR] Use an entire Windows allocation-granularity region. Reservations
+// must start at a 64 KiB boundary: allocating just 4 KiB leaves the other
+// 60 KiB unusable to this allocator. In a crowded rel32 window that exhausted
+// the only available region after 31 of our 128-byte trampoline slots.
+// Keep the slot/coexistence size and near-target search limits unchanged.
+#define MEMORY_BLOCK_SIZE 0x10000
 
 // Max range for seeking a memory block. (= 1024MB)
 #define MAX_MEMORY_RANGE 0x40000000
@@ -160,7 +164,7 @@ static PMEMORY_BLOCK GetMemoryBlock(LPVOID pOrigin)
     minAddr = (ULONG_PTR)si.lpMinimumApplicationAddress;
     maxAddr = (ULONG_PTR)si.lpMaximumApplicationAddress;
 
-    // pOrigin ± 512MB
+    // pOrigin ± 1024MB
     if ((ULONG_PTR)pOrigin > MAX_MEMORY_RANGE && minAddr < (ULONG_PTR)pOrigin - MAX_MEMORY_RANGE)
         minAddr = (ULONG_PTR)pOrigin - MAX_MEMORY_RANGE;
 

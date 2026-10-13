@@ -4,6 +4,9 @@ Offline checks pass; user gameplay testing has identified regressions recorded i
 [October 11 follow-up](FOLLOWUP_2026_10_11.md). Test one game at a time. Report what you hear,
 and attach `ffpr_screen_reader.log` from that game's folder if something is wrong.
 
+Prioritize the [current hook/title/boarded-save checks](#hook-installation-title-and-boarded-save-retest-october-13)
+before continuing the earlier FF2 results checks when progression permits.
+
 ## Gameplay confirmations, October 13
 
 User report after the latest deployment (`a2f3b81`, DLL
@@ -524,3 +527,36 @@ the user's confirmation. These corrections need gameplay retest:
 Report the game, vehicle, destination and whether failure occurs before or after landing
 if a route still fails. Unreported category/F8/prompt/naming speech-order checks above
 remain separate from confirmed features. No agent game launch or runtime probe occurred.
+
+## Hook installation, title and boarded-save retest, October 13
+
+Built, isolated-smoke tested and deployed to all six; installed DLL hashes independently
+match `473F868AB8BCDBE5CC91F4FB41F654C9674ECDB88521F087E50B6DBD0BD31FD4`.
+Prism prerequisites were verified without changes. No agent game launch or probe.
+The user's latest FF2 session had 199 failed hooks, including the field/player/title
+observers. This explains its no-op navigation/Walking report; the earlier valid ship
+No path reports remain the separate riding/landing/wrap correction above.
+[Allocation/load evidence](re/THREADING.md#hook-allocation-and-boarded-save-follow-up-october-13),
+[title producer evidence](re/TITLE_PROMPT.md#current-timing-and-hook-installation-follow-up-october-13).
+
+1. **FF2, load the same save already aboard the ship first.** Once loading finishes,
+   press V: hear Ship/the actual vehicle name. Shift+`]` changes category; `]` browses
+   destinations. These must answer promptly. Select a known land destination and press
+   `\`: hear a legal sailing/landing/walking route, or the configured navigation audio.
+   No disembark/reboard workaround should be needed. Walking/no-op input means the
+   loaded-owner problem remains; No path is a different route-planning symptom.
+2. **FF1–FF4 title, when opening each game.** Wait for Press any button to be spoken,
+   then press a button. Hear initial menu focus normally. Return to title and repeat.
+   If you press immediately, a pending prompt must never speak over the opened menu.
+   Report the game/boot or return path if the prompt is silent or delayed. FF5/FF6 keep
+   their existing game-owned intro timing and prompt-then-intro instruction.
+3. **Continue the FF2 weapon rows and phase-wide I checks above.** Those corrections
+   are retained, along with the user's confirmed land responsiveness, smooth battle
+   transitions and FF1 results reading. Other vehicle/story states remain checks for
+   when progression makes them available, not confirmed coverage.
+
+Sol will check the ordinary game log for successful observer installation if any
+symptom remains; the user does not need to inspect hook counts or code. Offline tests
+reproduce old slot-31 allocation failure and pass 384 constrained/512 spacious hooks,
+actual loaded-state observers, explicit vehicle queries and actual title/speech pipeline
+with fake owners/SDK. These are not measurements of real visible-to-audible delivery.

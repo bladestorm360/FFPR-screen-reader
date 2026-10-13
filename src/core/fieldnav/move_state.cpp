@@ -3,6 +3,8 @@
 #include "../core.h"
 #include "../modtext.h"
 #include "../say.h"
+#include "../field/field_api.h"
+#include "../system/system.h"
 
 namespace ffpr::fieldnav::move_state {
 namespace {
@@ -72,6 +74,17 @@ const std::wstring& vehicle_name() { return vehicle_name_storage(); }
 
 std::wstring current_name()
 {
+    // Explicit V/controller query: loading a boarded save need not emit GetOn.
+    // Read the same ready native transportation owner as the route snapshot.
+    if (system::is_field_navigation_ready()) {
+        const auto vehicle = ::field::current_vehicle();
+        if (vehicle.valid) {
+            if (vehicle.type <= 1) return move_state_name(kWalk);
+            auto name = ::field::vehicle_display_name(vehicle.id, vehicle.type, vehicle.message_id);
+            if (!name.empty()) return name;
+            return move_state_name(transport_type_to_move_state(vehicle.type));
+        }
+    }
     // The game's own name for the boarded vehicle ("Snowcraft", not the state slot's "Canoe").
     if (!is_on_foot() && !vehicle_name_storage().empty()) return vehicle_name_storage();
     return move_state_name(current());

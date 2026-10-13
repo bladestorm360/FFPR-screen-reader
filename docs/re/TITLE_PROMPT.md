@@ -1,5 +1,61 @@
 # Title prompt and intro presentation, October 11
 
+## Current timing and hook-installation follow-up, October 13
+
+This section supersedes the October 11 Indicator.Hide/next-frame reader below.
+The user reports late prompts in FF1–FF4, and an FF2 boarded-save session where V
+said Walking and all navigation commands did nothing. The user's own FF2 log from
+07:23:11 has 29 installed/199 failed hooks, including every title observer,
+SceneManager.Internal_SceneLoaded, FieldMap.StateInit and FieldPlayerKeyController.Init.
+It contains no prompt-read entry, then a zero-live/zero-remote map snapshot and Walking.
+It therefore establishes absent observers in that session, not a measured prompt delay.
+The earlier successful FF1 session has 218 installed/zero failed hooks and a prompt-read
+entry; the log alone does not timestamp when its graphics became visible.
+
+The allocator reproduction and fix are recorded in
+[threading](THREADING.md#hook-allocation-and-boarded-save-follow-up-october-13).
+Fixing the title reader alone would leave the failed-hook session without a reader.
+
+The reader now observes the verified native UpdateNone producer after its original
+activates the prompt parent. InitNone arms the visit without reading hidden preload
+text; InitShortcutCommand can read its directly activated prompt immediately, and
+UpdateShortcutCommand handles delayed renderer readiness. Only a pending native title
+phase reads one known text candidate, with class, owner identity, Unity lifetime and
+the existing displayed::text renderer/alpha/cull guards. After one ready presentation
+the producer latch stops further reads. There is no scene search, Indicator.Hide
+dependency, scheduled next frame or 60-frame expiry. Native phase/menu/lifetime guards
+retire stale reads; this is event identity, not content deduplication. Identical wording
+on a new visit remains eligible. Additive preload scenes do not cancel the title owner.
+
+InitSelect and enabled main-menu callbacks cancel the pending event; original native
+work always runs first. A same-frame button/menu transition therefore reads Load Game
+normally without late prompt speech. Existing interrupt generations also discard a
+queued prompt if later menu focus supersedes it while the speech worker is busy.
+FF5/FF6 retain their native cinematic timing and their existing appended instruction.
+No native pointer is sent to a worker. The ready line is copied through say/speech;
+only the speech worker cleans/chunks it and calls Prism.
+
+Offline evidence:
+
+- `tools/re/title_calls.py` independently rechecked all six matching PE/dump call paths:
+  fade/preload readiness, inlined Hide→parent activation and shortcut activation. New
+  raw exports/manifests and binary hashes stay in ignored `build_check/re`; historical
+  archives remain preserved. FF2 UpdateShortcutCommand is 0x806EE0; UpdateNone remains
+  0x806C60. Production resolves names rather than using these offsets.
+- `tools/title_prompt_check.cpp` uses the actual title source, cache, speech ingress,
+  worker drain and Prism adapter with fake native owners/SDK. All-six prompt/instruction
+  order, same-callback publication, hidden/120-update delayed rendering, repeated visits,
+  shortcut/scene recovery, additive preload, foreign/destroyed owners and same-frame/
+  queued menu cancellation pass. It does not execute the commercial game or real NVDA.
+- Canonical build includes this regression. Final worst fake-native capture is
+  7.600 microseconds; it excludes real Unity call cost, game-frame scheduling and audible
+  delivery. Exact output is retained in `build_check/title_prompt_report.txt`. Actual
+  display-to-audible timing still requires user gameplay confirmation.
+
+Current deployment/concise test procedure is in
+[testing](../TESTING.md#hook-installation-title-and-boarded-save-retest-october-13).
+Sol implemented/reviewed/verified this follow-up; no delegation or runtime probe.
+
 Owner: Sol. Matching installed `GameAssembly.dll` files were read as PE data,
 never loaded/executed. Sources are the six adjacent `dump.cs` exports. Existing
 FF2/FF5 Ghidra projects were opened headlessly with `-noanalysis -readOnly`;

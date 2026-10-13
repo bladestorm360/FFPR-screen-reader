@@ -1,5 +1,27 @@
 # Native FFPR durable memory
 
+- October 13 hook-allocation/title/boarded-save follow-up deployed/hash-verified in
+  all six: `473F868AB8BCDBE5CC91F4FB41F654C9674ECDB88521F087E50B6DBD0BD31FD4`.
+  Supersedes older DLLs below. User's FF2 log installed 29/failed 199 hooks, including
+  field roots/boarding/title; zero-object scan and Walking explain that no-op session.
+  Old 4 KiB trampoline block wastes its remaining Windows reservation granularity;
+  scarce-nearby-memory fixture reproduces failure at slot 31. Allocate the full 64 KiB
+  region: 384/384 hooks now fit the same hole, and 512-hook/coexistence/release checks pass.
+  [Mechanism, native load ownership and limits](docs/re/THREADING.md#hook-allocation-and-boarded-save-follow-up-october-13).
+  V/controller vehicle query now reads ready native transport/id/name rather than
+  requiring a new GetOn announcement after load; preserves unready/absent-root fallback.
+  Title UpdateNone/shortcut native producers read the first rendered prompt in their
+  callback; removed Indicator.Hide/scene dependency and next-frame/60-frame reader.
+  Native menu entry cancels stale prompt speech, including pending worker ingress;
+  preserve additive preloads, new visits and FF5/FF6 native intro instruction/timing.
+  [Title evidence](docs/re/TITLE_PROMPT.md#current-timing-and-hook-installation-follow-up-october-13).
+  Canonical build (7,063 names/zero missing; zero undefined wiring), actual-source title/
+  speech, Transport/Player lifecycle, vehicle query, routes and isolated DLL smoke pass.
+  Fake-native title capture worst 7.600 us excludes real Unity/audible/frame timing.
+  No delegation, game launch/probe or Prism change. Boarded-load and FF1–FF4 prompt
+  gameplay confirmation pending; prior working land/battle/results confirmations stand.
+  [Prioritized short retest](docs/TESTING.md#hook-installation-title-and-boarded-save-retest-october-13).
+
 - October 13 FF2 results/boarded-vehicle follow-up deployed/hash-verified in all six:
   `FA433F55BD5743D3FFAA57450528E796C39FB875495BF329C5015E0F95A7D99E`.
   Supersedes earlier DLLs. Observe native SetBothHandsData as well as SetWeaponIcon;

@@ -1,13 +1,38 @@
 // check-sources: field/object_cache.cpp
 // Real owner cache with fake Unity lifetimes; no engine/window is accessed.
 #include "../src/core/field/object_cache.h"
+#include "../src/core/field/live_context.cpp"
 #include <cstdio>
 #include <cstring>
-namespace fixture { struct Object { int type; bool alive = true, attached = true; }; }
+namespace fixture {
+struct Object { int type; bool alive = true, attached = true; void* player = nullptr; int state = 0; };
+int original_calls = 0;
+void native_state(void* self, int state, const void*) { ++original_calls; static_cast<Object*>(self)->state = state; }
+void native_init(void* self, void* player, const void*) { ++original_calls; static_cast<Object*>(self)->player = player; }
+}
+namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
 namespace ref {
 Class::Class(const char* n, const char* c, uint8_t g, const char* a) : ns(n), name(c), games(g), assembly(a) {}
-il2cpp::Class* Class::get() { return reinterpret_cast<il2cpp::Class*>(std::strcmp(name, "Window") == 0 ? 1 : 2); }
+Method::Method(Class& c, const char* n, int a) : cls(c), name(n), argc(a) {}
+il2cpp::Class* Class::get() {
+    uintptr_t key = 2;
+    if (std::strcmp(name,"Window")==0) key=1;
+    else if (std::strcmp(name,"FieldMap")==0) key=3;
+    else if (std::strcmp(name,"FieldPlayerController")==0 || std::strcmp(name,"FieldPlayerKeyController")==0) key=4;
+    return reinterpret_cast<il2cpp::Class*>(key);
+}
 bool Class::is(void* object) { return object && static_cast<fixture::Object*>(object)->type == reinterpret_cast<uintptr_t>(get()); }
+}
+namespace field::r {
+ref::Class kFieldMap{"", "FieldMap"};
+ref::Class kFieldPlayerController{"Last.Map", "FieldPlayerController"};
+}
+namespace hooks {
+bool attach_raw(ref::Method& m, void*, void** original) {
+    *original=std::strcmp(m.name,"StateInit")==0 ? reinterpret_cast<void*>(&fixture::native_state) : reinterpret_cast<void*>(&fixture::native_init);
+    return true;
+}
+void note_fault(const char*) { std::abort(); }
 }
 namespace unity {
 bool alive(void* object) { return object && static_cast<fixture::Object*>(object)->alive; }
@@ -33,6 +58,23 @@ int main() {
     second.attached = false;
     expect(get_all(window).size() == 1 && get_all(alias).front() == &first, "multiple current widgets retain existing inclusion/lifetime guard");
     clear_all(); expect(!get(window) && get_all(window).empty(), "explicit reset retires all owner handles");
-    std::printf("Component cache: shared keys, incoming ownership, reuse/destroyed/widget lifetimes: %d failures\n", failures);
+    field::install();
+    fixture::Object map{3}, key{4}, ship_player{5}, foot_player{5}, incoming_map{3}, incoming_key{4};
+    // Native Transport state is 4 in all six games. A save loaded aboard has
+    // no intervening GetOn event: lifecycle observers must be sufficient.
+    field::d_state(&map,4,nullptr); field::d_init(&key,&ship_player,nullptr);
+    expect(get(field::r::kFieldMap)==&map && get(field::r::kFieldPlayerController)==&key &&
+        key.player==&ship_player && map.state==4 && fixture::original_calls==2,
+        "boarded-save owner initialization needs no separate boarding event and calls originals first");
+    field::d_state(&incoming_map,3,nullptr); field::d_init(&incoming_key,&foot_player,nullptr);
+    expect(get(field::r::kFieldMap)==&incoming_map && get(field::r::kFieldPlayerController)==&incoming_key && incoming_key.player==&foot_player,
+        "another loaded map/player replaces prior ship owners");
+    incoming_key.alive=false;
+    expect(!get(field::r::kFieldPlayerController),"destroyed loaded player controller retires");
+    clear_all(); field::d_init(&key,nullptr,nullptr);
+    expect(!get(field::r::kFieldPlayerController),"unready native Init does not seed a field player");
+    field::d_state(&first,4,nullptr);
+    expect(!get(field::r::kFieldMap),"folded unrelated state receiver cannot supply a map");
+    std::printf("Component cache: shared keys, replacement/lifetimes and actual loaded Transport/Player lifecycle observers: %d failures\n", failures);
     return failures ? 1 : 0;
 }

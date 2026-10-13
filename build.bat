@@ -121,6 +121,11 @@ if not "%errorlevel%"=="0" (
     echo Modal speech check FAILED - see build_check\modal_speech_report.txt
     exit /b 1
 )
+"out\checks\title_prompt_check.exe" > build_check\title_prompt_report.txt 2>&1
+if errorlevel 1 (
+    echo Title prompt check FAILED - see build_check\title_prompt_report.txt
+    exit /b 1
+)
 "out\checks\settings_worker_check.exe" > build_check\settings_worker_report.txt 2>&1
 if errorlevel 1 (
     echo Settings worker check FAILED - see build_check\settings_worker_report.txt
@@ -149,6 +154,11 @@ if not "%errorlevel%"=="0" (
 "out\checks\component_cache_check.exe" > build_check\component_cache_report.txt 2>&1
 if errorlevel 1 (
     echo Component cache check FAILED - see build_check\component_cache_report.txt
+    exit /b 1
+)
+"out\checks\vehicle_state_check.exe" > build_check\vehicle_state_report.txt 2>&1
+if errorlevel 1 (
+    echo Vehicle state check FAILED - see build_check\vehicle_state_report.txt
     exit /b 1
 )
 python tools\prism_package_check.py > build_check\prism_package_report.txt 2>&1

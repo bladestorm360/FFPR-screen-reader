@@ -208,8 +208,65 @@ void foreign_then_ours(int slot_index, bool fourteen, size_t fn_off)
 
 } // namespace
 
+// Reserve only virtual address space around synthetic functions, leaving one
+// 64 KiB allocation-granularity hole within rel32 reach. A spacious process can
+// hide the FF2 failure: 4 KiB blocks use only 31 of the slots that hole permits.
+void crowded_address_check()
+{
+    constexpr SIZE_T range = 0x40000000, granularity = 0x10000;
+    constexpr SIZE_T span = 2 * range + 3 * granularity;
+    auto* base = static_cast<unsigned char*>(VirtualAlloc(nullptr, span, MEM_RESERVE, PAGE_NOACCESS));
+    check(base != nullptr, "reserve isolated crowded address layout (no physical 2 GiB allocation)");
+    if (!base) return;
+    VirtualFree(base, 0, MEM_RELEASE);
+    void* lower = VirtualAlloc(base, range, MEM_RESERVE, PAGE_NOACCESS);
+    auto* upper = static_cast<unsigned char*>(VirtualAlloc(base + range + granularity,
+        range + 2 * granularity, MEM_RESERVE, PAGE_NOACCESS));
+    auto* code = upper ? static_cast<unsigned char*>(VirtualAlloc(upper, granularity,
+        MEM_COMMIT, PAGE_EXECUTE_READWRITE)) : nullptr;
+    check(lower == base && upper == base + range + granularity && code == upper,
+        "only one 64 KiB free region remains near the targets");
+    if (code && lower == base) {
+        check(MH_Initialize() == MH_OK, "initialize crowded-layout hooks");
+        std::memset(code, 0xCC, granularity);
+        int created = 0;
+        bool originals_ok = true;
+        for (int i = 0; i < 384; ++i) {
+            auto* target = code + 0x1000 + i * 64;
+            std::memcpy(target, kProlog5, sizeof kProlog5);
+            void* original = nullptr;
+            const auto status = MH_CreateHook(target, kOurs[0], &original);
+            if (status != MH_OK) {
+                std::printf("  crowded allocation hook %d: %s\n", i, MH_StatusToString(status));
+                break;
+            }
+            if (i == 0) o_ours[0] = reinterpret_cast<Fn>(original);
+            originals_ok = originals_ok && call(original, 5) == 12;
+            ++created;
+        }
+        std::printf("  crowded layout: %d/384 hooks created\n", created);
+        check(originals_ok, "crowded trampolines preserve native functions");
+        check(created == 384, "384 simultaneous hooks fit the sole nearby allocation region");
+        check(MH_EnableHook(MH_ALL_HOOKS) == MH_OK, "enable crowded hooks");
+        if (created == 384) {
+            check(call(code + 0x1000 + 227 * 64, 5) == 24, "late reader executes through its relay");
+            check(MH_RemoveHook(code + 0x1000 + 31 * 64) == MH_OK, "release a slot beyond the old page limit");
+            void* original = nullptr;
+            check(MH_CreateHook(code + 0x1000 + 31 * 64, kOurs[0], &original) == MH_OK,
+                "released crowded slot can be reused");
+        }
+        check(MH_Uninitialize() == MH_OK, "release all crowded hook blocks");
+        MEMORY_BASIC_INFORMATION region{};
+        VirtualQuery(base + range, &region, sizeof region);
+        check(region.State == MEM_FREE, "last slot release frees the entire reserved hook block");
+    }
+    if (lower) VirtualFree(lower, 0, MEM_RELEASE);
+    if (upper) VirtualFree(upper, 0, MEM_RELEASE);
+}
+
 int main()
 {
+    crowded_address_check();
     g_page = static_cast<unsigned char*>(
         VirtualAlloc(nullptr, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
     if (!g_page) { std::printf("VirtualAlloc failed\n"); return 2; }
@@ -231,7 +288,7 @@ int main()
     std::printf("stats: %u long resume, %u short, %u refused unhooks\n", l, s, p);
     check(s == 0, "no hook fell back to the short resume");
 
-    // First FF2 boot failed after one trampoline page filled. Exercise many pages
+    // First FF2 boot failed after one trampoline block filled. Exercise many blocks
     // without loading a game, rather than testing only five transient hooks.
     auto* many = static_cast<unsigned char*>(VirtualAlloc(nullptr, 0x10000,
         MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
@@ -246,10 +303,11 @@ int main()
             if (status != MH_OK) { std::printf("  allocation hook %d: %s\n", i, MH_StatusToString(status)); many_ok = false; break; }
         }
     }
-    check(many_ok, "512 simultaneous hooks span multiple trampoline pages");
+    check(many_ok, "512 simultaneous hooks span multiple trampoline blocks");
 
     MH_Uninitialize();
     if (many) VirtualFree(many, 0, MEM_RELEASE);
+    VirtualFree(g_page, 0, MEM_RELEASE);
     std::printf(g_failures ? "COEXIST CHECK FAILED (%d)\n" : "COEXIST CHECK PASSED\n", g_failures);
     return g_failures ? 1 : 0;
 }

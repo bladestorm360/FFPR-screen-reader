@@ -241,6 +241,68 @@ The [cross-platform ownership reference](../../../../../codex/templates/accessib
 separately constrains Linux backends and macOS helper ownership. This FFPR work implements
 Windows only; research does not certify another platform/loader/ABI.
 
+## Hook allocation and boarded-save follow-up, October 13
+
+The user's own FF2 session at 07:23:11 installed 29 hooks and failed 199 with
+MH_ERROR_MEMORY_ALLOC. The first failure follows 27 GameAssembly readers plus four
+runtime trip-wires: exactly the 31 slots in the old 4 KiB/128-byte trampoline block.
+The two later successes chain onto mod detours in a different address neighborhood.
+Title, scene-loaded, field-map/player lifecycle and boarding observers all failed.
+The later scanner captured zero live/remote objects; V announced Walking. Missing
+owner roots explain that session's inactive navigation without implicating the baked
+vehicle grids or reverting worker ownership. The exact process memory layout was not
+captured; the allocation mechanism below reproduces its capacity/error signature.
+
+`buffer.c` now allocates a full 64 KiB Windows allocation-granularity region instead
+of 4 KiB at each aligned reservation address. The old allocator could not reserve the
+remaining 60 KiB at another aligned base, wasting its only nearby usable region in a
+crowded rel32 window. The corrected block has 511 of the existing 128-byte slots.
+It preserves the ±1 GiB near-target range, instruction relocation, 16-byte coexistence
+resume, original chaining, batched enable and refusal to overwrite another mod's patch.
+Blocks still grow only when needed and release when their final slot is freed. This
+is boot allocation, not new game-thread pathfinding or a hook-retry loop.
+
+`coexist_check.cpp` reserves virtual address space in its isolated process around
+synthetic functions, leaving exactly one free 64 KiB region within the production
+allocator's reach. Only target code/trampoline pages are committed, not the surrounding
+2 GiB virtual reservation. With the old allocator, hook 31 returns MH_ERROR_MEMORY_ALLOC;
+31/384 succeed (`build_check/coexist_crowded_before.txt`). With the corrected allocator,
+384/384 create; every original trampoline returns correctly, a late relay executes,
+released slots reuse, and final teardown frees the block. The existing spacious
+512-hook multiple-block and Dobby/MonoMod/funchook chain/unhook checks also pass.
+This replaces the inadequate earlier spacious-only regression for this failure.
+
+Boarded-load initialization was audited separately: existing FieldMap.StateInit and
+FieldPlayerKeyController.Init observe ready native roots without requiring GetOn.
+FF2's archived SetControlPlayer calls controller virtual Init with the current player;
+the concrete key Init stores fieldPlayer at +20. Current vehicle queries read the native
+transportation controller for route snapshots. Native Transport
+state 4 is already navigation-ready. `component_cache_check.cpp` now executes the actual
+lifecycle observers with copied fake loaded Transport/Player owners, original-first
+initialization, incoming-owner replacement, invalid/unready/destroyed handles. It passes
+without a boarding event. Existing real-bake vehicle routes/filters and cancellations
+remain covered. These do not certify the game's save deserializer or every vehicle/story
+state; loading the user's boarded save after successful hook installation remains the
+decisive gameplay check. No speculative vehicle-state rewrite was added.
+
+The explicit V/controller vehicle-name query separately used only the cached GetOn/
+GetOff announcement. It now reads that same current native transportation snapshot
+while the field is navigation-ready, including the actual game/id-specific name.
+A native Player row says Walking even if a prior boarding cache said Ship. Unready
+contexts and absent roots retain the existing cached fallback, with no scene scan or
+automatic announcement. `vehicle_state_check.cpp` executes the actual query with fake
+ship/airship/Snowcraft/native-player snapshots, missing/unready ownership and no GetOn
+event. It passes; exactly one current snapshot is read per ready explicit request.
+This does not add periodic reconciliation or change boarding/landing speech priorities.
+
+The title prompt's native producer timing correction is documented in
+[title evidence](TITLE_PROMPT.md#current-timing-and-hook-installation-follow-up-october-13).
+Canonical build/name/wiring, actual-source lifecycle/title/speech/route regressions and
+isolated smoke checks remain the acceptance route. Current installed DLL and user checks
+are in [testing](../TESTING.md#hook-installation-title-and-boarded-save-retest-october-13).
+Sol handled implementation/review/verification; no delegation, game launch/control/probe
+or Prism dependency change.
+
 ## Delegation record
 
 All bounded handoffs used Luna (`gpt-6-luna`, medium, fresh task-specific context).

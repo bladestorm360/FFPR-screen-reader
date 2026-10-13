@@ -2,14 +2,18 @@
 
 No DLL is loaded. Disassemble only metadata-sized function ranges; retain direct
 call names and complete instructions so inlined SetActive paths are inspectable.
+New raw exports stay in ignored build_check/re; preserve the historical archive.
 Requires the already-installed pefile and capstone packages.
 """
 import pathlib
 import re
+import hashlib
 import capstone
 import pefile
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+OUTPUT = ROOT / 'build_check/re'
+OUTPUT.mkdir(parents=True, exist_ok=True)
 STEAM = pathlib.Path('D:/Games/SteamLibrary/steamapps/common')
 GAMES = ['FINAL FANTASY PR', 'FINAL FANTASY II PR', 'FINAL FANTASY III PR',
          'FINAL FANTASY IV PR', 'FINAL FANTASY V PR', 'FINAL FANTASY VI PR']
@@ -39,7 +43,7 @@ for n, folder in enumerate(GAMES, 1):
     pe = pefile.PE(str(STEAM / folder / 'GameAssembly.dll'), fast_load=True)
     ordered = sorted(names)
     disassembler = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64)
-    output = []
+    output = ['GameAssembly SHA256: ' + hashlib.sha256((STEAM / folder / 'GameAssembly.dll').read_bytes()).hexdigest()]
     decoded = {}
     for name, rva in targets.items():
         following = next((x for x in ordered if x > rva), rva + 4096)
@@ -77,9 +81,9 @@ for n, folder in enumerate(GAMES, 1):
                and any(prev.mnemonic == 'mov' and prev.op_str == 'dl, 1'
                        for prev in shortcut[max(0, i - 5):i])
                for i, ins in enumerate(shortcut)), 'FF%d: shortcut does not enable prompt' % n
-    destination = ROOT / 'docs/re' / ('ff%d_title_calls.txt' % n)
+    destination = OUTPUT / ('ff%d_title_calls.txt' % n)
     destination.write_text('\n'.join(output) + '\n', encoding='utf-8')
-    (ROOT / 'docs/re' / ('ff%d_title_manifest.tsv' % n)).write_text(
+    (OUTPUT / ('ff%d_title_manifest.tsv' % n)).write_text(
         ''.join('%X\t%s\n' % (pe.OPTIONAL_HEADER.ImageBase + rva, name)
                 for name, rva in targets.items()), encoding='utf-8')
     print('FF%d: native startup/shortcut prompt activation verified; %d entry points' % (n, len(targets)))
