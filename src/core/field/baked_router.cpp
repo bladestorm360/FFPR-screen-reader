@@ -145,7 +145,9 @@ Route find(const Request& r)
 
     if (is_goal(start)) {
         out.found = true;
-        out.cells.push_back(start);
+        // World searches normalize their internal layer to zero. Published paths
+        // still use the caller's layer, including adjacent zero-movement arrival.
+        out.cells.push_back(r.start);
         return out;
     }
 

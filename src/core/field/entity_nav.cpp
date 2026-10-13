@@ -82,7 +82,7 @@ bool ensure_field_context()
     return true;
 }
 
-/// RefreshEntitiesIfNeeded: an incremental scan on each key; a full rescan on a map change.
+/// Refresh live deltas asynchronously; browsing uses the prepared category views.
 void refresh_entities_if_needed()
 {
     int id = current_map_id();
@@ -350,7 +350,7 @@ int install()
 
     // The toggles store the setting; the scanner reads the filter settings live, so the
     // reactions only re-apply the list as FF1's setters did.
-    actions::define("Settings.Changed.PathfindingFilter", [] {});   // applied at the next cycle
+    actions::define("Settings.Changed.PathfindingFilter", [] { scanner::invalidate_map(); scanner::scan_entities(); });
     actions::define("Settings.Changed.MapExitFilter", [] { scanner::reapply_filter(); });
     actions::define("Settings.Changed.ToLayerFilter", [] { scanner::set_filter_to_layer(true); });
 

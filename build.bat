@@ -121,6 +121,21 @@ if errorlevel 1 (
     echo Entity filter check FAILED - see build_check\entity_filter_report.txt
     exit /b 1
 )
+"out\checks\entity_scanner_check.exe" > build_check\entity_scanner_report.txt 2>&1
+if not "%errorlevel%"=="0" (
+    echo Entity scanner check FAILED - see build_check\entity_scanner_report.txt
+    exit /b 1
+)
+"out\checks\navigation_worker_check.exe" > build_check\navigation_worker_report.txt 2>&1
+if not "%errorlevel%"=="0" (
+    echo Navigation worker check FAILED - see build_check\navigation_worker_report.txt
+    exit /b 1
+)
+"out\checks\navigation_perf_check.exe" > build_check\navigation_perf_report.txt 2>&1
+if not "%errorlevel%"=="0" (
+    echo Navigation performance check FAILED - see build_check\navigation_perf_report.txt
+    exit /b 1
+)
 "out\checks\component_cache_check.exe" > build_check\component_cache_report.txt 2>&1
 if errorlevel 1 (
     echo Component cache check FAILED - see build_check\component_cache_report.txt

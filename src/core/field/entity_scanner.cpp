@@ -15,6 +15,7 @@
 #include "entity_translator.h"
 #include "npc_names.h"
 #include "entity_filter.h"
+#include "capture_budget.h"
 #include "event_labels.h"
 #include "field_api.h"
 #include "field_internal.h"
@@ -83,6 +84,7 @@ bool pathfinding_passes(const EntityPtr& e, const FilterContext& ctx)
     if (!e || !e->is_alive()) return false;
     // Another floor's entry exists only under "Current map", which lists everything.
     if (e->remote()) return pathfinding_mode() == ui::prefs::kFilterCurrentMap;
+    if (!pathfinding_enabled()) return true;
     // A vehicle-only trigger hidden for the current vehicle is not a walking target: it is
     // reached by boarding its vehicle, so the walking path test does not apply.
     if (e->game && entity_is_hidden_by_vehicle(e->game)) return true;
@@ -400,10 +402,13 @@ EntityPtr convert(void* fe)
 
 std::vector<std::pair<void*, EntityPtr>> g_entity_map;   // FieldEntity -> conversion, in insertion order
 std::vector<EntityPtr> g_entities;
-std::vector<EntityPtr> g_filtered;
+std::array<std::vector<EntityPtr>, 6> g_category_views;
 std::vector<Vec3> g_exit_positions; // worker-compiled unfiltered live exits, for wall tones
 int g_index = 0;
 Category g_category = Category::All;
+std::vector<EntityPtr>& filtered_view() { return g_category_views[static_cast<size_t>(g_category)]; }
+bool g_views_ready = false;
+std::optional<Vec3> g_view_origin;
 int g_last_scanned_map_id = -1;
 worker_job::Owner g_filter_work;
 bool g_filter_pending = false;
@@ -474,8 +479,8 @@ struct RemoteBuilder {
         input.locale = modtext::lang();
     }
     bool step() {
-        const double until = frame::now() + 0.0005;
-        for (int captured = 0; next < objects.size() && captured < 4 && frame::now() < until; ++captured, ++next) {
+        CaptureBudget budget;
+        for (; next < objects.size() && budget.available(); ++next) {
             const auto& object = objects[next];
             RemoteRow row; row.object = object; row.floor = resolve_map_name(object.map_id);
             switch (object.type) {
@@ -562,9 +567,8 @@ void apply_filter() {
     frame::every_frame([entities, input, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y]() mutable {
         if (generation != g_filter_generation) return false;
         if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) { cancel_filter(); return false; }
-        const double started = frame::now();
-        for (int captured = 0; next < entities->size() && captured < 4; ++captured, ++next) {
-            if (captured && frame::now() - started >= 0.0005) break;
+        CaptureBudget budget;
+        for (; next < entities->size() && budget.available(); ++next) {
             const auto& entity = (*entities)[next];
             FilterRow row;
             row.index = next; row.kind = entity->kind; row.category = entity->category();
@@ -582,29 +586,44 @@ void apply_filter() {
             input->rows.push_back(std::move(row));
         }
         if (next < entities->size()) return true;
-        worker_job::start(g_filter_work, std::move(*input), &filter_worker::build,
-            [entities, generation, map_id, continued_map, continued_x, continued_y](Filtered filtered) {
+        const auto origin = input->sort ? std::optional<Vec3>(input->player) : std::nullopt;
+        worker_job::start(g_filter_work, std::move(*input), &filter_worker::build_categories,
+            [entities, generation, map_id, continued_map, continued_x, continued_y, origin](Categories filtered) {
                 if (generation != g_filter_generation || map_id != current_map_id_or_user_data()) return;
-                auto result = std::make_shared<Filtered>(std::move(filtered));
-                auto handles = std::make_shared<std::vector<EntityPtr>>(); // native owner registry only
-                frame::every_frame([entities, result, handles, named = size_t(0), ordered = size_t(0),
-                                    generation, map_id, continued_map, continued_x, continued_y]() mutable {
+                auto result = std::make_shared<Categories>(std::move(filtered));
+                auto handles = std::make_shared<std::array<std::vector<EntityPtr>, 6>>(); // native owner registry only
+                frame::every_frame([entities, result, handles, named = size_t(0), ordered = size_t(0), view = size_t(0),
+                                    generation, map_id, continued_map, continued_x, continued_y, origin]() mutable {
                     if (generation != g_filter_generation) return false;
                     if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) {
                         cancel_filter(); return false;
                     }
-                    for (int count = 0; named < result->names.size() && count < 4; ++named, ++count)
-                        (*entities)[named]->name = std::move(result->names[named]);
-                    for (int count = 0; ordered < result->order.size() && count < 4; ++ordered, ++count)
-                        handles->push_back((*entities)[result->order[ordered]]);
-                    if (named < result->names.size() || ordered < result->order.size()) return true;
-                    g_filtered.swap(*handles); g_exit_positions.swap(result->exits);
-                    if (result->restored >= 0) g_index = result->restored;
+                    CaptureBudget budget;
+                    auto& all = result->views[0];
+                    for (; named < all.names.size() && budget.available(); ++named)
+                        (*entities)[named]->name = std::move(all.names[named]);
+                    for (; view < handles->size() && budget.available(); ++view, ordered = 0) {
+                        const auto& order = result->views[view].order;
+                        for (; ordered < order.size() && budget.available(); ++ordered)
+                            (*handles)[view].push_back((*entities)[order[ordered]]);
+                        if (ordered < order.size()) return true;
+                    }
+                    if (named < all.names.size() || view < handles->size()) return true;
+                    g_category_views.swap(*handles); g_exit_positions.swap(all.exits);
+                    auto& current = result->views[static_cast<size_t>(g_category)];
+                    // Input can move selection while this refresh is running. Keep
+                    // the latest owner-side identity, not the capture's old index.
+                    const auto selected = std::find(filtered_view().begin(), filtered_view().end(), g_sel);
+                    if (g_sel && selected != filtered_view().end())
+                        g_index = static_cast<int>(selected - filtered_view().begin());
+                    else if (g_sel_has && current.restored >= 0) g_index = current.restored;
                     baked_nav::MapGoal goal; TargetKind kind; std::wstring name;
-                    const bool continued_current = result->continued >= 0 && baked_nav::pending_goal(goal, kind, name)
+                    const bool continued_current = current.continued >= 0 && baked_nav::pending_goal(goal, kind, name)
                         && goal.map_id == continued_map && goal.cell.x == continued_x && goal.cell.y == continued_y;
-                    if (continued_current) g_index = result->continued;
-                    if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
+                    if (continued_current) g_index = current.continued;
+                    if (g_index >= static_cast<int>(filtered_view().size())) g_index = 0;
+                    g_views_ready = true;
+                    g_view_origin = origin;
                     g_filter_pending = false;
                     if (continued_current) {
                         save_selected_identifier();
@@ -612,7 +631,7 @@ void apply_filter() {
                     }
                     return false;
                 }, "EntityScanner.FilterPublish", INT_MAX);
-            });
+            }, background::Lane::Navigation);
         return false;
     }, "EntityScanner.FilterCapture", INT_MAX);
 }
@@ -651,25 +670,26 @@ void ensure_correct_map()
 // scanner API
 // =========================================================================================
 namespace scanner {
-namespace { bool scan_pending(); }
 void when_filter_ready(std::function<void()> ready) {
     ensure_correct_map();
     const int map_id = current_map_id_or_user_data();
-    frame::every_frame([map_id, ready = std::move(ready)]() mutable {
+    auto attempt = [map_id, ready = std::move(ready)]() mutable {
         if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) return false;
-        if (scan_pending() || g_filter_pending) return true;
+        // A live refresh must not put each browse input behind a full map scan.
+        // Map/settings invalidation clears readiness; ordinary refresh keeps it.
+        if (!g_views_ready) return true;
         if (!pathfinding_enabled()) { ready(); return false; }
         if (!baked_nav::available(field::map_handle())) { ffpr::say(T(L"Navigation map data unavailable")); return false; }
         baked_nav::request_reachability(pathfinding_mode() == ui::prefs::kFilterCurrentMapWithVehicles, std::move(ready));
         return false;
-    }, "EntityScanner.Ready", INT_MAX);
+    };
+    if (attempt()) frame::every_frame(std::move(attempt), "EntityScanner.Ready", INT_MAX);
 }
 
 namespace {
 std::atomic<uint64_t> g_scan_generation{0};
 bool g_scan_running = false;
 worker_job::Owner g_scan_work;
-bool scan_pending() { return g_scan_running; }
 void finish_scan(int map_id, bool remote_ready = false)
 {
     g_entities.clear();
@@ -682,7 +702,7 @@ void finish_scan(int map_id, bool remote_ready = false)
     }
     g_last_scanned_map_id = map_id;
     apply_filter();
-    if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
+    if (g_index >= static_cast<int>(filtered_view().size())) g_index = 0;
     // Selection is restored by the asynchronous filter publication.
 }
 }
@@ -703,7 +723,9 @@ void invalidate_map()
     g_remote_map_id = -1;
     g_remote.clear();
     g_entities.clear();
-    g_filtered.clear();
+    for (auto& view : g_category_views) view.clear();
+    g_views_ready = false;
+    g_view_origin.reset();
     g_exit_positions.clear();
     g_index = 0;
     g_last_scanned_map_id = -1;
@@ -739,8 +761,8 @@ void schedule_scan()
         // Read one current native collection slot at a time. No eager list copy,
         // deferred stale list pointer or full native allocation precedes the batch.
         bool more = !scan->captured;
-        const double until = frame::now() + 0.0005;
-        for (int count = 0; more && count < 4 && frame::now() < until; ++count) {
+        CaptureBudget budget;
+        for (; more && budget.available();) {
             void* fe = nullptr;
             if (!(more = scan->cursor.next(fe))) break;
             if (!fe) continue;
@@ -755,7 +777,7 @@ void schedule_scan()
         }
         if (more) return true;
         scan->captured = true;
-        for (int checked = 0; scan->prune < g_entity_map.size() && checked < 4; ++checked, ++scan->prune) {
+        for (; scan->prune < g_entity_map.size() && budget.available(); ++scan->prune) {
             auto& entry = g_entity_map[scan->prune];
             if (!scan->cursor.seen.count(entry.first) || !entry.second->is_alive()) entry.second.reset();
         }
@@ -823,21 +845,16 @@ void force_rescan()
 void next_entity()
 {
     ensure_correct_map();
-    if (g_filtered.empty()) {
+    if (filtered_view().empty()) {
         scan_entities();
-        if (g_filtered.empty()) return;
+        if (filtered_view().empty()) return;
     }
-    int n = static_cast<int>(g_filtered.size());
-    if (!pathfinding_enabled()) {
-        g_index = (g_index + 1) % n;
-        save_selected_identifier();
-        return;
-    }
+    int n = static_cast<int>(filtered_view().size());
     FilterContext ctx;
     int start = g_index;
     for (int attempts = 0; attempts < n; ++attempts) {
         g_index = (g_index + 1) % n;
-        if (pathfinding_passes(g_filtered[static_cast<size_t>(g_index)], ctx)) {
+        if (pathfinding_passes(filtered_view()[static_cast<size_t>(g_index)], ctx)) {
             save_selected_identifier();
             return;
         }
@@ -848,21 +865,16 @@ void next_entity()
 void previous_entity()
 {
     ensure_correct_map();
-    if (g_filtered.empty()) {
+    if (filtered_view().empty()) {
         scan_entities();
-        if (g_filtered.empty()) return;
+        if (filtered_view().empty()) return;
     }
-    int n = static_cast<int>(g_filtered.size());
-    if (!pathfinding_enabled()) {
-        g_index = (g_index - 1 + n) % n;
-        save_selected_identifier();
-        return;
-    }
+    int n = static_cast<int>(filtered_view().size());
     FilterContext ctx;
     int start = g_index;
     for (int attempts = 0; attempts < n; ++attempts) {
         g_index = (g_index - 1 + n) % n;
-        if (pathfinding_passes(g_filtered[static_cast<size_t>(g_index)], ctx)) {
+        if (pathfinding_passes(filtered_view()[static_cast<size_t>(g_index)], ctx)) {
             save_selected_identifier();
             return;
         }
@@ -872,22 +884,21 @@ void previous_entity()
 
 bool no_reachable_entities()
 {
-    if (!pathfinding_enabled() || g_filtered.empty()) return false;
+    if (!pathfinding_enabled() || filtered_view().empty()) return false;
     FilterContext ctx;
-    for (auto& e : g_filtered)
+    for (auto& e : filtered_view())
         if (pathfinding_passes(e, ctx)) return false;
     return true;
 }
 
 bool select_first_reachable()
 {
-    if (g_filtered.empty()) return false;
-    if (!pathfinding_enabled()) return true;
+    if (filtered_view().empty()) return false;
     FilterContext ctx;
-    int n = static_cast<int>(g_filtered.size());
+    int n = static_cast<int>(filtered_view().size());
     for (int i = 0; i < n; ++i) {
         int idx = (g_index + i) % n;
-        if (pathfinding_passes(g_filtered[static_cast<size_t>(idx)], ctx)) {
+        if (pathfinding_passes(filtered_view()[static_cast<size_t>(idx)], ctx)) {
             g_index = idx;
             save_selected_identifier();
             return true;
@@ -898,14 +909,15 @@ bool select_first_reachable()
 
 void reapply_filter()
 {
+    g_views_ready = false;
     apply_filter();
-    if (g_index >= static_cast<int>(g_filtered.size())) g_index = 0;
+    if (g_index >= static_cast<int>(filtered_view().size())) g_index = 0;
 }
 
 void set_filter_to_layer(bool)
 {
     // FilterToLayer's setter: the filter state is the setting itself; re-apply at once.
-    apply_filter();
+    reapply_filter();
 }
 
 void set_category(Category c)
@@ -913,8 +925,17 @@ void set_category(Category c)
     if (g_category == c) return;
     g_category = c;
     clear_selected_identifier();
-    apply_filter();
+    // Every published generation already contains this view. If the map is still
+    // being captured, let its pending worker prepare all views together.
     g_index = 0;
+    Vec3 at;
+    if (g_views_ready && player_local_position(at) && (!g_view_origin ||
+        at.x != g_view_origin->x || at.y != g_view_origin->y || at.z != g_view_origin->z)) {
+        // Preserve nearest-first category entry after movement. Refresh only the
+        // small live row snapshot/sort, without waiting for a full entity scan.
+        g_views_ready = false;
+        apply_filter();
+    }
 }
 
 Category category() { return g_category; }
@@ -922,12 +943,13 @@ Category category() { return g_category; }
 EntityPtr current_entity()
 {
     ensure_correct_map();
-    if (g_filtered.empty() || g_index < 0 || g_index >= static_cast<int>(g_filtered.size())) return nullptr;
-    return g_filtered[static_cast<size_t>(g_index)];
+    if (filtered_view().empty() || g_index < 0 || g_index >= static_cast<int>(filtered_view().size())) return nullptr;
+    auto entity = filtered_view()[static_cast<size_t>(g_index)];
+    return entity && entity->is_alive() ? entity : nullptr;
 }
 
 int current_index() { return g_index; }
-int count() { return static_cast<int>(g_filtered.size()); }
+int count() { return static_cast<int>(filtered_view().size()); }
 
 std::vector<unity::Vec3> map_exit_positions()
 {

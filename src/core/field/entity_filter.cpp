@@ -7,6 +7,35 @@ float point_distance(Vec3 a, Vec3 b) {
     const auto x=a.x-b.x, y=a.y-b.y, z=a.z-b.z;
     return static_cast<float>(std::sqrt(static_cast<double>(x*x+y*y+z*z)));
 }
+void restore_selection(Filtered& result, const FilterInput& input) {
+    if (input.continued_goal) for (size_t i = 0; i < result.order.size(); ++i) {
+        const auto& row = input.rows[result.order[i]];
+        const bool map_matches = row.remote_map ? row.remote_map == input.continued_map
+            : input.current_map == input.continued_map;
+        if (map_matches && (row.remote_map || row.cell_valid)
+            && row.cell_x == input.continued_x && row.cell_y == input.continued_y) {
+            result.continued = static_cast<int>(i); break;
+        }
+    }
+    for (size_t i = 0; i < result.order.size(); ++i)
+        if (input.rows[result.order[i]].selected) { result.restored = static_cast<int>(i); return; }
+    if (input.selected_has) {
+        for (size_t i = 0; i < result.order.size(); ++i) {
+            const auto& row = input.rows[result.order[i]];
+            const bool match = input.selected_remote > 0
+                ? row.remote_map == input.selected_remote && row.cell_x == input.selected_x && row.cell_y == input.selected_y
+                : !row.remote_map && row.category == input.selected_category && point_distance(row.position, input.selected_position) < 0.5f;
+            if (match) { result.restored = static_cast<int>(i); return; }
+        }
+        if (!input.selected_name.empty() && !input.selected_remote)
+            for (size_t i = 0; i < result.order.size(); ++i) {
+                const auto& row = input.rows[result.order[i]];
+                if (!row.remote_map && row.category == input.selected_category && row.name == input.selected_name) {
+                    result.restored = static_cast<int>(i); break;
+                }
+            }
+    }
+}
 }
 Filtered build(FilterInput& input) {
     Filtered result;
@@ -39,33 +68,22 @@ Filtered build(FilterInput& input) {
         if (input.exits && row.kind == Kind::MapExit && row.destination > 0 && !exits.insert(row.destination).second) return true;
         return input.layer && row.kind == Kind::Event && row.event_type == L"ToLayer";
     }), result.order.end());
-    if (input.continued_goal) for (size_t i = 0; i < result.order.size(); ++i) {
-        const auto& row = input.rows[result.order[i]];
-        const bool map_matches = row.remote_map ? row.remote_map == input.continued_map
-            : input.current_map == input.continued_map;
-        if (map_matches && (row.remote_map || row.cell_valid)
-            && row.cell_x == input.continued_x && row.cell_y == input.continued_y) {
-            result.continued = static_cast<int>(i); break;
-        }
+    restore_selection(result, input);
+    return result;
+}
+Categories build_categories(FilterInput& input) {
+    input.category = Category::All;
+    Categories result;
+    auto& all = result.views[0];
+    all = build(input);
+    for (size_t i = 0; i < all.order.size(); ++i) {
+        const auto index = all.order[i];
+        auto& view = result.views[static_cast<size_t>(input.rows[index].category)];
+        if (&view == &all) continue;
+        view.order.push_back(index);
     }
-    for (size_t i = 0; i < result.order.size(); ++i)
-        if (input.rows[result.order[i]].selected) { result.restored = static_cast<int>(i); return result; }
-    if (input.selected_has) {
-        for (size_t i = 0; i < result.order.size(); ++i) {
-            const auto& row = input.rows[result.order[i]];
-            const bool match = input.selected_remote > 0
-                ? row.remote_map == input.selected_remote && row.cell_x == input.selected_x && row.cell_y == input.selected_y
-                : !row.remote_map && row.category == input.selected_category && point_distance(row.position, input.selected_position) < 0.5f;
-            if (match) { result.restored = static_cast<int>(i); return result; }
-        }
-        if (!input.selected_name.empty() && !input.selected_remote)
-            for (size_t i = 0; i < result.order.size(); ++i) {
-                const auto& row = input.rows[result.order[i]];
-                if (!row.remote_map && row.category == input.selected_category && row.name == input.selected_name) {
-                    result.restored = static_cast<int>(i); break;
-                }
-            }
-    }
+    for (size_t category = 1; category < result.views.size(); ++category)
+        restore_selection(result.views[category], input);
     return result;
 }
 }

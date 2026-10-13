@@ -22,6 +22,7 @@
 #include "../frame.h"
 #include "../background.h"
 #include "../worker_job.h"
+#include "capture_budget.h"
 #include "../system/system.h"
 #include "../modtext.h"
 #include "../say.h"
@@ -209,6 +210,7 @@ struct NativeObstacle {
     bool chest = false, npc = false;
 };
 struct RouteSnapshot {
+    double requested_at = 0, captured_at = 0;
     int map_id = 0, layer = 1;
     const baked::Submap* submap = nullptr; // immutable prepared bake, process lifetime
     Vec3 position;
@@ -1218,7 +1220,7 @@ CornerState cached_corner(const baked::Submap* sm, int map_id, const Cell& at,
     worker_job::start(g_follow_owner, input, &build_corner, [](CornerResult result) {
         if (!g_corner_pending || !same_corner(*g_corner_pending, result.input)) return;
         g_corner = std::move(result); g_corner_pending.reset();
-    });
+    }, background::Lane::Navigation);
     return CornerState::Pending;
 }
 } // namespace
@@ -1561,7 +1563,7 @@ void ensure_quick(baked_route::Request request, std::function<void()> ready = {}
             g_quick_grid = std::move(grid);
             auto waiters = std::move(g_quick_waiters); g_quick_waiters.clear();
             for (auto& ready : waiters) ready();
-        });
+        }, background::Lane::Navigation);
 }
 bool quick_query(Vec3 from, Vec3 to, void* map, void* player, TargetKind kind, bool with_vehicles, PathInfo& out) {
     auto req = quick_movement(from, map, player, with_vehicles);
@@ -1591,6 +1593,7 @@ struct SnapshotScope {
     ~SnapshotScope() { g_route_snapshot = old; g_active = active; g_pending = pending; }
 };
 struct Planned {
+    double requested_at = 0, capture_ms = 0, compute_ms = 0;
     PathInfo path;
     std::shared_ptr<ActiveRoute> active;
     Pending pending;
@@ -1603,11 +1606,14 @@ struct Planned {
     bool keep_destination = true;
 };
 Planned plan_snapshot(RouteSnapshot& snapshot) {
+    const double compute_started = frame::now();
     if (snapshot.previous_active) snapshot.active = *snapshot.previous_active;
     modtext::LocaleScope locale(snapshot.locale);
     SnapshotScope scope(snapshot);
     const Pending previous_pending = snapshot.pending;
     Planned result;
+    result.requested_at = snapshot.requested_at;
+    result.capture_ms = (snapshot.captured_at - snapshot.requested_at) * 1000;
     result.map_id = snapshot.map_id;
     result.start = cell_of(*snapshot.submap, snapshot.position, snapshot.layer);
     result.locale = snapshot.locale;
@@ -1618,6 +1624,7 @@ Planned plan_snapshot(RouteSnapshot& snapshot) {
     }
     if (!snapshot.keep_destination) snapshot.pending = previous_pending;
     result.active = std::make_shared<ActiveRoute>(std::move(snapshot.active)); result.pending = std::move(snapshot.pending);
+    result.compute_ms = (frame::now() - compute_started) * 1000;
     return result;
 }
 void resolve_plan_name(Planned& result, const std::wstring& name) {
@@ -1640,6 +1647,14 @@ bool still_current(const Planned& result) {
     if (!ffpr::system::is_field_navigation_ready() || field::current_map_id() != result.map_id) return false;
     Cell now;
     return player_cell(field::map_handle(), field::player(), now) && now == result.start;
+}
+void commit_plan(Planned& result) {
+    g_request_pending = false;
+    if (!g_pending) g_pending = new Pending();
+    g_published_route = std::move(result.active); g_active = g_published_route.get();
+    *g_pending = std::move(result.pending);
+    LOGF("[BakedNav] ready map %d: capture %.3f ms, compute %.3f ms, total %.3f ms",
+        result.map_id, result.capture_ms, result.compute_ms, (frame::now() - result.requested_at) * 1000);
 }
 NativeObstacle capture_obstacle(void* fe, const RouteSnapshot& snapshot) {
     NativeObstacle out;
@@ -1689,6 +1704,7 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
         publish(std::move(missing)); return;
     }
     auto snapshot = std::make_shared<RouteSnapshot>(map_state::Resolver());
+    snapshot->requested_at = frame::now();
     snapshot->map_id = field::current_map_id(); snapshot->submap = submap;
     snapshot->position = unity::local_position(unity::transform(pl));
     snapshot->layer = submap->world ? 1 : player_layer(pl);
@@ -1708,8 +1724,8 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
             cancel_route_work(); return false;
         }
         bool more = true;
-        const double until = frame::now() + 0.0005;
-        for (int copied = 0; copied < 4 && frame::now() < until; ++copied) {
+        CaptureBudget budget;
+        for (; budget.available();) {
             void* fe = nullptr;
             if (!(more = entities->next(fe))) break;
             if (!live_entity(fe) || !entity_is_active(fe) || !unity::transform(fe)) continue;
@@ -1726,6 +1742,7 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
         for (const auto& row : baked::transports())
             if (std::find(snapshot->auto_groups.begin(), snapshot->auto_groups.end(), row.group) != snapshot->auto_groups.end())
                 snapshot->vehicle_names.emplace(row.id, field::vehicle_display_name(row.id, row.type, baked::str(row.message)));
+        snapshot->captured_at = frame::now();
         worker_job::start(g_route_owner, std::move(*snapshot), &plan_snapshot,
             [serial, publish = std::move(publish)](Planned result) mutable {
                 if (serial != g_request_serial) return;
@@ -1740,6 +1757,13 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
                     return;
                 }
                 const auto name = result.path.next_map_id > 0 ? resolve_map_name_by_id(result.path.next_map_id) : std::wstring();
+                if (result.path.next_map_id <= 0) {
+                    // Same-floor routes already have their complete worker text.
+                    // Do not add another queue/frame round trip to every request.
+                    commit_plan(result);
+                    publish(std::move(result.path));
+                    return;
+                }
                 struct Finish { Planned result; std::wstring name; };
                 worker_job::start(g_route_owner, Finish{std::move(result), name},
                     [](Finish& finish) { resolve_plan_name(finish.result, finish.name); return std::move(finish.result); },
@@ -1751,12 +1775,10 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
                                 request_route(std::move(finished.goal), finished.kind, std::move(finished.name), std::move(publish), finished.keep_destination);
                             return;
                         }
-                        if (!g_pending) g_pending = new Pending();
-                        g_published_route = std::move(finished.active); g_active = g_published_route.get();
-                        *g_pending = std::move(finished.pending);
+                        commit_plan(finished);
                         publish(std::move(finished.path));
-                    });
-            });
+                    }, background::Lane::Navigation);
+            }, background::Lane::Navigation);
         return false;
     }, "BakedNav.Capture", INT_MAX);
 }

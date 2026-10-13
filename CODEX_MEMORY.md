@@ -1,5 +1,21 @@
 # Native FFPR durable memory
 
+- October 13 navigation-latency fix deployed/hash-verified in all six games:
+  `ED888BC45404857EA010B80991E38DAD8107F9047FC1D8F34075BC6E9421C7C2`.
+  Supersedes preceding builds. FF1 log showed ~875 ms repeated world scans before
+  filtering. Navigation now has a dedicated normal-priority worker; native captures
+  retain a central 0.5 ms elapsed budget without a fixed four-entry cap. Prepare all
+  six category views together; warm browsing does not wait for live refresh, and
+  movement refreshes nearest-first category sorting. Preserve lifetime/map/settings
+  invalidation and latest selection. Same-floor plans skip an extra queue/frame trip.
+  Canonical build (7,061 names, zero missing/undefined wiring), actual-source blocked
+  refresh/input/selection checks, all-six real-world bakes and isolated DLL smoke pass.
+  Final representative world compute: flood <=7.454 ms, route <=14.260 ms; 10,000
+  rows/six views ~2–4 ms. These are offline compute/fixture timings, not gameplay speech
+  or loading measurements. No game launched. [Evidence, ownership and reviewed Luna
+  documentation handoff](docs/re/THREADING.md#navigation-latency-follow-up-october-13),
+  [short user checks](docs/TESTING.md#navigation-latency-follow-up-october-13).
+
 - October 12 final worker/results follow-up deployed and hash-verified in all six
   games: `DA45D46CA76664B2E722D20AA898B7AD10389642F97E009D4D41D2B7B818C95F`.
   Supersedes all earlier DLLs below. Canonical build (7,061 names, zero missing;

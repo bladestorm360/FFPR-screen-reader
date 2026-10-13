@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <thread>
 #include <fstream>
+#include <chrono>
 #include "../src/core/field/baked_nav.cpp"
 namespace fixture {
 const DWORD native_owner = GetCurrentThreadId();
@@ -119,7 +120,19 @@ int main() {
         long_route.auto_groups = {2}; // Semitt Falls requires the owned canoe
         long_route.goal.map_id = world->first_map_id; long_route.goal.cell = {1, 107, 44};
         long_route.kind = field::TargetKind::Transition; long_route.locale = L"en";
-        std::thread full([&] { result = plan_snapshot(long_route); }); full.join();
+        double route_ms = 0, flood_ms = 0;
+        std::thread full([&] {
+            const auto started = std::chrono::steady_clock::now();
+            result = plan_snapshot(long_route);
+            route_ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - started).count();
+            field::baked_route::Request reach;
+            reach.submap = world; reach.start = {1, 123, 34}; reach.auto_groups = {2}; reach.ignore_hazards = true;
+            const auto flood_started = std::chrono::steady_clock::now();
+            auto grid = field::baked_route::flood(reach);
+            flood_ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - flood_started).count();
+            expect(grid.reachable({1, 107, 44}), "world flood preserves canoe reachability");
+        }); full.join();
+        std::printf("FF2 world worker: route %.3f ms, reachability %.3f ms (offline computation)\n", route_ms, flood_ms);
         expect(result.path.success && result.path.step_count >= 26, "worker routes real world map without native distance cap");
         field::baked_route::Request cancelled;
         cancelled.submap = world; cancelled.start = {1, 123, 34}; cancelled.goals = {{1, 107, 44}};

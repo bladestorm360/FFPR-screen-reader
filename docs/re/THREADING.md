@@ -25,8 +25,8 @@ listed below pass. Runtime speech/loading/frame confirmation remains user-side.
 | SDL/gamepad | Read copied physical state/edges; focus and native input routing. Publish initialization readiness only. | Exclusive dedicated Windows SDL owner loads/initializes/pumps/gamepads and publishes owned snapshots. Audio worker owns permitted device/stream calls. |
 | Mod audio | Fixed copied PCM commands or owned synthesis parameters; atomic gains/cancellation. | Below-normal audio owner synthesizes dynamic sounds and opens/streams/clears/closes devices. Cancellation cannot be lost when the PCM ring is full. |
 | Baked maps/state | Read atomic readiness and copy current flags/pose/rules. | Data worker prepares immutable grids, translation tables and remote projection. Compute worker uses copied flag resolver/locale. No callback cold decoding. |
-| Entity capture | Current native list/dictionary slots and fields, at most four entries per batch; 0.5 ms checked between entity captures. Lifetime/context validation and owned-handle publication remain here. | Remote formatting, exact-tag NPC numbering, sorting, inclusion filters, transition destination matching and live-exit cache construction. Publication moves four names/handles per frame. |
-| Routes/reachability/beacon | Copied pose, map/layer, vehicle/group data, current obstacles and rendered next-floor name. Validate context/request before publication. | Baked A*, floods, boarding and cross-floor Dijkstra; route remainder/corners, formatting and replacement of owned name tokens. Cancellable private snapshots, immutable prior route, no native pointers. |
+| Entity capture | Current native list/dictionary slots and fields under one central 0.5 ms elapsed capture budget. Lifetime/context validation and owned-handle publication remain here. | Remote formatting, exact-tag NPC numbering, sorting, inclusion filters, transition destination matching and live-exit cache construction. All six category views are prepared together; owner publication moves names/handles under the same elapsed budget. |
+| Routes/reachability/beacon | Copied pose, map/layer, vehicle/group data, current obstacles and rendered next-floor name, under the same central 0.5 ms elapsed capture budget. Validate context/request before publication. | Baked A*, floods, boarding and cross-floor Dijkstra run on the separate Navigation lane; route remainder/corners, formatting and replacement of owned name tokens use owned cancellable snapshots. Same-floor route publication avoids an unnecessary second worker/frame round trip. No native pointers. |
 | UI/results/status/bestiary | Current native phase/page detection and ready visible fields. Native lifecycle supplies current controllers; input is owned immediately during buffer preparation. | Owned buffer construction, group indexing and full-page text assembly. Manual actions are retained FIFO, then replayed at most four per frame while the same page/generation is active. |
 
 The necessary owner reads are bounded by the native UI's displayed rows or the explicit
@@ -34,7 +34,9 @@ capture batches. A time budget is checked between operations; it does not preemp
 single engine call. This source contract and offline stall tests cannot certify literal
 zero instruction overhead or actual load/frame timing.
 
-`background.cpp` prepares Data/Compute/Io lanes during boot; callback publication uses
+`background.cpp` prepares Data/Compute/Io lanes during boot; a separate normal-priority
+Navigation lane is also created during boot for full routes, reachability floods and
+corner computation. Data/Compute/Io remain below-normal priority. Callback publication uses
 `try_to_lock`, with no inline fallback. `worker_job.h` sends only owned Snapshot/Work
 values to workers. Native callbacks and handles remain in its owner registry. An epoch
 invalidates old work; busy/full publication keeps the owned job for a later frame.
@@ -74,10 +76,54 @@ matching GameAssembly binaries. Particularly useful FF2 evidence:
 slot at a time; it never hands collection pointers to a worker. Existing cross-list and
 story-variant inclusion guards remain. Owned vehicles erase native pointers; vehicle
 and automatic-group caches are tagged with their map. Route capture, live entity
-conversion and remote native-name capture use four slots / 0.5 ms batches. Invalid
-map/battle/readiness generations retire capture instead of publishing stale values.
-Native collision revalidation checks one approved movement edge using the actual local
-player position; baked search never rewrites native grids.
+conversion and remote native-name capture share the central 0.5 ms elapsed capture budget;
+there is no fixed entries-per-frame limit. Invalid map/battle/readiness generations retire
+capture instead of publishing stale values. Native collision revalidation checks one
+approved movement edge using the actual local player position; baked search never rewrites
+native grids.
+
+## Navigation latency follow-up, October 13
+
+The user's October 13 FF1 log showed repeated world scans of 872.7–876.0 ms with 47 live
+targets. The old fixed four-entries-per-frame stages stacked scan/prune, filter snapshot,
+name/handle publication and route work. Field route capture, live scans, filter snapshots,
+remote labels and publication now use the shared 0.5 ms elapsed owner-read budget, without
+the old four-entry cap. A single filter-worker pass prepares all six category views while
+retaining the central NPC naming/grouping guards. Warm category changes use those views
+without recapture, renaming or queued work. Ordinary input-triggered live refresh does not
+hold browse readiness; map/settings invalidation still requires fresh views. Lifetime is
+rechecked for each entity, and a refresh completion preserves the latest selection if the
+user has moved it meanwhile. Same-floor routes publish directly from the worker result;
+cross-floor native name completion retains its owner-thread continuation. Route logs now
+include capture, compute and total milliseconds.
+After player movement, category entry refreshes the live row positions/distance sort
+without waiting for a full entity scan, preserving nearest-first selection. Route-log
+capture/total values include elapsed frame/queue handoffs; they are not game-thread CPU time.
+
+Actual-source offline checks: `entity_scanner_check.cpp` made 2,000 rows ready in 3–4
+ticks; cached category switching measured below 0.1 µs per switch in the fake-native
+fixture. Blocked scan/filter browsing, nearest-first entry after movement,
+latest-selection retention, despawn skipping and stale-map rejection passed.
+`entity_filter_check.cpp` prepared six views for 10,000 rows in about 2–4 ms.
+`route_worker_check.cpp` measured the FF2 Salamand–Semitt route and flood at about 1.3–1.5 ms,
+with zero worker-native calls and cancellation checks passing.
+`navigation_worker_check.cpp` verified that a blocked unrelated Compute owner does not
+block the separate normal-priority Navigation owner. `navigation_perf_check.cpp` exercises
+all six games' real world-map bakes: 24 world records, 16 representative reachable routes,
+with final-run worst flood 7.454 ms and far route 14.260 ms, zero failures.
+Eight records have no foot-start cell; some starts are isolated, so this is representative
+coverage, not an exhaustive benchmark of every origin, movement mode or destination.
+That check exposed an A* zero-movement early return that published internal layer 0; the
+caller layer is now preserved. The first benchmark caught that endpoint mismatch; its
+corrected replay passes. The scanner fixture also retires deliberately blocked jobs before
+C++ static teardown, and its canonical check catches every nonzero process status.
+Canonical build passes (7,061 native-name checks, zero missing; zero undefined wiring),
+as do all existing route/autowalk/input/worker checks and the isolated DLL smoke host.
+A final sandbox build stalled at process handling and was interrupted; the canonical
+build and smoke then passed outside that sandbox. All six installed DLL hashes match
+`ED888BC45404857EA010B80991E38DAD8107F9047FC1D8F34075BC6E9421C7C2`.
+No game was launched or probed. Actual input-to-speech and load/frame timing remains
+user-side; these compute/fixture timings do not include screen-reader delivery latency.
 
 Other current-owner paths use the native parents' item/equipment view fields, shop
 list/info fields, bestiary view/list/content chain, config details and game-specific
@@ -148,6 +194,7 @@ and verification. No Astra was used; no measured token or reserve saving is clai
 | Command-window lifecycle | Converted command bar/item/equipment/FF1 ability to specified native owner cache paths. Sol reviewed timing/fields and incoming-owner close behavior; canonical checks pass. | Runtime native screen entry/return. |
 | Bestiary lifecycle refs | Replaced all five actual scene finds with specified parent/current-controller paths (handoff had said six). Sol verified all-six chains/lifetime guards and build. | Runtime detail/list/formation transitions. |
 | Game-specific window lifecycle | Added specified FF2/3/4/6 ability and FF2 keyword native owner observations. Sol reviewed class guards/close identity and canonical name/build checks. | Runtime game-specific screen transitions. |
+| October 13 navigation latency documentation | Recorded known implementation/evidence and concise user checks. Sol reviewed against source/reports and corrected minor lane/publication/benchmark wording. | Gameplay timing remains user-side; final build/deployment recorded below and in memory. |
 
 ## Offline validation and runtime boundary
 

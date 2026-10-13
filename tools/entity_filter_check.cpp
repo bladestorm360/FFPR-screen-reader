@@ -2,6 +2,7 @@
 #include "../src/core/field/entity_filter.h"
 #include <cstdio>
 #include <thread>
+#include <chrono>
 int main() {
     using namespace field; using namespace filter_worker;
     int failures = 0;
@@ -49,6 +50,29 @@ int main() {
     expect(result.continued >= 0 && result.order[result.continued] == 1, "live destination uses copied verified cell");
     input.rows[1].cell_valid = false; result = build(input);
     expect(result.continued == -1, "invalid native cell capture cannot match a live destination");
+    const auto categories = build_categories(input);
+    for (int category = 0; category < 6; ++category) {
+        input.category = static_cast<Category>(category);
+        const auto expected = build(input);
+        const auto& actual = categories.views[category];
+        expect(actual.order == expected.order && actual.restored == expected.restored && actual.continued == expected.continued,
+            "prepared category matches the independent native-policy filter and selection");
+    }
+    // Large owned lists are prepared once, not recaptured/renamed for each key.
+    FilterInput large;
+    large.sort = true;
+    for (size_t i = 0; i < 10000; ++i) {
+        FilterRow value; value.index = i; value.kind = Kind::MapExit;
+        value.category = Category::MapExits; value.name = L"Exit";
+        value.position = {static_cast<float>(i % 256), static_cast<float>(i / 256), 0};
+        large.rows.push_back(std::move(value));
+    }
+    const auto started = std::chrono::steady_clock::now();
+    const auto prepared = build_categories(large);
+    const auto elapsed = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - started).count();
+    expect(prepared.views[0].order.size() == 10000 && prepared.views[3].order.size() == 10000,
+        "large-list categories retain every entity without a per-frame entry cap");
+    std::printf("Prepared 10,000 rows / six categories: %.3f ms (offline computation)\n", elapsed);
     std::printf("Entity filter: owned worker sorting, stable NPC groups, inclusion guards, selection: %d failures\n", failures);
     return failures ? 1 : 0;
 }

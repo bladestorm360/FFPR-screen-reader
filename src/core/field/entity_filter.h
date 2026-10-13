@@ -1,6 +1,7 @@
 #pragma once
 #include "field_internal.h"
 #include "npc_names.h"
+#include <array>
 namespace field::filter_worker {
 using Vec3 = unity::Vec3;
 struct FilterRow {
@@ -32,4 +33,8 @@ struct Filtered {
     int continued = -1;
 };
 Filtered build(FilterInput& input);
+// One worker pass prepares every category. Only view 0 owns names/exits; the
+// other views share those source rows and contain their own selection indices.
+struct Categories { std::array<Filtered, 6> views; };
+Categories build_categories(FilterInput& input);
 }

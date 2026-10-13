@@ -412,3 +412,19 @@ The follow-up is deployed/hash-verified in all six games:
 5. Compare the same save with the mod and without it: game loading, a map transition
    and battle entry. Report a repeatable slowdown and where it occurs. Offline stall
    tests do not measure actual game loading or frame responsiveness.
+
+## Navigation latency follow-up, October 13
+
+Offline evidence and implementation details: [thread ownership and latency record](re/THREADING.md#navigation-latency-follow-up-october-13).
+Canonical build and isolated DLL smoke pass. Deployed/hash-verified in all six games:
+`ED888BC45404857EA010B80991E38DAD8107F9047FC1D8F34075BC6E9421C7C2`.
+Gameplay confirmation and measured input-to-speech/load/frame timings remain pending.
+
+1. On a world map, rapidly browse targets and cycle categories. Browsing should remain
+   responsive while a live refresh runs.
+2. Move, change category, then request directions. Confirm the selected target is still
+   current, nearest-first category selection uses your new position, and directions match.
+3. Request a long or cross-floor route, cancel with manual input, then try autowalk
+   continuation. Confirm cancellation prevents later movement and manual input wins.
+4. Repeat during a map transition/loading. Check that the game stays responsive and
+   navigation becomes available when the map is ready.
