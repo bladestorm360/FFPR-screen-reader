@@ -219,17 +219,28 @@ int main() {
     expect(scanner::current_index() == 11, "warm browsing skips a despawned native handle even without reachability filtering");
     g_navigation_filtered=true;g_view_vehicle=0;
     fixture::pose.x+=1;spoken=false;
+    const auto queued = fixture::tasks.size();
+    const auto selected_started=frame::now();
+    scanner::when_filter_ready([&]{spoken=true;},true);
+    const auto selected_us=(frame::now()-selected_started)*1e6;
+    expect(spoken && g_views_ready && fixture::tasks.size()==queued,
+        "directions to a live selected target after movement do not wait for world-list refiltering");
+    apply_filter();fixture::pose.x+=16;spoken=false;
+    scanner::when_filter_ready([&]{spoken=true;},true);
+    expect(spoken && g_views_ready && !g_filter_pending,"selected route retires an obsolete destination flood without waiting for its worker");
+    spoken=false;
     scanner::when_filter_ready([&]{spoken=true;});
     expect(!spoken&&!g_views_ready&&g_filter_pending,"moving before grouped-exit browse waits for the new nearest-exit generation");
     for(int i=0;!spoken&&i<100;++i){fixture::tick();fixture::work();}
     expect(spoken,"grouped-exit browse resumes after owned worker publication");
     scanner::invalidate_map();
-    spoken = false; scanner::when_filter_ready([&] { spoken = true; });
+    spoken = false; scanner::when_filter_ready([&] { spoken = true; },true);
     expect(!spoken, "map invalidation requires a new ready generation");
     ++fixture::map; fixture::tick(); fixture::work(); fixture::tick();
     expect(!spoken && !g_views_ready, "changed map retires pending input and cannot publish stale categories");
     std::printf("Scanner: 2,000 rows prepared in %d capture/publication ticks; warm category %.3f us; %d failures\n",
         frames, category_us, failures);
+    std::printf("Selected destination after movement: %.3f us native-fixture dispatch, zero list-readiness ticks (offline)\n",selected_us);
     // Retire intentionally blocked fixture work before C++ static registries
     // tear down. Production workers/queues live for the entire game process.
     scanner::invalidate_map();

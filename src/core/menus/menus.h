@@ -10,14 +10,11 @@
 //            MagicMenuState.IsSpellListActive, MagicMenuState.IsTargetSelectionActive,
 //            MagicMenuState.ShouldSuppress (FF1)
 //   text     CharacterSelectionReader.TryReadCharacterSelection (reads cursor::current() and
-//            sets its out_count, src/core/system/cursor_event.h),
-//            UsableByAnnouncer.BuildShopItemAnnouncement
+//            sets its out_count, src/core/system/cursor_event.h)
 //   actions  ItemMenuState.ResetState, EquipMenuState.ClearState, MagicMenuState.ResetState,
 //            EquipDetailsAnnouncer.AnnounceCurrentItemDetails,
 //            ItemDescriptionAnnouncer.AnnounceCurrentDescription,
-//            ItemDetailsAnnouncer.AnnounceEquipRequirements,
 //            MagicDetailsAnnouncer.AnnounceCurrentSpellDescription,
-//            UsableByAnnouncer.AnnounceForCurrentContext
 //
 // Main thread only, like the C# originals.
 #include <string>

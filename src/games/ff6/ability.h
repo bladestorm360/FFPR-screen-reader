@@ -34,5 +34,6 @@ bool is_esper_cursor(void* cursor);
 
 /// Forget the esper list's last line (the list is being (re)entered).
 void reset_esper_list_guard();
+void refresh_esper_list(void* window);
 
 } // namespace ffpr::ff6

@@ -295,10 +295,11 @@ void d_UseSetCursor(void* self, void* cursor, const void* mi)
         int index = ui::cursor_index(cursor);
         void* content_list = ref::rd<void*>(self, fFF1AbilityUseContentList);
         if (!content_list) return;
-        int count = unity::list_count(content_list);
+        int count = displayed::target_count(content_list);
         if (index < 0 || index >= count) return;
 
-        void* content = unity::list_at(content_list, index);
+        void* content = displayed::cursor_row(cursor, content_list);
+        if (!content) content = unity::get_component_in_parent(cursor, kFF1MagicTargetContent);
         if (!content) return;
         void* character = ref::rd<void*>(content, fFF1MagicTargetCurrentData);
         if (!character) return;

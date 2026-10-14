@@ -1,4 +1,4 @@
-# Final Fantasy Pixel Master Core Screen Reader V0.9.1
+# Final Fantasy Pixel Master Core Screen Reader V0.9.2
 
 ## Purpose
 
@@ -6,16 +6,16 @@ Adds speech, menu and battle reading, pathfinding, optional autowalk and audio n
 
 ## Known Issues
 
-V0.9.1 is an early combined release. Some game-specific screens, vehicles and scripted map exits still need further gameplay testing. South Figaro house stairs and grouped world entrances have passed offline checks; gameplay confirmation is pending. Report missing or repeated speech with the game's ffpr_screen_reader.log and a short description of what happened.
+V0.9.2 is an early combined release. Some game-specific screens, airships and scripted map exits still need gameplay testing. FFIII and FFVI automatic airship boarding is disabled: board and take the wheel manually before requesting a flying route. FFVI flight autowalk has passed offline checks but still needs gameplay confirmation. Report missing or repeated speech with the game's ffpr_screen_reader.log and a short description of what happened.
 
 ## Install
 
-Requires 64-bit Windows, a Steam Pixel Remaster game and a running screen reader such as NVDA or JAWS. Prism 0.18.3 and SDL3 are included in this V0.9.1 bundle. MelonLoader, BepInEx, Python and separate dependency downloads are not required.
+Requires 64-bit Windows, a Steam Pixel Remaster game and a running screen reader such as NVDA or JAWS. Prism 0.18.3 and SDL3 are included in this V0.9.2 bundle. MelonLoader, BepInEx, Python and separate dependency downloads are not required.
 
 1. Close the game and extract the zip.
 2. Open the game's installation folder using Steam's Manage, Browse local files command. This is the folder containing FINAL FANTASY.exe, FINAL FANTASY II.exe, and so on.
 3. If an older screen reader is installed, remove its DLL from the game's Mods folder: FFI_ScreenReader.dll, FFII_ScreenReader.dll, FFIII_ScreenReader.dll, FFIV_ScreenReader.dll, FFV_ScreenReader.dll or FFVI_ScreenReader.dll, as appropriate. Keep your UserData folder.
-4. Open the extracted Final Fantasy Pixel Master Core Screen Reader V0.9.1 folder. Copy its contents into the game folder, including the .ffpr-deps folder. hid.dll and SDL3.dll must sit beside the game's EXE, and Prism must remain at .ffpr-deps/prism/prism.dll.
+4. Open the extracted Final Fantasy Pixel Master Core Screen Reader V0.9.2 folder. Copy its contents into the game folder, including the .ffpr-deps folder. hid.dll and SDL3.dll must sit beside the game's EXE, and Prism must remain at .ffpr-deps/prism/prism.dll.
 5. Start your screen reader, then the game. The title screen should speak. Repeat these steps for each game you use.
 
 The included license files should stay with the mod. Other mods' MelonLoader or BepInEx installations may remain; remove only the old screen reader DLL.
@@ -34,7 +34,8 @@ Mod keys require the game window to have focus. Field controls require the field
 - Enter: confirm.
 - Backspace or Escape: cancel.
 - Tab: open or close the game menu.
-- Q: switch the current stats/description panel where available; random name on naming screens.
+- Q: switch the current stats/description or Esper panel where available; random name on naming screens.
+- 2 / 3: previous / next native page or character where shown. On equipment information screens these change the numbered page; Q changes the footer without advancing that page.
 - F1: walk/run where the game permits it.
 - F3: toggle random encounters.
 
@@ -63,7 +64,6 @@ Mod keys require the game window to have focus. Field controls require the field
 - R: repeat the current dialogue or message.
 - I: read the highlighted item's, spell's or setting's details. In equipment and shops, read the current stats/description panel, following Q or X/Square. In the mod menu, I describes the highlighted setting.
 - Shift+I: read the controls for the current screen.
-- U: read who can equip the highlighted equipment.
 
 Current map includes connected dungeon/town floors. Chests use generic labels unless Speech / Spoil treasure chest contents is enabled; opened state is included when known.
 
@@ -90,7 +90,7 @@ In the waypoint name window, type normally. Left/Right reviews letters, Up/Down 
 - F7: toggle Autodetail.
 - F8 on the field: open the mod menu. F8 closes it directly.
 
-The mod menu has Speech, Navigation audio and Battle categories. Speech includes Autodetail, Verbose/Brief stat deltas, Status damage (default on) and Spoil treasure chest contents (default off). Navigation audio includes Autowalk, Speak autowalk path and Beacon with directions, each default off.
+The mod menu has Speech, Navigation, Navigation audio and Battle categories. Speech includes Autodetail, Verbose/Brief stat deltas, Status damage (default on) and Spoil treasure chest contents (default off). Navigation includes Autowalk, Speak autowalk path, filters and Stick Click Normalization. Navigation audio contains sound toggles and their volume controls, including Beacon with directions and the EXP counter sound where supported. Autowalk, Speak autowalk path and Beacon with directions remain independently default off.
 
 In the mod menu, Up/Down selects a category or setting, Enter/Space opens or toggles it, Left/Right changes a value, I reads its description, and Escape returns to categories or closes from the root.
 
@@ -101,7 +101,7 @@ In the mod menu, Up/Down selects a category or setting, Enter/Space opens or tog
 - I: details for the current page. On battle growth and weapon-progress pages, read all current-phase deltas.
 - Enter: advance the native results phase normally.
 
-Equipment replacement comparisons and extra item-detail screens use an arrow-key buffer. W/A/S/D retains native equipment selection; I reads the current item panel. Equipment slots speak the slot label, displayed Favored Hand and item name; Autodetail adds the current panel.
+Equipment replacement comparisons, extra item-detail screens and FFVI Esper information use an arrow-key buffer. W/A/S/D retains native equipment selection. I reads the current item panel for comparisons and the full current buffer on an extra item-detail screen. Equipment slots speak the slot label, displayed Favored Hand and item name; Autodetail adds the current panel. Extra item-detail entry includes the displayed quantity once; its buffer follows the current native page. The old U equipment-information key has been removed.
 
 ### Status, bestiary and controls lists
 
@@ -113,12 +113,12 @@ Equipment replacement comparisons and extra item-detail screens use an arrow-key
 ### Game-specific keys
 
 - FFI: I in the 15-puzzle reads the tile's row and column; I on new-game class selection reads the class description. F1 runs in towns/dungeons; the world map is walk-only.
-- FFII: I in Ask/Learn and key-term lists reads the selected term's description. U reports that any character can equip the item.
-- FFIII: R on status repeats the current stat; I in job selection reads the job description.
+- FFII: I in Ask/Learn and key-term lists reads the selected term's description.
+- FFIII: R on status repeats the current stat; I in job selection reads the displayed Equippable equipment types.
 - FFIII-VI: 9 on the field toggles beacon navigation, like F6.
 - FFIV-VI: T outside battle reads active timers; Shift+T freezes/resumes them.
 - FFV: Shift+Semicolon toggles landing pings on the field.
-- FFVI: extra equipment/item detail screens also support Up/Down and Ctrl+Up/Down review.
+- FFI-VI: extra equipment/item detail screens support arrow-key review; native page controls remain available.
 
 ### Game controller
 
@@ -146,7 +146,6 @@ Button names below use Xbox, with PlayStation in brackets. The mod announces lab
 - Field LT (L2/ZL): navigate to the last selected destination or waypoint; start/stop Autowalk when enabled.
 - In menus, right stick Up: details, like I.
 - In menus, right stick Down: screen controls, like Shift+I.
-- In menus, right stick Left: usable-by information, like U.
 - Status/bestiary/controls lists: D-pad or left stick Up/Down reviews entries.
 
 #### Mod mode combos

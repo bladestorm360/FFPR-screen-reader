@@ -233,7 +233,7 @@ struct FilterContext {
 
 // --- EntityScanner (entity_scanner.cpp) -----------------------------------------------------
 namespace scanner {
-void when_filter_ready(std::function<void()> ready);
+void when_filter_ready(std::function<void()> ready, bool existing_selection = false);
 void scan_entities();
 void schedule_scan();
 void cancel_scan();

@@ -9,7 +9,7 @@
 // defines it - the side effects of FF1's FFI_ScreenReaderMod.Toggle* methods (audio loops,
 // entity filters, stopping the EXP tick) belong there.
 //
-// Cross-game layout: exactly Speech, Navigation audio and Battle categories, followed by the
+// Cross-game layout: exactly Speech, Navigation, Navigation audio and Battle categories, followed by the
 // root Close Menu action. Game-specific entries remain conditional; FF2 has no EXP counter.
 // FF5's Landing Pings are available where a ship-type vehicle exists (not FF4 or FF6), and
 // Enemy Letters remains FF5-only. Displayed hit counters are supported wherever native UI shows them.
@@ -155,7 +155,28 @@ void initialize()
                        L"On. List entries announce their position, for example, 3 of 12.",
                        L"Off. List entries do not announce position."));
 
-    // Navigation audio and navigation filters
+    // Navigation
+    v.push_back(header(L"Navigation"));
+    v.push_back(toggle(L"Autowalk", p::kAutowalk, p::kAutowalkDefault,
+                       L"On. Backslash, P, Slash for a waypoint, or the controller left trigger walks to the destination. Press again to stop. Manual input, menus and battles stop the walk.",
+                       L"Off. Navigation requests give directions or restart the beacon."));
+    v.push_back(toggle(L"Speak autowalk path", p::kSpeakAutowalkPath, p::kSpeakAutowalkPathDefault,
+                       L"On. Reads the full current route when autowalk starts, and the next leg after a map transition.",
+                       L"Off. Autowalk starts without reading the route. Arrival and required actions are still announced."));
+    v.push_back(enumeration(L"Pathfinding Filter", {p::kPathfindingFilterModeNames[0], p::kPathfindingFilterModeNames[1], p::kPathfindingFilterModeNames[2]},
+                            p::kPathfindingFilterMode, p::kPathfindingFilterModeDefault, p::kPathfindingFilterModeMax,
+                            L"Current floor: entity cycling shows only what walking reaches on this floor. Current map with vehicles: also what a vehicle you have here reaches. Current map: everything, and a target cut off on this floor is routed through another floor."));
+    v.push_back(toggle(L"Map Exit Filter", p::kMapExitFilter, p::kMapExitFilterDefault,
+                       L"On. Multiple exits leading to the same destination collapse to the closest one.",
+                       L"Off. All map exits appear in navigation."));
+    v.push_back(toggle(L"Layer Transition Filter", p::kToLayerFilter, p::kToLayerFilterDefault,
+                       L"On. Layer transition entities are hidden from navigation.",
+                       L"Off. Layer transition entities appear in navigation."));
+    v.push_back(toggle(L"Stick Click Normalization", p::kStickClickNormalization, p::kStickClickNormalizationDefault,
+                       L"On. L3 and R3 pass through to the game (auto-dash and encounter toggle). Mod functions move to mod mode.",
+                       L"Off. L3 toggles beacon navigation; R3 toggles pathfinding filter; game cannot see them."));
+
+    // All audio settings, including the results-screen EXP sound, live together.
     v.push_back(header(L"Navigation audio"));
     v.push_back(toggle(L"Wall Tones", p::kWallTones, p::kWallTonesDefault,
                        L"On. Directional tones play as you approach walls.",
@@ -184,25 +205,15 @@ void initialize()
         v.push_back(volume(L"Landing Ping Volume", p::kLandingPingVolume, p::kLandingPingVolumeDefault,
                            L"Volume of the landing pings."));
     }
-    v.push_back(toggle(L"Autowalk", p::kAutowalk, p::kAutowalkDefault,
-                       L"On. Backslash, P, Slash for a waypoint, or the controller left trigger walks to the destination. Press again to stop. Manual input, menus and battles stop the walk.",
-                       L"Off. Navigation requests give directions or restart the beacon."));
-    v.push_back(toggle(L"Speak autowalk path", p::kSpeakAutowalkPath, p::kSpeakAutowalkPathDefault,
-                       L"On. Reads the full current route when autowalk starts, and the next leg after a map transition.",
-                       L"Off. Autowalk starts without reading the route. Arrival and required actions are still announced."));
 
-    v.push_back(enumeration(L"Pathfinding Filter", {p::kPathfindingFilterModeNames[0], p::kPathfindingFilterModeNames[1], p::kPathfindingFilterModeNames[2]},
-                            p::kPathfindingFilterMode, p::kPathfindingFilterModeDefault, p::kPathfindingFilterModeMax,
-                            L"Current floor: entity cycling shows only what walking reaches on this floor. Current map with vehicles: also what a vehicle you have here reaches. Current map: everything, and a target cut off on this floor is routed through another floor."));
-    v.push_back(toggle(L"Map Exit Filter", p::kMapExitFilter, p::kMapExitFilterDefault,
-                       L"On. Multiple exits leading to the same destination collapse to the closest one.",
-                       L"Off. All map exits appear in navigation."));
-    v.push_back(toggle(L"Layer Transition Filter", p::kToLayerFilter, p::kToLayerFilterDefault,
-                       L"On. Layer transition entities are hidden from navigation.",
-                       L"Off. Layer transition entities appear in navigation."));
-    v.push_back(toggle(L"Stick Click Normalization", p::kStickClickNormalization, p::kStickClickNormalizationDefault,
-                       L"On. L3 and R3 pass through to the game (auto-dash and encounter toggle). Mod functions move to mod mode.",
-                       L"Off. L3 toggles beacon navigation; R3 toggles pathfinding filter; game cannot see them."));
+    // EXP counter remains conditional because FF2 has no experience points.
+    if (!game::is(game::Id::FF2)) {
+        v.push_back(toggle(L"EXP Counter Sound", p::kExpCounter, p::kExpCounterDefault,
+                           L"On. A rapid tick plays while the EXP bar fills on the battle results screen.",
+                           L"Off. The EXP bar fills silently on the battle results screen."));
+        v.push_back(volume(L"EXP Counter Volume", p::kExpCounterVolume, p::kExpCounterVolumeDefault,
+                           L"Volume of the EXP counter tick, zero to one hundred percent."));
+    }
 
     // Battle
     v.push_back(header(L"Battle"));
@@ -220,15 +231,6 @@ void initialize()
     v.push_back(toggle(L"Battle results: changed stats", p::kAnnounceResultStatChanges, p::kAnnounceResultStatChangesDefault,
                        L"On. Announces only the displayed stats that changed on each battle growth page. Arrows still review the full table.",
                        L"Off. Changed stats remain available with I and arrow review."));
-
-    // EXP counter remains conditional because FF2 has no experience points.
-    if (!game::is(game::Id::FF2)) {
-        v.push_back(toggle(L"EXP Counter Sound", p::kExpCounter, p::kExpCounterDefault,
-                           L"On. A rapid tick plays while the EXP bar fills on the battle results screen.",
-                           L"Off. The EXP bar fills silently on the battle results screen."));
-        v.push_back(volume(L"EXP Counter Volume", p::kExpCounterVolume, p::kExpCounterVolumeDefault,
-                           L"Volume of the EXP counter tick, zero to one hundred percent."));
-    }
 
     // Close Menu action
     v.push_back(action(L"Close Menu", &close_menu, L"Closes the mod menu and returns to the game."));

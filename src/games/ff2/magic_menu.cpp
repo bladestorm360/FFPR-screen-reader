@@ -484,16 +484,16 @@ void d_UseSetCursor(void* self, void* cursor, const void* mi)
         }
         const int index = ui::cursor_index(cursor);
         void* list = ref::rd<void*>(self, fUseContentList);
-        const int count = unity::list_count(list);
+        const int count = displayed::target_count(list);
         if (!list || count == 0 || index < 0 || index >= count) return;
-        void* content = unity::list_at(list, index);
+        void* content = displayed::cursor_row(cursor, list);
+        if (!content) content = unity::get_component_in_parent(cursor, kTargetContent);
         void* character = content ? ref::rd<void*>(content, fTargetCurrentData) : nullptr;
         if (!character) return;
         std::wstring announcement = displayed::target(content);
         if (announcement.empty()) return;
 
         sync();
-        if (!dedup::text(kCtxTarget, announcement)) return;
         on_target_selection_active();
         ffpr::say(ui::menu_position(announcement, index, count), true);
     });

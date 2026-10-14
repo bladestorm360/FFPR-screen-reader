@@ -238,7 +238,12 @@ def map_bounds(info, objects):
     """Native MapRange rectangle, else the tilemap extent (FF6 shared room sheets)."""
     for obj in objects:
         if obj["type_name"] == "MapRange" and obj.get("group") == "entity_default" and obj.get("w") and obj.get("h"):
-            return to_int(obj.get("tx")), tile_row(obj), to_int(obj["w"]) // 16, to_int(obj["h"]) // 16
+            # ParseMapRange uses signed integer division, which truncates toward zero.
+            # A pixel origin of -2 is tile 0, not Python's floor-divided tile -1.
+            def native_div(value):
+                value = to_int(value)
+                return value // 16 if value >= 0 else -((-value) // 16)
+            return tuple(native_div(obj.get(k)) for k in ("x", "y", "w", "h"))
     return 0, 0, to_int(info.get("width")), to_int(info.get("height"))
 
 

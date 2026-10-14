@@ -37,18 +37,6 @@ ref::Method mGetCurrentMP{kParamBase, "get_CurrentMP", 0};
 ref::Method mConfirmedMaxHp{kParamBase, "ConfirmedMaxHp", 0};
 ref::Method mConfirmedMaxMp{kParamBase, "ConfirmedMaxMp", 0};
 
-ref::Class  kStatusWindow{"Last.UI.KeyInput", "StatusWindowController", game::kFF4};
-ref::Method mSwitchCorps{kStatusWindow, "SwitchCorps", 0};
-ref::Class  kStatusWindowBase{"Serial.Template.UI.KeyInput", "StatusWindowControllerBase", game::kFF4};
-ref::Field  fStatusSelectCursor{kStatusWindowBase, "selectCursor"};
-ref::Class  kUserDataManager{"Last.Management", "UserDataManager", game::kFF4};
-ref::Method mUserDataInstance{kUserDataManager, "Instance", 0};
-ref::Method mGetCorpsListClone{kUserDataManager, "GetCorpsListClone", 0};
-ref::Class  kFieldController{"Last.Map", "FieldController", game::kFF4};
-ref::Method mCorpsApparentOrder{kFieldController, "GetCorpsListCloneWithApparentOrder", 0};
-ref::Class  kCorps{"Last.Data.User", "Corps", game::kFF4};
-ref::Method mCorpsId{kCorps, "get_Id", 0};
-
 // PartySettingMenuBaseController.State
 enum PartyState {
     None = 0, MemberSelect = 1, MemberSelecting = 2, SlotSelect = 3, SlotSelecting = 4,
@@ -178,32 +166,12 @@ void d_PartySelectContent(void* self, int32_t index, const void* mi)
 }
 
 // StatusWindowController_SwitchCorps_Patch (prefix): the row the character is about to move to.
-using Void_t = void (*)(void* self, const void* mi);
-Void_t o_SwitchCorps;
-void d_SwitchCorps(void* self, const void* mi)
-{
-    hooks::guarded("FF4 StatusWindowController.SwitchCorps", [&] {
-        void* cursor = ref::rd<void*>(self, fStatusSelectCursor);
-        if (!cursor) return;
-        if (!ref::call_static<void*>(mUserDataInstance)) return;
-        int id = corps_id_at(ui::cursor_index(cursor));
-        if (id < 0) return;
-        std::wstring new_row;
-        if (id == 1) new_row = T(L"Back Row");          // CorpsId.Front
-        else if (id == 2) new_row = T(L"Front Row");    // CorpsId.Back
-        else new_row = TF(L"Unknown Row Type {0}", {text::num(id)});
-        ffpr::say(new_row, true);
-    });
-    o_SwitchCorps(self, mi);
-}
-
 int install()
 {
     // MenuStates.Party registers with the registry (its reset is the flag only).
     menu_state::register_reset(PARTY, [] {});
     int n = 0;
     if (hooks::attach(mPartySelectContent, &d_PartySelectContent, &o_PartySelectContent)) ++n;
-    if (hooks::attach(mSwitchCorps, &d_SwitchCorps, &o_SwitchCorps)) ++n;
     queries::define("MenuStates.Party.ShouldSuppress", [] { return is_active(PARTY); });
     cursor::add_suppressor("MenuStates.Party.ShouldSuppress");
     return n;
@@ -212,18 +180,5 @@ int install()
 core::Install s_install{"FF4.PartySetting", &install, 512, game::kFF4};
 
 } // namespace
-
-int corps_id_at(int slot_index)
-{
-    void* corps_list = ref::call_static<void*>(mCorpsApparentOrder);
-    if (!corps_list) {
-        // Fallback to data order when FieldController is not ready (battle, early load).
-        void* udm = ref::call_static<void*>(mUserDataInstance);
-        if (udm) corps_list = ref::call<void*>(mGetCorpsListClone, udm);
-    }
-    if (!corps_list || slot_index < 0 || slot_index >= unity::list_count(corps_list)) return -1;
-    void* corps = unity::list_at(corps_list, slot_index);
-    return corps ? ref::call<int32_t>(mCorpsId, corps) : -1;
-}
 
 } // namespace ffpr::ff4

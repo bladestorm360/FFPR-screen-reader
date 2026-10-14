@@ -146,6 +146,7 @@ int main() {
         expect(output.size()==1 && output[0].interrupt && output[0].text.find("Press any button")==0,
             "actual speech ingress/adapter submit the prompt as one interrupting event");
         expect(!output.empty() && (output[0].text.find("intro cinematic")!=std::string::npos)==(game>=5),"only FF5/FF6 append their existing intro instruction");
+        expect(output[0].text.find("open the title menu")==std::string::npos && output[0].text.find("or press")==std::string::npos,"native press-any-button prompt has no redundant mod button clause");
         int reads=text_reads;
         for(int i=0;i<100;++i) call("UpdateNone");
         drain(); expect(text_reads==reads && output.size()==1,"completed phase does no further text reads or speech");

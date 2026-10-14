@@ -562,13 +562,16 @@ bool announce_use_target(void* self, int index)
 {
     if (!self) return false;
     void* list = ref::rd<void*>(self, fUseContentList);
-    void* content = ui::list_item(list, index);
+    void* cursor = ref::rd<void*>(self, fUseSelectCursor);
+    void* content = displayed::cursor_row(cursor, list);
+    if (!content) content = unity::get_component_in_parent(cursor, kItemTargetContent);
     void* data = content ? ref::rd<void*>(content, fTargetCurrentData) : nullptr;
     if (!data) return false;
     std::wstring announcement = displayed::target(content);
     if (announcement.empty()) return false;
-    announcement = ui::menu_position(announcement, index, list ? unity::list_count(list) : 0);
-    if (!is_new(kCtxUseTarget, index)) return false;
+    const int count = displayed::target_count(list);
+    if (index < 0 || index >= count) return false;
+    announcement = ui::menu_position(announcement, index, count);
     ffpr::say(announcement);
     return true;
 }

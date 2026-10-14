@@ -14,6 +14,8 @@ bool world_visible(void* entity);
 /// A rendered UI Image with a live sprite (for digit/icon reconstruction).
 bool image_visible(void* component);
 void* image_sprite(void* component);
+/// Accessible type equivalent for a rendered UI_Common_Icon equipment sprite.
+std::wstring equipment_icon(void* image);
 std::wstring text(void* text_component);
 std::wstring text_field(void* view, const char* name);
 std::vector<std::wstring> texts(void* root);
@@ -27,11 +29,17 @@ std::wstring vitals(void* view);
 std::vector<std::wstring> vital_lines(void* view);
 std::wstring bar(void* component);
 std::wstring character(void* view);
+/// Only on native Formation/Order: derive row from the displayed portrait parent.
+std::wstring formation_row(void* window, void* content);
+/// Native serialized cursor anchor; row scripts can live on another GameObject.
+void* cursor_row(void* cursor, void* contents);
 /// Read only condition icons whose native sprite is currently rendered.
 std::wstring conditions(void* content_or_controller);
 std::vector<std::wstring> condition_lines(void* content_or_controller);
 /// A displayed targeting row, respecting its native HP/MP/icon visibility.
 std::wstring target(void* content);
+/// Active native party-target slots; raw pools may include empty or reordered rows.
+int target_count(void* list);
 std::wstring spell_row(void* content);
 std::wstring skill_row(void* content);
 std::wstring skill_name(void* content);

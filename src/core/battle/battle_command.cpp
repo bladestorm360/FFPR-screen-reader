@@ -44,6 +44,9 @@ ref::Class kTargetSelect{"Last.UI.KeyInput", "BattleTargetSelectController"};
 ref::Method mShowWindow{kTargetSelect, "ShowWindow", 1};
 ref::Method mEnemysInit{kTargetSelect, "EnemysInit", 0};
 ref::Method mPlayerInit{kTargetSelect, "PlayerInit", 0};
+// These native group-target entry phases exist in every game, including ATB games.
+ref::Method mPlayerAll{kTargetSelect, "PlayerAllInit", 0}, mEnemyAll{kTargetSelect, "EnemyAllInit", 0};
+ref::Method mAll{kTargetSelect, "AllInit", 0};
 ref::Field fSelectCursor{kTargetSelect, "selectCursor"};
 ref::Field fPlayerDataList{kTargetSelect, "playerDataList"};
 ref::Field fEnemyDataList{kTargetSelect, "enemyDataList"};
@@ -52,6 +55,12 @@ ref::Field fTargetEnamyList{kTargetSelect, "<TargetEnamyList>k__BackingField"};
 ref::Class kTargetSelectFF6{"Last.UI.KeyInput", "BattleTargetSelectController", game::kFF6};
 ref::Method mSideAttackPlayerInit{kTargetSelectFF6, "SideAttackPlayerInit", 0};
 ref::Method mEnemySideAttackPlayerInit{kTargetSelectFF6, "EnemySideAttackPlayerInit", 0};
+ref::Method mSidePlayerAll{kTargetSelectFF6, "SideAttackPlayerAllInit", 0},
+            mSideEnemyAll{kTargetSelectFF6, "EnemySideAttackEnemyAllInit", 0};
+ref::Field fRangeType{kTargetSelectFF6, "rangeType"};
+ref::Class kTargetUtility{"Last.Systems", "BattleTargetSelectUtility", game::kFF6};
+ref::Method mPlayerSideOnly{kTargetUtility, "IsPlayerSingleSideAll", 1},
+            mEnemySideOnly{kTargetUtility, "IsEnemySingleSideAll", 1};
 
 ref::Class kTransform{"UnityEngine", "Transform"};
 
@@ -80,12 +89,30 @@ int g_set_command_data_seq = 0;
 
 // Initial-target read generation: bumped by every EnemysInit/PlayerInit and by ShowWindow(false).
 int g_target_read_gen = 0;
-// Bumped each time the enemy SelectContent hook speaks. In FF2-FF5, EnemysInit calls the enemy
+// Bumped each time the enemy SelectContent hook observes a ready focus. In FF2-FF5, EnemysInit calls the enemy
 // SelectContent itself (KeyInput EnemysInit +0x139 / +0x148 in each GameAssembly.dll; FF1's does
 // not), so the entry target was spoken by that hook and again by the initial read. EnemysInit
 // compares this around its original: the initial read runs only when the game's own call spoke
 // nothing (one event, one line; an identity check, not a text comparison).
 int g_enemy_spoken_seq = 0;
+int g_player_spoken_seq = 0;
+// FF6's existing (side, index) focus guard belongs at the single-target producer too:
+// EnemysUpdate tail-calls SelectContent every frame, without a new focus event.
+int g_target_focus_side = -1, g_target_focus_index = -1;
+void* g_target_focus_unit = nullptr;
+bool same_target_focus(bool enemy, int index, void* unit)
+{
+    return game::is(game::Id::FF6) && (enemy ? 1 : 0) == g_target_focus_side &&
+        index == g_target_focus_index && unit == g_target_focus_unit;
+}
+bool changed_target_focus(bool enemy, int index, void* unit)
+{
+    if (!game::is(game::Id::FF6)) return true;
+    const int side = enemy ? 1 : 0;
+    if (side == g_target_focus_side && index == g_target_focus_index && unit == g_target_focus_unit) return false;
+    g_target_focus_side = side; g_target_focus_index = index; g_target_focus_unit = unit;
+    return true;
+}
 // Frames a pending initial-target read may wait for the cursor and list.
 constexpr int kTargetReadMaxFrames = 10;
 
@@ -144,34 +171,40 @@ bool check_and_update_target_selection_active()
     return state_active(menu_state::BATTLE_TARGET);
 }
 
-void announce_player_target(void* list, int index)
+bool announce_player_target(void* list, int index)
 {
-    if (!is_list(list)) return;
-    int count = unity::list_count(list);
-    if (count == 0) return;
-    if (index < 0 || index >= count) return;
-    void* player = unity::list_at(list, index);
-    if (!player) return;
+    std::vector<void*> targets;
+    if (!unity::enumerate_bounded(list, targets, 64)) return false;
+    int count = static_cast<int>(targets.size());
+    if (count == 0) return false;
+    if (index < 0 || index >= count) return false;
+    void* player = targets[static_cast<size_t>(index)];
+    if (!player) return false;
+    if (same_target_focus(false, index, player)) return true;
 
     std::wstring announcement = displayed_player(player);
-    if (announcement.empty()) return;
+    if (announcement.empty()) return false;
+    if (!changed_target_focus(false, index, player)) return true;
     announcement = ui::menu_position(announcement, index, count);
 
     // Entering targeting = left the command menu: arm the back-out re-announce. Safe on commit:
     // SetCursor's target-active check returns before consuming it while the target view is shown.
     g_command_reannounce_pending = true;
     ffpr::say(announcement, true);
+    return true;
 }
 
-/// True when it spoke.
+/// True once a ready focus was observed, including a repeated FF6 refresh.
 bool announce_enemy_target(void* list, int index)
 {
-    if (!is_list(list)) return false;
-    int count = unity::list_count(list);
+    std::vector<void*> targets;
+    if (!unity::enumerate_bounded(list, targets, 64)) return false;
+    int count = static_cast<int>(targets.size());
     if (count == 0) return false;
     if (index < 0 || index >= count) return false;
-    void* enemy = unity::list_at(list, index);
+    void* enemy = targets[static_cast<size_t>(index)];
     if (!enemy) return false;
+    if (same_target_focus(true, index, enemy)) return true;
 
     std::wstring name = T(L"Unknown");
     std::wstring localized = enemy_name(enemy);
@@ -182,7 +215,7 @@ bool announce_enemy_target(void* list, int index)
     int same_name_count = 0;
     int position_in_group = 0;
     for (int i = 0; i < count; ++i) {
-        void* other = unity::list_at(list, i);
+        void* other = targets[static_cast<size_t>(i)];
         if (!other) continue;
         std::wstring other_name = enemy_name(other);
         if (!other_name.empty() && other_name == name) {
@@ -200,6 +233,7 @@ bool announce_enemy_target(void* list, int index)
     announcement += optional_enemy_hp(enemy);
     announcement = ui::menu_position(announcement, index, count);
 
+    if (!changed_target_focus(true, index, enemy)) return true;
     g_command_reannounce_pending = true;
     ffpr::say(announcement, true);
     return true;
@@ -211,6 +245,7 @@ bool try_read_initial_target(void* instance, bool is_enemy)
 {
     void* controller = instance;
     if (!controller || !unity::alive(controller)) return true;
+    observe_target_party(displayed::field(controller, "playerInfomationController"));
 
     // Attack's targeting path presents an INACTIVE controller (magic/item an active one), so
     // activeInHierarchy is not required; prefer an active instance when this one is inactive.
@@ -226,14 +261,16 @@ bool try_read_initial_target(void* instance, bool is_enemy)
 
     if (is_enemy) {
         void* list = ref::rd<void*>(controller, fEnemyDataList);
-        if (!is_list(list) || unity::list_count(list) == 0) list = ref::rd<void*>(controller, fTargetEnamyList);
-        if (!is_list(list) || index >= unity::list_count(list)) return false;   // not ready: retry
-        announce_enemy_target(list, index);
+        std::vector<void*> targets;
+        if (!unity::enumerate_bounded(list, targets, 64) || targets.empty()) list = ref::rd<void*>(controller, fTargetEnamyList);
+        if (!unity::enumerate_bounded(list, targets, 64) || index >= static_cast<int>(targets.size())) return false;
+        return announce_enemy_target(list, index);
     } else {
         void* list = ref::rd<void*>(controller, fPlayerDataList);
-        if (!is_list(list) || unity::list_count(list) == 0) list = ref::rd<void*>(controller, fTargetPlayerList);
-        if (!is_list(list) || index >= unity::list_count(list)) return false;
-        announce_player_target(list, index);
+        std::vector<void*> targets;
+        if (!unity::enumerate_bounded(list, targets, 64) || targets.empty()) list = ref::rd<void*>(controller, fTargetPlayerList);
+        if (!unity::enumerate_bounded(list, targets, 64) || index >= static_cast<int>(targets.size())) return false;
+        return announce_player_target(list, index);
     }
     return true;
 }
@@ -353,9 +390,10 @@ void d_SelectPlayer(void* self, void* list, int32_t index, const void* mi)
 {
     o_SelectPlayer(self, list, index, mi);
     hooks::guarded("BattleTargetSelectController.SelectContent(Player)", [&] {
+        observe_target_party(displayed::field(self, "playerInfomationController"));
         if (kTargetSelect.is(self)) { g_cached_target_controller = self; field::cache::register_object(kTargetSelect, self); }
         set_target_selection_active(true);
-        announce_player_target(is_list(list) ? list : nullptr, index);
+        if (announce_player_target(list, index)) ++g_player_spoken_seq;
     });
 }
 
@@ -365,7 +403,7 @@ void d_SelectEnemy(void* self, void* list, int32_t index, const void* mi)
     hooks::guarded("BattleTargetSelectController.SelectContent(Enemy)", [&] {
         if (kTargetSelect.is(self)) { g_cached_target_controller = self; field::cache::register_object(kTargetSelect, self); }
         set_target_selection_active(true);
-        if (announce_enemy_target(is_list(list) ? list : nullptr, index)) ++g_enemy_spoken_seq;
+        if (announce_enemy_target(list, index)) ++g_enemy_spoken_seq;
     });
 }
 
@@ -377,6 +415,7 @@ void d_ShowWindow(void* self, bool is_show, const void* mi)
 {
     hooks::guarded("BattleTargetSelectController.ShowWindow", [&] {
         if (!kTargetSelect.is(self)) return;
+        reset_target_focus();
         if (is_show) { g_cached_target_controller = self; field::cache::register_object(kTargetSelect, self); }
         set_target_selection_active(is_show);
         if (!is_show) {
@@ -394,6 +433,49 @@ void d_ShowWindow(void* self, bool is_show, const void* mi)
 using Init_t = void (*)(void* self, const void* mi);
 Init_t o_EnemysInit;
 Init_t o_PlayerInit;
+Init_t o_PlayerAll, o_EnemyAll;
+Init_t o_All, o_SidePlayerAll, o_SideEnemyAll;
+void announce_group(void* self, std::wstring label) {
+    if (!kTargetSelect.is(self)) return;
+    g_cached_target_controller = self; field::cache::register_object(kTargetSelect, self);
+    g_command_reannounce_pending = true;
+    ++g_target_read_gen; reset_target_focus(); set_target_selection_active(true);
+    ffpr::say(label, true);
+}
+void d_PlayerAll(void* self, const void* mi)
+{
+    o_PlayerAll(self, mi);
+    hooks::guarded("BattleTarget.PlayerAll", [self] {
+        announce_group(self, T(L"All allies"));
+    });
+}
+void d_EnemyAll(void* self, const void* mi)
+{
+    o_EnemyAll(self, mi);
+    hooks::guarded("BattleTarget.EnemyAll", [self] {
+        announce_group(self, T(L"All enemies"));
+    });
+}
+void d_All(void* self, const void* mi) {
+    o_All(self, mi);
+    hooks::guarded("BattleTarget.All", [self] { announce_group(self, T(L"All allies and enemies")); });
+}
+void d_SidePlayerAll(void* self, const void* mi) {
+    o_SidePlayerAll(self, mi);
+    hooks::guarded("BattleTarget.SidePlayerAll", [self] {
+        if (!kTargetSelectFF6.is(self)) return;
+        const bool side_only = ref::call_static<bool>(mPlayerSideOnly, ref::rd<int32_t>(self, fRangeType));
+        announce_group(self, T(side_only ? L"All allies on this side" : L"All allies"));
+    });
+}
+void d_SideEnemyAll(void* self, const void* mi) {
+    o_SideEnemyAll(self, mi);
+    hooks::guarded("BattleTarget.SideEnemyAll", [self] {
+        if (!kTargetSelectFF6.is(self)) return;
+        const bool side_only = ref::call_static<bool>(mEnemySideOnly, ref::rd<int32_t>(self, fRangeType));
+        announce_group(self, T(side_only ? L"All enemies on this side" : L"All enemies"));
+    });
+}
 
 void d_EnemysInit(void* self, const void* mi)
 {
@@ -410,8 +492,12 @@ void d_EnemysInit(void* self, const void* mi)
 
 void d_PlayerInit(void* self, const void* mi)
 {
+    const int before = g_player_spoken_seq;
     o_PlayerInit(self, mi);
-    hooks::guarded("BattleTargetSelectController.PlayerInit", [&] { begin_initial_target_read(self, false); });
+    hooks::guarded("BattleTargetSelectController.PlayerInit", [&] {
+        if (before != g_player_spoken_seq) { ++g_target_read_gen; return; }
+        begin_initial_target_read(self, false);
+    });
 }
 
 // FF6 side attacks: the same single-ally state entry as PlayerInit.
@@ -456,6 +542,13 @@ int install()
     n += hooks::attach(mShowWindow, &d_ShowWindow, &o_ShowWindow) ? 1 : 0;
     n += hooks::attach(mEnemysInit, &d_EnemysInit, &o_EnemysInit) ? 1 : 0;
     n += hooks::attach(mPlayerInit, &d_PlayerInit, &o_PlayerInit) ? 1 : 0;
+    n += hooks::attach(mPlayerAll, &d_PlayerAll, &o_PlayerAll) ? 1 : 0;
+    n += hooks::attach(mEnemyAll, &d_EnemyAll, &o_EnemyAll) ? 1 : 0;
+    n += hooks::attach(mAll, &d_All, &o_All) ? 1 : 0;
+    // The other two FF6 group-side entries tail-jump to ordinary PlayerAll/EnemyAll;
+    // those are already covered. Only these independently implemented phases need hooks.
+    n += hooks::attach(mSidePlayerAll, &d_SidePlayerAll, &o_SidePlayerAll) ? 1 : 0;
+    n += hooks::attach(mSideEnemyAll, &d_SideEnemyAll, &o_SideEnemyAll) ? 1 : 0;
     // FF6 only (the class ref's mask; silent elsewhere).
     n += hooks::attach(mSideAttackPlayerInit, &d_SideAttackPlayerInit, &o_SideAttackPlayerInit) ? 1 : 0;
     n += hooks::attach(mEnemySideAttackPlayerInit, &d_EnemySideAttackPlayerInit, &o_EnemySideAttackPlayerInit) ? 1 : 0;
@@ -475,6 +568,7 @@ void notify_command_submenu_active()
 
 void command_reset_state()
 {
+    reset_target_focus();
     dedup::reset(kTurnCtx);
     g_command_turn_ready = false;
     dedup::reset(kCommandCtx);
@@ -485,5 +579,10 @@ void command_reset_state()
 }
 
 void clear_cached_target_controller() { g_cached_target_controller = nullptr; }
+void reset_target_focus()
+{
+    g_target_focus_side = g_target_focus_index = -1;
+    g_target_focus_unit = nullptr;
+}
 
 } // namespace ffpr::battle

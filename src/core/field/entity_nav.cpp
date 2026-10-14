@@ -180,7 +180,7 @@ void announce_current_entity(bool walking = false)
     refresh_entities_if_needed();
     scanner::when_filter_ready([walking,requested_at,generation=g_category_generation] {
         if (generation==g_category_generation && ensure_field_context()) announce_ready_entity(walking,requested_at);
-    });
+    }, true);
 }
 
 /// Shared keyboard/controller policy; autowalk speech remains its independent setting.
@@ -200,7 +200,7 @@ void navigate_to_entity()
             else { actions::run("Mod.RestartEntityBeacon"); return; }
         }
         announce_ready_entity(walking,requested_at);
-    });
+    }, true);
 }
 
 void announce_entity_only(speech::Timing timing = {})

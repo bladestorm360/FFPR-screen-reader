@@ -201,3 +201,59 @@ of these new changes remains pending. Sol performed the entire task independentl
 The public V0.9 archive/tag/release was not updated during this fix. The user
 subsequently requested commit/push and release 0.9.1; its packaging/publication
 record is maintained in [release.md](../release.md).
+
+
+## All-game asset audit, October 14
+
+The user requested every bake be checked, especially complex FF4–FF6 towns,
+multi-floor dungeons and FF6 World of Balance/Ruin variants. Sol independently
+re-extracted all six installed games with `../tools/dump_map_objects.py all` into
+ignored `build_check/map_audit_2026_10_14/fresh/`. No game process/function ran.
+All extraction runs reported zero errors. Retained and fresh submaps, grids,
+objects and scripts match semantically; master data was copied from the existing
+matching extraction into this private audit directory, not changed in game folders.
+
+`tools/re/map_bake_audit.py` regenerated each bake, decoded its binary grids and
+validated every native MapRange, collision/stair layer, hidden passage, terrain,
+transportation grid and map-id mapping. Native collision initializers still match
+all six installed metadata files (`exit_native_check.py`). Counts:
+
+| Game | Submaps | Collision cells checked |
+| --- | ---: | ---: |
+| I | 129 | 413,369 |
+| II | 349 | 263,355 |
+| III | 411 | 287,449 |
+| IV | 368 | 234,726 |
+| V | 655 | 574,822 |
+| VI | 638 | 657,695 |
+| Total | 2,550 | 2,431,416 |
+
+FF1–FF5 regenerate byte-identically. FF6 has one confirmed additional conversion
+fault: Map_30641_2, native map id 449, has MapRange pixel y=-2. Native signed integer
+division truncates to tile origin zero; the baker used floor(-2/16)=-1. Python
+negative slicing discarded the rows, then padding turned both collision layers
+into all-blocked masks. The baker now uses the signed native quotient for x/y/w/h.
+The previous private bake decodes to 1,116 zero masks per layer (raw padding value 1). The corrected room is 36 by 31, with both Ground/Upper collision layers retained.
+`map_exit_check.cpp` checks that these layers contain native blocked cells instead
+of uniformly blocked padding. No object coordinates or unrelated puzzle routes change.
+Only `data/ff6/maps.bin` changed: SHA256
+`DD75D6EA83FFCB921ACCB3C1E6E0B3BEE71A6DFD6EC5041E525329693E612729`.
+The previous binary is preserved in this audit directory.
+
+The private report records all rooms, dimensions, map ids, layers and object
+counts, including mapped scenes without native grids. Each variant retains its
+own submap/mapping; the audit does not merge rooms by displayed town title.
+Both South Figaro sets still pass all 178 floor exit approaches. The existing
+production router/follower checks replay 2,294 real routes from all six bakes.
+Fresh-source parity and every static grid pass; this is not confirmation of every
+native script, puzzle or vehicle state.
+
+The static exit audit also records two FF1 intro-map variants with no native
+collision/terrain grid, two FF4 Baron event exits outside the 34 by 34 map (group
+ev_e_0033, x=-2), and FF4 Map_30141_1's disconnected Bottom exit. FF5 Map_40011
+also has no native collision grid. The Istory, Lethe River, Magitek Factory and
+Kefka's Tower cases described above remain exact script/state or gameplay gaps;
+no walls were opened to force them to pass. Original objects/scripts for all
+flagged cases are preserved in `flagged_native_records.json`. Absent native
+geometry is recorded explicitly rather than invented. No further conversion or
+bundle-overwrite fault was found in the fresh extraction.

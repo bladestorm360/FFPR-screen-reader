@@ -1,5 +1,70 @@
 # Native FFPR durable memory
 
+- October 14 V0.9.2 is prepared/independently verified for publication: complete 20-file
+  dependency bundle, matching README/TXT and 0.9.2.0 metadata. Canonical build (6,724
+  names/zero missing, zero undefined wiring), all regressions and isolated smoke pass.
+  [Release checks/hashes/publication record](docs/release.md#v092-preparation-and-publication-october-14).
+  Feature behavior matches the final 189CFD... follow-up below; existing games retain
+  that DLL. No game launch/probe, dependency install or game-folder writes; Sol alone.
+
+- Subsequent user confirms FF4 All enemies entry and FF6 equipment content, icon
+  equivalents and numbered page updates. Apparent stale page count was Q/footer-toggle
+  confusion; no reader defect. Extra animation-completion hooks were removed and the
+  confirmed behavior restored, rebuilt/offline-checked and deployed/hash-verified in all
+  six: `189CFDEE77C64AB0FCAFC2DCB41B7A885F4D33A7554C6CC64CA4BF67A1731E9A`
+  (9,072,128 bytes), superseding intermediate 695B... and prior 50F5... artifacts.
+  6,724 names/zero missing, zero undefined wiring, regressions/smoke pass; SDL/Prism
+  unchanged. [Clarification, native mastery evidence and receipts](docs/FOLLOWUP_2026_10_14.md#page-count-retest-and-mastery-clarification).
+  Esper star means all taught spells are learned for the selected character, independent
+  of equipping that Esper. The Terra/Valigarmanda screenshot shows all three at 100%.
+  Sol alone; no probes, save/bake change, commit/push/publication or release change.
+
+- Latest October 14 blank/page/group-target retest fixes deployed/hash-verified in all six:
+  `50F5C5CB66DB5733658377C7A0D9B56F65EF4125223FC7ACB2FA1E4166867DFF`
+  (9,072,128 bytes), superseding 336FB4... below. Esper blanks say Empty/reset buffers;
+  native Q page readiness/unchanged-cursor return refreshes and active-character headers
+  are excluded. Competing FF6 equipment navigator removed: one displayed name/quantity,
+  current footer and numbered-page buffer. All-six whole-side/all-target entry phases
+  and FF6 independent side variants now speak initially. Sol alone; 6,724 names/zero
+  missing, zero undefined wiring, canonical regressions and isolated smoke pass.
+  [Evidence/receipt](docs/FOLLOWUP_2026_10_14.md#blank-espers-equipment-pages-and-whole-group-target-entry),
+  [short gameplay checks](docs/TESTING.md#latest-october-14-retest-blank-espers-equipment-pages-group-targets).
+  New gameplay confirmation remains pending; confirmed enemy-repeat/magic-cancel fixes
+  preserved. Recovery: build_check/esper_item_target_recovery_2026_10_14; before/deploy
+  receipts named esper_item_target_*_2026_10_14.json. SDL/Prism hashes unchanged;
+  no game launch/control/probe, save/bake change, commit/push or publication. V0.9.1 unchanged.
+
+- October 14 subsequent retest fixes deployed/hash-verified in all six:
+  `336FB4683AD8AD0E6A146A65C8D24A2C48ED1275059C74BE812A6FEB69849B3F` (9,099,776 bytes), superseding the first follow-up below.
+  Shared battle ally/item readiness and cancel-return, cursor-anchor visual party order,
+  formation-only rendered row, both Esper Equipped markers/current-panel buffers,
+  FF6 flight owner and existing-target refresh-wait bypass implemented/offline verified.
+  F8 now has separate Navigation and Navigation audio; Luna's bounded settings move
+  was reviewed and all-six modal checked by Sol. Native flight/filter and actual renderer
+  checks pass; 6,758 names/zero missing, zero undefined wiring, all regressions and
+  isolated DLL smoke pass. User confirms the prior enemy repeat and FF4 magic cancel
+  fixes; new ally/item/flight/Esper behavior and post-fix audible latency remain gameplay
+  pending. [Evidence and Luna outcome](docs/FOLLOWUP_2026_10_14.md#subsequent-targeting-rendered-esper-pages-and-navigation-retest),
+  [timing and bounds](docs/re/THREADING.md#selected-destination-world-latency-follow-up-october-14),
+  [short retest](docs/TESTING.md#subsequent-october-14-retest-target-rows-flight-and-esper-pages).
+  Recovery/receipt: build_check/followup2_recovery_2026_10_14 and
+  build_check/followup2_deploy_2026_10_14.json. SDL bytes/Prism unchanged; no game
+  launch/control/probe, save changes, commit/push or publication. V0.9.1 unchanged.
+
+- October 14 FF3–FF6 follow-up implemented/offline-verified and deployed/hash-verified
+  in all six: `224E87802EDC4148FB1407214E3B5A67347676F07A89D786E0714207D9FA3D68` (9,116,672 bytes).
+  Target/initial magic focus/cancel-return, rendered quantities/Equipped/Commands,
+  empty formation, save rows, FF3 equippable icons and current item-info buffers fixed.
+  U removed; FF3/FF6 airship boarding is manual; FF6 stored native flight axis fixed.
+  All 2,550 submaps freshly audited; one additional FF6 signed MapRange crop fixed.
+  Results reader unchanged; title instruction now only Wait to watch the intro cinematic.
+  [Evidence, validation/deployment and Luna cleanup review](docs/FOLLOWUP_2026_10_14.md),
+  [map coverage and remaining script/state gaps](docs/re/MAP_EXITS.md#all-game-asset-audit-october-14),
+  [prioritized gameplay checks](docs/TESTING.md#october-14-follow-up-test-these-first-when-available).
+  Canonical build/all checks and isolated DLL smoke pass. No game launch/control/probe,
+  save/dependency change or commit/push/publication; V0.9.1 remains unchanged.
+  Recovery: `build_check/followup_recovery_2026_10_14/`. Supersedes installed hashes below.
+
 - October 13 V0.9.1 published as Latest: exit fixes committed/pushed as `5354761` before
   version/README changes. Fresh canonical build/all offline checks and isolated
   smoke pass; verified complete 20-file/4,098,050-byte dependency ZIP prepared.

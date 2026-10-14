@@ -137,14 +137,6 @@ void d_ContentSelectContent(void* self, void* cursor, int32_t type, bool page_sk
     });
 }
 
-/// targetContents as a List<T> (its display order), or null when it is another enumerable.
-void* as_list(void* enumerable)
-{
-    if (!enumerable) return nullptr;
-    const char* cls = il2cpp::object_class_name(reinterpret_cast<il2cpp::Object*>(enumerable));
-    return (cls && text::starts_with(text::widen(cls), L"List`1")) ? enumerable : nullptr;
-}
-
 // AbilityUseContentListController_SelectContent_Patch
 using UseSelect_t = void (*)(void* self, void* target_contents, void* cursor, const void* mi);
 UseSelect_t o_UseSelectContent;
@@ -156,24 +148,18 @@ void d_UseSelectContent(void* self, void* target_contents, void* cursor, const v
         int index = ui::cursor_index(cursor);
         if (index < 0) return;
 
-        // targetContents (display order) rather than contentList (data order).
-        void* target_list = as_list(target_contents);
-        void* selected = nullptr;
-        int count = 0;
-        if (target_list && index < unity::list_count(target_list)) {
-            selected = unity::list_at(target_list, index);
-            count = unity::list_count(target_list);
-        } else {
-            void* list = ref::rd<void*>(self, fUseContentList);
-            selected = ui::list_item(list, index);
-            count = unity::list_count(list);
-        }
+        // Native SetParent has already selected the compacted display row.
+        // Raw contentList indices include empty party slots.
+        void* list = ref::rd<void*>(self, fUseContentList);
+        void* selected = displayed::cursor_row(cursor, list);
+        if (!selected) selected = unity::get_component_in_parent(cursor, kTargetContent);
+        const int count = displayed::target_count(list);
+        if (index >= count) return;
         if (!selected) return;
         void* data = ref::rd<void*>(selected, fTargetCurrentData);
         if (!data) return;
         std::wstring announcement = displayed::target(selected);
         if (announcement.empty()) return;
-        if (!dedup::text(kCtxUseTarget, announcement)) return;
 
         set_active_exclusive(ABILITY);
         ffpr::say(ui::menu_position(announcement, index, count), true);

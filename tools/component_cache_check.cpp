@@ -18,7 +18,7 @@ il2cpp::Class* Class::get() {
     uintptr_t key = 2;
     if (std::strcmp(name,"Window")==0) key=1;
     else if (std::strcmp(name,"FieldMap")==0) key=3;
-    else if (std::strcmp(name,"FieldPlayerController")==0 || std::strcmp(name,"FieldPlayerKeyController")==0) key=4;
+    else if (std::strcmp(name,"FieldPlayerController")==0 || std::strcmp(name,"FieldPlayerKeyController")==0 || std::strcmp(name,"FieldPlayerKeyAirshipController")==0) key=4;
     return reinterpret_cast<il2cpp::Class*>(key);
 }
 bool Class::is(void* object) { return object && static_cast<fixture::Object*>(object)->type == reinterpret_cast<uintptr_t>(get()); }
@@ -66,6 +66,10 @@ int main() {
     expect(get(field::r::kFieldMap)==&map && get(field::r::kFieldPlayerController)==&key &&
         key.player==&ship_player && map.state==4 && fixture::original_calls==2,
         "boarded-save owner initialization needs no separate boarding event and calls originals first");
+    fixture::Object flight{4};
+    field::d_airship_init(&flight,&ship_player,nullptr);
+    expect(get(field::r::kFieldPlayerController)==&flight && flight.player==&ship_player,
+        "FF6 takeoff and loaded flight replace the walking controller with the actual airship owner");
     field::d_state(&incoming_map,3,nullptr); field::d_init(&incoming_key,&foot_player,nullptr);
     expect(get(field::r::kFieldMap)==&incoming_map && get(field::r::kFieldPlayerController)==&incoming_key && incoming_key.player==&foot_player,
         "another loaded map/player replaces prior ship owners");

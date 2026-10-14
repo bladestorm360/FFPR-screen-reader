@@ -24,6 +24,7 @@
 #include "../../core/refs.h"
 #include "../../core/say.h"
 #include "../../core/battle/battle_util.h"
+#include "../../core/battle/battle.h"
 
 namespace ffpr::ff6 {
 namespace {
@@ -57,14 +58,20 @@ void reset_state()
 void all_players()
 {
     hooks::guarded("FF6.BattleTarget.AllPlayers", [] {
-        if (target_changed(Mode::AllPlayers)) ffpr::say(T(L"All allies"), true);
+        if (target_changed(Mode::AllPlayers)) {
+            battle::reset_target_focus();
+            ffpr::say(T(L"All allies"), true);
+        }
     });
 }
 
 void all_enemies()
 {
     hooks::guarded("FF6.BattleTarget.AllEnemies", [] {
-        if (target_changed(Mode::AllEnemies)) ffpr::say(T(L"All enemies"), true);
+        if (target_changed(Mode::AllEnemies)) {
+            battle::reset_target_focus();
+            ffpr::say(T(L"All enemies"), true);
+        }
     });
 }
 

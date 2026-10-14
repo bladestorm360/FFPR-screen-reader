@@ -69,6 +69,19 @@ int main() {
         if (game==6) {
             const auto* room=b::submap_by_name(L"Map_20071_11");
             if (!room || room->width!=27 || room->height!=20) ++failures;
+            const auto* signed_crop=b::submap_by_map_id(449);
+            if (!signed_crop || b::name_of(*signed_crop)!=L"Map_30641_2" || signed_crop->width!=36 || signed_crop->height!=31)
+                ++failures;
+            else {
+                const auto& cropped=b::grids(*signed_crop);
+                // A negative pixel y of -2 truncates to tile zero. Python floor/slice
+                // previously replaced both native collision layers with all-blocked cells.
+                for (int layer : {1,2}) {
+                    const auto& cells=cropped.collision[layer];
+                    if (cells.size()!=36u*31u || std::count(cells.begin(),cells.end(),uint8_t{0})==0 ||
+                        std::all_of(cells.begin(),cells.end(),[](uint8_t v){return v==0;})) ++failures;
+                }
+            }
         }
     }
     if (south_figaro<100) ++failures;

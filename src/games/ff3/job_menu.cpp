@@ -30,6 +30,8 @@
 #include "../../core/say.h"
 #include "../../core/text.h"
 #include "../../core/unity.h"
+#include "../../core/displayed_ui.h"
+#include "../../core/ui/preferences.h"
 #include "../../core/status/status.h"
 #include "../../core/system/cursor_event.h"
 
@@ -48,7 +50,6 @@ ref::Field fSkillLevelText{kJobView, "skillLevelValueText"};
 ref::Class kJob{"Last.Data.Master", "Job", game::kFF3};
 ref::Method mJobId{kJob, "get_Id", 0};
 ref::Method mJobMesIdName{kJob, "get_MesIdName", 0};
-ref::Method mJobMesIdDescription{kJob, "get_MesIdDescription", 0};
 
 ref::Class kOwnedCharacter{"Last.Data.User", "OwnedCharacterData", game::kFF3};
 ref::Method mCharJobId{kOwnedCharacter, "get_JobId", 0};
@@ -136,8 +137,22 @@ void on_update_job_info(void* self, void* character, void* job)
     // Active only after validation: the menu is confirmed open with valid data.
     menu_state::set_active_exclusive(kJobMenuKey);
     g_has_focused_job = true;
-    g_focused_description = localized(ref::call_str(mJobMesIdDescription, job));
-    ffpr::say(announcement, true);
+    void* view = ref::rd<void*>(self, fJobWindowView);
+    const auto heading = displayed::text_field(view, "infoFixedEquipText");
+    const auto all = displayed::text_field(view, "infoAllEquipText");
+    std::vector<std::wstring> types;
+    void* icons = displayed::field(view, "infoEquipIconList");
+    const int count = unity::list_count(icons);
+    if (count > 0 && count <= 32) for (int i = 0; i < count; ++i) {
+        auto type = displayed::equipment_icon(unity::list_at(icons, i));
+        if (!type.empty()) types.push_back(std::move(type));
+    }
+    g_focused_description = heading;
+    if (!all.empty()) g_focused_description += L": " + all;
+    else if (!types.empty()) g_focused_description += L": " + text::join(types, L", ");
+    if (ui::prefs::auto_detail_enabled() && !g_focused_description.empty())
+        ffpr::say_sequence({announcement, g_focused_description}, true);
+    else ffpr::say(announcement, true);
 }
 
 void reset_job_menu()

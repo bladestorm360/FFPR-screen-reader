@@ -34,6 +34,7 @@ ref::Method mEquipInfoSelectContent{kEquipmentInfoWindowController, "SelectConte
 ref::Class  kEquipmentSelectWindowController{"Last.UI.KeyInput", "EquipmentSelectWindowController"};
 ref::Field  fEquipSelectContentDataList{kEquipmentSelectWindowController, "contentDataList"};
 ref::Method mEquipSelectSelectContent{kEquipmentSelectWindowController, "SelectContent", 2};
+ref::Class kEquipmentItemRow{"Last.UI.KeyInput", "ItemListContentController"};
 
 ref::Class  kEquipmentCommandController{"Last.UI.KeyInput", "EquipmentCommandController"};
 ref::Method mEquipCommandSetFocus{kEquipmentCommandController, "SetFocus", 2};
@@ -273,6 +274,12 @@ void d_EquipSelectSelectContent(void* self, void* cursor, int32_t type, const vo
         std::wstring name = ref::rd_str(item, fEquipItemDataName);
         if (detail::blank(name)) name = T(L"Remove");
         name = detail::strip_icon(name);
+
+        // The cursor is parented beneath the rendered candidate row. Its count
+        // can differ from total ownership (equipped copies); read the visible label.
+        void* row = unity::get_component_in_parent(cursor, kEquipmentItemRow);
+        const auto quantity = displayed::text_field(displayed::field(row, "view"), "countText");
+        if (!quantity.empty()) name += L", " + quantity;
 
         g_focus = Focus::Candidate; // outer focus wins after nested native preview updates
         activate_equip_menu();

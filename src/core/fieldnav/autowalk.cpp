@@ -11,6 +11,7 @@
 #include "../field/object_cache.h"
 #include "../field/scene_events.h"
 #include "../ui/preferences.h"
+#include "../log.h"
 #include <cmath>
 
 namespace ffpr::fieldnav::autowalk {
@@ -22,6 +23,7 @@ ref::Class kKeyController{"Last.Map", "FieldPlayerKeyController"};
 ref::Class kAirshipController{"Last.Map", "FieldPlayerKeyAirshipController", game::kFF6};
 ref::Method mAirshipUpdate{kAirshipController, "LateUpdateObserveInput", 0};
 ref::Method mAirshipKey{kAirshipController, "OnKey", 1}, mAirshipKeyUp{kAirshipController, "OnKeyUp", 1};
+ref::Method mAirshipAxis{kAirshipController, "OnTouchPadCallback", 1};
 ref::Field fShiftUp{kAirshipController, "isDownShiftUp"}, fShiftDown{kAirshipController, "isDownShiftDown"};
 ref::Class kFieldMap{"", "FieldMap", game::kFF6};
 ref::Field fFieldController{kFieldMap, "fieldController"};
@@ -55,6 +57,7 @@ Cell g_boundary_target;
 VehicleAction g_boundary_action = VehicleAction::None;
 int g_boundary_vehicle = 0;
 const void* g_entity_identity = nullptr; // identity only, never dereferenced
+void* g_flight_axis_owner = nullptr; // release only through this controller's native input callback
 int g_entity_map = 0;
 
 bool safe_context()
@@ -207,7 +210,11 @@ unity::Vec2 axis(unity::Vec2 native)
         return {};
     }
     cancel();
-    if (step.result == Result::OffRoute) ffpr::say(T(L"Autowalk stopped. Route changed."));
+    if (step.result == Result::OffRoute) {
+        LOGF("[Autowalk] off route map %d cell (%d,%d) L%d vehicle %d type %d",
+            g_map, at.x, at.y, at.layer, field::current_vehicle().id, field::current_vehicle().type);
+        ffpr::say(T(L"Autowalk stopped. Route changed."));
+    }
     else if (step.result == Result::Action) ffpr::say(T(L"Autowalk stopped") + L", " + step.instruction);
     else ffpr::say(T(L"Arrived") + (faced || step.instruction.empty() ? L"" : L", " + step.instruction), false);
     return {};
@@ -227,7 +234,16 @@ void d_airship_update(void* self, const void* mi)
 {
     // Only the native input route is changed. Both shoulder inputs select the
     // game's cardinal-movement branch; its collision, speed and animation remain native.
-    const bool driving = g_active && context_ok() && kAirshipController.is(self) && controller_ok(field::player());
+    const bool eligible = kAirshipController.is(self) && self == field::cache::get(kController);
+    if (eligible && (g_active || g_flight_axis_owner == self)) {
+        // LateUpdate consumes the axis cached by the PREVIOUS input observation
+        // before reading InputDevice again. Publish this frame's route intent through
+        // the normal native callback first; otherwise a corner/stop has one extra move.
+        const auto wanted = axis(o_InputAxis(nullptr, nullptr));
+        ref::call<void>(mAirshipAxis, self, wanted);
+        g_flight_axis_owner = g_active ? self : nullptr;
+    }
+    const bool driving = g_active && context_ok() && eligible && controller_ok(field::player());
     const bool up = driving && !ref::rd<bool>(self, fShiftUp);
     const bool down = driving && !ref::rd<bool>(self, fShiftDown);
     if (up) ref::call<void>(mAirshipKey, self, int32_t{2});
@@ -243,7 +259,7 @@ int install()
 {
     g_hooked = mIsMoving.ptr() && hooks::attach(mInputAxis, &d_InputAxis, &o_InputAxis);
     const bool flight_hooked = hooks::attach(mAirshipUpdate, &d_airship_update, &o_airship_update);
-    if (game::is(game::Id::FF6) && !flight_hooked) g_hooked = false;
+    if (game::is(game::Id::FF6) && (!flight_hooked || !mAirshipAxis.ptr())) g_hooked = false;
     actions::define("Settings.Changed.Autowalk", [] { if (!ui::prefs::autowalk_enabled()) cancel(); });
     queries::define("Autowalk.IsActive", [] { return active(); });
     actions::define("Autowalk.Cancel", [] { cancel(); });

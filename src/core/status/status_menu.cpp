@@ -109,31 +109,40 @@ Tracker g_tracker;
 
 // --- StatusMenuPatches.SelectContent_Postfix ------------------------------------------------
 
-void on_select_content(void* contents, int index)
+void on_select_content(void* contents, int index, void* cursor, void* window = nullptr)
 {
     // Only announce when the menu is actually open. IsActive is set only after validation, so
     // SelectContent firing during game load (menu not open) suppresses nothing.
     void* menu_manager = ref::instance(kMenuManager);
     if (!menu_manager || !ref::call<bool>(mMenuIsOpen, menu_manager)) return;
 
-    int count = unity::list_count(contents);
-    if (!contents || count == 0) return;
+    std::vector<void*> slots;
+    if (!unity::enumerate_bounded(contents, slots, 9)) return;
+    const int count = static_cast<int>(slots.size());
+    if (count == 0) return;
     if (index < 0 || index >= count) return;
-    void* content = unity::list_at(contents, index);
+    void* content = displayed::cursor_row(cursor, contents);
+    if (!content && cursor) content = unity::get_component_in_parent(cursor, kStatusContent);
+    if (!content) content = slots[static_cast<size_t>(index)];
     if (!content) return;
+    if (!displayed::container_visible(displayed::field(content, "view"))) return;
     void* data = ref::rd<void*>(content, fContentCharacterData);
-    if (!data) return;
 
     // Menu confirmed open with valid data: clear the other menu states, then set this one.
     ffpr::system::clear_other_menu_states("Status");
     menu_state::set_active(menu_state::STATUS_MENU, true);
+    if (!data) { ffpr::say(T(L"Empty"), true); return; }
 
     void* view = displayed::field(content, "view");
     std::wstring announcement = displayed::character(view);
     auto job = displayed::text_field(view, "jobNameText");
     auto level = displayed::pair(view, "fixedLevelText", "currentLevelText");
+    auto next = displayed::pair(view, "fixedNextText", "nextExpText");
+    auto row = displayed::formation_row(window, content);
     if (!job.empty()) announcement += L", " + job;
     if (!level.empty()) announcement += L", " + level;
+    if (!next.empty()) announcement += L", " + next;
+    if (!row.empty()) announcement += L", " + row;
     if (announcement.empty()) return;
 
     ffpr::say(announcement, true);
@@ -144,7 +153,23 @@ SelectContent_t o_StatusSelectContent;
 void d_StatusSelectContent(void* self, void* contents, int32_t index, void* cursor, const void* mi)
 {
     o_StatusSelectContent(self, contents, index, cursor, mi);
-    hooks::guarded("StatusWindowController.SelectContent", [&] { on_select_content(contents, index); });
+    hooks::guarded("StatusWindowController.SelectContent", [&] { on_select_content(contents, index, cursor, self); });
+}
+
+ref::Class kFormationWindow{"Last.UI.KeyInput", "StatusWindowController", game::kFF2 | game::kFF3 | game::kFF4 | game::kFF5 | game::kFF6};
+ref::Method mSwitchCorps{kFormationWindow, "SwitchCorps", 0};
+using Switch = void (*)(void*, const void*);
+Switch o_switch;
+void d_switch(void* self, const void* mi) {
+    o_switch(self, mi);
+    hooks::guarded("StatusWindow.Formation", [self] {
+        if (!kStatusWindow.is(self)) return;
+        void* cursor = displayed::field(self, "selectCursor");
+        void* content = displayed::cursor_row(cursor, displayed::field(self, "contentList"));
+        if (!content) content = unity::get_component_in_parent(cursor, kStatusContent);
+        auto row = displayed::formation_row(self, content);
+        if (!row.empty()) ffpr::say(row, true);
+    });
 }
 
 // --- SetActive postfixes --------------------------------------------------------------------
@@ -195,6 +220,7 @@ void d_StatusWindowSetActive(void* self, bool is_active, const void* mi)
 int install_status_menu()
 {
     int n = 0;
+    if (hooks::attach(mSwitchCorps, &d_switch, &o_switch)) ++n;
     if (hooks::attach(mStatusWindowSelectContent, &d_StatusSelectContent, &o_StatusSelectContent)) ++n;
     else if (kStatusWindowList.applies()) LOGF("[Status Menu] Could not find SelectContent method");
     if (hooks::attach(mStatusWindowSetActive, &d_StatusWindowSetActive, &o_StatusWindowSetActive)) ++n;

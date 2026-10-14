@@ -81,6 +81,7 @@ std::vector<std::wstring> lines(void* owner, std::vector<int>& groups)
         add(displayed::skill_row(unity::list_at(skills, i)));
     }
     group();
+    add(displayed::text_field(dv, "fixedBattleCommandText"));
     void* commands = displayed::field(dv, "battleCommandTextList");
     for (int i = 0; i < unity::list_count(commands); ++i) add(displayed::text(unity::list_at(commands, i)));
     void* abilities = displayed::field(dv, "equipAbilityContentList");

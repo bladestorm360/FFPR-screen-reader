@@ -642,3 +642,116 @@ read FrameTiming/LoadTiming in the ordinary mod log to separate mod work, native
 processing and frame gaps. No user code review, timing tools or visual check is required.
 Offline callback budgets, held-worker-lock/native continuation and stale-result disposal
 checks are separate from this gameplay confirmation.
+
+
+## October 14 follow-up: test these first when available
+
+All implementation and offline checks are complete. Live game behavior still needs
+confirmation; no code review is requested.
+
+1. FF4 battle: open White Magic, cancel to commands, move between commands, reopen
+   White Magic. Expect the focused spell and returned command, then normal speech.
+   Silence after cancel is the failure symptom. Repeat in FF5 and other games.
+2. FF3 battle: Cure and an ally-targeted item must announce the first ally and each
+   target move; Spark must say All enemies when targeting opens. FF6 single enemies
+   must speak once while idle, and again after changing focus or reopening targeting.
+3. Field magic: choose Use. FF3 should announce its first focused spell (for example
+   Poisona, Lv. 1, MP 25/25). Target Cure with a lone member in an otherwise empty
+   party; expect that member immediately and again on deliberate arrows. FF4's
+   three-member target order must match Rydia, Cecil, Tellah in the supplied screenshot.
+   Repeat initial-use/target tests in each game as progression permits.
+4. FF6: equipment candidates should include displayed quantities (Growth Egg 4),
+   Esper focus should add Equipped for a marked entry, empty formation slots should
+   say Empty, and the status buffer should include Commands before the list.
+5. FF3: job I/Autodetail should read Equippable equipment types. Items -> use a piece
+   of equipment should create a buffer for its current information/eligibility page;
+   page changes replace the buffer and I repeats it. Repeat in FF4–FF6. U is removed.
+6. Load menu: browse ordinary, quicksave, empty and corrupted slots. Expect displayed
+   leader/level/location/date/time/playtime where present plus full party names;
+   corrupted data must speak its rendered error. This check does not load or alter saves.
+7. FF6 Falcon: boarding stops for manual deck/wheel control. When Take the wheel opens,
+   its initial choice must speak. After manually taking the wheel, request an autowalk
+   route with a turn. Expect flight along it, stopping at arrival; manual input must
+   cancel. FF3 airship boarding likewise remains manual. No automatic wheel interaction
+   is implemented. Native flight timing still needs this test.
+8. FF5/FF6 title: expect native Press any button, followed only by Wait to watch the
+   intro cinematic. The EXP results reader is unchanged: Confirm can finish rolling
+   numbers without advancing to a new results phase.
+
+Map bake coverage and remaining progression-dependent script/state checks are in
+[MAP_EXITS.md](re/MAP_EXITS.md). Static geometry is checked for every extracted room,
+including both South Figaro variants; this does not certify every puzzle/story state.
+
+
+## Subsequent October 14 retest: target rows, flight and Esper pages
+
+Confirmed by the user before this revision: FF6 repeated enemy spell-target announcements
+are fixed; FF4 cancelling battle magic restores command speech. Preserve both confirmations.
+Prior installed ally targeting is still silent in FF4/FF5/FF6 and FF4 battle Items is silent.
+The following new checks are gameplay-pending after the subsequent deployment:
+
+1. In FF4, FF5 and FF6 battle, choose Cure or an ally item. The first highlighted ally
+   should speak; up/down should speak each displayed ally's name and rendered vitals.
+   FF4 shows HP current/max and current MP, with no level or MP maximum in those rows.
+2. FF4 battle Items: the first item and arrow highlights should speak name/count;
+   cancel back to commands, then move once. Both focused commands should speak.
+   Repeat with other games when available, including FF6 Tools. Recall has no I description.
+3. FF6: board manually, take the wheel, choose a town and start autowalk while flying.
+   Flight should continue, turn correctly and release input on stop/manual movement.
+   Both Current floor and Current map with vehicles should retain land-reachable towns.
+   Check Falcon first, then Blackjack when available; do not test automatic deck boarding.
+4. Walk/move, then immediately request Backslash directions to the selected target.
+   List refresh should not cause the prior half-to-one-second wait. Crow-flies and route
+   directions should use the current position. Browse/category changes must still update
+   the filtered list and its distance order. Large FF4/FF5 worlds remain useful timing cases.
+5. FF6 Espers: highlight an equipped Esper; hear Equipped before pressing Q. On the
+   acquired-magic page, arrows browse headings, each displayed progress/rate, level-up
+   bonus, description, MP cost and visible character header. Mastered still includes 100%.
+   Return to the list: its buffer must contain only the displayed list-panel information.
+6. Formation/Order: empty slots say Empty; FF4 follows Rydia, Cecil, Tellah in the supplied
+   layout and row changes reflect the displayed result. Other character/target menus never
+   add row. F8 has Speech, Navigation, Navigation audio and Battle, followed by Close Menu.
+
+All source/native evidence and offline checks are Sol's responsibility; the user need only
+report what speaks, whether flight stops, and whether the perceived directions lag remains.
+
+
+## Latest October 14 retest: blank Espers, equipment pages, group targets
+
+Build/offline checks pass and this revision is installed in all six games. These gameplay
+checks remain unconfirmed; do them first when the relevant screen is available.
+
+1. FF6 Espers: highlight a blank slot. Expect Empty and an Empty-only arrow/I buffer.
+   Move back to the prior Esper; expect its name again. Toggle Q (controller Square/X)
+   twice without changing Esper; each buffer must match its current panel, with no Terra
+   or other active-character line appended. Failure: old spell/description/cost survives,
+   a page requires scrolling before updating, or return to the name is silent.
+2. Items -> use equipment: expect name and displayed quantity once on entry. Q toggles
+   description versus stat-summary footer; both supplied screenshots remain page 1/2.
+   Use the numbered previous/next-page controls (2/3 in the screenshots) to change the
+   actual page; the buffer must then show the new page number and only its visible rows.
+   Failure: duplicate name, old description/eligibility, or permanently stale page number.
+   The shared source is checked in FF1-FF6; FF6's competing reader is removed.
+3. FF4 battle: enter Cecil's Darkness target screen. Expect All enemies immediately once.
+   Cancel and reopen; expect it again. Check group-only spells/items in other games when
+   available: All allies, All enemies or All allies and enemies as selected. FF6 side
+   attacks qualify a one-side group. Failure: silence until movement or repeated idle speech.
+
+Offline evidence: docs/FOLLOWUP_2026_10_14.md, final blank/page/group-target section.
+No runtime measurements or automatic gameplay tests were performed.
+
+
+### Equipment pager and mastery clarification: confirmed
+
+User confirms FF4 All enemies entry and FF6 equipment content/icon equivalents. Numbered
+page updates are also confirmed: the apparent stale count was using Q instead of the
+native numbered page controls. In the supplied keyboard layout, 3 changes to the next
+numbered page and 2 returns; Q toggles the footer description/stat summary without
+advancing that pager. No additional test is requested for this resolved report. Unneeded
+completion hooks were removed; rebuilt/smoke-tested confirmed behavior is restored in
+all six games. Other earlier unconfirmed features retain their own checklist status.
+
+Esper mastery explanation is verified: the star means all that Esper's taught spells are
+learned for the selected character, independent of having equipped that specific Esper.
+The supplied Terra/Valigarmanda screenshot displays all three spells at 100% with stars;
+the mod's reading matches it. No reader change is required for that screenshot.

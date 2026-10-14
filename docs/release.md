@@ -205,3 +205,46 @@ source/tag/download URL, uploaded asset state, matching 4,098,050-byte size and
 SHA256 digest, and Latest=v0.9.1. `v091_draft_verification.json` and
 `v091_public_release.json` retain these receipts. Final publication records follow
 the tagged release source without changing its code or distributed bytes.
+
+
+## V0.9.2 preparation and publication, October 14
+
+User explicitly requested Prepare release v0.9.2. Existing repository ownership/public
+visibility, ID R_kgDOVFGmTg, master and named FFPRCore-Screen-Reader remote are verified.
+Upstream and local history agreed before preparation; no v0.9.2 tag/release existed.
+V0.9 and V0.9.1 are preserved. This release incorporates the October 14 shared targeting,
+menu/details/Esper/party/save fixes, separate Navigation audio, selected-target refresh-wait
+bypass, FF3/FF6 manual boarding policy, FF6 flight owner correction and signed bake repair.
+Detailed implementation, prior Luna work/review, confirmations and pending gameplay checks
+remain in FOLLOWUP_2026_10_14.md, TESTING.md and the linked investigation records.
+Release preparation/review/verification is by Sol, without further delegation.
+
+The player README retains the concise Purpose/Known Issues/Install/Keys/Credits layout,
+updates V0.9.2, documents native 2/3 numbered pages versus Q footer/panel toggling,
+current buffers, U removal and manual airship boarding/pending flight confirmation.
+ReadMe.txt agrees with the final Markdown; attribution and all pinned dependencies remain.
+FILEVERSION/PRODUCTVERSION and both resource strings are 0.9.2.0; boot stamp is V0.9.2.
+Feature behavior matches the final deployed 189CFD... follow-up, with release metadata
+changed. Release preparation does not modify game folders or install dependencies.
+
+Canonical build passes every included regression, 6,724 native-name checks/zero missing,
+121 used/316 defined wiring names/zero undefined and 47/47 proxy exports. Isolated smoke
+passes forwarding, boot/logger and normal exit. Independent PE checks confirm x64,
+numeric/string file/product 0.9.2.0 and correct product/all-six description. No game launch
+or runtime probe occurred. Gameplay-confirmed cases remain distinct from offline checks.
+
+Prepared folder: releases/Final Fantasy Pixel Master Core Screen Reader V0.9.2.
+Archive: releases/Final Fantasy Pixel Master Core Screen Reader V0.9.2.zip.
+7-Zip creates/tests the 4,081,872-byte, 20-file complete bundle. Independent verification
+passes CRCs, exact single-root payload/file list, source/folder/archive byte equality,
+README conversion, checksum manifest, every locked Prism runtime/license hash,
+corresponding-source notice, x64 and build/version metadata.
+
+- DLL SHA256: `a777f34b3f265b6d653af93c791a0513268db273ca3673cfbf35638a712c352b`.
+- ZIP SHA256: `1ac6fdf9b2ceaca245f720c4f2d4bf1665b45eea9f56e68f63445c3a34d594d9`.
+
+Local evidence: build_check/v092_build_console.txt, v092_smoke_console.txt,
+v092_version.json, v092_package_verification.json and verify_v092_package.py.
+Installed games retain the user-tested follow-up DLL
+`189CFDEE77C64AB0FCAFC2DCB41B7A885F4D33A7554C6CC64CA4BF67A1731E9A`.
+Publication verification and tag/source commit are recorded after the upload below.

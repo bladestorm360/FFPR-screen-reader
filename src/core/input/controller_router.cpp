@@ -197,9 +197,6 @@ void handle_normal_non_field(Context context)
     if (gamepad::rstick_up_pressed()) global_hotkeys::handle_item_details_key();
     // Right stick down: read controls (Shift+I).
     if (gamepad::rstick_down_pressed()) run_action("KeyHelpReader.AnnounceKeyHelp");
-    // Right stick left: usable by classes (U key).
-    if (gamepad::rstick_left_pressed()) run_action("UsableByAnnouncer.AnnounceForCurrentContext");
-
     // D-pad and left stick: virtual buffer navigation in Status / Bestiary / key help.
     const char* prev = nullptr;
     const char* next = nullptr;

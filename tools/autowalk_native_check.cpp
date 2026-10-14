@@ -7,7 +7,7 @@
 #include "../src/core/fieldnav/autowalk.cpp"
 #include "../src/core/input/input_passthrough.cpp"
 namespace fixture {
-struct Node { void* player=nullptr; void* controller=nullptr; bool enabled=true, airship=false, moving=false, up=false, down=false; float angle=0; };
+struct Node { void* player=nullptr; void* controller=nullptr; bool enabled=true, airship=false, moving=false, up=false, down=false; float angle=0; unity::Vec2 cached{}; };
 Node player, controller, map, field_controller;
 uint64_t tick=10; double seconds=1;
 bool ready=true, focus=true, menu=false, manual=false;
@@ -15,13 +15,19 @@ game::Id game=game::Id::FF1;
 field::VehicleState vehicle{true,1,1,L""};
 field::baked_route::Cell cell{1,1,1};
 unity::Vec2 native{};
-int calls=0, airship_calls=0, key_calls=0; bool shoulders=false;
+unity::Vec2 moved{};int calls=0, airship_calls=0, key_calls=0; bool shoulders=false;
 void step() { ++tick; seconds+=.016; }
 bool moving(void* o,const void*) { return static_cast<Node*>(o)->moving; }
 float angle(void* o,const void*) { return static_cast<Node*>(o)->angle; }
 void on_key(void* o,int k,const void*) { ++key_calls; if(k==2)static_cast<Node*>(o)->up=true; if(k==3)static_cast<Node*>(o)->down=true; }
 void on_key_up(void* o,int k,const void*) { ++key_calls; if(k==2)static_cast<Node*>(o)->up=false; if(k==3)static_cast<Node*>(o)->down=false; }
-void flight(void* o,const void*) { ++airship_calls; shoulders=static_cast<Node*>(o)->up&&static_cast<Node*>(o)->down; }
+void touch(void* o,unity::Vec2 value,const void*) {static_cast<Node*>(o)->cached=value;}
+void flight(void* o,const void*) { ++airship_calls;auto& n=*static_cast<Node*>(o);shoulders=n.up&&n.down;
+ const float radians=field_controller.angle*.017453292519943295f;
+ moved={n.cached.x*std::cos(radians)-n.cached.y*std::sin(radians),n.cached.x*std::sin(radians)+n.cached.y*std::cos(radians)};
+ // Recovered native phase order: consume stored axis, then observe next input.
+ n.cached=ffpr::fieldnav::autowalk::d_InputAxis(nullptr,nullptr);
+}
 unity::Vec2 native_axis(void*,const void*) { ++calls;return native; }
 bool native_key(void*,int,const void*) { ++calls;return false; }
 bool listener(void*,void*,int,bool,bool,const void*) { ++calls;return false; }
@@ -33,7 +39,7 @@ Method::Method(Class&c,const char*n,int a):cls(c),name(n),argc(a){}
 Field::Field(Class&c,const char*n,const char*a):cls(c),name(n),alt(a){}
 bool Class::is(void* p){if(!p)return false;auto*s=static_cast<fixture::Node*>(p);return std::string(name)=="FieldPlayerKeyAirshipController"?s->airship:std::string(name)=="FieldPlayerKeyController"?!s->airship:true;}
 int32_t Field::get(){std::string n=name;if(n=="fieldPlayer")return offsetof(fixture::Node,player);if(n=="fieldController")return offsetof(fixture::Node,controller);if(n=="<InputEnable>k__BackingField")return offsetof(fixture::Node,enabled);if(n=="isDownShiftUp")return offsetof(fixture::Node,up);if(n=="isDownShiftDown")return offsetof(fixture::Node,down);return -1;}
-void* Method::ptr(){std::string n=name;if(n=="get_IsMoving")return reinterpret_cast<void*>(&fixture::moving);if(n=="GetZAxisRotateBirdCamera")return reinterpret_cast<void*>(&fixture::angle);if(n=="OnKey")return reinterpret_cast<void*>(&fixture::on_key);if(n=="OnKeyUp")return reinterpret_cast<void*>(&fixture::on_key_up);return nullptr;}
+void* Method::ptr(){std::string n=name;if(n=="get_IsMoving")return reinterpret_cast<void*>(&fixture::moving);if(n=="GetZAxisRotateBirdCamera")return reinterpret_cast<void*>(&fixture::angle);if(n=="OnTouchPadCallback")return reinterpret_cast<void*>(&fixture::touch);if(n=="OnKey")return reinterpret_cast<void*>(&fixture::on_key);if(n=="OnKeyUp")return reinterpret_cast<void*>(&fixture::on_key_up);return nullptr;}
 il2cpp::Method* Method::get(){return reinterpret_cast<il2cpp::Method*>(ptr());}
 std::wstring rd_str(void*,Field&){return L"Action";}
 void call_failed_note(const char*){std::abort();}
@@ -78,10 +84,25 @@ int main(){
  fixture::player.moving=true;expect(a::d_InputAxis(nullptr,nullptr).x==0,"native in-progress movement cannot advance route");fixture::player.moving=false;fixture::cell={1,3,1};fixture::step();expect(a::d_InputAxis(nullptr,nullptr).x==1,"next completed tile advances route");
  fixture::cell={1,4,1};fixture::step();a::d_InputAxis(nullptr,nullptr);expect(input::d_GetKeyDown(nullptr,0,nullptr),"landing uses native confirm");fixture::vehicle={true,1,1,L""};fixture::step();axis=a::d_InputAxis(nullptr,nullptr);expect(axis.y==-1&&a::active(),"native walking state resumes last leg");
  fixture::cell={1,4,2};fixture::step();a::d_InputAxis(nullptr,nullptr);expect(!a::active()&&!a::virtual_key(0),"arrival releases all synthetic input");
+ for(int game_number:{3,6}) {
+  fixture::game=static_cast<game::Id>(game_number);fixture::cell={1,1,1};fixture::vehicle={true,1,1,L""};
+  a::Phase manual_board=fly;manual_board.vehicle_before=a::VehicleAction::None;p.walk_phases={walk,manual_board};a::start(p);fixture::step();a::d_InputAxis(nullptr,nullptr);
+  expect(!a::active()&&!a::virtual_key(0),"manual airship boundary stops the walker without a confirm pulse in FF3/FF6");
+ }
  fixture::game=game::Id::FF6;fixture::controller.airship=true;fixture::vehicle={true,3,3,L""};fixture::cell={1,2,1};fixture::field_controller.angle=90;fly.action_before.clear();fly.vehicle_before=a::VehicleAction::None;land.vehicle_before=a::VehicleAction::BackLand;p.walk_phases={fly,land};a::start(p);
  axis=a::d_InputAxis(nullptr,nullptr);expect(std::fabs(axis.x)<.00001&&std::fabs(axis.y+1)<.00001,"FF6 native camera rotation receives inverse-transformed cardinal axis");a::d_airship_update(&fixture::controller,nullptr);expect(fixture::shoulders&&!fixture::controller.up&&!fixture::controller.down,"FF6 holds both native shoulder inputs during flight and restores them afterwards");
  fixture::controller.up=true;a::d_airship_update(&fixture::controller,nullptr);expect(fixture::controller.up&&!fixture::controller.down,"native pre-existing shoulder hold survives synthetic flight");fixture::controller.up=false;
  fixture::cell={1,3,1};fixture::step();a::d_InputAxis(nullptr,nullptr);fixture::cell={1,4,1};fixture::step();a::d_InputAxis(nullptr,nullptr);expect(input::d_GetKeyDown(nullptr,1,nullptr)&&!input::d_GetKeyDown(nullptr,0,nullptr),"FF6 lands with Back rather than Confirm");
+ a::cancel();fixture::cell={1,2,1};fixture::controller.cached={.75f,.75f};
+ a::Phase corner;corner.cells={{1,2,1},{1,3,1},{1,3,2}};p.walk_phases={corner};a::start(p);fixture::step();a::d_airship_update(&fixture::controller,nullptr);
+ expect(std::fabs(fixture::moved.x-1)<.00001&&std::fabs(fixture::moved.y)<.00001,"flight movement consumes current route axis rather than prior stored input");
+ fixture::cell={1,3,1};fixture::step();a::d_airship_update(&fixture::controller,nullptr);
+ expect(std::fabs(fixture::moved.x)<.00001&&std::fabs(fixture::moved.y+1)<.00001,"native stored-axis pipeline turns at the route corner without an extra straight move");
+ fixture::cell={1,3,2};fixture::step();a::d_airship_update(&fixture::controller,nullptr);
+ expect(!a::active()&&std::fabs(fixture::moved.x)<.00001&&std::fabs(fixture::moved.y)<.00001,"arrival releases cached native flight input before movement");
+ fixture::cell={1,2,1};a::start(p);fixture::step();a::d_airship_update(&fixture::controller,nullptr);a::cancel();fixture::step();a::d_airship_update(&fixture::controller,nullptr);
+ expect(std::fabs(fixture::moved.x)<.00001&&std::fabs(fixture::moved.y)<.00001,"explicit cancel releases the owned stored axis on the next native observation");
+ a::start(p);fixture::native={.5f,0};fixture::step();a::d_airship_update(&fixture::controller,nullptr);expect(!a::active()&&fixture::controller.cached.x==.5f,"native manual axis takes priority and is preserved");fixture::native={};
  fixture::manual=true;a::input_updated();expect(!a::active()&&!a::virtual_key(1),"manual input cancels pending landing and releases pulse");fixture::manual=false;
  std::printf("Autowalk native input/vehicle waits/FF6 flight: %d failures\n",failures);return failures?1:0;
 }

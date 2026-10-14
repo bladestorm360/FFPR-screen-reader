@@ -68,6 +68,8 @@ int list_count(void* list);
 void* list_at(void* list, int index);
 /// Bounded reference-type IEnumerable traversal, including lists, arrays and LINQ iterators.
 bool enumerate(void* enumerable, std::vector<void*>& out);
+/// Reject oversized/unfinished native collections; used by bounded targeting snapshots.
+bool enumerate_bounded(void* enumerable, std::vector<void*>& out, int maximum);
 template <typename T> T list_value(void* list, int index);
 /// Dictionary<TKey,TValue> walk for reference keys/values or 4-byte ints (layout: hash,next,key,value).
 /// Calls fn(key, value) for each live entry; keys/values are raw 8-byte slots.

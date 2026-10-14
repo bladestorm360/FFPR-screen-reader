@@ -369,8 +369,9 @@ void announce_use_target(void* self, void* cursor)
     void* list = ref::rd<void*>(self, fUseContentList);
     const int slots = list ? unity::list_count(list) : 0;
     const int index = ui::cursor_index(cursor);
-    if (slots <= 0 || index < 0 || index >= slots) return;
-    void* content = unity::list_at(list, index);
+    if (slots <= 0 || slots > 9 || index < 0 || index >= slots) return;
+    void* content = displayed::cursor_row(cursor, list);
+    if (!content) content = unity::get_component_in_parent(cursor, kTargetContent);
     void* character = content ? ref::rd<void*>(content, fTargetCurrentData) : nullptr;
     if (!character) return;
 
@@ -381,13 +382,9 @@ void announce_use_target(void* self, void* cursor)
     g_focus.controller = self;
     g_focus.blitz_mes_id.clear();
 
-    if (!dedup::text(kCtxUseTarget, announcement, kScope)) return;
-
     // The slots shown (empty party slots are inactive).
-    int count = 0;
-    for (int i = 0; i < slots; ++i)
-        if (void* c = unity::list_at(list, i); c && unity::active_in_hierarchy(c)) ++count;
-    if (count <= index) count = slots;
+    const int count = displayed::target_count(list);
+    if (index >= count) return;
     ffpr::say(ui::menu_position(announcement, index, count));
 }
 
@@ -573,6 +570,7 @@ void d_WindowSelectMagicStoneInit(void* self, const void* mi)
         reset_esper_list_guard();
     }
     o_WindowSelectMagicStoneInit(self, mi);
+    hooks::guarded("FF6.Esper.ListReady", [self] { if (kAbilityWindow.is(self)) refresh_esper_list(self); });
 }
 
 // The window closing: every guard clears and the I key no longer has a focused entry.

@@ -408,3 +408,74 @@ Isolated DLL smoke and all-six deployment/hash verification pass:
 Subsequent user gameplay retest: the Deist-to-world transition lag seems fixed and is
 accepted as good enough for V0.9 release preparation. This confirms the reported case
 qualitatively; no absolute zero-overhead or all-map numerical timing claim follows.
+
+
+## Selected-destination world latency follow-up, October 14
+
+Latest user FF6 log: directions generations 153/155/169 took 468.461/958.265/1009.128 ms
+from request to SDK submission. Their route captures took 16.815–17.658 ms, computation
+0.636–2.246 ms and total route stage 33.433–34.230 ms. Speech queue was 0.151–0.211 ms,
+SDK calls 0.438–0.597 ms. Thus most logged delay preceded route planning; SDK submission
+is not first audible output. Native frame/Unity costs are not inferred from worker placement.
+
+The prior flow awaited when_filter_ready after movement, including full world exit
+reachability, sorting and obsolete-origin republishing, before requesting an otherwise
+small route. Existing live target requests now bypass that wait. Full list refresh is still
+scheduled; browsing/category selection keeps its fresh-generation wait. A flood for an
+obsolete pose/vehicle is cancelled by epoch, with checks inside worker search, without
+an owner join, lock wait, I/O wait, scene search or thread-affine pointer transfer. New
+route capture retains its 0.5-ms elapsed slice budget, copies live gates/vehicle/pose and
+checks map/pose/vehicle before committing. Crow-flies and native target positions remain
+live reads; route directions and beacon/autowalk retain their existing request/update
+mechanics. The user accepts publication/order finishing after selected-target directions.
+
+Baseline offline real-bake computation, before this change: 24 worlds, 16 far walking
+routes; worst flood 21.006 ms, route 146.768 ms (FF5). Representative FF6 walking world
+routes were 66.382 and 24.044 ms. All-six boarded route/filter maxima were 41.807/31.839 ms
+for 103 eligible world/transport cases. These were cold independent worker samples with
+real bakes, not game-frame/audible costs or universal targets; no A* semantics were changed.
+The native-fixture scanner regression checks the complete selection-to-readiness path
+against a 2,000-row capture/publication burst and an obsolete pending flood. The final
+reported selected-target native-fixture dispatch is recorded by entity_scanner_report.txt;
+zero destination-list readiness ticks are required for this warm case. Cold invalidation,
+map change, busy/retired work, preserved browse ordering and worker-native-call exclusion
+remain checked. Existing real worker lane, priority, callback budget, cancellation and
+fake-SDK speech checks also run in build.bat. Numerical actual post-fix SDK/audible and
+modded/unmodded game-frame timings require a subsequent user log/gameplay confirmation;
+no speedup ratio or instantaneous runtime guarantee is claimed.
+
+
+Final canonical native-fixture sample: 2,000 rows in three capture/publication ticks;
+selected-target dispatch 0.200 us and zero list-readiness ticks; zero worker native calls.
+Final real-bake worker sample: 103 boarded cases, route/filter maxima 32.446/16.093 ms;
+582 world exit candidates, six-category preparation 3.642 ms. All checks and isolated DLL
+smoke pass; installed receipt is linked from docs/FOLLOWUP_2026_10_14.md. These are
+bounded offline/fake-native tests. Actual post-fix request-to-submit/audible latency and
+comparable game-frame baselines are unmeasured until user gameplay/log feedback.
+
+
+### Native page and group-target follow-up, October 14
+
+The latest Esper/equipment/group-target correction is recorded in
+[the follow-up](../FOLLOWUP_2026_10_14.md#blank-espers-equipment-pages-and-whole-group-target-entry).
+Native Show/WaitInputInit/SelectContent/SetPage/SetParameterFlag producers own readiness;
+no keyboard-specific polling or three-frame delay remains for FF6 equipment entry.
+Esper observations are bounded to one virtual row (128-slot validation) or 32 spell rows,
+with one labelled continuation and generation/owner cancellation. Empty selections retire
+old review work immediately. Items preserve the existing elapsed 0.5 ms capture budget
+and collection bounds; copying displayed data stays on its owner, review assembly remains
+on the owned-text worker. Group-target labels use completed unique phase entries; FF6
+range qualification is a bounded static native call on that owner. No native pointers
+move to workers, no callback waits on work, and the confirmed single-enemy producer guard
+is unchanged. Actual-source renderer/review checks report zero worker native calls.
+These checks establish ownership and cancellation, not measured audible latency or new
+runtime frame budgets. No gameplay probes/measurements were performed for this revision.
+
+
+Equipment pager investigation traced native StartPrevPage/StarNextPage iterators, both
+calling the already hooked SetPage. The user confirmed actual numbered pages update
+correctly and the report was Q/footer-toggle confusion. The temporary completion hooks
+and their specific checks were removed, restoring the confirmed existing native producers
+and bounded owner capture/review service. No new timer, polling, hidden-number fallback,
+thread route or runtime latency claim remains from that investigation. Source/build/
+deployment recovery and mastery evidence are in the page-count/mastery follow-up record.

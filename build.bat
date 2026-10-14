@@ -111,6 +111,16 @@ if errorlevel 1 (
     echo Battle context check FAILED - see build_check\battle_context_report.txt
     exit /b 1
 )
+"out\checks\battle_focus_check.exe" > build_check\battle_focus_report.txt 2>&1
+if errorlevel 1 (
+    echo Battle focus check FAILED - see build_check\battle_focus_report.txt
+    exit /b 1
+)
+"out\checks\party_esper_check.exe" > build_check\party_esper_report.txt 2>&1
+if errorlevel 1 (
+    echo Party and Esper check FAILED - see build_check\party_esper_report.txt
+    exit /b 1
+)
 "out\checks\battle_results_check.exe" > build_check\battle_results_report.txt 2>&1
 if errorlevel 1 (
     echo Battle results check FAILED - see build_check\battle_results_report.txt

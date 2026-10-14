@@ -184,3 +184,30 @@ vehicle identities cannot resume a ride. Installed/hash-verified in all six game
 the menu/results follow-up recorded in MENU_DETAILS.md. New automated boarding/landing,
 FF6 flight and controller handback remain gameplay-unconfirmed. Existing user confirmation
 of FF2 ship routing and cross-vehicle path directions is not autowalk confirmation.
+
+
+## FF3/FF6 airship follow-up, October 14
+
+The user withdraws automatic airship boarding for FF3 and FF6. Plane and special
+plane boarding phases keep their manual instruction but carry VehicleAction::None,
+so the walker stops at that boundary without Confirm. Ordinary ships retain their
+existing action policy, and already-steering routes remain available. Future deck
+automation would have to walk to the wheel, interact, select Take the wheel, wait
+for the native steering transition/readiness, then replan/continue. This sequence
+is documentation only; no wheel interaction automation was added.
+
+The FF6 native late update consumes its stored input axis before calling the
+common InputDevice getter at its tail. Providing only the latter left the previous
+route direction in place at a corner or stop. Before original flight processing,
+the owner now publishes the current route axis through native OnTouchPadCallback,
+using the existing inverse bird-camera rotation and both native shoulder callbacks.
+The same callback releases the stored synthetic axis after cancel/arrival; native
+manual input has priority. No direct MoveToAxis, heading/transform, grid or vehicle
+state writes are introduced. Input remains isolated on the native owner thread.
+
+The actual-source native-input fixture now models the recovered consume-then-observe
+order, and checks corners, stored-axis release, arrival, cancel, manual priority,
+inverse rotation and pre-existing shoulder holds. It passes. The safe controller
+check accepts the FF6 flight controller as well as ordinary walking input. A bounded
+off-route diagnostic records map/cell/layer/native vehicle identity if a user-side
+retest still stops. Real Falcon flight/handback timing remains gameplay-unconfirmed.

@@ -125,7 +125,7 @@ void speak_press_prompt_if_shown(void* ctrl)
     // Preserve the game's displayed wording first. This is mod guidance,
     // requested by the user, only for games with native idle intro playback.
     if (game::flags().title_idle_cinematic)
-        raw += L". " + T(L"Wait to watch the intro cinematic, or press a button to open the title menu.");
+        raw += L". " + T(L"Wait to watch the intro cinematic.");
     ffpr::say(raw, true);
 }
 

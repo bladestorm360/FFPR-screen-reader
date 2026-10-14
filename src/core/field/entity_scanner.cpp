@@ -422,6 +422,8 @@ double g_view_captured_at = 0;
 int g_last_scanned_map_id = -1;
 worker_job::Owner g_filter_work;
 bool g_filter_pending = false;
+std::optional<Vec3> g_filter_origin;
+int g_filter_vehicle = 0;
 uint64_t g_filter_generation = 0;
 
 // The other floors' entries (baked data), built once per map while the filter is "Current
@@ -571,6 +573,8 @@ void apply_filter() {
     input->world = input->navigation && baked_nav::exit_snapshot_world(*input->navigation);
     const bool navigation_filtered = input->navigation != nullptr;
     const int vehicle = input->navigation ? baked_nav::exit_snapshot_vehicle(*input->navigation) : 0;
+    g_filter_origin = input->sort ? std::optional<Vec3>(input->player) : std::nullopt;
+    g_filter_vehicle = vehicle;
     const auto epoch = g_filter_work.epoch(); const auto epoch_generation = epoch->load();
     input->cancelled = [epoch,epoch_generation] { return epoch->load() != epoch_generation; };
     input->layer = to_layer_enabled(); input->selected_has = g_sel_has;
@@ -711,8 +715,23 @@ void ensure_correct_map()
 // scanner API
 // =========================================================================================
 namespace scanner {
-void when_filter_ready(std::function<void()> ready) {
+void when_filter_ready(std::function<void()> ready, bool existing_selection) {
     ensure_correct_map();
+    // Directions to a selected destination do not require re-sorting every
+    // destination or preparing another reachability flood after each move.
+    // The route captures current pose, vehicle and live gates independently.
+    // Cold entry, map/settings invalidation and dead selections still wait.
+    if (existing_selection && g_views_ready && g_sel && g_sel->is_alive() &&
+        g_last_scanned_map_id == current_map_id_or_user_data()) {
+        Vec3 at; const auto vehicle = current_vehicle();
+        // Do not leave an obsolete flood ahead of the interactive route on the
+        // Navigation lane. Its owned cancellation is checked inside search;
+        // the owner never waits. The scheduled live refresh supplies a new list.
+        if (g_filter_pending && (!g_filter_origin || !player_local_position(at) ||
+            at.x != g_filter_origin->x || at.y != g_filter_origin->y || at.z != g_filter_origin->z ||
+            (vehicle.valid ? vehicle.id : 0) != g_filter_vehicle)) cancel_filter();
+        ready(); return;
+    }
     if (g_views_ready && g_navigation_filtered) {
         Vec3 at; const auto transport=field::current_vehicle();
         if (!g_view_origin || !player_local_position(at) || at.x!=g_view_origin->x || at.y!=g_view_origin->y || at.z!=g_view_origin->z ||

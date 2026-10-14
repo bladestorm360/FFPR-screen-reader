@@ -26,6 +26,8 @@ ref::Method mOwnAlpha{kCanvasRenderer, "GetAlpha", 0};
 ref::Class kRenderer{"UnityEngine", "Renderer"};
 ref::Method mRendererEnabled{kRenderer, "get_enabled", 0}, mRendererVisible{kRenderer, "get_isVisible", 0};
 ref::Class kAbilityRow{"Last.UI.KeyInput", "AbilityContentController"};
+ref::Class kStatusBase{"Serial.Template.UI", "StatusWindowControllerBase"};
+ref::Field fMenuCommand{kStatusBase, "callerCommandId"};
 struct Color { float r, g, b, a; };
 
 std::wstring meter(void* view, const char* current, const char* maximum,
@@ -154,10 +156,54 @@ std::wstring character(void* view)
     if (!values.empty()) name += (name.empty() ? L"" : L", ") + values;
     return name;
 }
+std::wstring formation_row(void* window, void* content)
+{
+    // MenuCommandId.Sort is Formation/Order in all six. Other character menus
+    // may reuse the same portrait placement but do not announce row there.
+    if (!window || ref::rd<int32_t>(window, fMenuCommand) != 5) return {};
+    void* view = field(content, "view");
+    void* portrait = field(field(content, "menuCharacterController"), "characterImageView");
+    if (!image_visible(portrait)) return {};
+    void* parent = unity::parent(unity::transform(portrait));
+    void* front = field(view, "frontParent"), *back = field(view, "backParent");
+    if (front && parent == unity::transform(front)) return T(L"Front Row");
+    if (back && parent == unity::transform(back)) return T(L"Back Row");
+    return {};
+}
+void* cursor_row(void* cursor, void* contents)
+{
+    if (!unity::alive(cursor)) return nullptr;
+    void* parent = unity::parent(unity::transform(cursor));
+    if (!parent) return nullptr;
+    std::vector<void*> rows;
+    if (!unity::enumerate_bounded(contents, rows, 9)) return nullptr;
+    for (void* row : rows) {
+        if (!unity::alive(row)) continue;
+        void* view = field(row, "view");
+        for (const char* name : {"cursorParent", "otherCursorParent", "focusCursorParent", "defaultCursorParent"}) {
+            void* anchor = field(view, name);
+            if (unity::alive(anchor) && parent == unity::transform(anchor)) return row;
+        }
+    }
+    return nullptr;
+}
+int target_count(void* list)
+{
+    const int slots = unity::list_count(list);
+    if (slots <= 0 || slots > 9) return 0;
+    int count = 0;
+    for (int i = 0; i < slots; ++i) {
+        void* content = unity::list_at(list, i);
+        if (!text_field(field(content, "view"), "nameText").empty()) ++count;
+    }
+    return count;
+}
 std::wstring target(void* content)
 {
-    if (!visible(content)) return {};
-    auto value = character(field(content, "view"));
+    if (!unity::alive(content)) return {};
+    void* view = field(content, "view");
+    if (!container_visible(view)) return {};
+    auto value = character(view);
     auto icons = conditions(content);
     if (!icons.empty()) value += (value.empty() ? L"" : L", ") + icons;
     return value;

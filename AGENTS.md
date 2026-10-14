@@ -79,10 +79,23 @@ operands and ceil only at speech formatting; FF2's verified minimum gain is 1% (
 deadline. Read hit/damage digit sprites, without attack-sound or status-capacity arithmetic.
 See `docs/re/RESULTS.md` for evidence, controls, validation and remaining gameplay checks.
 
-Settings use exactly Speech, Navigation audio, Battle submenus, followed by Close Menu;
-volumes sit beside their audio setting and battle results settings belong to Battle (user,
-2026-10-12). Stat delta detail belongs to Speech because it also governs equipment comparisons
-(user correction, 2026-10-13). Preserve direct F8 keyboard entry and controller mode/context input ownership.
+Settings use Speech, Navigation, Navigation audio, Battle submenus, followed by Close Menu
+(user replacement, 2026-10-14). Navigation contains autowalk, path speech, filters and
+stick-click normalization. Navigation audio contains sound toggles and their adjacent
+volumes, including the conditional EXP counter. Stat delta detail belongs to Speech.
+Preserve saved keys/defaults, direct F8 entry and controller mode/context ownership.
+Speak row only on native Formation/Order, from the actual rendered portrait placement;
+never append it to other character/target/status menus. FF4 changes the formation as a
+whole, so announce the resulting displayed row after the original operation.
+For battle commands, if the screenshot has no description, do not expose one with I or
+investigate hidden description data (user, 2026-10-14). Esper information buffers follow
+the currently displayed panel; keep progress numerals alongside mastery icons and read
+Equipped from either visible marker without a hidden owner-name lookup.
+Esper buffers contain only the selected Esper's current panel; exclude the active
+character header. Rendered unowned blank slots say Empty and replace prior information.
+Native panel changes rebuild immediately without requiring cursor movement. Equipment
+information uses the shared buffer alone, with one rendered name/quantity entry. Q's
+description/stat-summary toggle is separate from the numbered equipment page controls.
 All mod modal keyboard input requires active game-window focus, with held-key seeding on
 return. Never add keyboard mod mode. Navigation must cancel at battle transition, preserve
 live story gates and map state, route between floors to each transition, and explain blocked

@@ -30,8 +30,6 @@ ref::Class kSaveContentKey{"Last.UI.KeyInput", "SaveContentController"};
 ref::Class kSaveContentTouch{"Last.UI.Touch", "SaveContentController"};
 ref::Class kSaveSlotData{"Last.Management", "SaveSlotData"};
 ref::Class kOwnedCharacter{"Last.Data.User", "OwnedCharacterData"};
-ref::Class kPlayerParameter{"Last.Data", "PlayerCharacterParameter"};
-ref::Class kMessageManager{"Last.Management", "MessageManager"};
 ref::Class kMenuManager{"Last.UI", "MenuManager"};
 
 ref::Field fTitleLoadPopup{kTitleLoad, "savePopup"};
@@ -64,19 +62,10 @@ ref::Method mInterruptionSetEnablePopup{kInterruption, "SetEnablePopup", 1};
 ref::Method mInterruptionInitComplite{kInterruption, "InitComplite", 0};
 ref::Method mSaveListSetActive{kSaveList, "SetActive", 3};
 
-ref::Method mKeySlotName{kSaveContentKey, "get_SlotName", 0};
 ref::Method mKeySlotData{kSaveContentKey, "get_SlotData", 0};
-ref::Method mTouchSlotName{kSaveContentTouch, "get_SlotName", 0};
 ref::Method mTouchSlotData{kSaveContentTouch, "get_SlotData", 0};
-ref::Method mSlotCurrentArea{kSaveSlotData, "get_CurrentArea", 0};
-ref::Method mSlotCurrentLocation{kSaveSlotData, "get_CurrentLocation", 0};
-ref::Method mSlotPlayTime{kSaveSlotData, "get_PlayTime", 0};
-ref::Method mSlotTimeStamp{kSaveSlotData, "get_TimeStamp", 0};
 ref::Method mSlotPartyList{kSaveSlotData, "get_PartyList", 0};
 ref::Method mCharName{kOwnedCharacter, "get_Name", 0};
-ref::Method mCharParameter{kOwnedCharacter, "get_Parameter", 0};
-ref::Method mConfirmedLevel{kPlayerParameter, "ConfirmedLevel", 0};
-ref::Method mGetMessage{kMessageManager, "GetMessage", 2};
 ref::Method mMenuIsOpen{kMenuManager, "get_IsOpen", 0};
 
 // --- SaveLoadMenuState --------------------------------------------------------------------
@@ -111,88 +100,45 @@ void* find_slot_content_list(void* root)
     return (gp && unity::name(gp) == L"Scroll View") ? content : nullptr;
 }
 
-// GetSlotIdentifier: the controller's SlotName, else Autosave / Quicksave / File N by index.
-std::wstring slot_identifier(const std::wstring& slot_name, int slot_index)
+// Rendered slot fields own every ordinary announcement. Party names are the
+// user's explicitly approved exception for the displayed party sprites.
+std::wstring read_from_controller(void* controller, void* slot_data, int slot_index)
 {
-    if (!slot_name.empty()) return slot_name;
-    if (slot_index == 0) return T(L"Autosave");
-    if (slot_index == 1) return T(L"Quicksave");
-    return TF(L"File {0}", {text::num(slot_index - 1)});
-}
-
-// BuildAnnouncement: slot name, date, character and level, location, play time.
-std::wstring build_slot_announcement(const std::wstring& slot_id, const std::wstring& time_stamp,
-                                      const std::wstring& location, const std::wstring& character_name,
-                                      const std::wstring& level, const std::wstring& hours,
-                                      const std::wstring& minutes)
-{
-    std::wstring a = slot_id;
-    if (!time_stamp.empty()) a += L", " + time_stamp;
-    // FF2 has no character levels: its slot keeps the game's level field at 1 (user, 2026-10-10).
-    const bool with_level = !level.empty() && game::flags().has_levels;
-    if (!character_name.empty()) {
-        a += L": " + character_name;
-        if (with_level) a += L" " + TF(L"Level {0}", {level});
-    } else if (with_level) {
-        a += L": " + TF(L"Level {0}", {level});
+    void* view = displayed::field(controller, "view");
+    const auto slot = displayed::text_field(view, "slotNameText");
+    const auto number = displayed::text_field(view, "slotNumText");
+    if (slot.empty()) return {};
+    std::wstring result = slot + (number.empty() ? L"" : L" " + number);
+    const auto empty = displayed::text_field(view, "emptyText");
+    if (!empty.empty()) return result + L": " + empty;
+    for (const char* field : {"timeStampDate", "timeStampTime", "charaNameText"}) {
+        const auto value = displayed::text_field(view, field);
+        if (!value.empty()) result += L", " + value;
     }
-    if (!location.empty()) a += L", " + location;
-    if (!hours.empty() && !minutes.empty()) a += L", " + TF(L"Time {0}:{1}", {hours, minutes});
-    return a;
-}
-
-// MessageManager.GetMessage(key, true)
-std::wstring game_message(void* mm, const std::wstring& key)
-{
-    void* s = ref::new_str(key);
-    if (!s) return key;
-    return ref::str(ref::call<void*>(mGetMessage, mm, s, true));
-}
-
-// ReadFromController: the slot's SaveSlotData.
-std::wstring read_from_controller(const std::wstring& slot_name, void* slot_data, int slot_index)
-{
-    const std::wstring slot_id = slot_identifier(slot_name, slot_index);
-    if (!slot_data) return slot_id + L": " + T(L"Empty");
-
-    std::wstring location = ref::call_str(mSlotCurrentArea, slot_data);
-    std::wstring floor = ref::call_str(mSlotCurrentLocation, slot_data);
-    const double play_seconds = ref::call<double>(mSlotPlayTime, slot_data);
-    const std::wstring time_stamp = ref::call_str(mSlotTimeStamp, slot_data);
-
-    // Translate message keys to localized text.
-    if (void* mm = ref::instance(kMessageManager)) {
-        if (!location.empty()) location = game_message(mm, location);
-        if (!floor.empty()) floor = game_message(mm, floor);
+    const auto level = displayed::pair(view, "fixedLevelText", "levelText");
+    if (!level.empty()) result += L", " + level;
+    for (const char* field : {"areaNameText", "floorNameText"}) {
+        const auto value = displayed::text_field(view, field);
+        if (!value.empty()) result += L", " + value;
     }
-
-    // Lead character from the party list.
-    std::wstring character_name;
-    std::wstring level;
-    void* party = ref::call<void*>(mSlotPartyList, slot_data);
-    if (party && unity::list_count(party) > 0) {
-        if (void* lead = unity::list_at(party, 0)) {
-            character_name = ref::call_str(mCharName, lead);
-            if (void* param = ref::call<void*>(mCharParameter, lead))
-                level = text::num(ref::call<int32_t>(mConfirmedLevel, param));
+    const auto hours = displayed::text_field(view, "hourText");
+    const auto minutes = displayed::text_field(view, "minuteText");
+    if (!hours.empty() && !minutes.empty()) result += L", " +
+        displayed::text_field(view, "fixedTimeText") + L" " + hours +
+        displayed::text_field(view, "timeSeparateText") + minutes;
+    void* party = slot_data ? ref::call<void*>(mSlotPartyList, slot_data) : nullptr;
+    const int count = unity::list_count(party);
+    if (count > 0 && count <= 9) {
+        std::vector<std::wstring> names;
+        for (int i = 0; i < count; ++i) {
+            void* member = unity::list_at(party, i);
+            if (!member) continue;
+            auto name = ref::call_str(mCharName, member);
+            if (!name.empty()) names.push_back(std::move(name));
         }
+        if (!names.empty()) result += L". " + T(L"Party") + L": " + text::join(names, L", ");
     }
-
-    const bool has_data = !location.empty() || !character_name.empty() || play_seconds > 0;
-    if (!has_data) return slot_id + L": " + T(L"Empty");
-
-    std::wstring hours, minutes;
-    if (play_seconds > 0) {
-        const int total_minutes = static_cast<int>(play_seconds / 60);
-        const int h = total_minutes / 60;
-        const int m = total_minutes % 60;
-        hours = text::num(h);
-        minutes = (m < 10 ? L"0" : L"") + text::num(m);   // ToString("D2")
-    }
-
-    if (!floor.empty() && !location.empty()) location += L" - " + floor;
-
-    return build_slot_announcement(slot_id, time_stamp, location, character_name, level, hours, minutes);
+    return result;
 }
 
 // ReadSlotFromTransform: KeyInput SaveContentController first, then Touch.
@@ -204,14 +150,13 @@ std::wstring read_slot_from_transform(void* slot, int slot_index, bool& found)
     if (!key) key = unity::get_component_in_children(slot, kSaveContentKey);
     if (key) {
         found = true;
-        return read_from_controller(ref::call_str(mKeySlotName, key), ref::call<void*>(mKeySlotData, key), slot_index);
+        return read_from_controller(key, ref::call<void*>(mKeySlotData, key), slot_index);
     }
     void* touch = unity::get_component(slot, kSaveContentTouch);
     if (!touch) touch = unity::get_component_in_children(slot, kSaveContentTouch);
     if (touch) {
         found = true;
-        return read_from_controller(ref::call_str(mTouchSlotName, touch), ref::call<void*>(mTouchSlotData, touch),
-                                    slot_index);
+        return read_from_controller(touch, ref::call<void*>(mTouchSlotData, touch), slot_index);
     }
     return {};
 }

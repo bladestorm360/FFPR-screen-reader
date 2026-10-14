@@ -337,6 +337,21 @@ int main() {
                 onboard.submap=map; onboard.map_id=map->first_map_id; onboard.layer=1; onboard.position=world_of_cell(*map,start);
                 onboard.vehicle={true,row.id,row.type,field::baked::str(row.message)}; onboard.auto_groups=riding.auto_groups;
                 onboard.goal.map_id=onboard.map_id; onboard.goal.cell=target; onboard.kind=field::TargetKind::Transition; onboard.locale=L"en";
+                // Exercise the actual exit-filter path while already aboard,
+                // rather than inferring its behavior from a successful route.
+                for(bool with_vehicles : {false,true}) {
+                    ExitSnapshot filtered(with_vehicles,field::map_state::Resolver(field::map_state::Flags{},fixture::records));
+                    filtered.route.submap=map;filtered.route.map_id=onboard.map_id;filtered.route.layer=1;
+                    filtered.route.position=onboard.position;filtered.route.vehicle=onboard.vehicle;filtered.route.auto_groups=onboard.auto_groups;
+                    std::vector<ExitTarget> exits;
+                    for(const auto& object:grid.objects) if(object.type==field::baked::ObjType::GotoMap)
+                        exits.push_back({world_of_cell(*map,{1,object.tx,object.ty}),0,object.a,{1,object.tx,object.ty}});
+                    std::vector<int> distances;
+                    std::thread filter([&]{distances=exit_distances(filtered,exits,{});});filter.join();
+                    if(number==6 && (row.type==3||row.type==8))
+                        expect(std::any_of(distances.begin(),distances.end(),[](int d){return d>=0;}),
+                            "both FF6 floor and vehicles filters retain destinations reachable from an already flying airship");
+                }
                 std::thread vehicle_worker([&] {
                     const auto started=std::chrono::steady_clock::now(); result=plan_snapshot(onboard);
                     worst_vehicle_ms=std::max(worst_vehicle_ms,std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-started).count());

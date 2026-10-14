@@ -65,12 +65,14 @@ ref::Method mExchangeInit{kWindow, "ExchangeInit", 0};
 ref::Method mCommandInit{kWindow, "CommandInit", 0};
 ref::Method mSetNextState{kWindow, "SetNextState", 1};
 ref::Method mWindowSetActive{kWindow, "SetActive", 1};
+ref::Method mWindowUpdate{kWindow, "UpdateController", 0};
 
 ref::Class kList{"Serial.FF3.UI.KeyInput", "AbilityContentListController", game::kFF3};
 ref::Field fListContents{kList, "contentList"};
 ref::Field fListItems{kList, "abilityItemList"};
 ref::Field fListCharacter{kList, "targetCharacterData"};
 ref::Field fListWindow{kList, "abilityWindowController"};
+ref::Field fListCursor{kList, "selectCursor"};
 ref::Method mListSetCursor{kList, "SetCursor", 3};
 
 ref::Class kUseList{"Serial.FF3.UI.KeyInput", "AbilityUseContentListController", game::kFF3};
@@ -101,6 +103,7 @@ ref::Method mGetConditionList{kParamBase, "get_CurrentConditionList", 0};
 // AbilityWindowController.State (FF3).
 constexpr int kStateNone = 0;
 constexpr int kStateUseList = 1;
+constexpr int kStateUseTarget = 2;
 constexpr int kStateMemorizeList = 3;
 constexpr int kStateRemoveList = 4;
 constexpr int kStateCommand = 7;
@@ -111,6 +114,8 @@ constexpr int kCommandReadMaxFrames = 10;
 
 void* g_character = nullptr;        // MagicMenuState.CurrentCharacter (party data)
 std::wstring g_last_description;    // MagicMenuState.LastFocusedDescription
+void* g_pending_spell_window = nullptr;
+int g_pending_spell_frames = 0;
 int g_command_gen = 0;
 
 bool auto_detail() { return ui::prefs::auto_detail_enabled(); }
@@ -132,7 +137,7 @@ int window_state(void* window)
 
 void* find_window() { return field::cache::get(kWindow); }
 
-void reset_state() { menu_state::set_active(menu_state::MAGIC_MENU, false); }
+void reset_state() { g_pending_spell_window = nullptr; menu_state::set_active(menu_state::MAGIC_MENU, false); }
 
 /// MagicMenuState.ShouldSuppress.
 bool should_suppress()
@@ -174,6 +179,7 @@ bool try_content_list(void* list_ctrl, int index)
     if (count == 0 || index < 0 || index >= count) return false;
     void* content = unity::list_at(list, index);
     void* ability = content ? ref::rd<void*>(content, fAbilityContentData) : nullptr;
+    if (ability && displayed::spell_row(content).empty()) return false;
     if (!ability) announce_empty(index, count);
     else announce_spell(ability, content, index, count);
     return true;
@@ -212,9 +218,10 @@ void on_list_set_cursor(void* self, void* cursor)
     if (!unity::active_in_hierarchy(self)) return;
     const int index = ui::cursor_index(cursor);
     const int state = window_state(ref::rd<void*>(self, fListWindow));
-    if (state == kStateMemorizeList) try_item_list(self, index);
-    else if (state == kStateUseList || state == kStateRemoveList) try_content_list(self, index);
-    else if (!try_content_list(self, index)) try_item_list(self, index);
+    const bool ready = state == kStateMemorizeList ? try_item_list(self, index) :
+        (state == kStateUseList || state == kStateRemoveList) ? try_content_list(self, index) :
+        (try_content_list(self, index) || try_item_list(self, index));
+    if (ready) g_pending_spell_window = nullptr;
 }
 
 // SpellListStateInit_Postfix (Use / Learn / Remove / Forget / Exchange entry)
@@ -227,13 +234,19 @@ void on_spell_list_init(void* window)
     }
     void* list = ref::rd<void*>(window, fWindowList);
     if (void* character = list ? ref::rd<void*>(list, fListCharacter) : nullptr) g_character = character;
+    g_pending_spell_window = window;
+    g_pending_spell_frames = 0;
 }
 
 // SetNextState_Postfix: back to the command bar (or closed) leaves the spell list.
 void on_set_next_state(void* self, int state)
 {
     if (!kWindow.is(self)) return;   // folded body
-    if ((state == kStateCommand || state == kStateNone) && spell_list_active()) reset_state();
+    if (state == kStateCommand || state == kStateNone) {
+        g_pending_spell_window = nullptr;
+        if (spell_list_active()) reset_state();
+    }
+    else if (state == kStateUseTarget) g_pending_spell_window = nullptr;
 }
 
 // --- targets (AbilityUseContentListController.SetCursor) -----------------------------------------
@@ -243,9 +256,10 @@ void on_use_set_cursor(void* self, void* cursor)
     if (!self || !cursor) return;
     const int index = ui::cursor_index(cursor);
     void* list = ref::rd<void*>(self, fUseContents);
-    const int count = unity::list_count(list);
+    const int count = displayed::target_count(list);
     if (index < 0 || index >= count) return;
-    void* content = unity::list_at(list, index);
+    void* content = displayed::cursor_row(cursor, list);
+    if (!content) content = unity::get_component_in_parent(cursor, kTargetContent);
     void* character = content ? ref::rd<void*>(content, fTargetContentData) : nullptr;
     if (!character) return;
     std::wstring line = displayed::target(content);
@@ -309,6 +323,25 @@ using Bool_t = void (*)(void* self, bool value, const void* mi);
 using Cursor_t = void (*)(void* self, void* cursor, const void* mi);
 using ListCursor_t = void (*)(void* self, void* cursor, bool is_scroll, int32_t range_type, const void* mi);
 Void_t o_UseListInit, o_MemorizeListInit, o_RemoveListInit, o_ForgetInit, o_ExchangeInit, o_CommandInit;
+Void_t o_WindowUpdate;
+void d_WindowUpdate(void* self, const void* mi)
+{
+    o_WindowUpdate(self, mi);
+    hooks::guarded("FF3.Magic.InitialFocus", [self] {
+        if (g_pending_spell_window != self) return;
+        if (++g_pending_spell_frames > 10) { g_pending_spell_window = nullptr; return; }
+        if (!live_window(self)) { g_pending_spell_window = nullptr; return; }
+        const int state = window_state(self);
+        if (state == kStateCommand || state == kStateNone) return; // native transition not published yet
+        if (state == kStateUseTarget) { g_pending_spell_window = nullptr; return; }
+        void* list = ref::rd<void*>(self, fWindowList);
+        void* cursor = list ? ref::rd<void*>(list, fListCursor) : nullptr;
+        const int index = ui::cursor_index(cursor);
+        if (index < 0) return;
+        const bool ready = state == kStateMemorizeList ? try_item_list(list, index) : try_content_list(list, index);
+        if (ready) g_pending_spell_window = nullptr;
+    });
+}
 Void_t o_SetCommandSelectCursor;
 Int_t o_SetNextState;
 Bool_t o_WindowSetActive;
@@ -379,11 +412,13 @@ int install()
     n += hooks::attach(mSetCommandSelectCursor, &d_SetCommandSelectCursor, &o_SetCommandSelectCursor) ? 1 : 0;
     n += hooks::attach(mSetNextState, &d_SetNextState, &o_SetNextState) ? 1 : 0;
     n += hooks::attach(mWindowSetActive, &d_WindowSetActive, &o_WindowSetActive) ? 1 : 0;
+    n += hooks::attach(mWindowUpdate, &d_WindowUpdate, &o_WindowUpdate) ? 1 : 0;
     n += hooks::attach(mListSetCursor, &d_ListSetCursor, &o_ListSetCursor) ? 1 : 0;
     n += hooks::attach(mUseSetCursor, &d_UseSetCursor, &o_UseSetCursor) ? 1 : 0;
-    LOGF("[FF3 Magic] %d of 11 hooks", n);
+    LOGF("[FF3 Magic] %d of 12 hooks", n);
 
     menu_state::register_reset(menu_state::MAGIC_MENU, [] {
+        g_pending_spell_window = nullptr;
         g_character = nullptr;
         g_last_description.clear();
     });

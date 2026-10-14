@@ -88,9 +88,71 @@ int main()
     };
 
     fixture::values[ui::prefs::kStatDeltaMode] = 1;
+    const std::map<std::string, std::wstring> moved_settings = {
+        {ui::prefs::kAutowalk, L"Navigation"},
+        {ui::prefs::kSpeakAutowalkPath, L"Navigation"},
+        {ui::prefs::kPathfindingFilterMode, L"Navigation"},
+        {ui::prefs::kMapExitFilter, L"Navigation"},
+        {ui::prefs::kToLayerFilter, L"Navigation"},
+        {ui::prefs::kStickClickNormalization, L"Navigation"},
+        {ui::prefs::kWallTones, L"Navigation audio"},
+        {ui::prefs::kWallToneVolume, L"Navigation audio"},
+        {ui::prefs::kWallBumpVolume, L"Navigation audio"},
+        {ui::prefs::kFootsteps, L"Navigation audio"},
+        {ui::prefs::kFootstepVolume, L"Navigation audio"},
+        {ui::prefs::kAudioBeacons, L"Navigation audio"},
+        {ui::prefs::kBeaconVolume, L"Navigation audio"},
+        {ui::prefs::kBeaconWithDirections, L"Navigation audio"},
+        {ui::prefs::kLandingPings, L"Navigation audio"},
+        {ui::prefs::kLandingPingVolume, L"Navigation audio"},
+        {ui::prefs::kExpCounter, L"Navigation audio"},
+        {ui::prefs::kExpCounterVolume, L"Navigation audio"},
+    };
     for (int n = 1; n <= 6; ++n) {
         fixture::game_id = n; ui::mod_menu::initialize();
         std::wstring section; int modes = 0;
+        std::vector<std::wstring> headers;
+        std::map<std::string, int> moved_counts;
+        const auto& items = ui::mod_menu::st().items;
+        for (size_t i = 0; i < items.size(); ++i) {
+            const auto& item = items[i];
+            if (item.kind == ui::mod_menu::Kind::Header) { section = item.name; headers.push_back(section); }
+            if (item.key) {
+                const auto expected = moved_settings.find(item.key);
+                if (expected != moved_settings.end()) {
+                    ++moved_counts[item.key];
+                    expect(section == expected->second, "moved setting is under its requested category");
+                }
+            }
+            auto adjacent_volume = [&](const char* toggle_key, const char* volume_key) {
+                if (!item.key || std::string(item.key) != toggle_key) return;
+                expect(item.kind == ui::mod_menu::Kind::Toggle && i + 1 < items.size() &&
+                       items[i + 1].kind == ui::mod_menu::Kind::Volume && items[i + 1].key &&
+                       std::string(items[i + 1].key) == volume_key && section == L"Navigation audio",
+                       "audio toggle and its volume remain adjacent in Navigation audio");
+            };
+            adjacent_volume(ui::prefs::kWallTones, ui::prefs::kWallToneVolume);
+            adjacent_volume(ui::prefs::kFootsteps, ui::prefs::kFootstepVolume);
+            adjacent_volume(ui::prefs::kAudioBeacons, ui::prefs::kBeaconVolume);
+            adjacent_volume(ui::prefs::kExpCounter, ui::prefs::kExpCounterVolume);
+            adjacent_volume(ui::prefs::kLandingPings, ui::prefs::kLandingPingVolume);
+        }
+        expect(headers == std::vector<std::wstring>{L"Speech", L"Navigation", L"Navigation audio", L"Battle"},
+               "all-six main category order is Speech, Navigation, Navigation audio, Battle");
+        for (const auto& [key, category] : moved_settings) {
+            const bool conditional = (key == ui::prefs::kExpCounter || key == ui::prefs::kExpCounterVolume) ? n != 2 :
+                                     (key == ui::prefs::kLandingPings || key == ui::prefs::kLandingPingVolume) ? n != 4 && n != 6 : true;
+            expect(moved_counts[key] == (conditional ? 1 : 0), "moved settings retain one entry and optional-game availability");
+        }
+        auto moved_toggle = std::find_if(items.begin(), items.end(), [&](const auto& item) {
+            return item.key && std::string(item.key) == ui::prefs::kAutowalk;
+        });
+        expect(moved_toggle != items.end(), "Autowalk remains available after its category move");
+        if (moved_toggle != items.end()) {
+            fixture::values[ui::prefs::kAutowalk] = 0;
+            ui::mod_menu::flip(*moved_toggle);
+            expect(fixture::values[ui::prefs::kAutowalk] == 1, "moved toggle still changes its existing persistent setting key");
+        }
         for (const auto& item : ui::mod_menu::st().items) {
             if (item.kind == ui::mod_menu::Kind::Header) section = item.name;
             if (!item.key || std::string(item.key) != ui::prefs::kStatDeltaMode) continue;

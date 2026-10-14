@@ -55,10 +55,12 @@ std::vector<void*> rows()
 {
     std::vector<void*> out;
     if (!in_battle()) return out;
-    if (!displayed::container_visible(g_party)) g_party = field::cache::get(kParty);
-    if (!displayed::container_visible(g_party)) return out;
+    if (!unity::alive(g_party)) g_party = field::cache::get(kParty);
+    if (!unity::alive(g_party)) return out;
     // The game swaps its ordinary and target-select panels. Read whichever it displays.
-    for (void* list : {ref::rd<void*>(g_party, fContents), ref::rd<void*>(g_party, fTargets)}) {
+    // Controllers and their serialized views need not share a GameObject. The
+    // rendered row owns visibility; a hidden controller must not veto its panel.
+    for (void* list : {ref::rd<void*>(g_party, fTargets), ref::rd<void*>(g_party, fContents)}) {
         const int count = unity::list_count(list);
         if (count <= 0 || count > 9) continue;
         std::vector<void*> slots(static_cast<size_t>(count));
@@ -158,9 +160,24 @@ core::Install s_install{"Battle.Party", &install, 110};
 
 std::wstring displayed_player(void* player)
 {
-    for (void* row : rows())
-        if (displayed::field(row, "<TargetData>k__BackingField") == player) return read_row(row);
+    if (!player) return {};
+    void* owned = player_owned_character(player);
+    const int id = owned ? character_id(owned) : 0;
+    for (void* row : rows()) {
+        void* data = displayed::field(row, "<TargetData>k__BackingField");
+        if (!data) continue;
+        if (data == player) return read_row(row);
+        // Target enumerables can carry another BattlePlayerData for the same
+        // character. Identity selects the rendered row, never hidden statistics.
+        void* row_owned = player_owned_character(data);
+        if (owned && row_owned && (owned == row_owned || (id > 0 && id == character_id(row_owned)))) return read_row(row);
+    }
     return {}; // A parameter object alone is not renderer evidence.
+}
+
+void observe_target_party(void* owner)
+{
+    if (unity::alive(owner) && kParty.is(owner)) g_party = owner;
 }
 
 void announce_active_status()

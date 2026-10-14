@@ -220,9 +220,6 @@ void initialize_bindings()
     // --- Global: I (cascading menu priority) ---
     register_binding(Key::I, Mod::None, Context::Global, &global_hotkeys::handle_item_details_key, "Item details");
 
-    // --- Global: U (usable-by classes) ---
-    reg(Key::U, Mod::None, Context::Global, "UsableByAnnouncer.AnnounceForCurrentContext", "Usable by classes");
-
     // --- Field-only toggles ---
     reg_field(Key::Quote, Mod::None, "Mod.ToggleFootsteps", "Toggle footsteps");
     reg_field(Key::Semicolon, Mod::None, "Mod.ToggleWallTones", "Toggle wall tones");

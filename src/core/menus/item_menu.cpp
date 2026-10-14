@@ -266,7 +266,7 @@ bool try_announce_item_target_initial(void* controller)
 {
     if (!detail::menu_manager_open()) return false;
     void* content_list = ref::rd<void*>(controller, fItemUseContentList);
-    int count = unity::list_count(content_list);
+    int count = displayed::target_count(content_list);
     if (count <= 0) return false;
 
     void* cursor = ref::rd<void*>(controller, fItemUseSelectCursor);
@@ -274,7 +274,8 @@ bool try_announce_item_target_initial(void* controller)
     int index = ui::cursor_index(cursor);
     if (index < 0 || index >= count) return false;
 
-    void* content = unity::list_at(content_list, index);
+    void* content = displayed::cursor_row(cursor, content_list);
+    if (!content) content = unity::get_component_in_parent(cursor, kItemTargetSelectContentController);
     if (!content) return false;
     return announce_item_use_target(content, index, count);
 }

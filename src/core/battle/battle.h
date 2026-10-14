@@ -25,6 +25,10 @@ bool in_battle();
 void announce_active_status();
 void announce_active_turn();
 std::wstring displayed_player(void* player);
+// Native target controller's serialized party panel, including independently rooted views.
+void observe_target_party(void* owner);
+/// FF6 redraws a single target every update; native whole-side entry retires that focus.
+void reset_target_focus();
 /// Native action lifecycle; stores an already identified actor name and party identity.
 void action_actor_started(void* unit);
 void action_actor_finished();

@@ -83,7 +83,7 @@ std::wstring Entity::format_description(unity::Vec3) const { return L"Chest, nor
 FilterContext::FilterContext() { field_player = map_handle = reinterpret_cast<void*>(1); }
 }
 namespace field::scanner {
-void when_filter_ready(std::function<void()> ready) { fixture::pending.push_back(std::move(ready)); }
+void when_filter_ready(std::function<void()> ready, bool) { fixture::pending.push_back(std::move(ready)); }
 void scan_entities() {} void force_rescan() {} void invalidate_map() {} void schedule_scan() {} void cancel_scan() {}
 void reapply_filter() {} void set_filter_to_layer(bool) {}
 void next_entity() { ++fixture::next; } void previous_entity() { ++fixture::previous; }

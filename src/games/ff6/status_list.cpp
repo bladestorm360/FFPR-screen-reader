@@ -12,7 +12,6 @@
 //
 // SelectContent's body is not folded in FF6 (RVA 0x909C70, 1 method).
 #include <string>
-#include "status.h"
 #include "../../core/core.h"
 #include "../../core/hooks.h"
 #include "../../core/modtext.h"
@@ -40,34 +39,40 @@ ref::Class  kPlayerParam{"Last.Data", "PlayerCharacterParameter", k6};
 ref::Method mConfirmedMaxMp{kPlayerParam, "ConfirmedMaxMp", 0};
 
 // StatusMenuPatches.SelectContent_Postfix (core) + the FF6 row.
-void on_select_content(void* contents, int index)
+void on_select_content(void* contents, int index, void* cursor, void* window = nullptr)
 {
     // Only announce when the menu is actually open (SelectContent also fires during game load).
     void* menu_manager = ref::instance(kMenuManager);
     if (!menu_manager || !ref::call<bool>(mMenuIsOpen, menu_manager)) return;
 
-    int count = unity::list_count(contents);
-    if (!contents || count == 0) return;
+    std::vector<void*> slots;
+    if (!unity::enumerate_bounded(contents, slots, 9)) return;
+    const int count = static_cast<int>(slots.size());
+    if (count == 0) return;
     if (index < 0 || index >= count) return;
-    void* content = unity::list_at(contents, index);
+    void* content = displayed::cursor_row(cursor, contents);
+    if (!content && cursor) content = unity::get_component_in_parent(cursor, kStatusContent);
+    if (!content) content = slots[static_cast<size_t>(index)];
     if (!content) return;
+    if (!displayed::container_visible(displayed::field(content, "view"))) return;
     void* data = ref::rd<void*>(content, fContentCharacterData);
-    if (!data) return;
 
     // Menu confirmed open with valid data: clear the other menu states, then set this one.
     ffpr::system::clear_other_menu_states("Status");
     menu_state::set_active(menu_state::STATUS_MENU, true);
+    if (!data) { ffpr::say(T(L"Empty"), true); return; }
 
     void* view = displayed::field(content, "view");
     std::wstring announcement = displayed::target(content);
     if (announcement.empty()) return;
     auto job = displayed::text_field(view, "jobNameText");
-    auto level = displayed::pair(view, "levelLabelText", "levelValueText");
+    auto level = displayed::pair(view, "fixedLevelText", "currentLevelText");
+    auto next = displayed::pair(view, "fixedNextText", "nextExpText");
     if (!job.empty()) announcement += L", " + job;
     if (!level.empty()) announcement += L", " + level;
-
-    // FF6: the row of the slot (CharacterSelectionReader, corpsList[slotIndex]).
-    announcement += row_suffix(index);
+    if (!next.empty()) announcement += L", " + next;
+    auto row = displayed::formation_row(window, content);
+    if (!row.empty()) announcement += L", " + row;
 
     ffpr::say(announcement, true);
 }
@@ -77,7 +82,7 @@ SelectContent_t o_SelectContent;
 void d_SelectContent(void* self, void* contents, int32_t index, void* cursor, const void* mi)
 {
     o_SelectContent(self, contents, index, cursor, mi);
-    hooks::guarded("FF6.StatusWindowController.SelectContent", [&] { on_select_content(contents, index); });
+    hooks::guarded("FF6.StatusWindowController.SelectContent", [&] { on_select_content(contents, index, cursor, self); });
 }
 
 int install()

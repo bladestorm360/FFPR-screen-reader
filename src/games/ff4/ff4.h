@@ -62,12 +62,6 @@ std::wstring status_conditions(void* parameter);
 /// GetFullStatus: ", HP 100/200, MP 50/100, Poison" (leading comma), or empty.
 std::wstring full_status(void* parameter);
 
-/// The Corps (front/back row) id of the party slot at a display index: FieldController
-/// .GetCorpsListCloneWithApparentOrder(), else UserDataManager.GetCorpsListClone() (FF4
-/// CharacterSelectionReader / FormationRowPatches). 1 = Front, 2 = Back, -1 when unreadable.
-/// Defined in party_setting.cpp.
-int corps_id_at(int slot_index);
-
 /// OwnedCharacterData.Name (empty for null).
 std::wstring character_name(void* owned_character);
 /// OwnedCharacterData.parameter (null for null).

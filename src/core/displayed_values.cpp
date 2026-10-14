@@ -10,6 +10,24 @@
 #include <limits>
 
 namespace displayed {
+std::wstring equipment_icon(void* image)
+{
+    void* sprite = image_sprite(image);
+    if (!sprite) return {};
+    const auto name = unity::name(sprite);
+    constexpr std::wstring_view prefix = L"UI_Common_Icon";
+    if (name.size() != prefix.size() + 2 || name.compare(0, prefix.size(), prefix) != 0) return {};
+    const auto tens = name[prefix.size()], units = name.back();
+    if (tens < L'0' || tens > L'9' || units < L'0' || units > L'9') return {};
+    const int id = 10 * (tens - L'0') + units - L'0';
+    // Master icon.txt tags, native IconTextUtility's sprite format and extracted pixels.
+    static const wchar_t* types[] = {L"", L"Swords", L"Greatswords", L"Ninja blades", L"Katanas",
+        L"Daggers", L"Spears", L"Nunchaku", L"Axes", L"Hammers", L"Staves", L"Rods", L"Bows",
+        L"Arrows", L"Throwing weapons", L"Shuriken", L"Harps", L"Bells", L"Claws", L"Whips",
+        L"Flails", L"Brushes", L"Cards", L"Scrolls", L"Machines", L"Books", L"Clothing",
+        L"Armor", L"Accessories", L"Shields", L"Helmets", L"Gloves", L"Hats"};
+    return id > 0 && id < static_cast<int>(std::size(types)) ? T(types[id]) : std::wstring();
+}
 namespace {
 // Parse only complete rendered numeric strings. Never recover hidden native parameters.
 std::optional<long long> number(const std::wstring& value)

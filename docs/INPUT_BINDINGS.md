@@ -31,10 +31,20 @@ its grouped arrow/Shift/Ctrl review and native page controls. No keyboard mod mo
 F8 settings opens on the field: select a category and then a setting. Escape/B returns to
 categories and closes from the root; F8 closes directly. F1/F3 read actual native changes
 after game input, including loaded encounter state and the world-map speed restriction.
-The only categories are Speech, Navigation audio, Battle, followed by Close Menu. Audio
-volumes are beside their related settings; EXP counter settings belong to Battle.
+The categories are Speech, Navigation, Navigation audio, Battle, followed by Close Menu.
+Navigation contains autowalk, path speech, filters and stick-click normalization. Audio
+volumes are beside their related settings; EXP counter sound and volume belong to Navigation audio.
 All modal keyboard input requires game-window focus. Alt+Tab retains the current menu
 position; held keys on focus return do not act until released and pressed again.
+
+## October 14 visible-information follow-up
+
+U and its menu/controller eligibility actions are removed in all games. Current
+party equipment comparisons in shops retain their existing 1–9 bindings. Native
+Items equipment-information pages provide their own review buffer, with visible
+stats, eligibility names/colors and pager information; I/controller West repeats
+that current buffer. Replacement comparisons retain I for the live native panel.
+FF3 job I/Autodetail names its rendered Equippable weapon/armor icons.
 
 ## How a key is dispatched (each frame)
 
@@ -133,7 +143,6 @@ Checked in this order:
 | R | `MessageWindowPatches.RepeatLastDialogue` if `MessageWindowPatches.IsInDialogue` | Global |
 | I | `GlobalHotkeyHandler.HandleItemDetailsKey` (below) | Global |
 | Shift+I | `ControllerRouter.AnnounceContextControls` | Global |
-| U | `UsableByAnnouncer.AnnounceForCurrentContext` | Global |
 | F8 (no modifier) | mod menu (`ui::mod_menu::open`) if `ControllerRouter.IsFieldActive`, else `ControllerRouter.SpeakModMenuUnavailable` | any |
 | F7 (no modifier) | `Mod.ToggleAutoDetail` | any |
 | F5 (no modifier) | in battle: cycles setting `EnemyHPDisplay` (Numbers, Percentage, Hidden), says "Enemy HP: {0}", runs `Settings.Changed.EnemyHPDisplay`; otherwise `ControllerRouter.SpeakModMenuUnavailable` | any |
@@ -178,7 +187,7 @@ Labels follow the pad family (A/B/X/Y, Cross/Circle/Square/Triangle, Nintendo).
 |---|---|---|
 | A / B / X / Y | silence speech, pass to game | silence speech, pass to game |
 | D-pad up / down / left / right | `WaypointHandler.CyclePrevious` / `CycleNext` / `CyclePreviousCategory` / `CycleNextCategory` (consumed) | game; in Status, BestiaryDetail, KeyHelp: up/down (also left stick) run `StatusNavigationReader`, `BestiaryNavigationReader`, `KeyHelpReader` `.NavigatePrevious` / `.NavigateNext` |
-| Right stick up / down / left / right | `Mod.CyclePrevious` / `Mod.CycleNext` / `Mod.CyclePreviousCategory` / `Mod.CycleNextCategory` | up: `GlobalHotkeyHandler.HandleItemDetailsKey`; down: `KeyHelpReader.AnnounceKeyHelp`; left: `UsableByAnnouncer.AnnounceForCurrentContext` |
+| Right stick up / down / left / right | `Mod.CyclePrevious` / `Mod.CycleNext` / `Mod.CyclePreviousCategory` / `Mod.CycleNextCategory` | up: `GlobalHotkeyHandler.HandleItemDetailsKey`; down: `KeyHelpReader.AnnounceKeyHelp` |
 | Left trigger | `WaypointHandler.PathfindToCurrentWaypoint` if waypoint; `Mod.NavigateToEntity` if entity; else "No target selected". Both use the same autowalk/settings policy. | game (Page Up) |
 | L3 (released alone) | Stick Click Normalization off: `Mod.ToggleAudioBeacons`; on: a one-frame L3 press to the game | game |
 | R3 (released alone) | off: `Mod.TogglePathfindingFilter` (cycles the three filter modes); on: one-frame R3 press to the game | game |

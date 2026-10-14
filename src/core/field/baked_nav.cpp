@@ -613,7 +613,10 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
         if (!riding) {
             p2.action_before = TF(L"board the {0}", {name});
             p2.transportation_id = v.transportation_id;
-            p2.vehicle_before = sails ? route_progress::VehicleAction::WalkOn : route_progress::VehicleAction::ConfirmBoard;
+            // These games board onto an airship deck; reaching the flight controls is manual.
+            const bool deck = game::in(game::kFF3 | game::kFF6) && (row->type == 3 || row->type == 7 || row->type == 8);
+            p2.vehicle_before = deck ? route_progress::VehicleAction::None :
+                sails ? route_progress::VehicleAction::WalkOn : route_progress::VehicleAction::ConfirmBoard;
             const auto approach = leg1.cells.back();
             p2.action_cell = approach;
             int dx = vcell.x - approach.x, dy = vcell.y - approach.y;

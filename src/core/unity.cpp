@@ -407,23 +407,25 @@ void dict_for_each(void* dict, void (*fn)(uint64_t, uint64_t, void*), void* stat
     }
 }
 
-bool enumerate(void* e, std::vector<void*>& out)
+static bool enumerate_impl(void* e, std::vector<void*>& out, int maximum, bool strict)
 {
     out.clear();
-    if (!e) return false;
+    if (!e || maximum <= 0 || maximum > kMaxEnumerated) return false;
     il2cpp::Class* k = il2cpp::object_class(e);
     if (!k) return false;
 
     if (class_is(k, "System.Collections.Generic", "List`1")) {
         int n = list_count(e);
-        if (n > kMaxEnumerated) n = kMaxEnumerated;
+        if (n < 0 || (strict && n > maximum)) return false;
+        n = std::min(n, maximum);
         out.reserve(static_cast<size_t>(n));
         for (int i = 0; i < n; ++i) out.push_back(list_at(e, i));
         return true;
     }
     if (ends_with(il2cpp::class_name(k), "[]")) {
         int n = array_length(e);
-        if (n > kMaxEnumerated) n = kMaxEnumerated;
+        if (n < 0 || (strict && n > maximum)) return false;
+        n = std::min(n, maximum);
         out.reserve(static_cast<size_t>(n));
         for (int i = 0; i < n; ++i) out.push_back(array_at(e, i));
         return true;
@@ -449,9 +451,21 @@ bool enumerate(void* e, std::vector<void*>& out)
     if (!move_next || !current) return false;
     move_next = il2cpp::virtual_method(it, move_next);
     current = il2cpp::virtual_method(it, current);
-    for (int i = 0; i < kMaxEnumerated && il2cpp::invoke_bool(move_next, it, nullptr, 0); ++i)
+    for (int i = 0; i <= maximum; ++i) {
+        if (!il2cpp::invoke_bool(move_next, it, nullptr, 0)) return true;
+        if (i == maximum) { if (strict) out.clear(); return !strict; }
         out.push_back(il2cpp::invoke_ptr(current, it, nullptr, 0));
-    return true;
+    }
+    return false;
+}
+
+bool enumerate(void* e, std::vector<void*>& out)
+{
+    return enumerate_impl(e, out, kMaxEnumerated, false);
+}
+bool enumerate_bounded(void* e, std::vector<void*>& out, int maximum)
+{
+    return enumerate_impl(e, out, maximum, true);
 }
 
 } // namespace unity

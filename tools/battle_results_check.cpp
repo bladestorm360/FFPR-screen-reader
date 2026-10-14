@@ -398,6 +398,11 @@ int main()
         equipment.weapon_type=type; hands_hook(&skill_content,&equipment,nullptr);
         expect(displayed::skill_name(&skill_content)==weapon_names[type], "all eight rendered weapon types are named by the actual producer reader");
     }
+    fixture::Node equip_image,equip_sprite;equip_image.sprite=&equip_sprite;equip_sprite.name=L"UI_Common_Icon05";
+    expect(displayed::equipment_icon(&equip_image)==L"Daggers","FF3 equippable sprite maps to its textual equipment class");
+    equip_sprite.name=L"UI_Common_Icon29";expect(displayed::equipment_icon(&equip_image)==L"Shields","rendered armor classes are decoded as well as weapons");
+    equip_image.visible=false;expect(displayed::equipment_icon(&equip_image).empty(),"hidden job equipment icon remains undisclosed");
+    equip_image.visible=true;equip_sprite.name=L"UI_Common_Icon99";expect(displayed::equipment_icon(&equip_image).empty(),"unknown icon is not assigned an invented equipment class");
     icon_image.visible=false; expect(displayed::skill_name(&skill_content).empty(), "hidden weapon icon cannot disclose its type"); icon_image.visible=true;
     Node changed_sprite;
     icon_image.sprite=&changed_sprite; expect(displayed::skill_name(&skill_content).empty(), "a changed sprite cannot reuse an old captured type");
