@@ -247,4 +247,24 @@ Local evidence: build_check/v092_build_console.txt, v092_smoke_console.txt,
 v092_version.json, v092_package_verification.json and verify_v092_package.py.
 Installed games retain the user-tested follow-up DLL
 `189CFDEE77C64AB0FCAFC2DCB41B7A885F4D33A7554C6CC64CA4BF67A1731E9A`.
-Publication verification and tag/source commit are recorded after the upload below.
+Publication verification and tag/source commit are recorded below.
+
+
+Published [V0.9.2](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/tag/v0.9.2)
+at 2026-10-14 18:35:19 UTC and marked Latest. Annotated v0.9.2 resolves locally and
+remotely to release source commit `d0a7a478b37bd08092fc83e7571db04a23b3d845`, pushed
+before upload. Its tag object is 504ecad32e50adcdbb3485a2dd36c32ae16e677e. GitHub
+normalizes spaces in the asset name:
+[Final.Fantasy.Pixel.Master.Core.Screen.Reader.V0.9.2.zip](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/download/v0.9.2/Final.Fantasy.Pixel.Master.Core.Screen.Reader.V0.9.2.zip).
+The folder inside the archive retains the requested release name.
+
+Authenticated draft inventory verified release ID 413052831, tag/title/source and one
+uploaded asset with the expected size/digest. GitHub's tag endpoint omits drafts, so
+verification used the existing draft from the authenticated inventory rather than
+creating another release. The draft ZIP was downloaded into build_check/v092_remote_verify;
+its SHA256 matched the independently verified local archive before publication.
+Public API verification confirms draft=false, prerelease=false, Latest=v0.9.2, expected
+source/tag/download URL, uploaded asset state, 4,081,872-byte size and SHA256 digest.
+Receipts: v092_draft_release.json, v092_draft_verification.json, v092_public_release.json
+and v092_latest_release.json under build_check. Final publication records follow the
+release source tag without changing tagged code or distributed bytes.

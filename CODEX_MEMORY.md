@@ -1,11 +1,16 @@
 # Native FFPR durable memory
 
-- October 14 V0.9.2 is prepared/independently verified for publication: complete 20-file
-  dependency bundle, matching README/TXT and 0.9.2.0 metadata. Canonical build (6,724
-  names/zero missing, zero undefined wiring), all regressions and isolated smoke pass.
-  [Release checks/hashes/publication record](docs/release.md#v092-preparation-and-publication-october-14).
-  Feature behavior matches the final 189CFD... follow-up below; existing games retain
-  that DLL. No game launch/probe, dependency install or game-folder writes; Sol alone.
+- October 14 V0.9.2 published as Latest from annotated tag/source
+  `d0a7a478b37bd08092fc83e7571db04a23b3d845`; all October 14 fixes are committed/pushed.
+  Complete 20-file/4,081,872-byte dependency ZIP, README/TXT and 0.9.2.0 metadata verified.
+  Canonical build (6,724 names/zero missing, zero undefined wiring), all regressions and
+  isolated smoke pass. Uploaded draft ZIP downloaded/hash-verified before publication;
+  public asset/digest/size and Latest verified.
+  [Release URL, hashes and verification](docs/release.md#v092-preparation-and-publication-october-14).
+  Feature behavior matches the final 189CFD... follow-up below; installed games retain
+  that DLL. No game launch/probe, dependency install or game-folder writes; Sol handled
+  release preparation/publication alone. Earlier gameplay confirmations/pending cases
+  remain in TESTING.md and FOLLOWUP_2026_10_14.md.
 
 - Subsequent user confirms FF4 All enemies entry and FF6 equipment content, icon
   equivalents and numbered page updates. Apparent stale page count was Q/footer-toggle
