@@ -323,12 +323,15 @@ std::wstring Entity::type_name() const
     }
 }
 
-/// FormatDescription: "{name} ({steps} {direction}) - {type}".
-std::wstring Entity::format_description(unity::Vec3 player_pos) const
+/// Distances require a current direct route; floor/state labels are independent of it.
+std::wstring Entity::format_description(unity::Vec3 player_pos, bool directly_reachable,
+                                        const std::wstring& route_note) const
 {
     // Another floor (user, 2026-10-11): "{name} ({floor}) - {type}". Steps and a direction
     // mean nothing across floors.
     if (remote()) return display_name() + L" (" + floor_name + L") - " + type_name();
+    if (!directly_reachable)
+        return display_name() + (route_note.empty() ? std::wstring() : L" (" + route_note + L")") + L" - " + type_name();
     unity::Vec3 p = position();
     float distance = vec_distance(player_pos, p);
     std::wstring dir = direction_name(player_pos, p);

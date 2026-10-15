@@ -1,5 +1,69 @@
 # Read-only snapshots and worker ownership
 
+## Object browsing floors and direct distance, October 15
+
+`entity_nav.cpp` uses the shared `Entity::format_description` for every category.
+Other-floor rows keep their existing destination floor independently of chest state;
+known Opened/Unopened state is composed with that floor, never instead of it. Entity
+inclusion, story/placeholder guards, treasure disclosure and category numbering are
+unchanged. Live same-floor rows previously always exposed Euclidean steps/bearing,
+even when actual navigation needed another floor or a scripted transition.
+
+Only the currently browsed live object now requests `baked_nav::request_browse_route`.
+Its independent worker-job owner cancels superseded work; native reads remain in the
+owner's `EntityCursor` capture with the existing 0.5 ms slice allowance. No game pointer
+enters the worker. The normal current-state planner evaluates copied gates, NPCs,
+events, traps, vehicle rules and cross-floor connectivity. The browse worker starts
+with empty temporary route/pending state, never calls `commit_plan`, and destroys
+route geometry/text on the worker before publishing small `BrowseRoute` evidence.
+It cannot replace beacon/autowalk plans or modify manual/guide trap receipts.
+
+Steps/bearing require a successful current-floor route with no next-map leg,
+required trap, intervening event or phase action. A same-floor target whose first
+leg enters another floor instead says `Requires travelling through [floor] first`.
+The floor name resolves on its native owner. Same-map warps/traps and other indirect
+or unknown routes omit distance; known failure reasons are retained. A selected
+step-on event/trap suppresses direct distance too, while its existing directions
+warning exemption remains intact. Ordinary interaction approaches remain valid.
+Missing map data fails closed. Category/selection/lifetime/context checks discard
+obsolete speech, current pose/vehicle checks reject obsolete route evidence, and
+explicit directions cancel pending browse speech. No text-content deduplication.
+The final ordinal is read at publication, so a list refresh cannot leave an obsolete
+`N of M` suffix alongside an otherwise-current object.
+
+Production evidence: `tools/browse_route_check.cpp` executes the actual owned browse
+worker against all-six real bakes, checks state isolation and cancellation, a copied
+live-event barrier and an extracted same-floor Deist detour. `trap_route_check.cpp`
+covers required cross-floor and same-map falls. Actual formatter checks cover every
+entity kind, direct/indirect/remote labels and known chest state with the floor intact;
+actual speech producers cover ordered category/focus and stale browse cancellation.
+Reports and final build/deployment receipt are in local `build_check/browse_*`.
+Compute observations are offline; native capture/queue age, first audible response,
+busy-map tail latency and game-frame effects still need user-side gameplay evidence.
+The first attempt stalled at MSBuild's sandbox worker startup and was stopped by
+its exact CMake process tree; the canonical build was rerun with normal process access.
+An initial regression assumed a Deist B1 detour; inspection showed the fixture was
+wrong and it was replaced by an actual entry/object detour across the Deist floors.
+
+Final canonical build and isolated smoke pass: 6,736 native names, zero missing or
+undefined references, 47 exports. All-six direct fixtures pass (worst selected direct
+compute 0.207 ms in the final run; no claim about in-game capture/queue/audible latency).
+Real Deist B2 map184 entry (33,16) to same-floor object (8,31) requires map183 first;
+the browse result names that floor and omits distance. Cross-floor and same-map trap
+checks, current numbering, all-type floor/state formatters and all existing regressions
+pass. Both new labels cover 12 locales; all earlier catalog entries are preserved.
+README/TXT content agrees after Markdown heading removal; batch CRLF is preserved.
+
+Deployed/hash-verified to all six closed games after the user confirmed FFII had closed.
+Final DLL SHA256 5943CF93359EB5DAEBBCA306D1A333A3F8009B5C11F62642BFA5AADAFDD3CA07,
+9,515,008 bytes. SDL3/pinned eight-file HRTF payload match; Prism/preferences/waypoints
+retain their before hashes and timestamps. Recovery: `build_check/browse_recovery_2026_10_15`;
+before/final receipts: `browse_before_2026_10_15.json`, `browse_deploy_final_2026_10_15.json`;
+verification summary: `browse_2026_10_15.json`. Sol alone; no game launch/control/probe,
+tester/save access, dependency installation or new commit/push/publication. Gameplay
+confirmation remains with the user, using the focused checks in TESTING.md.
+
+
 October 15 soundscape update: the native owner copies only published pathfinder entries,
 at most 512 entries/0.25 ms per slice, into four worker-prepared/recycled buffers. This is
 part of fixed subscriber/audio work before the existing 0.5 ms deferred-dispatch allowance;

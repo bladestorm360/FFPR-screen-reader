@@ -783,6 +783,7 @@ void invalidate()
     cancel_route_work();
     cancel_follow_work();
     cancel_quick_work();
+    cancel_browse_route();
 }
 
 // --- across maps -----------------------------------------------------------------------------
@@ -1800,6 +1801,7 @@ bool follow_goal(void* map_handle, void* player, const MapGoal& goal_in, TargetK
 namespace {
 worker_job::Owner g_route_owner;
 worker_job::Owner g_quick_owner;
+worker_job::Owner g_browse_owner;
 struct QuickGrid {
     baked_route::Request movement;
     baked_route::Reach reach, passages, landed;
@@ -1940,7 +1942,7 @@ void resolve_plan_name(Planned& result, const std::wstring& name) {
     for (auto& phase : result.path.walk_phases) replace(phase.action_after);
     if (result.active) for (auto& phase : result.active->phases) replace(phase.action_after);
 }
-bool still_current(const Planned& result) {
+template<class Result> bool still_current(const Result& result) {
     if (!ffpr::system::is_field_navigation_ready() || field::current_map_id() != result.map_id) return false;
     Cell now;
     if (!player_cell(field::map_handle(), field::player(), now) || !(now == result.start)) return false;
@@ -1984,6 +1986,90 @@ NativeObstacle capture_obstacle(void* fe, const RouteSnapshot& snapshot) {
 
 void cancel_requests() { cancel_route_work(); cancel_follow_work(); }
 bool request_pending() { return g_request_pending; }
+
+void cancel_browse_route() {
+    g_browse_owner.cancel();
+    frame::cancel_label("BakedNav.BrowseCapture");
+}
+
+namespace {
+struct BrowsePlanned {
+    BrowseRoute route;
+    int map_id = 0;
+    Cell start;
+    VehicleState vehicle;
+    MapGoal goal;
+    TargetKind kind = TargetKind::Infer;
+};
+BrowsePlanned plan_browse_snapshot(RouteSnapshot& snapshot) {
+    // Browsing always evaluates the current snapshot from scratch. Kept walking
+    // plans and trap receipts belong to explicit navigation, not list labels.
+    snapshot.previous_active.reset(); snapshot.active = {}; snapshot.pending = {};
+    auto planned = plan_snapshot(snapshot);
+    BrowsePlanned result;
+    result.map_id = planned.map_id; result.start = planned.start; result.vehicle = planned.vehicle;
+    result.goal = std::move(planned.goal); result.kind = planned.kind;
+    const auto& path = planned.path;
+    result.route.direct = path.success && !path.next_map_id && !path.required_trap && !path.event_on_route;
+    SnapshotScope scope(snapshot);
+    const auto live = live_blockers(*snapshot.submap, baked::grids(*snapshot.submap), {});
+    for (const auto& phase : path.walk_phases)
+        if (!phase.action_before.empty() || !phase.action_after.empty() || event_on_route(phase.cells, live.triggers))
+            result.route.direct = false;
+    if (path.success && path.next_map_id != planned.map_id) result.route.via_map_id = path.next_map_id;
+    result.route.reason = path.reason;
+    // Route geometry, phase text and temporary plans are destroyed here on the
+    // worker. Only small owned evidence goes back to the native owner.
+    return result;
+}
+}
+
+void request_browse_route(MapGoal goal, TargetKind kind, std::function<void(BrowseRoute)> publish) {
+    cancel_browse_route();
+    void* pl = field::player();
+    const auto* submap = current_submap(field::map_handle());
+    if (!submap || !pl || !unity::transform(pl)) { publish({}); return; }
+    auto snapshot = std::make_shared<RouteSnapshot>(map_state::Resolver());
+    snapshot->requested_at = frame::now();
+    snapshot->map_id = field::current_map_id(); snapshot->submap = submap;
+    snapshot->position = unity::local_position(unity::transform(pl));
+    snapshot->layer = submap->world ? 1 : player_layer(pl);
+    snapshot->vehicle = field::current_vehicle(); snapshot->locale = modtext::lang();
+    snapshot->goal = std::move(goal); snapshot->kind = kind;
+    snapshot->epoch = g_browse_owner.epoch(); snapshot->generation = snapshot->epoch->load();
+    auto entities = std::make_shared<EntityCursor>(); // native-owner closure only
+    frame::every_frame([snapshot, entities, publish = std::move(publish)]() mutable {
+        if (snapshot->epoch->load() != snapshot->generation) return false;
+        if (!ffpr::system::is_field_navigation_ready() || field::current_map_id() != snapshot->map_id) {
+            cancel_browse_route(); return false;
+        }
+        CaptureBudget budget;
+        bool more = true;
+        while (budget.available()) {
+            void* entity = nullptr;
+            if (!(more = entities->next(entity))) break;
+            if (live_entity(entity) && entity_is_active(entity) && unity::transform(entity))
+                snapshot->obstacles.push_back(capture_obstacle(entity, *snapshot));
+        }
+        if (more) return true;
+        snapshot->auto_groups = field::owned_auto_vehicle_groups();
+        snapshot->vehicles = field::vehicles_on_map();
+        for (auto& vehicle : snapshot->vehicles) vehicle.game = nullptr;
+        snapshot->captured_at = frame::now();
+        worker_job::start(g_browse_owner, std::move(*snapshot), &plan_browse_snapshot,
+            [publish = std::move(publish)](BrowsePlanned result) mutable {
+                if (!still_current(result)) {
+                    if (result.map_id > 0 && result.map_id == field::current_map_id() && ffpr::system::is_field_navigation_ready())
+                        request_browse_route(std::move(result.goal), result.kind, std::move(publish));
+                    return;
+                }
+                // In particular, do not commit_plan: browsing must not redirect a
+                // beacon/autowalk, remember a destination or consume a trap receipt.
+                publish(std::move(result.route));
+            }, background::Lane::Navigation);
+        return false;
+    }, "BakedNav.BrowseCapture", INT_MAX);
+}
 
 struct ExitSnapshot {
     RouteSnapshot route;

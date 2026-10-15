@@ -181,6 +181,11 @@ if not "%errorlevel%"=="0" (
     echo Navigation speech check FAILED - see build_check\navigation_speech_report.txt
     exit /b 1
 )
+"out\checks\browse_route_check.exe" > build_check\browse_route_report.txt 2>&1
+if errorlevel 1 (
+    echo Browse route check FAILED - see build_check\browse_route_report.txt
+    exit /b 1
+)
 "out\checks\modal_speech_check.exe" > build_check\modal_speech_report.txt 2>&1
 if not "%errorlevel%"=="0" (
     echo Modal speech check FAILED - see build_check\modal_speech_report.txt

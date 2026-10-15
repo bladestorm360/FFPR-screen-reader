@@ -1,4 +1,32 @@
 {
+  "Requires travelling through {0} first": {
+    "en": "Requires travelling through {0} first",
+    "ja": "先に{0}を通る必要があります",
+    "fr": "Nécessite de passer d’abord par {0}",
+    "it": "Richiede di passare prima da {0}",
+    "de": "Erfordert zuerst den Weg durch {0}",
+    "es": "Requiere pasar primero por {0}",
+    "ko": "먼저 {0}을(를) 거쳐야 합니다",
+    "zht": "需要先經過{0}",
+    "zhc": "需要先经过{0}",
+    "ru": "Сначала нужно пройти через {0}",
+    "th": "ต้องผ่าน {0} ก่อน",
+    "pt": "É necessário passar primeiro por {0}"
+  },
+  "Not directly reachable": {
+    "en": "Not directly reachable",
+    "ja": "直接は到達できません",
+    "fr": "Pas directement accessible",
+    "it": "Non raggiungibile direttamente",
+    "de": "Nicht direkt erreichbar",
+    "es": "No se puede llegar directamente",
+    "ko": "직접 도달할 수 없습니다",
+    "zht": "無法直接到達",
+    "zhc": "无法直接到达",
+    "ru": "Нельзя добраться напрямую",
+    "th": "ไม่สามารถไปถึงได้โดยตรง",
+    "pt": "Não é possível alcançar diretamente"
+  },
   "On": {
     "en": "On",
     "ja": "オン",

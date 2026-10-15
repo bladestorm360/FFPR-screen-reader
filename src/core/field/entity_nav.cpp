@@ -104,17 +104,6 @@ void refresh_entities_if_needed()
     }
 }
 
-/// FormatCurrentEntity: name, steps, direction, type and "(N of M)"; empty when none.
-std::wstring format_current_entity()
-{
-    EntityPtr e = scanner::current_entity();
-    if (!e) return L"";
-    FilterContext ctx;
-    std::wstring s = e->format_description(ctx.player_position);
-    s += L" " + TF(L"({0} of {1})", {text::num(scanner::current_index() + 1), text::num(scanner::count())});
-    return s;
-}
-
 /// Where a route to this entity ends (field_api.h TargetKind): beside and facing an NPC or
 /// chest, on an exit, on a vehicle or save point; an event by what is baked at its cell.
 TargetKind target_kind_of(const Entity& e)
@@ -127,6 +116,42 @@ TargetKind target_kind_of(const Entity& e)
     case Kind::Vehicle: return TargetKind::Spot;
     default: return TargetKind::Infer;
     }
+}
+
+/// Only the selected object is evaluated. Native capture and owned route work are
+/// asynchronous; the independent browse request cannot replace beacon/walk plans.
+void format_current_entity(std::function<void(std::wstring)> publish)
+{
+    baked_nav::cancel_browse_route();
+    const auto e = scanner::current_entity();
+    if (!e) { publish({}); return; }
+    const auto ordinal = L" " + TF(L"({0} of {1})", {text::num(scanner::current_index() + 1), text::num(scanner::count())});
+    if (e->remote()) { publish(e->format_description({}) + ordinal); return; }
+    FilterContext ctx;
+    const auto position = e->position();
+    baked_nav::MapGoal goal;
+    goal.map_id = current_map_id();
+    if (!baked_nav::cell_at(ctx.map_handle, position, goal.cell)) {
+        publish(e->format_description({}, false, T(L"Navigation map data unavailable")) + ordinal); return;
+    }
+    const auto generation = g_category_generation;
+    baked_nav::request_browse_route(goal, target_kind_of(*e),
+        [e, position, generation, publish = std::move(publish)](baked_nav::BrowseRoute path) {
+            if (generation != g_category_generation || scanner::current_entity() != e ||
+                !ensure_field_context() || !e->is_alive()) return;
+            const auto now = e->position();
+            const bool direct = path.direct &&
+                now.x == position.x && now.y == position.y && now.z == position.z;
+            std::wstring note;
+            if (!direct) {
+                const auto via = path.via_map_id > 0 ? baked_nav::map_name_of(path.via_map_id) : std::wstring();
+                note = !via.empty() ? TF(L"Requires travelling through {0} first", {via})
+                    : (!path.reason.empty() ? path.reason : T(L"Not directly reachable"));
+            }
+            FilterContext current;
+            const auto ordinal = L" " + TF(L"({0} of {1})", {text::num(scanner::current_index() + 1), text::num(scanner::count())});
+            publish(e->format_description(current.player_position, direct, note) + ordinal);
+        });
 }
 
 void announce_ready_entity(bool walking, double requested_at)
@@ -182,6 +207,7 @@ void announce_current_entity(bool walking = false)
 {
     const double requested_at=frame::now();
     if (!ensure_field_context()) return;
+    baked_nav::cancel_browse_route();
     refresh_entities_if_needed();
     scanner::when_filter_ready([walking,requested_at,generation=g_category_generation] {
         if (generation==g_category_generation && ensure_field_context()) announce_ready_entity(walking,requested_at);
@@ -192,6 +218,7 @@ void announce_current_entity(bool walking = false)
 void navigate_to_entity()
 {
     if (!ensure_field_context()) return;
+    baked_nav::cancel_browse_route();
     if (ffpr::fieldnav::autowalk::stop_requested()) return;
     const double requested_at=frame::now();
     refresh_entities_if_needed();
@@ -213,21 +240,23 @@ void announce_entity_only(speech::Timing timing = {})
     if (!ensure_field_context()) return;
     refresh_entities_if_needed();
 
-    std::wstring announcement = format_current_entity();
-    if (announcement.empty()) {
+    if (!scanner::current_entity()) {
         std::wstring cat = category_name(scanner::category());
         if (scanner::count() == 0) ffpr::say(TF(L"No {0} found", {cat}), true, timing);
         else ffpr::say(T(L"No entity selected"), true, timing);
         return;
     }
     mark_entity();
-    ffpr::say(announcement, true, timing);
+    format_current_entity([timing](std::wstring announcement) {
+        if (!announcement.empty()) ffpr::say(announcement, true, timing);
+    });
 }
 
 void cycle(bool next)
 {
     const double requested_at = frame::now();
     if (!ensure_field_context()) return;
+    baked_nav::cancel_browse_route();
     if (!ffpr::fieldnav::autowalk::active()) baked_nav::cancel_requests();
     refresh_entities_if_needed();
     const auto generation = g_category_generation;
@@ -250,6 +279,7 @@ Category g_current_category = Category::All;
 void announce_category_change(double requested_at)
 {
     const auto generation = ++g_category_generation;
+    baked_nav::cancel_browse_route();
     if (!ffpr::fieldnav::autowalk::active()) baked_nav::cancel_requests();
     std::wstring category_text = TF(L"Category: {0}", {category_name(g_current_category)});
     baked_nav::clear_pending();   // the selection moves to the category's first entity
@@ -266,14 +296,13 @@ void announce_category_change(double requested_at)
         ffpr::say(category_text, true, {speech::Feature::EntityCategory, requested_at, scanner::captured_at()});
         return;
     }
-    std::wstring description = format_current_entity();
-    if (description.empty()) {
-        ffpr::say(category_text, true, {speech::Feature::EntityCategory, requested_at, scanner::captured_at()});
-        return;
-    }
     // The category and its first entity, which becomes the navigation target.
     mark_entity();
-    ffpr::say_sequence({category_text, description}, true, {speech::Feature::EntityCategory, requested_at, scanner::captured_at()});
+    const speech::Timing timing{speech::Feature::EntityCategory, requested_at, scanner::captured_at()};
+    format_current_entity([category_text, timing](std::wstring description) {
+        if (description.empty()) ffpr::say(category_text, true, timing);
+        else ffpr::say_sequence({category_text, description}, true, timing);
+    });
     });
 }
 

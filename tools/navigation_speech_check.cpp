@@ -9,12 +9,16 @@ struct Output { std::vector<std::wstring> parts; bool interrupt; };
 std::vector<Output> output;
 std::vector<std::function<void()>> pending;
 std::function<void(field::PathInfo)> route;
+std::function<void(field::baked_nav::BrowseRoute)> browse;
+bool delay_browse = false;
+field::baked_nav::BrowseRoute browse_path;
 field::EntityPtr entity = std::make_shared<field::Entity>();
 field::Category category = field::Category::All;
 int next = 0, previous = 0, cancelled = 0;
 bool selectable = true, transition = false, field_ready = true, battle = false;
 bool soundscape=true,beacons=false,combined=false;int beacon_requests=0;
 int scans = 0, cache_reads = 0;
+int index = 0, total = 1;
 void finish() { auto callbacks = std::move(pending); pending.clear(); for (auto& callback : callbacks) callback(); }
 }
 namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
@@ -96,7 +100,10 @@ bool Entity::is_alive() const { return true; }
 Category Entity::category() const { return Category::Chests; }
 unity::Vec3 Entity::position() const { return pos; }
 std::wstring Entity::display_name() const { return L"Chest"; }
-std::wstring Entity::format_description(unity::Vec3) const { return L"Chest, north"; }
+std::wstring Entity::format_description(unity::Vec3, bool direct, const std::wstring& note) const {
+    if (remote()) return L"Chest (Deist Cavern B5)";
+    return direct ? L"Chest, north" : L"Chest (" + note + L")";
+}
 FilterContext::FilterContext() { field_player = map_handle = reinterpret_cast<void*>(1); }
 }
 namespace field::scanner {
@@ -106,16 +113,23 @@ void reapply_filter() {} void set_filter_to_layer(bool) {}
 void next_entity() { ++fixture::next; } void previous_entity() { ++fixture::previous; }
 bool no_reachable_entities() { return false; } bool select_first_reachable() { return fixture::selectable; }
 void set_category(Category c) { fixture::category = c; } Category category() { return fixture::category; }
-EntityPtr current_entity() { return fixture::entity; } int current_index() { return 0; } int count() { return 1; }
+EntityPtr current_entity() { return fixture::entity; } int current_index() { return fixture::index; } int count() { return fixture::total; }
 double captured_at() { return frame::now(); }
 }
 namespace field::baked_nav {
 void clear_pending(bool) {} void continue_pending() {} void invalidate() {}
 void cancel_requests() { ++fixture::cancelled; }
+void cancel_browse_route() { fixture::browse = {}; }
+std::wstring map_name_of(int id) { return id == 186 ? L"Deist Cavern B2" : L""; }
+void request_browse_route(MapGoal, TargetKind, std::function<void(BrowseRoute)> publish) {
+    if (fixture::delay_browse) fixture::browse = std::move(publish);
+    else publish(fixture::browse_path);
+}
 bool cell_at(void*, unity::Vec3, baked_route::Cell&) { return true; }
 void request_route(MapGoal, TargetKind, std::wstring, std::function<void(PathInfo)> publish, bool) { fixture::route = std::move(publish); }
 }
 int main() {
+    fixture::browse_path.direct = true;
     int failures = 0;
     auto expect = [&](bool ok, const char* reason) { if (!ok) { ++failures; std::printf("FAIL %s\n", reason); } };
     for (int condition = 0; condition < 3; ++condition) {
@@ -189,6 +203,31 @@ int main() {
     fixture::combined=true;field::navigate_to_entity();fixture::finish();
     expect(fixture::beacon_requests==2&&bool(fixture::route),"soundscape permits simultaneous beacon and directions");
     fixture::route(path);expect(!fixture::output.empty()&&fixture::soundscape,"combined navigation never changes soundscape preference");
-    std::printf("Navigation speech: ordered category/focus, stale-event rejection, FIFO browse, async route and concurrent soundscape/beacon/directions: %d failures\n", failures);
+    fixture::output.clear(); fixture::beacons=false; fixture::combined=false;
+    fixture::browse_path.direct=false;fixture::browse_path.via_map_id=186;
+    field::announce_entity_only();
+    expect(fixture::output.size()==1 && fixture::output.back().parts.front()==L"Chest (Requires travelling through Deist Cavern B2 first) (1 of 1)",
+        "same-floor cross-floor browse names first required floor without steps/bearing");
+    {
+        fixture::output.clear();fixture::browse_path={};
+        field::announce_entity_only();
+        expect(fixture::output.size()==1 && fixture::output.back().parts.front()==L"Chest (Not directly reachable) (1 of 1)",
+            "indirect or unknown browsing evidence never publishes direct distance");
+    }
+    fixture::delay_browse=true; fixture::output.clear();
+    field::announce_entity_only();fixture::index=2;fixture::total=5;
+    auto current_browse=fixture::browse;field::baked_nav::BrowseRoute direct;direct.direct=true;current_browse(direct);
+    expect(fixture::output.back().parts.front()==L"Chest, north (3 of 5)","async browse keeps current numbering after an owner-side list refresh");
+    fixture::index=0;fixture::total=1;fixture::output.clear();
+    field::announce_entity_only();const auto old_browse=fixture::browse;
+    field::category_next();fixture::finish();
+    const auto before_browse=fixture::output.size();old_browse(fixture::browse_path);
+    expect(fixture::output.size()==before_browse,"obsolete browse result cannot speak after category changes");
+    field::announce_current_entity();expect(!fixture::browse,"directions cancel pending browse speech without waiting");
+    fixture::entity->remote_map_id=187;fixture::output.clear();
+    field::announce_entity_only();
+    expect(!fixture::browse && fixture::output.back().parts.front()==L"Chest (Deist Cavern B5) (1 of 1)",
+        "other-floor browsing preserves floor immediately and makes no route request");
+    std::printf("Navigation speech: ordered category/focus, stale-event rejection, FIFO browse, route-aware distance/floors and concurrent soundscape/beacon/directions: %d failures\n", failures);
     return failures ? 1 : 0;
 }

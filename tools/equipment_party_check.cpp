@@ -173,5 +173,21 @@ int main(){background::prepare();using namespace fixture;using namespace ffpr::m
 
  Node damage_owner,animation,entity;damage_owner.animation=&animation;o_execute=&damage;battle=false;spoken.clear();d_execute(&damage_owner,nullptr,&entity,1,1,nullptr);tick();expect(contains(L"Status damage"),"field warning defaults on");bools["StatusDamage"]=false;spoken.clear();int before=native_calls;for(int i=0;i<20;++i){d_execute(&damage_owner,nullptr,&entity,i,0,nullptr);tick();}expect(native_calls==before+20&&spoken.empty(),"toggle off preserves every native damage operation while muting warning");bools["StatusDamage"]=true;for(int i=0;i<3;++i){d_execute(&damage_owner,nullptr,&entity,i,0,nullptr);tick();}expect(spoken.size()==3,"identical native damage events remain distinct with warning on");
  field::Entity chest;chest.kind=field::Kind::TreasureChest;chest.name=L"Egil's Torch";chest.remote_map_id=2010;chest.floor_name=L"Castle Deist";chest.opened_known=false;bools.erase("SpoilTreasureChestContents");expect(chest.display_name()==L"Treasure Chest"&&chest.format_description({}).find(L"Torch")==std::wstring::npos,"remote chest contents cannot leak by default");chest.opened_known=true;expect(chest.display_name()==L"Unopened Treasure Chest","remote chest renders known unopened state without spoilers");chest.opened=true;expect(chest.display_name()==L"Opened Treasure Chest"&&chest.format_description({}).find(L"Castle Deist")!=std::wstring::npos,"remote chest renders opened state and floor without spoilers");bools["SpoilTreasureChestContents"]=true;expect(chest.display_name()==L"Opened Egil's Torch","explicit spoil preference allows contents while retaining opened state");bools["SpoilTreasureChestContents"]=false;chest.opened=false;chest.remote_map_id=0;expect(chest.display_name()==L"Unopened Treasure Chest","live/cached chest labels obey preference immediately");expect(wrong_thread==0,"no native pointers or graphics are read on review worker");
- std::printf("Equipment/party/status warning/chest disclosure: %d failures\n",failures);return failures?1:0;
+ for (const auto kind : {field::Kind::NPC,field::Kind::Event,field::Kind::MapExit,field::Kind::SavePoint,field::Kind::Vehicle,field::Kind::ScriptTrigger}) {
+  field::Entity object;object.kind=kind;object.name=L"Conversation";object.event_type=L"Interactive Object";
+  object.remote_map_id=187;object.floor_name=L"Deist Cavern B5";
+  expect(object.format_description({},true).find(L"(Deist Cavern B5)")!=std::wstring::npos && object.format_description({},true).find(L"steps")==std::wstring::npos,
+   "every other-floor object type retains its floor and suppresses distance even if given direct evidence");
+  object.remote_map_id=0;object.pos={0,224,0};
+  expect(object.format_description({},false,L"Requires travelling through B2 first").find(L"(Requires travelling through B2 first)")!=std::wstring::npos && object.format_description({}).find(L"steps")==std::wstring::npos,
+   "same-floor indirect and unknown reachability never invent steps/bearing");
+  expect(object.format_description({},true).find(L"14.0 steps North")!=std::wstring::npos,"directly reachable object retains ordinary distance and direction");
+ }
+ chest.remote_map_id=187;chest.floor_name=L"Deist Cavern B5";chest.opened_known=true;
+ for(bool opened : {false,true}) {
+  chest.opened=opened;
+  expect(chest.format_description({})==(opened?L"Opened Treasure Chest (Deist Cavern B5) - Treasure Chest":L"Unopened Treasure Chest (Deist Cavern B5) - Treasure Chest"),
+   "known remote chest state updates preserve the exact cross-floor label");
+ }
+ std::printf("Equipment/party/status warning/chest disclosure and object floor labels: %d failures\n",failures);return failures?1:0;
 }

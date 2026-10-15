@@ -81,6 +81,7 @@ Common commands in both layouts:
 - Shift+I: read the controls for the current screen.
 
 Current map includes connected dungeon/town floors. Chests use generic labels unless Speech / Spoil treasure chest contents is enabled; opened state is included when known.
+Every other-floor object keeps its floor name, including known opened/unopened chest state. An object on this floor that needs a detour through another floor says "Requires travelling through [floor] first". Browsing announces steps and direction only when a current route reaches the object directly, without another floor, warp, trap or intervening event.
 
 World map exit lists include reachable transition trigger tiles. The map exit filter updates the nearest entrance after movement; turn it off to browse individual reachable entrances.
 

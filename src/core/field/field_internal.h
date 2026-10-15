@@ -215,7 +215,8 @@ struct Entity {
     bool is_opened() const;
     std::wstring display_name() const;
     std::wstring type_name() const;
-    std::wstring format_description(unity::Vec3 player_pos) const;
+    std::wstring format_description(unity::Vec3 player_pos, bool directly_reachable = false,
+                                    const std::wstring& route_note = {}) const;
 };
 using EntityPtr = std::shared_ptr<Entity>;
 

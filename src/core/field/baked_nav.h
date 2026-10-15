@@ -90,6 +90,11 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
                    std::function<void(PathInfo)> publish, bool keep_destination = true);
 void cancel_requests();
 bool request_pending();
+/// Read-only browsing evidence, on its own cancellable capture/worker lane owner.
+/// Never publishes an active route or changes the manually tracked destination.
+struct BrowseRoute { bool direct = false; int via_map_id = 0; std::wstring reason; };
+void request_browse_route(MapGoal goal, TargetKind kind, std::function<void(BrowseRoute)> publish);
+void cancel_browse_route();
 void request_reachability(bool with_vehicles, std::function<void()> ready);
 // Same owned native obstacle snapshot and movement rules as explicit routes.
 // Capture functions run on the native owner; distances run only on Navigation.

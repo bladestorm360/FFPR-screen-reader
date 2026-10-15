@@ -1,5 +1,25 @@
 # Testing the native mod
 
+## Object browsing floors and chest state, October 15
+
+After the offline checks pass, test these first when a suitable dungeon is available:
+
+1. Select Current map in Navigation. Browse an NPC, event, exit or other listed object
+   on another floor: its floor should be included, with no steps or compass bearing.
+2. Browse a same-floor object reached by going through another floor. It should say
+   `Requires travelling through [floor] first`, with no distance. A nearby directly
+   reachable object should still say its steps and direction.
+3. Browse a destination requiring a warp, trap or intervening event: no direct distance.
+   Requesting directions/beacon should still work normally. Rapid browsing or switching
+   categories must not let an older object's result interrupt the new selection.
+4. Open a chest, change floors, then browse it under Current map. Where saved state is
+   known, expect `Opened Treasure Chest ([its floor]) - Treasure Chest (N of M)`.
+   An unopened chest keeps both its state and floor too; unknown state reveals neither
+   an invented state nor contents. Do not enable treasure spoilers for this check.
+
+Offline ownership/fixtures and limits: [browsing evidence](re/THREADING.md#object-browsing-floors-and-direct-distance-october-15).
+
+
 ## Keyboard, flee and safe teleport follow-up, October 15
 
 Implemented, offline verified and deployed/hash-verified in all six games on October 15

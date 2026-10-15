@@ -1,5 +1,16 @@
 # Native FFPR durable memory
 
+- October15 browsing follow-up: every other-floor object retains its floor, including
+  known opened/unopened chest state. Same-floor cross-floor detours name the first
+  required floor; steps/bearing require a direct current-state route without warp,
+  trap or intervening event. Independent read-only selected-object worker leaves
+  navigation plans/receipts intact. [Implementation, checks and limits](docs/re/THREADING.md#object-browsing-floors-and-direct-distance-october-15),
+  [first gameplay checks](docs/TESTING.md#object-browsing-floors-and-chest-state-october-15).
+  Canonical build/isolated smoke pass; deployed/hash-verified all six closed games:
+  5943CF93359EB5DAEBBCA306D1A333A3F8009B5C11F62642BFA5AADAFDD3CA07 (9,515,008 bytes).
+  Settings/Prism/waypoints unchanged. Sol alone, no launch/probe or new publication;
+  gameplay confirmation pending. Receipts/recovery: build_check/browse_*2026_10_15*.
+
 - October15 beacon modes: Shift+F6 switches saved Follow route (default) / Object
   location; F6 remains on/off, with the same choice in Navigation audio. Object mode
   uses selected entity/waypoint position and wrapped world bearing without any

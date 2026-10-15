@@ -95,6 +95,8 @@ int main() {
                     std::thread worker{[&] {
                         const auto result=plan_snapshot(snapshot);
                         expect(result.path.success && result.path.required_trap && result.path.next_map_id==407,"same-map drop is a real forward route leg when alternatives close");
+                        const auto browse=plan_browse_snapshot(snapshot);
+                        expect(!browse.route.direct&&!browse.route.via_map_id,"same-map drop browse suppresses distance without inventing a different floor");
                         snapshot.pending=result.pending;
                         { SnapshotScope owner(snapshot);
                           expect(note_trap_start(407,{drop->layer,drop->tx,drop->ty}),"same-map start requests transition recovery");
@@ -167,6 +169,8 @@ int main() {
             expect(preview.pending.valid && preview.pending.incoming_trap.has_value(),"guide/follower preview retains its own trap receipt");
             snapshot.keep_destination=true;
             expect(drop.path.success && drop.path.required_trap && drop.path.next_map_id==186,"closed stairs allow the only required trap leg");
+            const auto browse=plan_browse_snapshot(snapshot);
+            expect(!browse.route.direct&&browse.route.via_map_id==186,"required trap browse omits direct steps and retains its next floor");
             expect(drop.path.warning==L"Warning: a trap is required on this route.","required trap warning is a separate optional speech part");
             expect(drop.path.walk_phases.size()==1 && drop.path.walk_phases.front().cells.back()==Cell{0,14,27},"trap leg stops at trigger rather than crossing it");
             expect(drop.pending.incoming_trap.has_value(),"planned trap arrival is retained with final destination");
@@ -187,6 +191,7 @@ int main() {
             snapshot.goal.map_id=185; snapshot.goal.cell={0,14,27};
             const auto selected=plan_snapshot(snapshot);
             expect(selected.path.success && selected.path.warning.empty(),"directions to the selected trap itself omit event-along-route warning");
+            expect(!plan_browse_snapshot(snapshot).route.direct,"selected step-on trap still cannot claim event-free browsing distance");
         }}; worker.join();
         // Publication keeps the latest guide/follower receipt apart from the
         // destination chosen manually; neither client shares mutable worker data.
