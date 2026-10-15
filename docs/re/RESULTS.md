@@ -421,3 +421,32 @@ Settings changes rebuild current comparisons without automatic replay. Extra ite
 panels retain native page ownership for I. Actual-source all-six phase/visibility,
 learning/level-gain, Brief/Verbose and input tests pass; full build/smoke/all-six deployment
 record and pending gameplay checks are in [MENU_DETAILS.md](MENU_DETAILS.md).
+
+
+## All-six hit-count recheck, October 14
+
+User requested an audit because FF3 sometimes announces 20 or more hits. Source audit
+finds one active producer for all six games: shared battle_message.cpp hooks
+DamageViewUIManager.CreateHitCount(3), runs the original with its untouched arguments,
+and passes the returned HitCountEntity to rendered::hit_count. The native hit argument
+is not used as speech data. There is no active GetHitCount, accuracy/multiplier/evasion
+calculation, damage division, sound count or attack-capacity fallback in the mod.
+FF6's per-game reader has only its speaker addition, not an alternate hit producer.
+
+The shared reader waits for the visible hitText image, reads numRenderers and decodes
+visible sprites named exactly Battle_Common_DamageNumber_0 through _9. sprite_number
+orders by actual rendered x, excludes hidden/unused slots and rejects unknown glyphs,
+locale HIT/HITS word images, unfinished overlapping layouts and overflow. Arithmetic
+here reconstructs the decimal number shown by those digits; it does not derive combat hits.
+All-six extracted hit prefabs have the same ten-glyph palette and two numeric slots.
+
+Read-only installed-asset recheck passes in all six (`tools/re/rendered_asset_check.py`;
+report in build_check/pathfinding_diagnosis_2026_10_14/rendered_assets.txt). Existing native
+FF2 CreateHitCount/SetNumSprite evidence and all-six symbol/name checks remain matched.
+Extended actual-reader regression displays 20, 27 and 99 using renderer glyphs under
+each of the six game identities, alongside hidden/unready/singular/word-suffix checks;
+canonical battle_results_check passes. The user's own FF3 log has `20 hits` at 310056.156,
+line 453, following a successfully installed CreateHitCount hook. The log records speech,
+not a screenshot of that frame: the producer/source contract is confirmed, while direct
+visual comparison of that specific attack is not claimed. No hit-count gameplay code or
+rendered-value policy changed. Sol performed the audit; no delegation or game launch/probe.

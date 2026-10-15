@@ -39,6 +39,15 @@ AudioEngine, ToneGenerator (all nine tones match FF1 sample for sample), SoundPl
 SoundConstants, MovementSoundPatches. Hook: `FieldPlayerKeyController.OnTouchPadCallback`.
 - Landing ping has no FF1 source: built from FF5's constants (660 Hz, 80 ms in 250 ms).
 
+October 15 update supersedes the original playback implementation above: all effects now
+use 18 embedded, individually replaceable WAV cues, worker mixing and optional default-off
+HRTF loopback. Independent entity soundscape, bounded capture, per-cue controls/previews,
+range and navigation-audio/speech masters are implemented/offline verified in all six.
+The speech-only mod menu stays spoken through central say. Build/smoke pass; all six
+games are deployed/hash-verified after the user lifted the hold. Gameplay/audio
+confirmation remains pending.
+[Current evidence and limits](re/SOUNDSCAPE.md).
+
 ## FF1 module (`src/games/ff1`) — FINISHED
 
 NewGamePatches + NewGameHelpers (8 hooks), JobSelectionPatches (1), PuzzlePatches +

@@ -119,9 +119,13 @@ void pathfind_to_current_waypoint()
     if (ui::prefs::autowalk_enabled()) autowalk::request(goal, ::field::TargetKind::Spot, waypoint->name);
     else ::field::baked_nav::request_route(goal, ::field::TargetKind::Spot, waypoint->name,
         [waypoint](::field::PathInfo path_info) {
+            if (!ensure_field_context()) return;
             if (nav::selected() != waypoint) return;
-            ffpr::say((path_info.success && !path_info.description.empty()) ? path_info.description
-                : (!path_info.reason.empty() ? path_info.reason : T(L"No path")));
+            auto line = (path_info.success && !path_info.description.empty()) ? path_info.description
+                : (!path_info.reason.empty() ? path_info.reason : T(L"No path"));
+            if (ui::prefs::mod_warnings_enabled() && !path_info.warning.empty())
+                ffpr::say_sequence({path_info.warning, std::move(line)}, true);
+            else ffpr::say(line);
         });
 }
 

@@ -186,6 +186,9 @@ struct Entity {
     unity::Vec3 pos{};             // position when converted
     std::wstring name;
     std::wstring converted_name;   // name as converted; NPCs are renumbered from it each scan
+    std::wstring audio_hint;       // bounded raw identifying string; never spoken
+    bool audio_door = false;       // positive native/name door evidence, not an exit guess
+    bool audio_exit = false;       // actual GotoMap detector, including unknown destination
     bool opened = false;           // TreasureChest: state when converted (fallback)
     bool opened_known = true;      // Remote chest: false if save flag/mapping is unavailable
     std::wstring asset;            // NPC

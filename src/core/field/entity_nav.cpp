@@ -68,6 +68,9 @@ uint64_t g_category_generation = 0; // event identity, including a return to the
 /// EnsureFieldContext: the player is on an active field map and no menu is open.
 bool ensure_field_context()
 {
+    if (!queries::is("GameStatePatches.IsFieldNavigationReady") ||
+        queries::is("GameStatePatches.IsInputTransitionBlocked") ||
+        queries::is("BattleStateHelper.IsInBattle")) return false;
     if (menu_state::any_active()) return false;
 
     void* map = cache::get_or_refresh(r::kFieldMap);
@@ -165,9 +168,11 @@ void announce_ready_entity(bool walking, double requested_at)
     } else {
         const auto name = e->display_name() + (e->remote() ? L" (" + e->floor_name + L")" : std::wstring());
         baked_nav::request_route(walk_goal, kind, name, [e, category_generation = g_category_generation, requested_at](PathInfo p) {
-            if (category_generation != g_category_generation || scanner::current_entity() != e || !e->is_alive()) return;
-            ffpr::say(p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path")), true,
-                {speech::Feature::Directions, requested_at, requested_at});
+            if (category_generation != g_category_generation || !ensure_field_context() || scanner::current_entity() != e || !e->is_alive()) return;
+            auto message = p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path"));
+            const speech::Timing timing{speech::Feature::Directions, requested_at, requested_at};
+            if (!p.warning.empty() && ui::prefs::mod_warnings_enabled()) ffpr::say_sequence({p.warning, message}, true, timing);
+            else ffpr::say(message, true, timing);
         });
     }
 }
@@ -228,7 +233,7 @@ void cycle(bool next)
     const auto generation = g_category_generation;
     scanner::when_filter_ready([next, generation, requested_at] {
         if (generation != g_category_generation) return;
-        if (!queries::is("GameStatePatches.IsFieldNavigationReady") || menu_state::any_active()) return;
+        if (!ensure_field_context()) return;
         if (next) scanner::next_entity(); else scanner::previous_entity();
         baked_nav::clear_pending();
         const speech::Timing timing{speech::Feature::EntityBrowse, requested_at, scanner::captured_at()};
@@ -253,7 +258,7 @@ void announce_category_change(double requested_at)
     refresh_entities_if_needed();
     const Category requested = g_current_category;
     scanner::when_filter_ready([requested, generation, requested_at, category_text = std::move(category_text)] {
-    if (generation != g_category_generation || requested != g_current_category || !queries::is("GameStatePatches.IsFieldNavigationReady") || menu_state::any_active()) return;
+    if (generation != g_category_generation || requested != g_current_category || !ensure_field_context()) return;
 
     // Obey the pathfinding filter: select the nearest reachable entity. None reachable (or an
     // empty category): the category name only ("No reachable entities" is for cycling).
@@ -311,12 +316,14 @@ void category_reset_to_all()
 // =========================================================================================
 void force_entity_rescan()
 {
+    if (!ensure_field_context()) return;
     scanner::force_rescan();
     speak(T(L"Entity scan complete"));
 }
 
 void announce_current_map()
 {
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) return;
     std::wstring name = hooks::guarded_r("Mod.AnnounceCurrentMap", std::wstring(), [] { return current_map_name(); });
     speak(name.empty() ? T(L"Unknown location") : name);
 }
@@ -384,16 +391,28 @@ int install()
     // next leg to the remembered destination from where the player arrived.
     events::on(events::Kind::MapChanged, [] {
         if (ffpr::fieldnav::autowalk::active()) return; // walker owns continuation and its speech setting
-        frame::after_seconds(0.8, [] { hooks::guarded("BakedNav.ContinuePending", [] { baked_nav::continue_pending(); }); },
-                             "BakedNav.ContinuePending");
+        const auto generation = g_category_generation;
+        frame::every_frame([generation] {
+            if (generation != g_category_generation) return false;
+            if (queries::is("GameStatePatches.IsInputTransitionBlocked") ||
+                !queries::is("GameStatePatches.IsFieldNavigationReady") ||
+                queries::is("BattleStateHelper.IsInBattle")) return true;
+            if (!ensure_field_context()) return false;
+            hooks::guarded("BakedNav.ContinuePending", [] { baked_nav::continue_pending(); });
+            return false;
+        }, "BakedNav.ContinuePending", INT_MAX);
     });
     events::on(events::Kind::BattleStart, [] {
+        ++g_category_generation;
         scanner::cancel_scan();
         frame::cancel_label("BakedNav.ContinuePending");
         baked_nav::invalidate();
     });
+    events::on(events::Kind::MapChanging, [] { ++g_category_generation; });
     events::on(events::Kind::SceneLoaded, [] {
-        if (scene_name() == L"Title") scanner::invalidate_map();
+        if (scene_name() == L"Title") {
+            scanner::invalidate_map(); baked_nav::clear_pending(true); baked_nav::invalidate();
+        }
     });
 
     int n = hooks::attach(mInternalSceneLoaded, &d_SceneLoaded, &o_SceneLoaded) ? 1 : 0;

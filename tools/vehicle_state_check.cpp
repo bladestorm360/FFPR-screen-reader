@@ -4,6 +4,7 @@
 #include "core.h"
 #include "field/field_api.h"
 #include "fieldnav/move_state.h"
+#include "fieldnav/watercraft.h"
 namespace fixture {
 bool ready=false;
 int reads=0;
@@ -30,6 +31,12 @@ int main() {
     using namespace ffpr::fieldnav::move_state;
     int failures=0;
     auto expect=[&](bool ok,const char* reason) { if(!ok) { ++failures; std::printf("FAIL %s\n",reason); } };
+    using namespace ffpr::fieldnav::landing_spots;
+    for(int game:{1,2,3,5}) expect(watercraft(game,4,2),"freeform ships supported in FF1/2/3/5");
+    for(int game:{1,2,3}) expect(watercraft(game,2,5),"actual canoe master supported in FF1/2/3");
+    expect(!watercraft(2,5,5)&&!watercraft(3,3,3)&&!watercraft(4,4,2)&&!watercraft(6,4,2),"snowcraft, aircraft and FF4/6 excluded");
+    expect(legal_shore(true,false,true,true)&&legal_shore(true,false,false,false),"valid dock and canoe shore");
+    expect(!legal_shore(false,false,true,true)&&!legal_shore(true,false,false,true)&&!legal_shore(true,true,true,true),"wall, forbidden ship shore and same water rejected");
     reset(); fixture::ready=true; fixture::vehicle={true,3,2,L"ShipName"}; fixture::name=L"Ship";
     expect(current_name()==L"Ship" && fixture::reads==1,"loaded boarded ship is named without a GetOn event");
     fixture::vehicle={true,5,5,L""}; fixture::name=L"Snowcraft";

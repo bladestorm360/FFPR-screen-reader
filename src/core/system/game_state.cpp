@@ -11,6 +11,7 @@
 #include "field/scene_events.h"
 #include "system/system.h"
 #include "battle/battle.h"
+#include "fieldnav/map_transition.h"
 
 namespace ffpr::system {
 namespace {
@@ -54,6 +55,7 @@ int state_library_info() { return state_library_ui() + 1; }
 // The main-game manager, cached from ChangeState. A plain managed object (not a Unity object):
 // re-checked by class before each use, and dropped on the title (FF1 ResetMainGameState).
 void* g_main_game = nullptr;
+int g_state_change_depth = 0; // native owner only; nested ChangeState calls remain blocked
 
 void run_action(const char* name)
 {
@@ -91,6 +93,10 @@ ChangeState_t o_ChangeState;
 
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
+    struct ChangingState {
+        ChangingState() { ++g_state_change_depth; }
+        ~ChangingState() { --g_state_change_depth; }
+    } changing;
     hooks::guarded("GameState.BattleTransition", [&] {
         if (self && kMainGame.is(self)) battle::main_game_transition(state);
     });
@@ -137,6 +143,7 @@ int install()
 
     queries::define("GameStatePatches.IsFieldPlayerState", [] { return is_field_player_state(); });
     queries::define("GameStatePatches.IsFieldNavigationReady", [] { return is_field_navigation_ready(); });
+    queries::define("GameStatePatches.IsInputTransitionBlocked", [] { return input_transition_blocked(); });
     queries::define("GameStatePatches.IsFieldState", [] { return is_field_state(); });
     actions::define("GameStatePatches.ResetMainGameState", [] { reset_main_game_state(); });
     // FF1 FFI_ScreenReaderMod.OnSceneLoaded calls ResetMainGameState on the "Title" scene load:
@@ -168,6 +175,20 @@ bool is_field_navigation_ready()
         if (!g_main_game || !kMainGame.is(g_main_game)) return false;
         const int state = ref::call<int32_t>(mGetCurrentState, g_main_game);
         return state == kStatePlayer || state == kStateTransport;
+    });
+}
+
+bool input_transition_blocked()
+{
+    if (g_state_change_depth || fieldnav::map_transition::is_screen_fading()) return true;
+    return hooks::guarded_r("GameState.InputTransition", true, [] {
+        if (!g_main_game) return field::scene_name() != L"Title"; // allow the stable title; block boot/loading before a manager exists
+        if (!kMainGame.is(g_main_game)) return true;
+        const int state = ref::call<int32_t>(mGetCurrentState, g_main_game);
+        // Matching all-six native enum: map construction, event/encounter preparation,
+        // and return to title. A displayed event dialogue remains manually reviewable.
+        return state == 0 || state == 1 || state == 2 || state == 14 ||
+            (state == 12 && !queries::is("MessageWindowPatches.IsInDialogue"));
     });
 }
 

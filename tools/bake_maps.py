@@ -57,6 +57,7 @@ c=entity_id; IgnoreRoute / MoveArea / NonEncountArea: the rect only.
 Read-only on the dumps. The C++ reader is FFPRCore-Screen-Reader/src/core/field/baked_map.cpp.
 """
 import json
+import hashlib
 import os
 import struct
 import sys
@@ -331,11 +332,23 @@ def bake_game(game, out_dir, check=False):
     except (OSError, KeyError):
         pass
     scripts_by_key = {}   # (submap, script name) -> the dumped script
+    scripts_by_parent = {}
     scripts_path = os.path.join(MAPDUMP, f"{game}_scripts.jsonl")
     if os.path.exists(scripts_path):
         for l in open(scripts_path, encoding="utf-8"):
             s = json.loads(l)
             scripts_by_key[(s["submap"], s["name"])] = s
+            scripts_by_parent.setdefault((s['map'], s['name']), []).append(s)
+
+    def shared_trap_script(obj, name):
+        script = scripts_by_key.get((obj['submap'], name))
+        raw = obj.get('name') or ''
+        if script or not any(word in raw for word in ('落とし穴','落し穴','穴に落ちる','地割れに落ちる','pitfall','trapdoor')):
+            return script
+        # FF5 FieldController.GetScriptData tries MapModel.GetScript then
+        # MapManager's resident name bank. Accept only one same-package script.
+        candidates = scripts_by_parent.get((obj['map'], name), [])
+        return candidates[0] if len(candidates) == 1 else None
 
     def main_change_map(s):
         """(map_id, point_id, continuation script name) of the first ChangeMap in the script's
@@ -375,6 +388,9 @@ def bake_game(game, out_dir, check=False):
 
     warps = 0
     scenes = 0
+    arrival_path = os.path.join(DEFAULT_OUT, game, 'warp_arrival_overrides.json')
+    arrival_overrides = json.load(open(arrival_path, encoding='utf-8')) if os.path.exists(arrival_path) else []
+    used_arrivals = set()
 
     # --- objects per sub-map ---------------------------------------------------------------
     by_sub = {}
@@ -384,18 +400,48 @@ def bake_game(game, out_dir, check=False):
             continue
         by_sub.setdefault(o["submap"], []).append(o)
         sid = to_int((o["props"] or {}).get("script_id"))
-        if sid and t in ("Event", "Entity", "AnimEntity"):
-            s = scripts_by_key.get((o["submap"], script_names.get(sid, "")))
+        if sid and t in ("Event", "RandomEvent", "Entity", "AnimEntity"):
+            s = shared_trap_script(o, script_names.get(sid, ""))
             dest = main_change_map(s) if s else None
+            correction = next(((index, row) for index, row in enumerate(arrival_overrides)
+                               if row['submap'] == o['submap'] and row['entity_id'] == to_int((o['props'] or {}).get('entity_id'))
+                               and ('object_id' not in row or row['object_id'] == o['id'])), None)
+            if correction and correction[1].get('same_map'):
+                index, row = correction
+                assert dest is None
+                assert s and s['name'] == row['continuation']
+                dest = (row['destination_map'], 0, row['continuation'])
             if dest and round_trip(o["submap"], dest[0], dest[2]):
                 scenes += 1   # a cutscene that returns: the cell stays open, no edge
             elif dest:
+                point = dest[1]
+                if correction:
+                        index, row = correction
+                        assert dest[:2] == (row['destination_map'], row['original_point'])
+                        assert dest[2] == row['continuation']
+                        cont = s if row.get('same_map') else scripts_by_key[(submap_of_mapid[dest[0]], dest[2])]
+                        digest = hashlib.sha256(json.dumps(cont, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest()
+                        assert digest == row['continuation_sha256'], 'Reviewed trap landing script changed'
+                        if 'arrival_cell' in row:
+                            # Owned graph-only PointIn: scripts may finish somewhere
+                            # other than their native ChangeMap point, or on the same map.
+                            point = -100000-index
+                            x, y, layer = row['arrival_cell']
+                            arrival = dict(submap=submap_of_mapid[dest[0]], type_name='PointIn',
+                                           tx=x, ty=y, x=x*16, y=y*16, w=16, h=16,
+                                           layer=LAYER_NAMES[layer], group='', name='Reviewed trap landing',
+                                           props={'object_id':point, 'entity_id':-1})
+                            by_sub.setdefault(arrival['submap'],[]).append(arrival)
+                        else: point = row['arrival_point']
+                        used_arrivals.add(index)
                 w = dict(o)
                 w["type_name"] = "Warp"
-                w["props"] = {"entity_id": (o["props"] or {}).get("entity_id"), "map_id": dest[0],
-                              "point_id": dest[1], "step_on": 1 if t == "Event" else 0}
+                w["props"] = {"entity_id": (o["props"] or {}).get("entity_id"), "map_id": -1 if correction and correction[1].get('same_map') else dest[0],
+                              "point_id": point, "step_on": 1 if t in ('Event','RandomEvent') else 0}
                 by_sub[o["submap"]].append(w)
                 warps += 1
+
+    assert len(used_arrivals) == len(arrival_overrides), 'Reviewed arrival override did not match its object'
 
     def pack_object(o):
         t = o["type_name"]

@@ -47,7 +47,6 @@ std::wstring* g_name = nullptr;
 double g_progress_at = 0;
 Cell g_last_cell;
 bool g_have_cell = false;
-bool g_lt_was_held = false;
 VehicleAction g_vehicle_action = VehicleAction::None;
 int g_vehicle_id = 0, g_key_action = -1;
 uint64_t g_key_frame = 0;
@@ -360,13 +359,12 @@ void start(const field::PathInfo& path, const field::baked_nav::MapGoal* goal, f
     if (goal) *g_goal = *goal;
     *g_name = name;
     ffpr::say(T(L"Autowalk started"));
+    if (!path.warning.empty() && ui::prefs::mod_warnings_enabled()) ffpr::say(path.warning, false);
     begin(path);
 }
 void input_updated()
 {
-    const bool lt_held = input::left_trigger() > .5f;
-    const bool lt_pressed = lt_held && !g_lt_was_held;
-    g_lt_was_held = lt_held;
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) return;
     if (!active()) return;
     if (g_vehicle_action != VehicleAction::None && frame::now() > g_vehicle_deadline) {
         cancel(); ffpr::say(T(L"Autowalk blocked")); return;
@@ -375,12 +373,9 @@ void input_updated()
         cancel(); return;
     }
     using K = input::Key;
+    const K entity_request = ui::prefs::navigation_keymap() == 0 ? K::P : K::Backslash;
     const bool request_key = !input::shift_held() && !input::ctrl_held() && !input::alt_held()
-        && (input::key_pressed(K::Backslash) || input::key_pressed(K::P) || input::key_pressed(K::Slash));
-    // Field bindings are unavailable during loading, so handle a second request here too.
-    if (g_transition.waiting() && !queries::is("GameStatePatches.IsFieldNavigationReady") && (request_key || lt_pressed)) {
-        cancel(true); return;
-    }
+        && (input::key_pressed(entity_request) || input::key_pressed(K::Slash));
     const bool manual_key = input::any_key_pressed() && !request_key;
     bool manual_pad = input::left_stick_x() != 0 || input::left_stick_y() != 0
         || input::right_stick_x() != 0 || input::right_stick_y() != 0 || input::right_trigger() > .5f;

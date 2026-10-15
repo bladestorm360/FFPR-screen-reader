@@ -5693,8 +5693,8 @@
     "id": 38,
     "raw": "落とし穴②",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_1",
@@ -5801,8 +5801,8 @@
     "id": 60,
     "raw": "落とし穴1",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5810,8 +5810,8 @@
     "id": 61,
     "raw": "落とし穴2",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5819,8 +5819,8 @@
     "id": 62,
     "raw": "落とし穴3",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5828,8 +5828,8 @@
     "id": 63,
     "raw": "落とし穴4",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5837,8 +5837,8 @@
     "id": 64,
     "raw": "落とし穴5",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5846,8 +5846,8 @@
     "id": 65,
     "raw": "落とし穴6",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5855,8 +5855,8 @@
     "id": 66,
     "raw": "落とし穴7",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5864,8 +5864,8 @@
     "id": 67,
     "raw": "落とし穴8",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5873,8 +5873,8 @@
     "id": 68,
     "raw": "落とし穴9",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5882,8 +5882,8 @@
     "id": 70,
     "raw": "落とし穴10",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5891,8 +5891,8 @@
     "id": 71,
     "raw": "落とし穴11",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5900,8 +5900,8 @@
     "id": 72,
     "raw": "落とし穴12",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5909,8 +5909,8 @@
     "id": 73,
     "raw": "落とし穴13",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5918,8 +5918,8 @@
     "id": 74,
     "raw": "落とし穴14",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5927,8 +5927,8 @@
     "id": 75,
     "raw": "落とし穴15",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5936,8 +5936,8 @@
     "id": 84,
     "raw": "落とし穴16",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5945,8 +5945,8 @@
     "id": 85,
     "raw": "落とし穴17",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5954,8 +5954,8 @@
     "id": 86,
     "raw": "落とし穴18",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",
@@ -5963,8 +5963,8 @@
     "id": 87,
     "raw": "落とし穴19",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30061_4",

@@ -10,6 +10,8 @@
 // TransportationController.CurrentTransportation / CheckLandingList / CheckOkList,
 // TransportationInfo.Id) exist with the same signatures in all five dump.cs files.
 namespace ffpr::fieldnav::landing_spots {
+// Ready native owner only; current TransportationInfo, including loaded saves.
+bool riding_watercraft();
 
 /// The neighbouring tiles (north, south, east, west of the player) where the current vehicle can
 /// land or dock: the tile's attribute is in the vehicle's landing list, or not in its OK list

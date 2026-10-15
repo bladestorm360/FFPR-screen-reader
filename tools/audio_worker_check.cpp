@@ -11,12 +11,13 @@ SDL_DYNAMIC_FUNCTIONS(DEFINE)
 bool load() { return true; }
 }
 namespace log_ { void write(const char*, ...) {} }
+namespace sound::runtime { void pump(SDL_AudioStream*) {} void close() {} }
 namespace fixture {
 HANDLE opening, opened, putting, release_put;
 DWORD main_thread = GetCurrentThreadId();
 std::atomic<DWORD> callback_thread{0};
 std::atomic<bool> wrong_thread{false};
-std::atomic<int> queued[9]{};
+std::atomic<int> queued[10]{};
 std::atomic<int> last_sample{-1}, clears{0};
 int stream_count = 0;
 void check_worker() {

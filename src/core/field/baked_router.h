@@ -30,7 +30,7 @@ struct Cell {
 
 // Ordinary exits, vehicle pads and layer switches are never story-event hazards.
 inline bool step_event(const baked::Object& object) {
-    return (object.type == baked::ObjType::Event && (object.a != 0 || object.b != 0)) ||
+    return ((object.type == baked::ObjType::Event || object.type == baked::ObjType::RandomEvent) && (object.a != 0 || object.b != 0)) ||
            (object.type == baked::ObjType::Warp && object.d == 1);
 }
 inline bool crosses_event(const std::vector<Cell>& path, const std::vector<Cell>& events) {
@@ -56,6 +56,9 @@ struct Request {
     bool ignore_hazards = false;     // filter reachability includes destinations behind events
     bool live_hazards = false;       // current map: replace baked variants with active triggers
     std::vector<Cell> hazards;
+    bool live_traps = false;
+    std::vector<Cell> traps;
+    bool allow_trap_goal = false;     // only an explicitly selected trap or required transition leg
     bool goals_open = true;           // a closed transition goal may be entered, retaining
                                       // native terrain/transport and directional restrictions: the
                                       // game opens a GotoMap entity's cells for the route
@@ -123,9 +126,13 @@ int transition_distance(const Request& request, const Reach& reach);
 
 /// Cell tests shared with the callers: open for the request's movement rules.
 bool open(const Request& r, const baked::Grids& g, const Cell& c);
+bool trap_cell(const Request& r, const baked::Grids& g, const Cell& c);
 bool direction_allowed(const Request& r, const Cell& from, const Cell& to);
 // Native baked cardinal masks and the parser's explicit diagonal stair edges.
 bool edge_allowed(const Request& r, const baked::Grids& g, const Cell& from, const Cell& to);
+/// A teleport landing must be open, clear of blockers/traps/events and have a legal way out.
+/// Uses the same owned movement snapshot as routing; no path search or native calls.
+bool safe_landing(const Request& movement, const baked::Grids& grids, const Cell& landing);
 int step_direction(const Cell& from, const Cell& to, int wrap_width = 0, int wrap_height = 0);
 /// The layer the player is on after stepping on `c` (ToLayer objects), else c.layer.
 int layer_after(const baked::Grids& g, int from_layer, int x, int y);

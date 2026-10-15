@@ -1,5 +1,5 @@
 // Ports FF4 Patches/TimerPatches.cs (Timer_Update_Patch and TimerHelper): T reads the on-screen
-// countdowns (escape timers), Shift+T freezes and resumes them.
+// countdowns (escape timers), Shift+F5 freezes and resumes them.
 //
 // Timer.Update is the game's own per-frame call; the detour only skips it while the freeze is on
 // (OPEN_ISSUES.md "Timers and per-frame work deliberately kept": the game's timing, as in FF5).
@@ -140,7 +140,7 @@ int install()
     queries::define("TimerHelper.TimersFrozen", [] { return g_timers_frozen; });
     input::add_binding(input::Key::T, input::Mod::None, input::Context::Global, "TimerHelper.AnnounceActiveTimers",
                        "Announce active timers");
-    input::add_binding(input::Key::T, input::Mod::Shift, input::Context::Global, "TimerHelper.ToggleTimerFreeze",
+    input::add_binding(input::Key::F5, input::Mod::Shift, input::Context::Global, "TimerHelper.ToggleTimerFreeze",
                        "Toggle timer freeze");
     return n;
 }

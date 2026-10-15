@@ -12,8 +12,8 @@
 #undef contains
 namespace fixture {
 const DWORD owner = GetCurrentThreadId();
-int wrong_owner = 0, map = 1, next_task = 0;
-bool ready = true;
+int wrong_owner = 0, map = 1, next_task = 0, native_reads=0;
+bool ready = true, transition = false;
 struct TalkProperty { int script = 65; std::wstring name = L"飛竜", message; } talk;
 struct Actor { void* property = &talk; } npc, object;
 bool can_action = true;
@@ -26,7 +26,7 @@ struct Task { frame::Step step; std::string label; };
 std::map<int, Task> tasks;
 std::vector<frame::Task> navigation, compute, posted;
 std::mutex post_lock;
-void native() { if (GetCurrentThreadId() != owner) ++wrong_owner; }
+void native() { ++native_reads; if (GetCurrentThreadId() != owner) ++wrong_owner; }
 void tick() {
     std::vector<frame::Task> completed;
     { std::lock_guard lock(post_lock); completed.swap(posted); }
@@ -106,7 +106,10 @@ int get_int(const char*, int fallback) { return fallback; }
 bool get_bool(const char*, bool fallback) { return fallback; }
 }
 namespace ffpr { void say(std::wstring_view, bool) { fixture::native(); } }
-namespace ffpr::system { bool is_field_navigation_ready() { fixture::native(); return fixture::ready; } }
+namespace ffpr::system {
+bool is_field_navigation_ready() { fixture::native(); return fixture::ready; }
+bool input_transition_blocked() { fixture::native(); return fixture::transition; }
+}
 namespace ffpr::fieldnav::map_transition { bool is_screen_fading() { fixture::native(); return false; } }
 namespace modtext {
 LocaleScope::LocaleScope(std::wstring) {}
@@ -148,6 +151,7 @@ npc_names::Label npc_display_label(const std::wstring& name) { fixture::native()
 bool is_decimal_digit(wchar_t c) { return c >= L'0' && c <= L'9'; }
 bool EntityCursor::next(void*&) { fixture::native(); return false; }
 bool Entity::is_alive() const { fixture::native(); return game != reinterpret_cast<void*>(2); }
+bool Entity::is_opened() const { fixture::native(); return opened; }
 Category Entity::category() const { return kind == Kind::NPC ? Category::NPCs : Category::MapExits; }
 unity::Vec3 Entity::position() const { fixture::native(); return pos; }
 PathInfo find_path_to_quick(unity::Vec3, unity::Vec3, void*, void*, TargetKind, bool) { fixture::native(); return {}; }
@@ -171,6 +175,12 @@ int main() {
     using namespace field;
     int failures = 0;
     auto expect = [&](bool ok, const char* reason) { if (!ok) { ++failures; std::printf("FAIL %s\n", reason); } };
+    fixture::transition = true;
+    bool transition_callback = false;
+    scanner::when_filter_ready([&] { transition_callback = true; }, true);
+    expect(!transition_callback && fixture::tasks.empty() && fixture::navigation.empty(),
+        "transition input cannot inspect a map or enqueue scanner readiness work");
+    fixture::transition = false;
     Context talk; talk.fe=&fixture::npc; talk.go_name=L"Wyvern"; talk.go_lower=L"wyvern";
     for(int script:{65,189}){fixture::talk.script=script;auto result=npc_detector(talk);expect(result.result==Result::Detected&&result.entity->kind==Kind::NPC&&result.entity->name==L"Wyvern","native-actionable Deist Wyvern dialogue scripts are NPC targets despite placeholder name");}
     fixture::talk.script=0;fixture::talk.message=L"VisibleDialogueKey";
@@ -193,6 +203,49 @@ int main() {
     expect(g_views_ready && scanner::count() == 2000, "initial owner capture and worker publication prepare the actual list");
     expect(frames < 100, "2,000-row preparation has no four-entry-per-frame delay");
     expect(fixture::wrong_owner == 0, "worker build makes zero native calls");
+    // Production adapter over the existing published pathfinder registry. Its
+    // capacity is prepared on the audio worker before native acquisition.
+    auto measure_capture=[&](const char* label) {
+        sound::scape::Snapshot snapshot; snapshot.rows.reserve(sound::scape::max_rows);
+        size_t next=0;uint64_t revision=0;int calls=0,result=0;double peak=0,total=0;
+        const double start=frame::now();
+        while(result==0 && calls<100) {
+            const double begin=frame::now(); result=field::capture_soundscape(snapshot,next,revision);
+            const double cost=frame::now()-begin; peak=std::max(peak,cost);total+=cost;++calls;
+        }
+        expect(result==1&&snapshot.rows.size()==g_category_views[0].size(),"soundscape captures every published row across bounded native slices");
+        expect(calls>1&&calls>=int((next+511)/512),"soundscape enforces the per-slice count bound");
+        expect(!fixture::wrong_owner,"soundscape never accesses a native pointer off its owner");
+        ++g_audio_revision;
+        expect(field::capture_soundscape(snapshot,next,revision)==-1,"changed pathfinder registry invalidates an unfinished snapshot");
+        std::printf("Soundscape %s %zu: %d native slices, peak %.3f ms, aggregate %.3f ms, copy %.3f ms plus frame scheduling\n",
+            label,next,calls,peak*1000,total*1000,(frame::now()-start)*1000);
+    };
+    measure_capture("normal");
+    // Repeated production soundscape captures must never consume navigation
+    // selection/category/readiness or retire pending native-owner input work.
+    scanner::set_category(Category::NPCs);scanner::next_entity();
+    const auto audio_selected=scanner::current_entity();const int audio_index=scanner::current_index();
+    const auto audio_tasks=fixture::tasks.size();bool audio_browse=false,audio_directions=false;
+    for(int repeat=0;repeat<20;++repeat) {
+        sound::scape::Snapshot audio;audio.rows.reserve(sound::scape::max_rows);
+        size_t next=0;uint64_t revision=0;
+        for(int step=0;step<100 && capture_soundscape(audio,next,revision)==0;++step) {}
+        scanner::when_filter_ready([&]{audio_browse=true;});
+        scanner::when_filter_ready([&]{audio_directions=true;},true);
+    }
+    expect(audio_browse&&audio_directions&&g_views_ready&&scanner::current_entity()==audio_selected&&
+        scanner::current_index()==audio_index&&scanner::category()==Category::NPCs&&fixture::tasks.size()==audio_tasks,
+        "continuous production soundscape capture preserves actual scanner browse/directions readiness, selection and category");
+    scanner::set_category(Category::All);
+    auto saved_audio_view=g_category_views[0];
+    g_category_views[0].resize(sound::scape::max_rows,saved_audio_view.front());
+    for(auto& e:g_category_views[0]) e->audio_hint=std::wstring(512,L'x');
+    measure_capture("busy");
+    g_category_views[0].push_back(saved_audio_view.front());
+    sound::scape::Snapshot invalid;size_t invalid_next=0;uint64_t invalid_revision=0;
+    expect(field::capture_soundscape(invalid,invalid_next,invalid_revision)==-1&&invalid.rows.empty(),"over-bound registry fails closed before traversal/allocation");
+    g_category_views[0]=std::move(saved_audio_view);
     const auto started = frame::now();
     const auto task_count = fixture::tasks.size();
     for (int i = 0; i < 1000; ++i) { scanner::set_category(Category::NPCs); scanner::set_category(Category::MapExits); }
@@ -233,6 +286,12 @@ int main() {
     expect(!spoken&&!g_views_ready&&g_filter_pending,"moving before grouped-exit browse waits for the new nearest-exit generation");
     for(int i=0;!spoken&&i<100;++i){fixture::tick();fixture::work();}
     expect(spoken,"grouped-exit browse resumes after owned worker publication");
+    g_views_ready = false;
+    spoken = false;
+    scanner::when_filter_ready([&] { spoken = true; }, true);
+    fixture::transition = true; fixture::tick(); fixture::transition = false;
+    g_views_ready = true; fixture::tick();
+    expect(!spoken, "a loading transition retires pending input rather than replaying it on return");
     scanner::invalidate_map();
     spoken = false; scanner::when_filter_ready([&] { spoken = true; },true);
     expect(!spoken, "map invalidation requires a new ready generation");

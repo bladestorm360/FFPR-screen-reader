@@ -265,6 +265,13 @@ const Grids& grids(const Submap& s)
     // Step-on warps and trapdoors: cells an ordinary route must not cross.
     if (cells) {
         for (const Object& o : g->objects) {
+            if (is_trap(o) && o.layer < 3) {
+                auto& traps = g->traps[o.layer];
+                if (traps.empty()) traps.assign(cells, 0);
+                for (int y = o.ty; y < o.ty + o.th; ++y) for (int x = o.tx; x < o.tx + o.tw; ++x)
+                    if (x >= 0 && y >= 0 && x < g->width && y < g->height)
+                        traps[static_cast<size_t>(y) * g->width + x] = 1;
+            }
             if (o.type != ObjType::Warp || o.d != 1) continue;
             if (g->hazard.empty()) g->hazard.assign(cells, 0);
             for (int y = o.ty; y < o.ty + o.th; ++y)
@@ -299,6 +306,17 @@ bool vehicle_open(const Grids& g, int group, int x, int y)
 {
     if (group < 1 || group > static_cast<int>(g.transport.size()) || !in_bounds(g, x, y)) return false;
     return g.transport[static_cast<size_t>(group - 1)][static_cast<size_t>(y) * g.width + x] == 0;
+}
+
+bool is_trap(const Object& object)
+{
+    if (!((object.type == ObjType::Warp && object.d == 1) ||
+          ((object.type == ObjType::Event || object.type == ObjType::RandomEvent) && (object.a || object.b)))) return false;
+    const auto name = str(object.name);
+    return name.find(L"落とし穴") != std::wstring::npos || name.find(L"落し穴") != std::wstring::npos ||
+        name.find(L"穴に落ちる") != std::wstring::npos || name.find(L"地割れに落ちる") != std::wstring::npos ||
+        name.find(L"pitfall") != std::wstring::npos || name.find(L"trapdoor") != std::wstring::npos ||
+        (name.rfind(L"落ちる", 0) == 0 && name.find_first_not_of(L"0123456789０１２３４５６７８９", 3) == std::wstring::npos);
 }
 
 int attribute(const Grids& g, int x, int y)

@@ -1,8 +1,7 @@
 // Ports the FF6-only key of FF6 Core/InputManager.cs that the core's table
 // (docs/INPUT_BINDINGS.md) does not cover. Every other FF6 field key is the core's, with the
 // same action: J/K/L, [ ] \ P and their Shift/Ctrl forms, ' ; = - G M Shift+M, Shift+K, the
-// waypoint keys , . / and Ctrl+arrows. 9 (beacons) is bound by module.cpp, T / Shift+T by
-// timers.cpp.
+// waypoint keys , . / and Ctrl+arrows. T / Shift+F5 are bound by timers.cpp.
 //
 //   H (field) - airship status when flying, else the core's character status
 //               (FFVI_ScreenReaderMod.AnnounceAirshipOrCharacterStatus, airship.cpp). In battle

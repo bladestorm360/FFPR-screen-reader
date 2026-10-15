@@ -10,6 +10,7 @@
 #include <array>
 #include <cstring>
 #include "sound_constants.h"
+#include "cue_runtime.h"
 #include "../log.h"
 #include "../sdl_dyn.h"
 
@@ -44,7 +45,7 @@ const char* stream_name(int i)
 {
     static const char* const kNames[kStreamCount] = {
         "Footstep", "WallBump", "Beacon", "WallNorth", "WallSouth", "WallEast", "WallWest",
-        "Counter", "Landing"};
+        "Counter", "Landing", "Cues"};
     return (i >= 0 && i < kStreamCount) ? kNames[i] : "?";
 }
 
@@ -96,6 +97,10 @@ bool open_device()
                 s = nullptr;
             }
             g_streams[i] = s;
+        }
+        if(!g_streams[static_cast<int>(Stream::Cues)]) {
+            release_all();
+            return false;
         }
 
         // A freshly opened device starts paused; resuming a running one is harmless. Skipping
@@ -157,11 +162,13 @@ DWORD WINAPI audio_worker(void*)
             const int bytes = g_streams[i] ? sdl::SDL_GetAudioStreamQueued(g_streams[i]) : 0;
             g_queued[i].store(bytes > 0 ? bytes : 0, std::memory_order_relaxed);
         }
+        runtime::pump(g_streams[index(Stream::Cues)]);
     } } catch (...) {
         LOGF("[SDL Audio] worker call failed; mod audio disabled, game continues");
         g_running.store(false, std::memory_order_release);
     }
     g_initialized.store(false, std::memory_order_release);
+    runtime::close();
     release_all();
     return 0;
 }

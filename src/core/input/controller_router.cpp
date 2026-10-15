@@ -107,8 +107,9 @@ void announce_mod_mode_controls()
     } else {
         const std::wstring north = button_label(kNorth);
         const std::wstring south = button_label(kSouth);
-        ffpr::say(TF(L"{0} for Gil. {1} for location. {2} for vehicle. Right stick to teleport. {3} to cancel.",
+        ffpr::say(TF(L"{0} for Gil. {1} for location. {2} for vehicle. {3} to cancel.",
                      {west, north, south, back}), true);
+        if (ui::prefs::teleport_shortcuts_enabled()) ffpr::say(T(L"Right stick to teleport."), false);
         ffpr::say(TF(L"{0} for the puzzle guide, {1} to stop it.",
                      {button_label(kRightShoulder), button_label(kLeftShoulder)}), false);
     }
@@ -321,10 +322,12 @@ void handle_mod_mode_state()
         }
 
         // Right stick: teleport (field only).
-        if (gamepad::rstick_up_pressed()) { run_action("Mod.TeleportNorth"); g_state = RouterState::Normal; return; }
-        if (gamepad::rstick_down_pressed()) { run_action("Mod.TeleportSouth"); g_state = RouterState::Normal; return; }
-        if (gamepad::rstick_left_pressed()) { run_action("Mod.TeleportWest"); g_state = RouterState::Normal; return; }
-        if (gamepad::rstick_right_pressed()) { run_action("Mod.TeleportEast"); g_state = RouterState::Normal; return; }
+        if (ui::prefs::teleport_shortcuts_enabled()) {
+            if (gamepad::rstick_up_pressed()) { run_action("Mod.TeleportNorth"); g_state = RouterState::Normal; return; }
+            if (gamepad::rstick_down_pressed()) { run_action("Mod.TeleportSouth"); g_state = RouterState::Normal; return; }
+            if (gamepad::rstick_left_pressed()) { run_action("Mod.TeleportWest"); g_state = RouterState::Normal; return; }
+            if (gamepad::rstick_right_pressed()) { run_action("Mod.TeleportEast"); g_state = RouterState::Normal; return; }
+        }
     }
 
     // Right stick down: mod mode controls (in the field it teleports south above).
@@ -438,6 +441,15 @@ namespace router {
 void update(Context game_context)
 {
     g_game_context = game_context;
+
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) {
+        g_field_active = false;
+        release_controller_owned_state();
+        if (ui::mod_menu::is_open()) g_state = RouterState::ModMenu;
+        g_left_trigger_was_active = left_trigger() > 0.5f;
+        g_was_left_stick_active = left_stick_x() != 0.f || left_stick_y() != 0.f;
+        return; // clear pending LT/stick-click gestures without firing an action
+    }
 
     // Field-active state, once per frame (the single source of truth). Runs without a gamepad
     // too: audio suppression needs it for keyboard-only players.

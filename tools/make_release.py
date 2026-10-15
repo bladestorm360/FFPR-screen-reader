@@ -14,8 +14,8 @@ that out\\hid.dll exists and is newer than every source file). The zip goes to
 releases\\FFPR_ScreenReader_<version>.zip and holds, at its top level, the files that go in
 each game folder:
 
-    hid.dll (MinHook is built in), SDL3.dll, MinHook_LICENSE.txt, and readme.md (the user's
-    combined readme, only if it exists). Prism v0.18.3 x64 is a separate prerequisite and is
+    hid.dll (MinHook is built in), SDL3.dll, MinHook_LICENSE.txt, readme.md, and the pinned
+    private .ffpr-deps/openal-soft runtime/notices. Prism v0.18.3 x64 is a separate prerequisite and is
     installed with install_prism.bat; it is not included in the mod release zip. uninstall.bat
     is NOT included (it targets this machine's Steam path).
 
@@ -31,6 +31,7 @@ import shutil
 import subprocess
 import sys
 import zipfile
+from openal_dependency import payload as openal_payload
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUNTIME = os.path.join(ROOT, "third_party", "runtime")
@@ -80,6 +81,7 @@ def make_bundle(name, sevenzip):
         (root / "third_party/sdl3/LICENSE.txt", "SDL3_LICENSE.txt"),
         (readme, "ReadMe.md"), (companion, "ReadMe.txt"),
     ]
+    files.extend(openal_payload(Path(ROOT)))
     lock = json.loads((root / "prism.lock.json").read_text(encoding="utf-8"))
     prism_root = (root / "third_party/prism").resolve()
     for relative, entry in lock["files"].items():
@@ -161,6 +163,11 @@ def main():
             print("FAIL: " + str(error))
             return 1
     files = [(dll, "hid.dll")]
+    try:
+        files.extend(openal_payload(Path(ROOT)))
+    except (OSError, ValueError) as error:
+        print("FAIL: " + str(error))
+        return 1
     for name in ("SDL3.dll",):
         path = os.path.join(RUNTIME, name)
         if not os.path.exists(path):

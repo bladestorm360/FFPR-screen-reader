@@ -52,14 +52,14 @@ namespace frame {uint64_t count(){return fixture::tick;}double now(){return fixt
 namespace actions {void define(const char*,Fn){} }
 namespace events {void on(Kind,Handler){} }
 namespace queries {void define(const char*,std::function<bool()>){}bool is(const char*n){return std::string(n)=="GameStatePatches.IsFieldNavigationReady"?fixture::ready:false;} }
-namespace settings {bool get_bool(const char*k,bool d){return std::string(k)=="Autowalk"?true:d;} }
+namespace settings {int get_int(const char*,int d){return d;} bool get_bool(const char*k,bool d){return std::string(k)=="Autowalk"?true:d;} }
 namespace menu_state {bool any_active(){return fixture::menu;} }
 namespace field::cache {void*get(ref::Class&t){return std::string(t.name)=="FieldMap"?&fixture::map:&fixture::controller;}void*get_or_refresh(ref::Class&t){return get(t);} }
 namespace field {
 void*player(){return &fixture::player;}void*map_handle(){return &fixture::map;}int current_map_id(){return 1;}bool face_player(void*,int){return true;}Target selected(){return {};}
 VehicleState current_vehicle(){return fixture::vehicle;}const std::wstring&scene_name(){static std::wstring s=L"Field";return s;}
 namespace baked_nav {bool player_cell(void*,void*,baked_route::Cell&c){c=fixture::cell;return true;}bool cell_at(void*,unity::Vec3,baked_route::Cell&c){c=fixture::cell;return true;}bool walk_edge(void*,void*,const baked_route::Cell&,const baked_route::Cell&,bool,route_progress::VehicleAction,int){return true;}
-void remember_destination(const MapGoal&,TargetKind,const std::wstring&){}void clear_pending(){}void cancel_requests(){}void request_route(MapGoal,TargetKind,std::wstring,std::function<void(PathInfo)>,bool){} }
+void remember_destination(const MapGoal&,TargetKind,const std::wstring&){}void clear_pending(bool){}void cancel_requests(){}void request_route(MapGoal,TargetKind,std::wstring,std::function<void(PathInfo)>,bool){} }
 }
 namespace modtext {std::wstring T(std::wstring_view s){return std::wstring(s);}std::wstring TF(std::wstring_view s,std::initializer_list<std::wstring>a){return text::format(s,a);} }
 namespace ffpr {void say(std::wstring_view,bool){} }

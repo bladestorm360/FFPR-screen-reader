@@ -3,6 +3,7 @@
 #include <vector>
 #include "../unity.h"
 #include "route_progress.h"
+#include "../audio/soundscape.h"
 
 // The field-navigation contract between the entity area (src/core/field: EntityScanner,
 // FieldNavigationHelper, EntityNavigationManager, MapNameResolver) and its users (waypoints,
@@ -13,6 +14,11 @@
 // Ports FF1 Field/FieldNavigationHelper.cs (public API) and the entity-selection parts of
 // Core/FFI_ScreenReaderMod.cs and Core/EntityNavigationManager.cs.
 namespace field {
+
+// Bounded capture over the published pathfinder All view. No new scene/database
+// scan. Native pointers stay here; output contains only owned values. 1 complete,
+// 0 continue next frame, -1 changed/invalid registry (caller discards the snapshot).
+int capture_soundscape(sound::scape::Snapshot& snapshot, size_t& next, uint64_t& revision);
 
 /// FieldNavigationHelper.PathInfo
 struct PathInfo {
@@ -26,6 +32,9 @@ struct PathInfo {
     std::vector<unity::Vec3> world_path;
     std::vector<route_progress::Phase> walk_phases; // exact cells, layers and manual action boundaries
     std::wstring full_description;
+    std::wstring warning;         // optional mod warning; distinct from usable directions/failure
+    bool required_trap = false, event_on_route = false;
+    bool trap_repeat_blocked = false;
     int map_width = 0, map_height = 0;
     bool wraps = false;
     int next_map_id = 0;          // the route continues on this map after its last leg ("take

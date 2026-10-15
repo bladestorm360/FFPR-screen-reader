@@ -30,6 +30,9 @@ void say_sequence(std::vector<std::wstring> parts, bool interrupt, speech::Timin
 
 void say(std::wstring_view text, bool interrupt = true);
 void say(std::wstring_view text, bool interrupt, speech::Timing timing);
+/// Mod-menu speech remains available when the gameplay speech master is off.
+void say_menu(std::wstring_view text, bool interrupt = true);
+void say_menu_sequence(std::vector<std::wstring> parts, bool interrupt = true, speech::Timing timing = {});
 /// Queue behind whatever is speaking (interrupt = false).
 inline void say_queued(std::wstring_view text) { say(text, false); }
 /// Stop speech now.

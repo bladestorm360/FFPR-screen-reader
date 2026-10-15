@@ -8,15 +8,13 @@
 //  * Volume settings: FF1 Core/PreferencesManager.cs's five volume getters and clamping
 //    setters (0-100, default 50; 50 = the tone's reference loudness, gain = volume / 50), plus
 //    FF5's "LandingPingVolume" for sound::play_landing_ping.
-//  * sound::engine: FF1 Utils/AudioEngine.cs. One SDL3 playback device with one SDL audio
-//    stream per sound kind bound to it; SDL mixes the bound streams on its own audio thread.
-//    The mod queues raw S16LE stereo 22050 Hz PCM (src == dst spec, no resampling) and sets a
-//    per-stream gain. Looping sounds (wall tones, EXP counter) are kept fed by their caller's
-//    ~100 ms tick topping up the queue. The audio worker refreshes byte snapshots;
+//  * One SDL3 device, owned by the audio worker. Production effects use the cue
+//    runtime's Cues stream, with worker-owned loops/custom clips and spatial mixing.
+//    The original bounded raw-PCM stream contract remains available and checked;
 //    no SDL device/stream call runs on a game hook.
 //
-// Lifetime: the first live frame initializes the SDL audio subsystem on its required
-// owner thread and requests device construction on the worker, without waiting. Before
+// Lifetime: the first live frame requests initialization on the dedicated SDL owner,
+// which starts device construction on the audio worker without waiting. Before
 // that, and when SDL3.dll or the device is unavailable, every call does nothing.
 namespace sound {
 
@@ -25,14 +23,10 @@ enum class Volume { WallBump, Footstep, WallTone, Beacon, ExpCounter, LandingPin
 /// The settings key ("WallBumpVolume", "FootstepVolume", "WallToneVolume", "BeaconVolume",
 /// "ExpCounterVolume", "LandingPingVolume").
 const char* volume_key(Volume v);
-/// PreferencesManager.<X>Volume: the stored value (default 50).
+/// PreferencesManager.<X>Volume: the selected HRTF/stereo bank (default 50).
 int volume(Volume v);
-/// PreferencesManager.Set<X>Volume: clamp to 0..100 and store.
+/// PreferencesManager.Set<X>Volume: clamp to 0..100 and store in the selected bank.
 void set_volume(Volume v, int value);
-
-/// Generate the cached tones (FF1 SoundPlayer.Initialize's tables). Idempotent, any thread.
-/// The audio Install runs it on the boot thread; the first sound runs it if that did not.
-void prepare_tables();
 
 namespace engine {
 
@@ -47,6 +41,7 @@ enum class Stream : int {
     WallWest,
     Counter,
     Landing,
+    Cues,
     Count
 };
 

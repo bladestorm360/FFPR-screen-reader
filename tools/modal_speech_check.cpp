@@ -2,6 +2,7 @@
 // Actual modal producers, front end, worker queue and Prism adapter; fake SDK only.
 #include <windows.h>
 #include <cstdio>
+#include <cstring>
 #include <thread>
 #include <chrono>
 #include <cstdarg>
@@ -17,6 +18,7 @@ struct Trace { std::string feature; double request, queue, age, sdk; int result;
 std::vector<Trace> timing;
 uint64_t tick = 0;
 int pressed = 0, delayed = 0;
+bool game_speech = true;
 HANDLE entered = nullptr, release = nullptr;
 std::atomic<bool> block{false};
 double now() { return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count(); }
@@ -65,7 +67,10 @@ void write(const char* format, ...) {
 }
 void writeW(const wchar_t*, const wchar_t*) {}
 }
-namespace settings { void save_pending() {} }
+namespace settings {
+bool get_bool(const char* key, bool def) { return std::strcmp(key, "SpeechEnabled") == 0 ? fixture::game_speech : def; }
+void save_pending() {}
+}
 namespace frame { uint64_t count() { return fixture::tick; } void after_seconds(double, Task, const char*) { ++fixture::delayed; } }
 namespace ui::modal_keys {
 void seed() {} void sample() {} bool pressed(int key) { return key == fixture::pressed; } bool held(int) { return false; }
@@ -146,6 +151,48 @@ int main() {
     const double busy_ms=(fixture::output[1].at-requested)*1000;
     expect(fixture::timing.size()==2 && fixture::timing.back().age>=10 && fixture::timing.back().queue>=0,
         "pressure recovery retains owned snapshot age and excludes obsolete/tail first-output reports");
+    fixture::output.clear();
+    fixture::game_speech=false;
+    const std::wstring last_before_mute=ffpr::last_spoken();
+    ffpr::say(L"Muted game line",true);
+    ffpr::say_parts({L"Muted game parts"},true);
+    ffpr::say_sequence({L"Muted game sequence"},true);
+    expect(ffpr::last_spoken()==last_before_mute && fixture::output.empty(),
+        "muted say, parts and sequence leave repeat state untouched and publish nothing");
+    fixture::drain();
+    expect(fixture::output.empty(), "muted gameplay messages do not reach the backend");
+
+    ffpr::say_menu(L"Game speech: Off",true); fixture::drain();
+    ffpr::say_menu_sequence({L"Mod menu",L"Game speech: Off"},true); fixture::drain();
+    ffpr::say_menu(L"Mod menu closed",true); fixture::drain();
+    expect(fixture::output.size()==4 && fixture::output[0].text=="Game speech: Off" &&
+        fixture::output[1].text=="Mod menu" && fixture::output[1].interrupt &&
+        fixture::output[2].text=="Game speech: Off" && !fixture::output[2].interrupt &&
+        fixture::output[3].text=="Mod menu closed" && ffpr::last_spoken()==L"Mod menu closed",
+        "explicit menu row, ordered sequence and close remain spoken with gameplay speech off");
+    ffpr::say(L"Muted after menu",true);
+    ffpr::say_sequence({L"Muted sequence after menu"},true);
+    expect(ffpr::last_spoken()==L"Mod menu closed", "menu exemption does not leak to later ordinary speech");
+    fixture::drain();
+    expect(fixture::output.size()==4, "ordinary speech immediately after menu remains muted");
+
+    fixture::output.clear();
+    fixture::game_speech=true;
+    ffpr::say_sequence({L"Queued gameplay heading",L"Obsolete gameplay tail"},true);
+    fixture::game_speech=false;
+    ffpr::say_menu(L"Game speech: Off",true);
+    fixture::drain();
+    expect(fixture::output.size()==1 && fixture::output[0].text=="Game speech: Off" && fixture::output[0].interrupt,
+        "turning the master off with menu confirmation cancels queued gameplay speech");
+
+    fixture::game_speech=true;
+    fixture::output.clear();
+    ffpr::say(L"Repeated line",true);
+    ffpr::say(L"Repeated line",false);
+    fixture::drain();
+    expect(fixture::output.size()==2 && fixture::output[0].text=="Repeated line" &&
+        fixture::output[1].text=="Repeated line" && fixture::output[0].interrupt && !fixture::output[1].interrupt,
+        "re-enabling restores gameplay speech and identical queued lines remain distinct");
     std::printf("Speech request to fake SDK: cold %.3f ms, worst warm %.3f ms; 2,000 blocked-SDK publications %.3f ms, latest output %.3f ms; %d failures\n",
         cold_ms,worst_warm,publish_ms,busy_ms,failures);
     CloseHandle(fixture::entered); CloseHandle(fixture::release);

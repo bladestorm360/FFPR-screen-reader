@@ -1,3 +1,4 @@
+// check-sources: audio/cue_bank.cpp
 // Offline regression of the real modal sampler and settings menu; no game/window/control.
 #include <windows.h>
 #include <cstdio>
@@ -9,6 +10,7 @@
 
 namespace fixture {
 bool focused = true;
+bool transition = false;
 int game_id = 2;
 bool keys[256]{};
 int key_reads = 0;
@@ -37,7 +39,9 @@ void define(const char*, Fn) {}
 bool defined(const char*) { return false; }
 bool run(const char*) { return false; }
 }
-namespace queries { void define(const char*, std::function<bool()>) {} }
+namespace queries { bool is(const char*) { return fixture::transition; } void define(const char*, std::function<bool()>) {} }
+namespace data { std::string resource(const char*) { return {}; } }
+namespace log_ { void write(const char*, ...) {} }
 namespace frame {
 uint64_t count() { return fixture::tick; }
 double now() { return fixture::tick / 60.0; }
@@ -45,12 +49,28 @@ void subscribe(void (*)(), const char*) {}
 void after_seconds(double, Task task, const char*) { fixture::pending.push_back(std::move(task)); }
 }
 namespace game { Id current() { return static_cast<Id>(fixture::game_id); } }
+namespace fixture { std::vector<int> previews; }
+namespace sound { void preview(cues::Id cue) { fixture::previews.push_back(static_cast<int>(cue)); } }
 namespace input { bool game_window_focused() { return fixture::focused; } }
-namespace modtext { std::wstring T(std::wstring_view key) { return std::wstring(key); } }
+namespace modtext {
+std::wstring T(std::wstring_view key) { return std::wstring(key); }
+std::wstring TF(std::wstring_view key, std::initializer_list<std::wstring> args) {
+    std::wstring result(key);
+    size_t index = 0;
+    for (const auto& arg : args) {
+        const std::wstring token = L"{" + std::to_wstring(index++) + L"}";
+        const size_t at = result.find(token);
+        if (at != result.npos) result.replace(at, token.size(), arg);
+    }
+    return result;
+}
+}
 namespace ffpr {
 void say(std::wstring_view line, bool) { fixture::spoken.emplace_back(line); }
 void say_sequence(std::vector<std::wstring> parts, bool) { for (auto& part : parts) fixture::spoken.push_back(std::move(part)); }
 void say_sequence(std::vector<std::wstring> parts, bool interrupt, speech::Timing) { say_sequence(std::move(parts), interrupt); }
+void say_menu(std::wstring_view line, bool) { fixture::spoken.emplace_back(line); }
+void say_menu_sequence(std::vector<std::wstring> parts, bool, speech::Timing) { for (auto& part : parts) fixture::spoken.push_back(std::move(part)); }
 }
 namespace text {
 std::wstring num(long long value) { return std::to_wstring(value); }
@@ -90,7 +110,10 @@ int main()
     fixture::values[ui::prefs::kStatDeltaMode] = 1;
     const std::map<std::string, std::wstring> moved_settings = {
         {ui::prefs::kAutowalk, L"Navigation"},
+        {ui::prefs::kSpeechEnabled, L"Speech"},
         {ui::prefs::kSpeakAutowalkPath, L"Navigation"},
+        {ui::prefs::kNavigationKeymap, L"Navigation"},
+        {ui::prefs::kTeleportShortcuts, L"Navigation"},
         {ui::prefs::kPathfindingFilterMode, L"Navigation"},
         {ui::prefs::kMapExitFilter, L"Navigation"},
         {ui::prefs::kToLayerFilter, L"Navigation"},
@@ -109,15 +132,35 @@ int main()
         {ui::prefs::kExpCounterVolume, L"Navigation audio"},
     };
     for (int n = 1; n <= 6; ++n) {
+        fixture::values.erase(ui::prefs::kModWarnings);
+        fixture::values.erase(ui::prefs::kNavigationKeymap);
+        fixture::values.erase(ui::prefs::kTeleportShortcuts);
         fixture::game_id = n; ui::mod_menu::initialize();
-        std::wstring section; int modes = 0;
+        std::wstring section; int modes = 0; int warning_rows = 0; int speech_rows = 0;
+        bool first_speech_item = true;
         std::vector<std::wstring> headers;
         std::map<std::string, int> moved_counts;
         const auto& items = ui::mod_menu::st().items;
         for (size_t i = 0; i < items.size(); ++i) {
             const auto& item = items[i];
             if (item.kind == ui::mod_menu::Kind::Header) { section = item.name; headers.push_back(section); }
+            else if (section == L"Speech" && first_speech_item) {
+                first_speech_item = false;
+                expect(item.key && std::string(item.key) == ui::prefs::kSpeechEnabled &&
+                       item.name == L"Game speech" && item.kind == ui::mod_menu::Kind::Toggle && item.bool_def,
+                       "Game speech is the first Speech row and defaults on");
+            }
             if (item.key) {
+                if (std::string(item.key) == ui::prefs::kSpeechEnabled) {
+                    ++speech_rows;
+                    expect(section == L"Speech" && item.kind == ui::mod_menu::Kind::Toggle && item.bool_def,
+                           "Game speech is a default-on Speech toggle");
+                }
+                if (std::string(item.key) == ui::prefs::kModWarnings) {
+                    ++warning_rows;
+                    expect(section == L"Speech" && item.kind == ui::mod_menu::Kind::Toggle && item.bool_def,
+                           "Mod warnings is a default-on Speech toggle");
+                }
                 const auto expected = moved_settings.find(item.key);
                 if (expected != moved_settings.end()) {
                     ++moved_counts[item.key];
@@ -139,6 +182,84 @@ int main()
         }
         expect(headers == std::vector<std::wstring>{L"Speech", L"Navigation", L"Navigation audio", L"Battle"},
                "all-six main category order is Speech, Navigation, Navigation audio, Battle");
+        expect(speech_rows == 1, "all-six menus expose one Game speech row");
+        const auto audio_header = std::find_if(items.begin(), items.end(), [](const auto& item) {
+            return item.kind == ui::mod_menu::Kind::Header && item.name == L"Navigation audio";
+        });
+        expect(audio_header != items.end() && items.back().name == L"Close Menu" && items.back().parent == -1,
+               "all-six root keeps four categories and Close Menu");
+        if (audio_header != items.end()) {
+            const int audio_index = static_cast<int>(audio_header - items.begin());
+            expect(audio_index + 4 < static_cast<int>(items.size()) &&
+                   items[audio_index + 1].name == L"Navigation audio master" &&
+                   items[audio_index + 1].kind == ui::mod_menu::Kind::Toggle && items[audio_index + 1].bool_def &&
+                   items[audio_index + 2].name == L"HRTF" && items[audio_index + 2].kind == ui::mod_menu::Kind::Toggle &&
+                   !items[audio_index + 2].bool_def &&
+                   items[audio_index + 3].name == L"Soundscape" && items[audio_index + 3].kind == ui::mod_menu::Kind::Toggle &&
+                   !items[audio_index + 3].bool_def &&
+                   items[audio_index + 4].name == L"Soundscape settings" &&
+                   items[audio_index + 4].kind == ui::mod_menu::Kind::Submenu &&
+                   items[audio_index + 1].parent == audio_index && items[audio_index + 3].parent == audio_index,
+                   "Navigation audio starts with its independent master, HRTF, Soundscape switch and settings submenu");
+            const int soundscape_index = audio_index + 4;
+            const auto distance = std::find_if(items.begin(), items.end(), [&](const auto& item) {
+                return item.parent == soundscape_index && item.key && std::string(item.key) == "SoundscapeDistance";
+            });
+            expect(distance != items.end() && distance->kind == ui::mod_menu::Kind::Range &&
+                   distance->int_def == 10 && distance->int_min == 5 && distance->int_max == 25 && distance->int_step == 5,
+                   "Soundscape distance defaults to 10 and uses five-step bounds from 5 to 25");
+            if (distance != items.end()) {
+                fixture::values.erase("SoundscapeDistance");
+                expect(ui::mod_menu::int_value(*distance) == 10, "Soundscape distance reads its default value");
+                ui::mod_menu::adjust(*distance, -1);
+                expect(fixture::values["SoundscapeDistance"] == 5, "Soundscape distance clamps downward at 5");
+                ui::mod_menu::adjust(*distance, -1);
+                expect(fixture::values["SoundscapeDistance"] == 5, "Soundscape distance cannot move below 5");
+                ui::mod_menu::adjust(*distance, 1);
+                expect(fixture::values["SoundscapeDistance"] == 10, "Soundscape distance adjusts in five-step increments");
+                fixture::values["SoundscapeDistance"] = 25;
+                ui::mod_menu::adjust(*distance, 1);
+                expect(fixture::values["SoundscapeDistance"] == 25, "Soundscape distance clamps upward at 25");
+            }
+
+            int cue_count = 0;
+            const auto preview_count_before = fixture::previews.size();
+            for (size_t cue_index = sound::cues::first_entity; cue_index < sound::cues::count; ++cue_index) {
+                const auto& cue = sound::cues::definitions[cue_index];
+                const auto toggle = std::find_if(items.begin(), items.end(), [&](const auto& item) {
+                    return item.parent == soundscape_index && item.key && std::string(item.key) == cue.toggle;
+                });
+                const auto volume = std::find_if(items.begin(), items.end(), [&](const auto& item) {
+                    return item.parent == soundscape_index && item.key && std::string(item.key) == cue.volume;
+                });
+                const std::wstring label = cue.label;
+                const auto preview = std::find_if(items.begin(), items.end(), [&](const auto& item) {
+                    return item.parent == soundscape_index && item.kind == ui::mod_menu::Kind::Action &&
+                           item.name == L"Preview " + label;
+                });
+                expect(toggle != items.end() && toggle->kind == ui::mod_menu::Kind::Toggle && toggle->bool_def &&
+                       toggle->name == label && volume != items.end() && volume->kind == ui::mod_menu::Kind::Volume &&
+                       volume->name == label + L" volume" && volume->int_def == 50 && volume->int_step == 5 &&
+                       preview != items.end() && preview->cue == static_cast<sound::cues::Id>(cue_index),
+                       "each shared cue has an independent toggle, volume and matching preview");
+                if (preview != items.end()) ui::mod_menu::activate(*preview);
+                ++cue_count;
+            }
+            expect(cue_count == static_cast<int>(sound::cues::entity_count) &&
+                   fixture::previews.size() == preview_count_before + sound::cues::entity_count,
+                   "every entity preview dispatches through the shared cue bank");
+
+            auto& menu_state = ui::mod_menu::st();
+            menu_state.open = true; menu_state.page = -1; menu_state.index = audio_index;
+            ui::mod_menu::enter_page(soundscape_index);
+            expect(menu_state.page == soundscape_index && menu_state.index >= 0 &&
+                   items[static_cast<size_t>(menu_state.index)].parent == soundscape_index,
+                   "Soundscape settings submenu opens on its first child row");
+            ui::mod_menu::back();
+            expect(menu_state.page == audio_index && menu_state.index == soundscape_index,
+                   "Back returns to Navigation audio with Soundscape settings focused");
+            menu_state.open = false; menu_state.page = -1;
+        }
         for (const auto& [key, category] : moved_settings) {
             const bool conditional = (key == ui::prefs::kExpCounter || key == ui::prefs::kExpCounterVolume) ? n != 2 :
                                      (key == ui::prefs::kLandingPings || key == ui::prefs::kLandingPingVolume) ? n != 4 && n != 6 : true;
@@ -164,8 +285,76 @@ int main()
         }
         expect(modes == 1 && ui::prefs::stat_delta_mode() == 1,
                "moving the setting preserves the saved Brief preference without duplicate entries");
+        int keymap_rows = 0, teleport_rows = 0, beacon_rows=0;
+        for (const auto& item : items) {
+            if (item.kind == ui::mod_menu::Kind::Header) section = item.name;
+            if (!item.key) continue;
+            if(std::string(item.key)==ui::prefs::kBeaconMode) {
+                ++beacon_rows;
+                expect(section==L"Navigation audio"&&item.kind==ui::mod_menu::Kind::Enum&&item.options.size()==2&&
+                    std::wstring(item.options[0])==L"Follow route"&&std::wstring(item.options[1])==L"Object location"&&
+                    item.int_def==0&&item.int_max==1,"all six games expose one persistent route/object beacon choice");
+                fixture::values.erase(ui::prefs::kBeaconMode);
+                expect(ui::prefs::beacon_mode()==0,"beacon mode preserves current route behavior by default");
+                ui::mod_menu::adjust(item,1);expect(ui::prefs::beacon_mode()==1,"menu mode switch selects object location");
+                fixture::values["HRTF"]=1;expect(ui::prefs::beacon_mode()==1,"beacon behavior is shared across HRTF volume banks");
+                fixture::values["HRTF"]=0;
+            }
+            if (std::string(item.key) == ui::prefs::kNavigationKeymap) {
+                ++keymap_rows;
+                expect(section == L"Navigation" && item.kind == ui::mod_menu::Kind::Enum &&
+                       item.options.size() == 2 && std::wstring(item.options[0]) == L"Letters" &&
+                       std::wstring(item.options[1]) == L"Brackets and backslash" &&
+                       item.int_def == 0 && item.int_max == 1,
+                       "all-six Navigation keymap row has translated choices and default Letters");
+                expect(ui::prefs::navigation_keymap() == 0, "Navigation keymap defaults to Letters");
+                ui::mod_menu::adjust(item, 1);
+                expect(fixture::values[ui::prefs::kNavigationKeymap] == 1 && ui::prefs::navigation_keymap() == 1,
+                       "Navigation keymap enum adjustment persists Brackets and backslash");
+                fixture::values[ui::prefs::kNavigationKeymap] = 9;
+                expect(ui::prefs::navigation_keymap() == 1, "Navigation keymap getter clamps stored values");
+            }
+            if (std::string(item.key) == ui::prefs::kTeleportShortcuts) {
+                ++teleport_rows;
+                expect(section == L"Navigation" && item.kind == ui::mod_menu::Kind::Toggle && !item.bool_def,
+                       "all-six Teleport shortcuts row is under Navigation and defaults off");
+                expect(!ui::prefs::teleport_shortcuts_enabled(), "Teleport shortcuts defaults off");
+                ui::mod_menu::flip(item);
+                expect(fixture::values[ui::prefs::kTeleportShortcuts] == 1 && ui::prefs::teleport_shortcuts_enabled(),
+                       "Teleport shortcuts toggle persists its enabled value");
+            }
+        }
+        // Every existing volume row changes bank in place, including the nested
+        // master/categories. Range/enums/toggles are deliberately not banked.
+        const auto row_count=items.size();
+        for(const auto& item:items) if(item.kind==ui::mod_menu::Kind::Volume) {
+            fixture::values["HRTF"]=0;ui::mod_menu::set_int(item,30);
+            fixture::values.erase(std::string("HRTF.")+item.key);
+            fixture::values["HRTF"]=1;
+            expect(ui::mod_menu::int_value(item)==50,"new HRTF bank has independent default volume in each existing row");
+            ui::mod_menu::set_int(item,85);
+            expect(ui::mod_menu::int_value(item)==85&&fixture::values[item.key]==30,"HRTF adjustment preserves stereo bank");
+            fixture::values["HRTF"]=0;
+            expect(ui::mod_menu::int_value(item)==30,"switching HRTF off restores saved stereo volume");
+            ui::mod_menu::set_int(item,15);fixture::values["HRTF"]=1;
+            expect(ui::mod_menu::int_value(item)==85,"stereo adjustment cannot change HRTF volume");
+            ui::mod_menu::set_int(item,-1);expect(ui::mod_menu::int_value(item)==0,"HRTF volume preserves zero mute");
+            ui::mod_menu::set_int(item,101);expect(ui::mod_menu::int_value(item)==100,"HRTF slider stays within original bounds");
+        }
+        const auto shared_range=std::find_if(items.begin(),items.end(),[](const auto& item){return item.kind==ui::mod_menu::Kind::Range;});
+        if(shared_range!=items.end()) {
+            fixture::values["HRTF"]=1;ui::mod_menu::set_int(*shared_range,15);fixture::values["HRTF"]=0;
+            expect(ui::mod_menu::int_value(*shared_range)==15&&!fixture::values.contains("HRTF.SoundscapeDistance"),"soundscape range stays shared across HRTF modes");
+        }
+        fixture::values["HRTF"]=0;
+        expect(items.size()==row_count,"mode-specific volumes add no menu rows or configuration screens");
+        expect(keymap_rows == 1 && teleport_rows == 1 && beacon_rows==1, "all six games expose one row for each navigation setting");
+        expect(warning_rows == 1 && ui::prefs::mod_warnings_enabled(),
+               "Mod warnings has one Speech row and defaults on when no saved preference exists");
+        fixture::values[ui::prefs::kModWarnings] = 0;
+        expect(!ui::prefs::mod_warnings_enabled(), "Mod warnings reads its saved off preference");
     }
-    fixture::values.clear(); fixture::game_id = 2;
+    fixture::values.clear(); fixture::spoken.clear(); fixture::pending.clear(); fixture::game_id = 2;
     ui::mod_menu::initialize();
     fixture::keys[VK_F8] = true;
     ui::mod_menu::open();
@@ -180,6 +369,15 @@ int main()
     expect(fixture::spoken[fixture::spoken.size()-2] == L"Speech", "submenu headline precedes its initial setting");
     const auto initial_name = fixture::spoken.back();
     const size_t speech_count = fixture::spoken.size();
+    fixture::transition = true;
+    fixture::keys[VK_DOWN] = fixture::keys[VK_RETURN] = true;
+    tick(); ui::mod_menu::handle_input();
+    expect(fixture::spoken.size() == speech_count && fixture::values.empty(),
+        "loading blocks main, late and direct modal handlers without changing settings");
+    fixture::transition = false; tick();
+    expect(fixture::spoken.size() == speech_count && fixture::values.empty(),
+        "held modal input is seeded during loading and cannot replay on return");
+    fixture::keys[VK_DOWN] = fixture::keys[VK_RETURN] = false; tick();
 
     fixture::focused = false;
     const int read_count = fixture::key_reads;

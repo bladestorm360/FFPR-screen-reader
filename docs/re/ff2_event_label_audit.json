@@ -4802,8 +4802,8 @@
     "id": 29,
     "raw": "落とし穴1",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30071_3",
@@ -6908,8 +6908,8 @@
     "id": 8,
     "raw": "落とし穴",
     "type": 2,
-    "label": "Scene trigger",
-    "reason": "script action; outcome withheld"
+    "label": "Trap",
+    "reason": "environmental pit/drop identifier; story and reward withheld"
   },
   {
     "submap": "Map_30141_2",

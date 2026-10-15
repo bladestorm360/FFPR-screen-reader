@@ -1,7 +1,5 @@
 #include "../../core/game.h"
 #include "../../core/hooks.h"
-#include "../../core/log.h"
-#include "../../core/input/input.h"
 
 // FINAL FANTASY III (FF3): the game module.
 //
@@ -10,7 +8,7 @@
 // classes) are separate source files in this folder; each registers itself with a core::Install
 // whose game mask is game::kFF3, so nothing in this file needs to list them.
 //
-// install() adds FF3's own keys (Core/InputManager.cs of the old FF3 mod).
+// Keyboard bindings use the shared FF1 table, including R for dialogue and F6 for beacons.
 namespace {
 
 /// FF3's transportation master has no message_id for its canoe (id 2, type 5 "Content"); its
@@ -33,19 +31,6 @@ void configure(game::Flags& f)
     hooks::disable("FieldPlayer.GetOff");
 }
 
-int install()
-{
-    using input::Context;
-    using input::Key;
-    using input::Mod;
-    // 9: beacon toggle (FF3-FF5), field only, beside F6.
-    input::add_binding(Key::Alpha9, Mod::None, Context::Field, "Mod.ToggleAudioBeacons", "Toggle audio beacons (alt)");
-    // R on the status screen repeats the current stat (FF3 only); elsewhere R repeats dialogue.
-    input::add_binding(Key::R, Mod::None, Context::Status, "StatusNavigationReader.ReadCurrentStat", "Repeat current stat");
-    LOGF("[FF3] module keys added (9, R on status)");
-    return 0;
-}
-
 } // namespace
 
 extern const game::Module kFF3Module = {
@@ -54,5 +39,5 @@ extern const game::Module kFF3Module = {
     "FFIII_ScreenReader",
     "FFIII_ScreenReader.dll",
     &configure,
-    &install,
+    nullptr,
 };

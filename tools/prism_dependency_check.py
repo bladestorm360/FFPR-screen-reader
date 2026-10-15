@@ -111,22 +111,36 @@ with tempfile.TemporaryDirectory(prefix='prism-check-', dir=scratch_parent) as t
     (mod / 'third_party/runtime/SDL3.dll').write_bytes(b'fake SDL; never loaded')
     (mod / 'prism.lock.json').write_text(json.dumps(lock), encoding='utf-8')
     shutil.copy2(ROOT / 'tools/prism_dependency.py', mod / 'tools/prism_dependency.py')
+    shutil.copy2(ROOT / 'tools/openal_dependency.py', mod / 'tools/openal_dependency.py')
+    openal = mod / 'third_party/openal-soft'
+    openal.mkdir()
+    openal_files = {}
+    for name in json.loads((ROOT / 'openal.lock.json').read_text(encoding='utf-8'))['files']:
+        (openal / name).write_bytes(('fake OpenAL payload, never loaded: ' + name).encode())
+        openal_files[name] = dependency.digest(openal / name)
+    (mod / 'openal.lock.json').write_text(json.dumps({'version': 'fake', 'files': openal_files}), encoding='utf-8')
     steam = scratch / 'games'
     target = steam / dependency.GAMES[0][0]
     target.mkdir(parents=True)
     (target / dependency.GAMES[0][1]).write_bytes(b'fake executable; never launched')
     dependency.install(target, lock, package)
-    before = snapshot(target / '.ffpr-deps')
+    before = snapshot(target / '.ffpr-deps/prism')
     script = (ROOT / 'deploy.bat').read_text(encoding='utf-8').replace(
         'set "STEAM=D:\\Games\\SteamLibrary\\steamapps\\common"', 'set "STEAM=' + str(steam) + '"')
     (mod / 'deploy.bat').write_text(script, encoding='utf-8')
     env = dict(os.environ, FFPR_GAME_ROOT=str(steam))
+    previous_openal = None
     for version in [b'fake mod two', b'fake mod three']:
         (mod / 'out/hid.dll').write_bytes(version)
         result = subprocess.run(['cmd.exe', '/d', '/c', 'deploy.bat', 'ff1'], cwd=mod,
                                 env=env, capture_output=True, text=True)
-        expect(result.returncode == 0 and (target / 'hid.dll').read_bytes() == version, 'actual normal deploy updates only the mod')
-        expect(snapshot(target / '.ffpr-deps') == before, 'actual normal deploy preserves dependency hashes and timestamps')
+        expect(result.returncode == 0 and (target / 'hid.dll').read_bytes() == version, 'actual normal deploy copies mod and private OpenAL payload')
+        expect(snapshot(target / '.ffpr-deps/prism') == before, 'actual normal deploy preserves every Prism hash and timestamp')
+        actual_openal = snapshot(target / '.ffpr-deps/openal-soft')
+        expect({name: value[0] for name,value in actual_openal.items()} == openal_files, 'actual deploy includes every pinned OpenAL runtime/notice')
+        if previous_openal is not None:
+            expect(actual_openal == previous_openal, 'unchanged OpenAL deployment performs zero writes')
+        previous_openal = actual_openal
     (target / '.ffpr-deps/prism/prism.dll').unlink()
     old_mod = (target / 'hid.dll').read_bytes()
     result = subprocess.run(['cmd.exe', '/d', '/c', 'deploy.bat', 'ff1'], cwd=mod,
@@ -151,8 +165,9 @@ with tempfile.TemporaryDirectory(prefix='prism-check-', dir=scratch_parent) as t
     finally:
         sys.argv = argv
     with zipfile.ZipFile(mod / 'releases/FFPR_ScreenReader_offline-check.zip') as archive:
-        expect(set(archive.namelist()) == {'hid.dll', 'SDL3.dll', 'MinHook_LICENSE.txt', 'readme.md'},
-               'actual archive excludes Prism, Tolk, controller helpers and dependency receipts')
+        expected = {'hid.dll', 'SDL3.dll', 'MinHook_LICENSE.txt', 'readme.md'} | {'.ffpr-deps/openal-soft/' + name for name in openal_files}
+        expect(set(archive.namelist()) == expected,
+               'actual archive includes complete OpenAL, excludes Prism/Tolk/helpers/receipts')
 
 print('Prism dependency: idempotence/adoption/conflict/rollback, actual deploy and archive separation: %d failures' % failures)
 raise SystemExit(1 if failures else 0)

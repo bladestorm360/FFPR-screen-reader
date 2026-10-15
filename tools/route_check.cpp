@@ -405,6 +405,34 @@ int wmain(int argc, wchar_t** argv)
 {
     check_event_warnings();
     {
+        b::Submap map{}; map.width = map.height = 3;
+        b::Grids grid; grid.width = grid.height = 3;
+        grid.collision[1].assign(9, 0);
+        r::Request req; req.submap = &map;
+        const r::Cell landing{1, 1, 1};
+        expect(!r::safe_landing(req, grid, landing), "teleport refuses a wall tile");
+        grid.collision[1][4] = 15;
+        expect(!r::safe_landing(req, grid, landing), "teleport refuses an open tile enclosed by walls");
+        grid.collision[1][5] = 15;
+        expect(r::safe_landing(req, grid, landing), "teleport accepts clear ground with a legal exit");
+        grid.collision[1][4] = 1;
+        expect(!r::safe_landing(req, grid, landing), "teleport checks actual direction masks, not merely adjacent open ground");
+        grid.collision[1][4] = 15;
+        req.blocked = {landing};
+        expect(!r::safe_landing(req, grid, landing), "teleport refuses a live occupied landing");
+        req.blocked = {{1, 2, 1}};
+        expect(!r::safe_landing(req, grid, landing), "teleport refuses a landing whose only exit is occupied");
+        req.blocked.clear(); req.live_hazards = true; req.hazards = {landing};
+        expect(!r::safe_landing(req, grid, landing), "teleport refuses live event triggers");
+        req.hazards.clear(); grid.traps[1].assign(9, 0); grid.traps[1][4] = 1;
+        expect(!r::safe_landing(req, grid, landing), "teleport refuses a pitfall");
+        expect(!r::safe_landing(req, grid, {1, -1, 0}) && !r::safe_landing(req, grid, {1, 3, 0}) &&
+               !r::safe_landing(req, grid, {4, 1, 1}), "teleport refuses map boundaries and invalid layers");
+        grid.traps[1][4] = 0; grid.collision[1][4] = 0; grid.passage[1].assign(9, 0); grid.passage[1][4] = 1;
+        req.passages = true;
+        expect(r::safe_landing(req, grid, landing), "teleport uses the existing hidden-passage movement rule");
+    }
+    {
         namespace progress = field::route_progress;
         progress::Phase p;
         p.cells = {{1, 2, 3}, {1, 3, 3}, {1, 3, 2}};

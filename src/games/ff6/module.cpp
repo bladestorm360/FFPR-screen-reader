@@ -1,7 +1,6 @@
 #include "../../core/core.h"
 #include "../../core/game.h"
 #include "../../core/hooks.h"
-#include "../../core/input/input.h"
 
 // FINAL FANTASY VI (FF6): the game module.
 //
@@ -22,21 +21,10 @@ void configure(game::Flags& f)
     // (MapDataUtility.ParseHiddenPassageMappingData exists); the core retries a failed search
     // on the collision grid. FF6's map data was not checked for passage layers.
     f.has_hidden_passages = true;
-    f.timer_freeze = true;         // FF6 Shift+T (TimerPatches.cs)
+    f.timer_freeze = true;         // FF6 Shift+F5 (TimerPatches.cs)
     f.bestiary_steal = true;       // the bestiary lists stealable items (Steal ability)
     // FF6 has no FieldAirShip class: has_airship stays false.
 }
-
-// FF6's own key bindings beyond the core table (docs/INPUT_BINDINGS.md): 9 toggles the audio
-// beacons on the field, like F6 (FF6 InputManager).
-int install_bindings()
-{
-    input::add_binding(input::Key::Alpha9, input::Mod::None, input::Context::Field, "Mod.ToggleAudioBeacons",
-                       "Toggle audio beacons");
-    return 0;
-}
-
-core::Install s_bindings{"FF6.Bindings", &install_bindings, 500, game::kFF6};
 
 // The details key's game-module entry ("GameModule.HasDetails" / "GameModule.Details", read by
 // the core's I-key cascade): FF6 has two screens with their own details, the ability/esper

@@ -19,10 +19,12 @@
 // anything else = the literal. Map ids are the map master's (tools/mapdump/<game>_master/map.txt).
 #include <string>
 #include <vector>
+#include <climits>
 #include "baked_nav.h"
 #include "field_api.h"
 #include "field_internal.h"
 #include "map_names.h"
+#include "scene_events.h"
 #include "../core.h"
 #include "../frame.h"
 #include "../hooks.h"
@@ -31,6 +33,7 @@
 #include "../modtext.h"
 #include "../say.h"
 #include "../text.h"
+#include "../ui/preferences.h"
 
 namespace field::puzzle_guide {
 namespace {
@@ -54,6 +57,12 @@ bool g_loaded = false;
 int g_active = -1;         // index into g_puzzles
 int g_step = 0;
 int g_arrived_step = -1;   // the step whose arrival was already announced
+uint64_t g_context = 0;
+bool field_ready() {
+    return !queries::is("GameStatePatches.IsInputTransitionBlocked") &&
+        queries::is("GameStatePatches.IsFieldNavigationReady") &&
+        !queries::is("BattleStateHelper.IsInBattle");
+}
 
 void load()
 {
@@ -115,6 +124,7 @@ std::wstring puzzle_name(const Puzzle& p)
 /// "Step 2 of 4: Step on switch 2. North 3, East 1."
 void announce_step(bool interrupt)
 {
+    if (!field_ready()) return;
     const Puzzle* p = active();
     if (!p) return;
     if (g_step >= static_cast<int>(p->steps.size())) return;
@@ -126,17 +136,21 @@ void announce_step(bool interrupt)
     goal.cell = s.cell;
     goal.examine = s.examine;
     const int step = g_step;
-    baked_nav::request_route(goal, TargetKind::Infer, L"", [p, step, line = std::move(line), interrupt](PathInfo info) mutable {
-        if (active() != p || g_step != step) return;
+    const auto context = g_context;
+    baked_nav::request_route(goal, TargetKind::Infer, L"", [p, step, context, line = std::move(line), interrupt](PathInfo info) mutable {
+        if (!field_ready() || context != g_context || active() != p || g_step != step) return;
         if (info.success) {
             if (!info.description.empty() && info.description != T(L"No movement needed")) line += L". " + info.description;
         } else line += L". " + (!info.reason.empty() ? info.reason : T(L"No path to the next step"));
-        ffpr::say(line, interrupt);
+        if (ui::prefs::mod_warnings_enabled() && !info.warning.empty())
+            ffpr::say_sequence({info.warning, std::move(line)}, interrupt);
+        else ffpr::say(line, interrupt);
     }, false);
 }
 
 void start_or_repeat()
 {
+    if (!field_ready()) return;
     load();
     if (!g_puzzles) { ffpr::say(T(L"Navigation data is loading")); return; }
     if (!active()) {
@@ -148,6 +162,7 @@ void start_or_repeat()
             for (const Step& s : p.steps) here = here || s.map_id == map_id;
             if (!here) continue;
             g_active = static_cast<int>(i);
+            ++g_context;
             g_step = 0;
             g_arrived_step = -1;
             break;
@@ -165,7 +180,12 @@ void start_or_repeat()
 
 void stop()
 {
+    if (!field_ready()) return;
     if (!active()) return;
+    const auto& step = active()->steps[static_cast<size_t>(g_step)];
+    baked_nav::MapGoal goal; goal.map_id=step.map_id;goal.cell=step.cell;
+    baked_nav::clear_preview_destination(goal);
+    ++g_context;
     g_active = -1;
     g_step = 0;
     g_arrived_step = -1;
@@ -173,8 +193,9 @@ void stop()
 }
 
 /// Each movement input: has the player reached the current step?
-void on_move()
+void on_move(bool interrupt = true)
 {
+    if (!field_ready()) return;
     const Puzzle* p = active();
     if (!p || g_step >= static_cast<int>(p->steps.size()) || g_arrived_step == g_step) return;
     const Step& s = p->steps[static_cast<size_t>(g_step)];
@@ -188,13 +209,16 @@ void on_move()
 
     g_arrived_step = g_step;
     if (g_step + 1 >= static_cast<int>(p->steps.size())) {
-        ffpr::say(T(L"Puzzle guide finished"), true);
+        baked_nav::MapGoal goal; goal.map_id=s.map_id;goal.cell=s.cell;
+        baked_nav::clear_preview_destination(goal);
+        ++g_context;
+        ffpr::say(T(L"Puzzle guide finished"), interrupt);
         g_active = -1;
         g_step = 0;
         g_arrived_step = -1;
         return;
     }
-    ffpr::say(T(L"Step done"), true);
+    ffpr::say(T(L"Step done"), interrupt);
     ++g_step;
     announce_step(false);
 }
@@ -203,7 +227,16 @@ void on_map_changed()
 {
     if (!active()) return;
     // After the map name ("Entering X"): the step with directions from the new position.
-    frame::after_seconds(0.8, [] { if (active()) announce_step(false); }, "PuzzleGuide.MapChanged");
+    const auto context = g_context;
+    frame::every_frame([context] {
+        if (context != g_context || !active()) return false;
+        if (!field_ready()) return true;
+        const int step = g_step;
+        on_move(false);
+        if (!active() || g_step != step) return false;
+        announce_step(false);
+        return false;
+    }, "PuzzleGuide.MapChanged", INT_MAX);
 }
 
 int install()
@@ -213,6 +246,13 @@ int install()
     actions::define("PuzzleGuide.OnMove", [] { hooks::guarded("PuzzleGuide.OnMove", [] { on_move(); }); });
     queries::define("PuzzleGuide.IsActive", [] { return active() != nullptr; });
     events::on(events::Kind::MapChanged, [] { hooks::guarded("PuzzleGuide.MapChanged", [] { on_map_changed(); }); });
+    events::on(events::Kind::MapChanging, [] { ++g_context; });
+    events::on(events::Kind::BattleStart, [] { ++g_context; frame::cancel_label("PuzzleGuide.MapChanged"); });
+    events::on(events::Kind::SceneLoaded, [] {
+        if (scene_name() != L"Title") return;
+        ++g_context; g_active=-1; g_step=0; g_arrived_step=-1;
+        frame::cancel_label("PuzzleGuide.MapChanged");
+    });
     return 0;
 }
 core::Install s_install{"PuzzleGuide", &install, 130};

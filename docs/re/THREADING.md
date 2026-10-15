@@ -1,5 +1,22 @@
 # Read-only snapshots and worker ownership
 
+October 15 soundscape update: the native owner copies only published pathfinder entries,
+at most 512 entries/0.25 ms per slice, into four worker-prepared/recycled buffers. This is
+part of fixed subscriber/audio work before the existing 0.5 ms deferred-dispatch allowance;
+it is an additional bounded contribution, not a claim that total callbacks cost 0.25 ms.
+The audio worker owns custom/embedded WAV decoding, voice clocks, mixing and OpenAL Soft
+HRTF loopback into the existing SDL output. No native pointers cross that boundary;
+generation cancellation remains independent of queue capacity/driver stalls. Actual HRTF,
+capture, overload and fake-SDL measurements, state/count/age limits and remaining gameplay
+performance gaps are recorded in [SOUNDSCAPE.md](SOUNDSCAPE.md#final-verification-receipt).
+Canonical build/all checks and isolated smoke pass. The user lifted the hold; all six
+games are deployed/hash-verified, with gameplay/performance confirmation still pending.
+
+Current October 14 investigation: intermittent FF2 world-map delays remain open;
+earlier qualitative confirmations do not cover this reported session. The new input
+transition guard is built/offline-verified and deployed/hash-verified in all six.
+[Diagnosis, evidence and scoped remaining fix plan](#intermittent-world-refresh-and-transition-input-october-14).
+
 October 13 exit follow-up adds owned route-distance/grouping snapshots, native
 stair masks and FF6 cropped room geometry. [Evidence, limits and validation](MAP_EXITS.md).
 
@@ -479,3 +496,181 @@ and their specific checks were removed, restoring the confirmed existing native 
 and bounded owner capture/review service. No new timer, polling, hidden-number fallback,
 thread route or runtime latency claim remains from that investigation. Source/build/
 deployment recovery and mastery evidence are in the page-count/mastery follow-up record.
+
+
+## Intermittent world refresh and transition input, October 14
+
+Scope: user requested diagnosis and a fix plan for intermittent world-map movement
+lag and delayed post-battle recovery, then explicitly requested an input guard during
+map/battle transitions and loading. This section records that first guard phase.
+The subsequent trap recovery/routing repair and bounded Luna warning-menu handoff
+are recorded in [TRAPS.md](TRAPS.md). The broader world refresh correction below
+remains planned. No game launch/control or runtime probe.
+
+### Own-session evidence and limits
+
+The newest local session was FF2, beginning 2026-10-14 12:10:59, installed October 14
+06:25:04 build. Archived initial log and FF3's own hit-count log are in
+`build_check/pathfinding_diagnosis_2026_10_14/`; no tester logs/saves were read.
+The FF2 log continued growing during the investigation. Initial line references below
+remain valid in that session. The later Deist Cavern portions predominantly show
+~33–85 ms direction submissions, consistent with the user's world-only qualification;
+this is not an all-map performance guarantee.
+
+| FF2 world directions | Request to SDK submission | Route capture/compute/total |
+| --- | --- | --- |
+| Generation 75, log lines 648–651 | 1177.416 ms | 16.840 / 0.052 / 33.631 ms |
+| Generation 79, lines 668–671 | 1178.691 ms | 16.914 / 0.055 / 33.338 ms |
+| Generation 83, lines 688–691 | 1181.408 ms | 16.901 / 0.052 / 33.477 ms |
+
+Adjacent generations submit in ~33–50 ms. Speech queue cost in the three delayed cases
+is 0.136–0.177 ms and SDK call cost 0.370–0.442 ms. The ~1.14-second excess precedes
+`request_route`; it is not the logged route computation or speech ingress. SDK submission
+is not audible completion. Existing Directions `data-age` is populated with request time,
+so its duplicated request latency does not independently establish snapshot freshness.
+
+After the first battle, native state 3 returns at 334053.125 (line 565). The scanner logs
+38 live rows at 334053.750 and repeatedly through 334062.546; a menu round trip and manual
+rescan occur in between. Category generation 62 finally submits at 334063.140 after
+607.604 ms for that particular request. The live-row `ready` lines measure registry
+capture, not completion of asynchronous category/filter publication. Therefore they do
+not prove usable navigation was ready during that interval. We cannot assign the entire
+~10 seconds to one request or prove which intervening key belonged to the failed return:
+pre-dispatch ignored keys, filter stages and readiness reasons are not correlated in
+this log. Second battle return at 334099.046 is followed by a fast generation 94 at
+334100.453 with 33.520-ms request-to-submit. User confirms the delay is intermittent
+and both availability and lag improve when refresh finally completes.
+
+### Production paths and reproduced defects
+
+- `entity_nav.cpp::refresh_entities_if_needed` calls `scan_entities` for every navigation
+  request. Each completed scan reaches `scanner::finish_scan -> apply_filter ->
+  cancel_filter`, cancelling the preceding category preparation. Native row collection
+  is tiny in this case, so repeated keys can restart preparation faster than it finishes.
+- `entity_scanner.cpp::when_filter_ready(existing_selection=true)` skips the full list
+  wait only if `g_views_ready` is true. `apply_filter` publication clears that flag when
+  the live player pose differs from its captured origin and starts another filter.
+  The selected object may still be alive and current, yet directions fall back to a
+  full-list wait. This is the missing case in the October 14 FF6 bypass. Previous fixture
+  coverage exercised movement with readiness still true, not stale-origin publication.
+- `BattleStart` cancels the live scan, while `scanner::needs_scan` only checks map ID and
+  whether a scan is running. Returning to the same map can therefore skip automatic
+  revalidation despite cancelled/unready filter work. First input starts work instead;
+  repeated inputs can then cause the cancellation cycle above. This is a source-backed
+  recovery defect consistent with the user's report, not an exact traced attribution of
+  every silent second in this session.
+- `baked_nav.cpp::exit_distances` may call full `boarding_route` separately for each
+  inaccessible world exit in the Vehicles filter. That work repeats target-area floods,
+  vehicle approaches, riding floods, landing scans and path reconstruction. User settings
+  are PathfindingFilter=true, mode=2 (with vehicles), MapExitFilter=false, Autowalk=false.
+  Earlier all-six performance fixtures covered boarded vehicles or walking without
+  parked candidates; they did not model this walking-plus-parked-ship list preparation.
+- Cancellation supplied to `exit_distances` reaches its initial flood and outer target
+  loop. `ExitSnapshot.route` has no attached epoch, while boarding's riding flood and
+  landing scan use `planning_cancelled()`. Those inner stages therefore do not see that
+  filter cancellation. Rejected results stay rejected by the owner epoch, but obsolete
+  compute can still occupy the serial Navigation lane before an interactive request.
+
+Actual scanner diagnosis fixture results (`scanner_diagnosis.txt`): stale world-origin
+publication leaves views_ready=0, selected_alive=1, directions_delivered=0 and
+filter_pending=1. Stable publication then delivers the directions. Twenty actual
+`finish_scan` calls before worker delivery advance the filter generation twenty times,
+queue twenty fixture jobs and deliver no directions; stopping those refresh requests
+allows publication and delivery. Worker native-call count is zero. The fixture uses real
+scanner capture/publication/wait logic; native owners, flood computation and worker
+scheduling are modeled boundaries, not a measurement of Unity's collection or time.
+
+Actual real-bake `exit_distances` fixture (`world_filter_diagnosis.txt`), FF2 origin
+(216,40), canoe enabled, 150 baked candidate exits: 0.494 ms without a parked ship versus
+101.299 ms with a ship on the nearest legal water cell (210,40). Both return three
+reachable exits under the fixture flags. This is representative workload evidence, not
+a replay of the user's exact ship position, nine live gates, story flags or 38 live rows;
+it does not account for the full observed ~1.14-second delay. The missing inner epoch is
+also demonstrated. No universal target or runtime speedup is inferred. Temporary fixture
+sources are archived in the same evidence directory, copied into `tools/*_check.cpp` for
+canonical compilation and removed afterward. Their binaries remain under `out/checks`.
+
+### Implemented transition input guard
+
+`system::input_transition_blocked` uses the existing cached native main-game manager and
+FadeManager.IsFadeFinish. A native-owner nesting counter blocks input throughout the
+original ChangeState call, including reentrant callbacks before the new state settles.
+Matching all-six dumps give Init=0, ChangeMap=1, FieldReady=2, Event=12, Battle=13 and
+GotoTitle=14. Construction/title states and Event/encounter preparation block mod input;
+visible event dialogue remains manually reviewable. Any active fade blocks input even
+while GetCurrentState still reports Player/Transport/Battle or a menu. Stable title,
+field, vehicle, menu, naming, dialogue, battle and results controls remain available.
+
+All keyboard binding dispatch and function-key entry, controller routing, mod mode,
+modal input (including late/direct handlers), entity navigation and waypoint context
+entry use the shared guard. Blocked entity actions return before cache refresh, scan,
+setting action, speech or readiness work. Pending readiness callbacks retire during a
+transition; map/battle entry advances navigation speech identity. Completed route speech
+rechecks its context. Autowalk's former loading-time second-request exception is removed;
+its native lifecycle/route-transition handling is preserved. Controller pending clicks
+are retired and held LT/stick state is seeded, so held loading input cannot become a new
+navigation request on return. Mod modal held keys are seeded similarly.
+
+This suspends player-triggered mod actions; native observation, cancellation, automatic
+rendered speech and legitimate post-readiness map capture still have their existing
+producers. The patch does not promise that no hook executes during loading. No game
+thread waits, new scene search, worker/native-pointer transfer, timer, input injection,
+text deduplication, dependency upgrade, bake or save change is introduced.
+
+Canonical build/all regressions pass: 6,724 native names, zero missing/undefined wiring.
+`transition_input_check` exercises the actual complete keyboard registry/router and
+shows zero action/speech/native-cache/UI-handler work while blocked, no held-LT replay,
+and working fresh keyboard/LT input afterward. Actual native transition, scanner,
+category/route speech, modal main/late/direct-handler and high-hit regressions pass.
+Isolated DLL smoke passes all 47 forwarding exports and normal host exit. The first
+sandboxed build stopped progressing at file-glob validation and was cancelled; the
+canonical build completed outside the sandbox. New input-fixture duplicate inline stubs
+were corrected before the final successful build. This does not change test conclusions.
+
+Local `out/hid.dll`: SHA256
+`B32DBD80307EBD0E118918A06AB74D8F4744C4294556511C80A753546D5619D9`, 9,073,152 bytes.
+The user's FF2 session kept writing its log during investigation, then closed. A final
+read-only process check confirmed it was closed. After preserving prior DLLs, deploy.bat
+succeeded in all six and every installed hash matched the local build. All six SDL hashes
+are unchanged; Prism prerequisites were checked read-only. Recovery copies are in
+build_check/transition_guard_recovery_2026_10_14; before/deploy receipts are
+build_check/transition_guard_before_2026_10_14.json and
+build_check/transition_guard_deploy_2026_10_14.json. No commit/push/release publication,
+save/bake change or dependency upgrade occurred; public V0.9.2 remains unchanged. Runtime
+transition costs, modded/unmodded frame/load comparison and audible behavior remain
+unmeasured; guard gameplay confirmation is pending.
+
+### Prioritized remaining world-map fix plan
+
+1. Give native battle/map readiness an explicit resumption/dirty-generation contract.
+   Cancel obsolete filter work at transition entry; on same-map field readiness start one
+   bounded revalidation even when the map ID is unchanged. Separate registry completion
+   from usable category publication. Input during transitions is discarded by the new guard.
+2. Separate valid selected-target context from list sorting/reachability readiness.
+   Directions should capture current pose/vehicle/gates from a still-valid selected target
+   while an ordinary origin refresh is pending. Preserve map/settings/story/entity/category
+   invalidation and grouped representative policy; never route from a dead or retired target.
+   Do not simply delete the readiness check without replacing those validity guarantees.
+3. Coalesce ordinary live refreshes: keys must not unconditionally cancel/restart equivalent
+   in-progress work. Track authoritative entity/gate/transport changes and latest pose,
+   preserve a compatible published selection, and schedule a bounded follow-up generation
+   when needed. Maintain documented browse-event fidelity and latest direction cancellation;
+   no text-content deduplication or arbitrary speech delays.
+4. Propagate the filter's actual epoch into every inner boarding/flood/landing operation.
+   Replace per-exit full parked-vehicle route construction with reusable walking, vehicle
+   approach/riding and legal landing distance maps for the captured state. Keep exact native
+   transport/landing, wrapping, directional gates, hazards and shortest usable exit semantics.
+   Reconstruct movement phases only for the explicitly requested destination. Share/cache
+   only under keys covering map, live blockers/story state, player cell and vehicle ownership,
+   identity/location/rules; bound memory, pending work and stale retention. Keep interactive
+   routing ahead of obsolete bulk list work without owner waits or pointer-affinity changes.
+5. Add cheap correlated request/blocked-reason, registry/filter capture, queue, compute,
+   origin rejection, cancellation and first-usable-publication timestamps. Format/write
+   off-thread. Extend production fixtures to stale-origin publication, rapid keys with a
+   slow current filter, battle return during work, walking plus parked vehicles, and changed
+   flags/targets/vehicles. Compare whole request and cancel/tail costs against this baseline.
+
+After implementation, run canonical build/smoke and all-six real-bake regression coverage,
+then focused user gameplay confirmation in TESTING.md. Existing guards are offline-verified;
+the remaining world-map algorithm/readiness fix and its gameplay/performance acceptance
+are open. No speculative runtime capture or user code/architecture review is requested.

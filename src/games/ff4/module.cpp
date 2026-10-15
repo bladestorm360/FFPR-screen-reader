@@ -1,7 +1,5 @@
-#include "../../core/core.h"
 #include "../../core/game.h"
 #include "../../core/hooks.h"
-#include "../../core/input/input.h"
 
 // FINAL FANTASY IV (FF4): the game module.
 //
@@ -13,7 +11,7 @@
 //   status_details.cpp    status details screen and FF4's 17-stat navigation
 //   party_setting.cpp     party setting screen and formation rows
 //   naming.cpp            naming screen
-//   timers.cpp            T / Shift+T escape timers
+//   timers.cpp            T / Shift+F5 escape timers
 //   battle_abilities.cpp  battle spell / ability list and its I-key description
 //   battle_targets.cpp    "All allies" / "All enemies"
 //   vehicles.cpp          FF4's vehicle words (boarding speech, V key)
@@ -28,7 +26,7 @@ void configure(game::Flags& f)
     f.has_vehicle_pads = true;
     f.has_hidden_passages = true;
     f.atb = true;
-    f.timer_freeze = true;   // FF4 had Shift+T too (timers.cpp)
+    f.timer_freeze = true;   // FF4 had Shift+F5 too (timers.cpp)
     f.bestiary_steal = true;       // the bestiary lists stealable items (Steal ability)
 
     // The core's boarding speech names FF1's vehicles (ship, canoe): FF4's hovercraft and
@@ -36,17 +34,6 @@ void configure(game::Flags& f)
     hooks::disable("FieldPlayer.GetOn");
     hooks::disable("FieldPlayer.GetOff");
 }
-
-// FF4's own key bindings beyond the core table (docs/INPUT_BINDINGS.md): 9 toggles the audio
-// beacons on the field, like F6 (FF4 InputManager). T / Shift+T are bound by timers.cpp.
-int install_bindings()
-{
-    input::add_binding(input::Key::Alpha9, input::Mod::None, input::Context::Field, "Mod.ToggleAudioBeacons",
-                       "Toggle audio beacons");
-    return 0;
-}
-
-core::Install s_bindings{"FF4.Bindings", &install_bindings, 500, game::kFF4};
 
 } // namespace
 

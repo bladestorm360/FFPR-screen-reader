@@ -54,6 +54,8 @@ void cancel_label(const char*) { fixture::native(); }
 }
 namespace background { bool post(std::function<void()>, Lane) { fixture::native(); return false; } }
 namespace ffpr { void say(std::wstring_view, bool) { fixture::native(); } }
+namespace ffpr { void say_sequence(std::vector<std::wstring>, bool) { fixture::native(); } }
+namespace settings { bool get_bool(const char*, bool value) { return value; } }
 namespace ffpr::system { bool is_field_navigation_ready() { fixture::native(); return false; } }
 namespace game { Id current() { return fixture::game_id; } const Flags& flags() { static Flags f; return f; } const char* key() { return "ff2"; } }
 namespace modtext {
@@ -113,6 +115,22 @@ int main() {
     expect(result.path.success && result.path.step_count == 7, "owned snapshot preserves Fynn shop seven-cell route");
     expect(result.path.description == L"7 North", "worker formats concise directions");
     expect(result.active && result.active->valid && result.path.walk_phases.size() == 1, "owned active plan and autowalk phases returned");
+    {
+        ExitSnapshot landing(false, field::map_state::Resolver(field::map_state::Flags{}, fixture::records));
+        landing.route.submap = shop; landing.route.map_id = shop->first_map_id; landing.route.layer = 0;
+        landing.route.position = snapshot.position;
+        const auto target = world_of_cell(*shop, {0, 8, 10});
+        bool clear = false, occupied = true, invalid = true;
+        std::thread clearance([&] {
+            clear = teleport_landing_safe(landing, target);
+            NativeObstacle npc; npc.npc = true; npc.cell = {0, 8, 10};
+            landing.route.obstacles.push_back(npc);
+            occupied = teleport_landing_safe(landing, target);
+            invalid = teleport_landing_safe(landing, {1.e30f, 0, 0});
+        }); clearance.join();
+        expect(clear && !occupied && !invalid, "real Fynn landing accepts clear terrain, rejects copied NPC occupancy and oversized coordinates");
+        expect(fixture::wrong_owner == 0, "production landing clearance never reads native objects on its worker");
+    }
     const auto* world = field::baked::submap_by_name(L"Map_10010");
     expect(world != nullptr, "world bake exists");
     if (world) {

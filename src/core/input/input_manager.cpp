@@ -46,6 +46,7 @@ struct Binding {
     Context ctx;
     std::function<void()> fn;
     std::string description;
+    int navigation_keymap = -1; // -1 shared; 0 letters; 1 brackets/backslash
 };
 
 struct KeyEntry {
@@ -65,14 +66,15 @@ KeyEntry* entry(Key key)
 /// KeyBindingRegistry.Register followed by FinalizeRegistration's order: CtrlShift > Ctrl >
 /// Shift > None, then KeyHelp > BestiaryDetail > Status > Battle > Field > Global. Keeps the
 /// list sorted on every insert so game modules can add keys after the core's.
-void register_binding(Key key, Mod mod, Context ctx, std::function<void()> fn, const char* description)
+void register_binding(Key key, Mod mod, Context ctx, std::function<void()> fn, const char* description,
+                      int navigation_keymap = -1)
 {
     KeyEntry* e = entry(key);
     if (!e) {
         g_bindings.push_back(KeyEntry{key, {}});
         e = &g_bindings.back();
     }
-    Binding b{key, mod, ctx, std::move(fn), description ? description : ""};
+    Binding b{key, mod, ctx, std::move(fn), description ? description : "", navigation_keymap};
     auto before = [](const Binding& x, const Binding& y) {
         if (x.mod != y.mod) return static_cast<int>(x.mod) > static_cast<int>(y.mod);
         return static_cast<int>(x.ctx) > static_cast<int>(y.ctx);
@@ -81,28 +83,33 @@ void register_binding(Key key, Mod mod, Context ctx, std::function<void()> fn, c
     e->list.insert(pos, std::move(b));
 }
 
-void reg(Key key, Mod mod, Context ctx, const char* action, const char* description)
+void reg(Key key, Mod mod, Context ctx, const char* action, const char* description, int navigation_keymap = -1)
 {
     std::string name = action;
-    register_binding(key, mod, ctx, [name] { actions::run(name.c_str()); }, description);
+    register_binding(key, mod, ctx, [name] { actions::run(name.c_str()); }, description, navigation_keymap);
 }
 
 /// RegisterFieldOnly: off the field (menu, battle, title) the active context is never Field, so
 /// the binding has no match and the key does nothing.
-void reg_field(Key key, Mod mod, const char* action, const char* description)
+void reg_field(Key key, Mod mod, const char* action, const char* description, int navigation_keymap = -1)
 {
-    reg(key, mod, Context::Field, action, description);
+    reg(key, mod, Context::Field, action, description, navigation_keymap);
 }
 
 /// KeyBindingRegistry.TryExecute: the first binding with exactly these modifiers whose context
 /// is Global or the active one.
 bool try_execute(Key key, Mod mods, Context active)
 {
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) return false;
+    if (active == Context::Field && mods == Mod::Ctrl &&
+        (key == Key::UpArrow || key == Key::DownArrow || key == Key::LeftArrow || key == Key::RightArrow)
+        && !ui::prefs::teleport_shortcuts_enabled()) return false;
     KeyEntry* e = entry(key);
     if (!e) return false;
     for (const Binding& b : e->list) {
         if (b.mod != mods) continue;
         if (b.ctx != Context::Global && b.ctx != active) continue;
+        if (b.navigation_keymap >= 0 && b.navigation_keymap != ui::prefs::navigation_keymap()) continue;
         b.fn();
         return true;
     }
@@ -110,12 +117,6 @@ bool try_execute(Key key, Mod mods, Context active)
 }
 
 // --- binding bodies that were lambdas or private methods in FF1 -----------------------------------
-/// Backslash / P: the shared start/stop, directions and beacon request policy.
-void announce_entity_or_restart_beacon()
-{
-    actions::run("Mod.NavigateToEntity");
-}
-
 /// R: repeat the current dialogue / message.
 void repeat_dialogue()
 {
@@ -138,6 +139,9 @@ void handle_tab_key()
 
 void initialize_bindings()
 {
+    reg_field(Key::Semicolon, Mod::Shift, "Soundscape.RangeDown", "Reduce soundscape distance");
+    reg_field(Key::Quote, Mod::Shift, "Soundscape.RangeUp", "Increase soundscape distance");
+    reg_field(Key::Quote, Mod::Ctrl, "Mod.ToggleSoundscape", "Toggle soundscape");
     // --- Status screen: arrow key navigation ---
     reg(Key::DownArrow, Mod::Ctrl, Context::Status, "StatusNavigationReader.JumpToBottom", "Jump to bottom stat");
     reg(Key::DownArrow, Mod::Shift, Context::Status, "StatusNavigationReader.JumpToNextGroup", "Jump to next stat group");
@@ -160,29 +164,29 @@ void initialize_bindings()
     reg(Key::UpArrow, Mod::Ctrl, Context::KeyHelp, "KeyHelpReader.JumpToTop", "Jump to first control");
     reg(Key::UpArrow, Mod::None, Context::KeyHelp, "KeyHelpReader.NavigatePrevious", "Previous control");
 
-    // --- Field: entity navigation (brackets + backslash) ---
-    reg_field(Key::LeftBracket, Mod::Shift, "Mod.CyclePreviousCategory", "Previous entity category");
-    reg_field(Key::LeftBracket, Mod::None, "Mod.CyclePrevious", "Previous entity");
-    reg_field(Key::RightBracket, Mod::Shift, "Mod.CycleNextCategory", "Next entity category");
-    reg_field(Key::RightBracket, Mod::None, "Mod.CycleNext", "Next entity");
-    reg_field(Key::Backslash, Mod::Ctrl, "Mod.ToggleToLayerFilter", "Toggle layer filter");
-    reg_field(Key::Backslash, Mod::Shift, "Mod.TogglePathfindingFilter", "Toggle pathfinding filter");
-    register_binding(Key::Backslash, Mod::None, Context::Field, &announce_entity_or_restart_beacon,
-                     "Navigate to current entity / stop autowalk");
+    // --- Field: selectable navigation layouts, shared by all six games ---
+    reg_field(Key::LeftBracket, Mod::Shift, "Mod.CyclePreviousCategory", "Previous entity category", 1);
+    reg_field(Key::LeftBracket, Mod::None, "Mod.CyclePrevious", "Previous entity", 1);
+    reg_field(Key::RightBracket, Mod::Shift, "Mod.CycleNextCategory", "Next entity category", 1);
+    reg_field(Key::RightBracket, Mod::None, "Mod.CycleNext", "Next entity", 1);
+    reg_field(Key::Backslash, Mod::Ctrl, "Mod.ToggleToLayerFilter", "Toggle layer filter", 1);
+    reg_field(Key::Backslash, Mod::Shift, "Mod.TogglePathfindingFilter", "Toggle pathfinding filter", 1);
+    reg_field(Key::Backslash, Mod::None, "Mod.NavigateToEntity", "Navigate to current entity / stop autowalk", 1);
+    reg_field(Key::P, Mod::None, "Mod.AnnounceEntityOnly", "Announce entity name", 1);
+    reg_field(Key::P, Mod::Shift, "Mod.ResetToAllCategory", "Reset to All category", 1);
 
     // --- Field: manual entity rescan (backtick) ---
     reg_field(Key::BackQuote, Mod::None, "Mod.ForceEntityRescan", "Force entity rescan");
 
-    // --- Field: pathfinding alternate keys (J/K/L/P) ---
-    reg_field(Key::J, Mod::Shift, "Mod.CyclePreviousCategory", "Previous entity category (alt)");
-    reg_field(Key::J, Mod::None, "Mod.CyclePrevious", "Previous entity (alt)");
-    reg_field(Key::K, Mod::None, "Mod.AnnounceEntityOnly", "Announce entity name (alt)");
-    reg_field(Key::L, Mod::Shift, "Mod.CycleNextCategory", "Next entity category (alt)");
-    reg_field(Key::L, Mod::None, "Mod.CycleNext", "Next entity (alt)");
-    reg_field(Key::P, Mod::Ctrl, "Mod.ToggleToLayerFilter", "Toggle layer filter (alt)");
-    reg_field(Key::P, Mod::Shift, "Mod.TogglePathfindingFilter", "Toggle pathfinding filter (alt)");
-    register_binding(Key::P, Mod::None, Context::Field, &announce_entity_or_restart_beacon,
-                     "Navigate to current entity / stop autowalk (alt)");
+    reg_field(Key::J, Mod::Shift, "Mod.CyclePreviousCategory", "Previous entity category", 0);
+    reg_field(Key::J, Mod::None, "Mod.CyclePrevious", "Previous entity", 0);
+    reg_field(Key::K, Mod::None, "Mod.AnnounceEntityOnly", "Announce entity name", 0);
+    reg_field(Key::L, Mod::Shift, "Mod.CycleNextCategory", "Next entity category", 0);
+    reg_field(Key::L, Mod::None, "Mod.CycleNext", "Next entity", 0);
+    reg_field(Key::P, Mod::Ctrl, "Mod.ToggleToLayerFilter", "Toggle layer filter", 0);
+    reg_field(Key::P, Mod::Shift, "Mod.TogglePathfindingFilter", "Toggle pathfinding filter", 0);
+    reg_field(Key::P, Mod::None, "Mod.NavigateToEntity", "Navigate to current entity / stop autowalk", 0);
+    reg_field(Key::K, Mod::Shift, "Mod.ResetToAllCategory", "Reset to All category", 0);
 
     // --- Field: waypoint keys ---
     reg(Key::Comma, Mod::Shift, Context::Field, "WaypointHandler.CyclePreviousCategory", "Previous waypoint category");
@@ -224,15 +228,12 @@ void initialize_bindings()
     reg_field(Key::Quote, Mod::None, "Mod.ToggleFootsteps", "Toggle footsteps");
     reg_field(Key::Semicolon, Mod::None, "Mod.ToggleWallTones", "Toggle wall tones");
     reg_field(Key::F6, Mod::None, "Mod.ToggleAudioBeacons", "Toggle audio beacons");
+    reg_field(Key::F6, Mod::Shift, "Mod.ToggleBeaconMode", "Switch route or object beacon");
 
     // --- Field: puzzle guide (src/core/field/puzzle_guide.cpp) ---
     reg_field(Key::G, Mod::Shift, "PuzzleGuide.Next", "Puzzle guide: start, or the current step again");
     reg_field(Key::G, Mod::Ctrl, "PuzzleGuide.Stop", "Puzzle guide: stop");
 
-    // --- Field-only category shortcuts ---
-    reg_field(Key::K, Mod::Shift, "Mod.ResetToAllCategory", "Reset to All category");
-    reg_field(Key::Equals, Mod::None, "Mod.CycleNextCategory", "Next entity category (global)");
-    reg_field(Key::Minus, Mod::None, "Mod.CyclePreviousCategory", "Previous entity category (global)");
 }
 
 // --- context ---------------------------------------------------------------------------------------
@@ -258,6 +259,7 @@ bool both(const char* a, const char* b)
 
 Context determine_context(bool on_demand)
 {
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) return Context::Global;
     if (queries::is("ReviewBuffer.IsResults")) return Context::Results;
     // The key-help / controls overlay takes priority while shown.
     if (queries::is("KeyHelpReader.IsScreenActive")) return Context::KeyHelp;
@@ -373,6 +375,10 @@ void update()
     const Context context = determine_context(false);
     router::update(context);
     update_native_input_ownership();
+
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) {
+        return; // discard input edges; never replay hotkeys when loading finishes
+    }
 
     // Per-frame footstep tile-crossing poll (field-active gated, silent in vehicles).
     if (actions::defined("MovementSoundPatches.PollFootsteps")) actions::run("MovementSoundPatches.PollFootsteps");

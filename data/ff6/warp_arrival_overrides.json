@@ -1,0 +1,794 @@
+[
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 20,
+    "object_id": 67,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 21,
+    "object_id": 68,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 22,
+    "object_id": 69,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 23,
+    "object_id": 70,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 24,
+    "object_id": 71,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 25,
+    "object_id": 72,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 26,
+    "object_id": 73,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 27,
+    "object_id": 74,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 28,
+    "object_id": 75,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 29,
+    "object_id": 76,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 30,
+    "object_id": 77,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 31,
+    "object_id": 79,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 32,
+    "object_id": 80,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 33,
+    "object_id": 81,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 34,
+    "object_id": 82,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 35,
+    "object_id": 83,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 36,
+    "object_id": 84,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 37,
+    "object_id": 85,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 38,
+    "object_id": 86,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 39,
+    "object_id": 87,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 40,
+    "object_id": 88,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 41,
+    "object_id": 89,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 42,
+    "object_id": 90,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 43,
+    "object_id": 91,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 44,
+    "object_id": 92,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 45,
+    "object_id": 93,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 46,
+    "object_id": 94,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 47,
+    "object_id": 95,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 48,
+    "object_id": 96,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 49,
+    "object_id": 97,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 50,
+    "object_id": 98,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 86,
+    "object_id": 108,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 87,
+    "object_id": 109,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 89,
+    "object_id": 112,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_3",
+    "entity_id": 90,
+    "object_id": 114,
+    "same_map": true,
+    "destination_map": 407,
+    "original_point": 0,
+    "continuation": "sc_e_0445",
+    "continuation_sha256": "3e6ca6214bc76b9b19045124d2e4faab267343778245d51cc8692e1227decccc",
+    "arrival_cell": [
+      7,
+      8,
+      1
+    ],
+    "evidence": "Reviewed same-map environmental fall: unconditional player SetPos, preserves entry layer; docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30561_3",
+    "entity_id": 10,
+    "destination_map": 424,
+    "original_point": 7,
+    "continuation": "sc_e_0548_1",
+    "continuation_sha256": "81ff760cd785fd4b23d8afafbb2318c3c799c3e3d4a74b6addfb66fd456119a2",
+    "arrival_cell": [
+      39,
+      46,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      12,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30561_3",
+    "entity_id": 11,
+    "destination_map": 424,
+    "original_point": 9,
+    "continuation": "sc_e_0550_1",
+    "continuation_sha256": "b371c870f5bd3dd854810303a9012f07e979de2fe8964d195de4ed761afb2d0f",
+    "arrival_cell": [
+      39,
+      51,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      12,
+      18,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30561_3",
+    "entity_id": 12,
+    "destination_map": 424,
+    "original_point": 8,
+    "continuation": "sc_e_0549_1",
+    "continuation_sha256": "caf91eaf92ec3528903e9bb82fb4651bc66cdf332ef4ef9eb477d205a5785149",
+    "arrival_cell": [
+      44,
+      49,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      17,
+      16,
+      1
+    ]
+  }
+]

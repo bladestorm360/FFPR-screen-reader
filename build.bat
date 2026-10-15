@@ -13,6 +13,8 @@ if not exist "%CMAKE%" (
 if not exist build mkdir build
 
 echo Configuring...
+python tools\openal_dependency.py check
+if errorlevel 1 exit /b 1
 "%CMAKE%" -S . -B build -A x64 > build_log.txt 2>&1
 if errorlevel 1 (
     echo Configure FAILED - see build_log.txt
@@ -60,6 +62,28 @@ if errorlevel 1 (
     exit /b 1
 )
 
+"out\checks\puzzle_guide_check.exe" > build_check\puzzle_guide_report.txt 2>&1
+if errorlevel 1 (
+    echo Puzzle guide check FAILED - see build_check\puzzle_guide_report.txt
+    exit /b 1
+)
+"out\checks\fade_ready_check.exe" > build_check\fade_ready_report.txt 2>&1
+if errorlevel 1 (
+    echo Fade readiness check FAILED - see build_check\fade_ready_report.txt
+    exit /b 1
+)
+"out\checks\trap_route_check.exe" > build_check\trap_route_report.txt 2>&1
+if errorlevel 1 (
+    echo Trap routing check FAILED - see build_check\trap_route_report.txt
+    exit /b 1
+)
+
+"out\checks\teleport_check.exe" > build_check\teleport_report.txt 2>&1
+if errorlevel 1 (
+    echo Teleport check FAILED - see build_check\teleport_report.txt
+    exit /b 1
+)
+
 echo Checking every game-code name against each game's dump.cs...
 "out\checks\autowalk_check.exe" > build_check\autowalk_report.txt 2>&1
 if errorlevel 1 (
@@ -94,6 +118,22 @@ if errorlevel 1 (
 "out\checks\audio_worker_check.exe" > build_check\audio_worker_report.txt 2>&1
 if errorlevel 1 (
     echo Audio worker check FAILED - see build_check\audio_worker_report.txt
+    exit /b 1
+)
+"out\checks\soundscape_check.exe" > build_check\soundscape_report.txt 2>&1
+if errorlevel 1 (
+    echo Soundscape check FAILED - see build_check\soundscape_report.txt
+    exit /b 1
+)
+"out\checks\beacon_check.exe" > build_check\beacon_report.txt 2>&1
+if errorlevel 1 (
+    echo Beacon mode check FAILED - see build_check\beacon_report.txt
+    exit /b 1
+)
+
+"out\checks\sound_player_check.exe" > build_check\sound_player_report.txt 2>&1
+if errorlevel 1 (
+    echo Cue producer check FAILED - see build_check\sound_player_report.txt
     exit /b 1
 )
 "out\checks\controller_worker_check.exe" > build_check\controller_worker_report.txt 2>&1
@@ -166,6 +206,11 @@ if not "%errorlevel%"=="0" (
     echo Entity scanner check FAILED - see build_check\entity_scanner_report.txt
     exit /b 1
 )
+"out\checks\transition_input_check.exe" > build_check\transition_input_report.txt 2>&1
+if errorlevel 1 (
+    echo Transition input check FAILED - see build_check\transition_input_report.txt
+    exit /b 1
+)
 "out\checks\navigation_worker_check.exe" > build_check\navigation_worker_report.txt 2>&1
 if not "%errorlevel%"=="0" (
     echo Navigation worker check FAILED - see build_check\navigation_worker_report.txt
@@ -220,6 +265,11 @@ if errorlevel 1 (
 )
 REM Report only: a few names are optional by design (FF1's default when undefined).
 python tools\wiring_check.py
+python tools\soundscape_assets_check.py > build_check\soundscape_assets_report.txt 2>&1
+if errorlevel 1 (
+    echo Embedded soundscape asset check FAILED - see build_check\soundscape_assets_report.txt
+    exit /b 1
+)
 
 echo.
 echo Build OK: out\hid.dll

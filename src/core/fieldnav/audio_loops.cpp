@@ -11,14 +11,13 @@
 // From FF5 Core/AudioLoopManager.cs (all five games): the landing-ping loop (LandingPingLoop,
 // Start/StopLandingPingLoop, the scene-load and vehicle-transition suppression of landing pings)
 // and PathSearchMode.Quick for the beacon's path test (field/path_search.h). Landing pings play
-// only while on a ship-type vehicle (MoveStateHelper.IsControllingShip: ship or submarine); FF4
-// has none (transportation master: no type 2 or 6), so they never sound there.
+// while sailing a ship/submarine or riding the FF1-3 canoe. Current native vehicle ownership
+// also supports loaded boarded saves; FF4/6 and FF2's snowcraft are excluded.
 //
 // Sound: FF5 kept one looping stream per direction (660/440/550/520 Hz, wall-tone pans, a ping
 // every 250 ms). sound.h has one landing ping (one pitch, one stream that each call restarts),
 // so the directions with a landing spot take turns, one ping every 250 ms, each with FF5's pan
-// and amplitude for its direction. North and south therefore sound alike until the audio area
-// offers FF5's per-direction pitches.
+// and amplitude for its direction, retaining all four pitches in stereo fallback.
 #include <cmath>
 #include <memory>
 #include <vector>
@@ -36,11 +35,15 @@
 #include "../frame.h"
 #include "../hooks.h"
 #include "../log.h"
+#include "../say.h"
+#include "../modtext.h"
 #include "../refs.h"
 #include "../settings.h"
+#include "../input/input.h"
 #include "../unity.h"
 #include "../system/system.h"
 #include "../field/baked_nav.h"
+#include "../field/baked_map.h"
 #include "../field/field_api.h"
 #include "../field/path_search.h"
 
@@ -145,7 +148,8 @@ void stop_tone_if_playing()
 /// NPC message box shows dialogue.
 bool audio_blocked()
 {
-    return !queries::is("ControllerRouter.IsFieldActive")
+    return !settings::get_bool("NavigationAudio",true) || !input::game_window_focused()
+        || !system::is_field_navigation_ready() || !queries::is("ControllerRouter.IsFieldActive")
         || queries::is("ControllerRouter.SuppressGameInput")
         || queries::is("MessageWindowPatches.IsInDialogue");
 }
@@ -228,6 +232,12 @@ void wall_tone_step()
 
 // --- beacon -----------------------------------------------------------------------------
 
+bool object_beacon_remote() {
+    if(ui::prefs::beacon_mode()!=ui::prefs::kBeaconObjectLocation || nav_target::last_kind()!=nav_target::Kind::Entity) return false;
+    const auto target=::field::selected();
+    return target.valid && target.remote_map_id>0;
+}
+
 void beacon_iteration(double now)
 {
     TargetRef target;
@@ -281,15 +291,31 @@ void beacon_iteration(double now)
 
     unity::Vec3 player_pos = unity::local_position(unity::transform(player));
 
+    const bool direct=ui::prefs::beacon_mode()==ui::prefs::kBeaconObjectLocation;
+    // A projected entry has no meaningful local position, even during the
+    // brief interval before a map change publishes its new live selection.
+    if(direct && remote_map_id>0) { g_next_beacon_time=now+.5; return; }
+
     // Sanity check: skip if positions look invalid (garbage data during load)
-    if (std::isnan(player_pos.x) || std::isnan(target_pos.x) ||
-        std::fabs(player_pos.x) > 10000.0f || std::fabs(target_pos.x) > 10000.0f) {
+    if (!std::isfinite(player_pos.x) || !std::isfinite(player_pos.y) ||
+        std::fabs(player_pos.x) > 10000.0f || std::fabs(player_pos.y) > 10000.0f ||
+        (remote_map_id<=0 && (!std::isfinite(target_pos.x) || !std::isfinite(target_pos.y) ||
+        std::fabs(target_pos.x) > 10000.0f || std::fabs(target_pos.y) > 10000.0f))) {
         g_next_beacon_time = now + 0.2;
         return;
     }
 
-    float dist_tiles = distance(player_pos, target_pos) / kTileSize;
+    float dist_tiles = remote_map_id>0?0:distance(player_pos, target_pos) / kTileSize;
     unity::Vec3 aim = target_pos;   // what the ping points at
+    if(direct) {
+        const int map_id=::field::current_map_id();
+        if(const auto* sm=::field::baked::submap_by_map_id(map_id);sm && sm->world) {
+            auto nearest=[](float delta,float size){return size>0?delta-std::round(delta/size)*size:delta;};
+            aim.x=player_pos.x+nearest(target_pos.x-player_pos.x,sm->width*kTileSize);
+            aim.y=player_pos.y+nearest(target_pos.y-player_pos.y,sm->height*kTileSize);
+        }
+        dist_tiles=distance(player_pos,aim)/kTileSize;
+    }
 
     // On a baked map the beacon leads along the planned route, corner by corner (the FFXII
     // mod's model; user, 2026-10-11): it points at the end of the current leg, not across walls
@@ -297,10 +323,12 @@ void beacon_iteration(double now)
     // quiet on the route's last cell. The plan is the spoken route's own (baked_nav), so the
     // voice and the beacon never disagree; off the route it re-plans silently. A map the baked
     // data does not know keeps the old test: a path exists (Quick, never chaining) or not.
-    bool path_valid;
+    // Object mode uses the ordinary ping without asserting traversability, and
+    // makes no follow/route/quick-search request, even for an object behind a wall.
+    bool path_valid=direct;
     bool following = false;
-    void* map = ::field::map_handle();
-    if (::field::baked_nav::available(map)) {
+    void* map = direct ? nullptr : ::field::map_handle();
+    if (!direct && ::field::baked_nav::available(map)) {
         ::field::baked_nav::Corner corner;
         if (remote_map_id > 0) {
             // Another floor (user, 2026-10-11): the leg to the exit to take, and after the
@@ -326,7 +354,7 @@ void beacon_iteration(double now)
             aim = corner.point;
             dist_tiles = distance(player_pos, aim) / kTileSize;
         }
-    } else {
+    } else if(!direct) {
         try {
             ::field::PathInfo path_info = ::field::find_path_to_quick(player_pos, target_pos, map, player);
             path_valid = path_info.success;
@@ -451,7 +479,7 @@ void landing_ping_check(double current_time)
 {
     // FF5 suppressed briefly on every GetOn/GetOff (boarding animation). The core's vehicle hooks
     // are FF1's and do not call into the loops, so the boarding edge is taken from the ship state.
-    bool on_ship = move_state::is_controlling_ship();
+    bool on_ship = landing_spots::riding_watercraft();
     if (on_ship != g_was_on_ship) {
         g_was_on_ship = on_ship;
         g_vehicle_transition_until = current_time + kVehicleTransitionSuppression;
@@ -580,6 +608,15 @@ int install()
         if (settings::get_bool("AudioBeacons", false)) start_beacon_loop();
         else stop_beacon_loop();
     });
+    actions::define("Settings.Changed.BeaconMode", [] {
+        g_beacon_silenced=false;g_next_beacon_time=0;g_last_beacon_played_at=0;
+    });
+    actions::define("Mod.ToggleBeaconMode", [] {
+        const int mode=1-ui::prefs::beacon_mode();
+        settings::set_int(ui::prefs::kBeaconMode,mode);
+        ui::prefs::notify_changed(ui::prefs::kBeaconMode);
+        ffpr::say(T(L"Beacon mode")+L": "+T(ui::prefs::kBeaconModeNames[mode]));
+    });
     actions::define("Settings.Changed.BeaconWithDirections", [] {
         if (ui::prefs::beacon_with_directions_enabled()) {
             // Enabling the combined option must actually enable both aids. The existing
@@ -588,7 +625,7 @@ int install()
             ui::prefs::notify_changed(ui::prefs::kAudioBeacons);
         }
     });
-    // FF5 AudioLoopManager.ToggleLandingPings (the mod menu, FF5's Shift+;)
+    // Landing-ping setting changes from the shared mod menu.
     actions::define("Settings.Changed.LandingPings", [] {
         if (settings::get_bool(kLandingPingsKey, kLandingPingsDefault)) start_landing_ping_loop();
         else stop_landing_ping_loop();
@@ -598,6 +635,7 @@ int install()
     // restart" on, also re-speak the entity (same as cycling the list).
     actions::define("Mod.RestartEntityBeacon", [] {
         restart_beacon();
+        if(object_beacon_remote()) return; // retain the explicit unavailable-target explanation
         if (settings::get_bool("AnnounceOnBeaconRestart", false))
             actions::run("Mod.AnnounceEntityOnly");
     });
@@ -646,6 +684,8 @@ void restart_beacon()
 {
     g_beacon_silenced = false;
     g_next_beacon_time = 0;
+    // Explicit navigation request, not a repeating audio-loop announcement.
+    if(object_beacon_remote()) ffpr::say(T(L"Object beacon requires a destination on the current floor"));
 }
 
 void start_landing_ping_loop()

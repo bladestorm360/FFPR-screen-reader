@@ -8,6 +8,8 @@ setlocal
 cd /d "%~dp0"
 set "STEAM=D:\Games\SteamLibrary\steamapps\common"
 if not exist "out\hid.dll" ( echo ERROR: out\hid.dll missing - run build.bat first. & exit /b 1 )
+python tools\openal_dependency.py check
+if errorlevel 1 exit /b 1
 
 set "ONLY=%~1"
 set FAILED=0
@@ -19,7 +21,7 @@ call :one ff5 "FINAL FANTASY V PR" "FINAL FANTASY V.exe"
 call :one ff6 "FINAL FANTASY VI PR" "FINAL FANTASY VI.exe"
 if not "%FAILED%"=="0" ( echo Some copies FAILED. & exit /b 1 )
 echo.
-echo Installed hid.dll and SDL3.dll. Prism prerequisite was checked without changes.
+echo Installed hid.dll, SDL3.dll and private OpenAL Soft. Prism was checked without changes.
 echo Log: ffpr_screen_reader.log in each game folder. Uninstall: uninstall.bat
 endlocal
 exit /b 0
@@ -33,6 +35,8 @@ tasklist /FI "IMAGENAME eq %~3" 2>nul | "%SystemRoot%\System32\find.exe" /I "%~3
 if not errorlevel 1 ( echo ERROR: %~3 is running. Close the game first. & set FAILED=1 & exit /b 0 )
 REM Read-only dependency check. Never install, copy, repair or update Prism here.
 python tools\prism_dependency.py check %~1 --game-root "%STEAM%"
+if errorlevel 1 ( set FAILED=1 & exit /b 0 )
+python tools\openal_dependency.py deploy --game "%GAME%"
 if errorlevel 1 ( set FAILED=1 & exit /b 0 )
 copy /Y "out\hid.dll" "%GAME%\hid.dll" >nul || ( set FAILED=1 & exit /b 0 )
 copy /Y "third_party\runtime\SDL3.dll" "%GAME%\SDL3.dll" >nul || ( set FAILED=1 & exit /b 0 )

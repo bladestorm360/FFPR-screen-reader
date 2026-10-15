@@ -31,23 +31,28 @@
 #include "mod_ui.h"
 #include "modal_keys.h"
 #include "preferences.h"
+#include "../audio/sound.h"
+#include "../audio/volume_settings.h"
 
 namespace ui::mod_menu {
 namespace {
 
-enum class Kind : uint8_t { Header, Toggle, Volume, Enum, Action };
+enum class Kind : uint8_t { Header, Submenu, Toggle, Volume, Range, Enum, Action };
 
 struct Item {
     Kind kind = Kind::Header;
-    const wchar_t* name = L"";              // mod_text key
+    std::wstring name;                       // mod_text key
+    int parent = -2;                         // -2 infer category; -1 root
     const char* key = nullptr;              // settings key (Toggle, Volume, Enum)
     bool bool_def = false;                  // Toggle default
     int int_def = 0;                        // Volume / Enum default
     int int_max = 0;                        // Enum: PreferencesManager clamp maximum
+    int int_min = 0, int_step = 1;
     std::vector<const wchar_t*> options;    // Enum option keys
     const wchar_t* desc = nullptr;          // description (Toggle: when on)
     const wchar_t* desc_off = nullptr;      // Toggle: description when off
     void (*action)() = nullptr;             // Action
+    sound::cues::Id cue = sound::cues::Id::Count;
 };
 
 struct State {
@@ -96,6 +101,7 @@ Item volume(const wchar_t* name, const char* key, int def, const wchar_t* desc)
     i.key = key;
     i.int_def = def;
     i.desc = desc;
+    i.int_max = 100; i.int_step = 5;
     return i;
 }
 
@@ -137,6 +143,8 @@ void initialize()
 
     // Speech
     v.push_back(header(L"Speech"));
+    v.push_back(toggle(L"Game speech", p::kSpeechEnabled, p::kSpeechEnabledDefault,
+                       L"Game speech help", L"Game speech help"));
     v.push_back(toggle(L"Auto Detail", p::kAutoDetail, p::kAutoDetailDefault,
                        L"On. Reads displayed descriptions and current information buffers after their titles, including status and battle results.",
                        L"Off. Use the I key to read descriptions on demand."));
@@ -145,6 +153,9 @@ void initialize()
                             L"Stat delta detail help"));
     v.push_back(toggle(L"Status damage", p::kStatusDamage, p::kStatusDamageDefault,
                        L"Status damage on", L"Status damage off"));
+    v.push_back(toggle(L"Mod warnings", p::kModWarnings, p::kModWarningsDefault,
+                       L"Announce mod warning messages, including event and trap warnings.",
+                       L"Announce mod warning messages, including event and trap warnings."));
     v.push_back(toggle(L"Spoil treasure chest contents", p::kSpoilTreasureChestContents,
                        p::kSpoilTreasureChestContentsDefault,
                        L"Spoil treasure chest contents on", L"Spoil treasure chest contents off"));
@@ -158,8 +169,14 @@ void initialize()
     // Navigation
     v.push_back(header(L"Navigation"));
     v.push_back(toggle(L"Autowalk", p::kAutowalk, p::kAutowalkDefault,
-                       L"On. Backslash, P, Slash for a waypoint, or the controller left trigger walks to the destination. Press again to stop. Manual input, menus and battles stop the walk.",
+                       L"On. The selected layout's navigation key, Slash for a waypoint, or controller LT walks to the destination. Press again to stop. Manual input, menus and battles stop the walk.",
                        L"Off. Navigation requests give directions or restart the beacon."));
+    v.push_back(enumeration(L"Navigation keymap", {L"Letters", L"Brackets and backslash"},
+                            p::kNavigationKeymap, p::kNavigationKeymapDefault, p::kNavigationKeymapMax,
+                            L"Navigation keymap help"));
+    v.push_back(toggle(L"Teleport shortcuts", p::kTeleportShortcuts, p::kTeleportShortcutsDefault,
+                       L"Enable Ctrl+arrow and controller mod-mode right-stick shortcuts to teleport beside the selected destination.",
+                       L"Teleport shortcuts are off."));
     v.push_back(toggle(L"Speak autowalk path", p::kSpeakAutowalkPath, p::kSpeakAutowalkPathDefault,
                        L"On. Reads the full current route when autowalk starts, and the next leg after a map transition.",
                        L"Off. Autowalk starts without reading the route. Arrival and required actions are still announced."));
@@ -178,6 +195,27 @@ void initialize()
 
     // All audio settings, including the results-screen EXP sound, live together.
     v.push_back(header(L"Navigation audio"));
+    v.push_back(toggle(L"Navigation audio master", "NavigationAudio", true,
+                       L"Navigation audio master help", L"Navigation audio master help"));
+    v.push_back(toggle(L"HRTF", "HRTF", false, L"HRTF help", L"HRTF help"));
+    v.push_back(toggle(L"Soundscape", "Soundscape", false, L"Soundscape help", L"Soundscape help"));
+    const int soundscape_page = static_cast<int>(v.size());
+    Item submenu = header(L"Soundscape settings"); submenu.kind = Kind::Submenu;
+    v.push_back(submenu);
+    auto nested = [&](Item item) { item.parent = soundscape_page; v.push_back(std::move(item)); };
+    nested(volume(L"Soundscape volume", "SoundscapeVolume", 50, L"Soundscape volume help"));
+    Item distance = volume(L"Soundscape distance", "SoundscapeDistance", 10, L"Soundscape distance help");
+    distance.kind = Kind::Range; distance.int_min=5; distance.int_max=25;
+    nested(std::move(distance));
+    for(size_t n=sound::cues::first_entity;n<sound::cues::count;++n) {
+        const auto& cue=sound::cues::definitions[n];
+        nested(toggle(cue.label,cue.toggle,true,L"Soundscape cue help",L"Soundscape cue help"));
+        Item level=volume(L"",cue.volume,50,L"Soundscape cue volume help");
+        level.name=std::wstring(cue.label)+L" volume"; nested(std::move(level));
+        Item preview=action(L"",nullptr,L"Sound preview help");
+        preview.name=L"Preview "+std::wstring(cue.label); preview.cue=sound::cues::Id(n);
+        nested(std::move(preview));
+    }
     v.push_back(toggle(L"Wall Tones", p::kWallTones, p::kWallTonesDefault,
                        L"On. Directional tones play as you approach walls.",
                        L"Off. No directional wall feedback."));
@@ -191,10 +229,12 @@ void initialize()
     v.push_back(volume(L"Footstep Volume", p::kFootstepVolume, p::kFootstepVolumeDefault,
                        L"Volume of footstep sounds, zero to one hundred percent."));
     v.push_back(toggle(L"Beacon Navigation", p::kAudioBeacons, p::kAudioBeaconsDefault,
-                       L"On. Audio pings follow the route. Enable Beacon with directions to hear directions as well.",
+                       L"On. Audio pings use the selected beacon mode. Enable Beacon with directions to hear directions as well.",
                        L"Off. Turn-by-turn pathfinding is used for navigation."));
     v.push_back(volume(L"Beacon Volume", p::kBeaconVolume, p::kBeaconVolumeDefault,
                        L"Volume of audio beacon pings, zero to one hundred percent."));
+    v.push_back(enumeration(L"Beacon mode",{L"Follow route",L"Object location"},p::kBeaconMode,
+                           p::kBeaconModeDefault,p::kBeaconModeMax,L"Beacon mode help"));
     v.push_back(toggle(L"Beacon with directions", p::kBeaconWithDirections, p::kBeaconWithDirectionsDefault,
                        L"On. Enables Beacon Navigation. A navigation request both restarts the beacon and reads directions. During autowalk, Speak autowalk path controls route speech.",
                        L"Off. Beacon Navigation restarts the beacon without directions."));
@@ -216,6 +256,14 @@ void initialize()
     }
 
     // Battle
+    const int previews_page=static_cast<int>(v.size());
+    Item previews=header(L"Sound previews"); previews.kind=Kind::Submenu; v.push_back(previews);
+    for(size_t n=0;n<sound::cues::first_entity;++n) {
+        if((n==size_t(sound::cues::Id::Counter) && game::is(game::Id::FF2)) ||
+           (n==size_t(sound::cues::Id::Landing) && !landing_pings)) continue;
+        Item preview=action(sound::cues::definitions[n].label,nullptr,L"Sound preview help");
+        preview.parent=previews_page; preview.cue=sound::cues::Id(n); v.push_back(std::move(preview));
+    }
     v.push_back(header(L"Battle"));
     v.push_back(enumeration(L"Enemy HP Display", {L"Numbers", L"Percentage", L"Hidden"},
                             p::kEnemyHPDisplay, p::kEnemyHPDisplayDefault, p::kEnemyHPDisplayMax,
@@ -234,6 +282,13 @@ void initialize()
 
     // Close Menu action
     v.push_back(action(L"Close Menu", &close_menu, L"Closes the mod menu and returns to the game."));
+    int parent=-1;
+    for(size_t n=0;n<v.size();++n) {
+        auto& item=v[n];
+        if(item.kind==Kind::Header) { parent=int(n); item.parent=-1; }
+        else if(item.parent==-2) item.parent=parent;
+    }
+    v.back().parent=-1;
 }
 
 // Keep setting definitions in one place while presenting only the current category.
@@ -242,13 +297,7 @@ std::vector<int> page_items()
     const State& s = st();
     std::vector<int> result;
     const int count = static_cast<int>(s.items.size());
-    if (s.page < 0) {
-        for (int i = 0; i < count; ++i)
-            if (s.items[i].kind == Kind::Header || i == count - 1) result.push_back(i);
-    } else {
-        for (int i = s.page + 1; i < count - 1 && s.items[i].kind != Kind::Header; ++i)
-            result.push_back(i);
-    }
+    for(int i=0;i<count;++i) if(s.items[i].parent==s.page) result.push_back(i);
     return result;
 }
 
@@ -262,29 +311,35 @@ void enter_page(int header_index)
     const auto items = page_items();
     if (items.empty()) { s.page = -1; return; }
     s.index = items.front();
-    ffpr::say_sequence({T(s.items[header_index].name), format_current_item()}, true,
+    ffpr::say_menu_sequence({T(s.items[header_index].name), format_current_item()}, true,
         {speech::Feature::ModMenu, requested_at, requested_at});
 }
 
 // --- item behaviour ---------------------------------------------------------------------------
 
 bool toggle_value(const Item& i) { return settings::get_bool(i.key, i.bool_def); }
-int int_value(const Item& i) { return settings::get_int(i.key, i.int_def); }
+int int_value(const Item& i) {
+    const int value=i.kind==Kind::Volume?sound::levels::get(i.key,i.int_def):settings::get_int(i.key,i.int_def);
+    return i.kind==Kind::Range ? std::clamp(value/5*5,i.int_min,i.int_max) : value;
+}
 
 /// FF1 FFI_ScreenReaderMod.Toggle*: flip and store, then let the owning area react.
 void flip(const Item& i)
 {
     settings::toggle(i.key, i.bool_def);
     ui::prefs::notify_changed(i.key);
+    actions::run("Audio.RefreshSettings");
 }
 
 /// FF1 PreferencesManager.Set*: clamp and store, then let the owning area react.
 void set_int(const Item& i, int value)
 {
-    const int max = i.kind == Kind::Volume ? ui::prefs::kVolumeMax : i.int_max;
-    const int min = i.kind == Kind::Volume ? ui::prefs::kVolumeMin : 0;
-    ui::prefs::set_int_clamped(i.key, value, min, max);
+    const int max = i.int_max;
+    const int min = i.int_min;
+    if(i.kind==Kind::Volume) sound::levels::set(i.key,std::clamp(value,min,max));
+    else ui::prefs::set_int_clamped(i.key, value, min, max);
     ui::prefs::notify_changed(i.key);
+    actions::run("Audio.RefreshSettings");
 }
 
 /// MenuItem.GetValueString.
@@ -295,6 +350,8 @@ std::wstring value_string(const Item& i)
         return toggle_value(i) ? T(L"On") : T(L"Off");
     case Kind::Volume:
         return text::num(int_value(i)) + L"%";
+    case Kind::Range:
+        return TF(L"{0} steps",{text::num(int_value(i))});
     case Kind::Enum: {
         const int index = int_value(i);
         if (index >= 0 && index < static_cast<int>(i.options.size()))
@@ -302,6 +359,7 @@ std::wstring value_string(const Item& i)
         return T(L"Unknown");
     }
     case Kind::Header:
+    case Kind::Submenu:
     case Kind::Action:
         break;
     }
@@ -316,7 +374,8 @@ void adjust(const Item& i, int delta)
         flip(i);
         break;
     case Kind::Volume:
-        set_int(i, std::clamp(int_value(i) + delta * 5, 0, 100));
+    case Kind::Range:
+        set_int(i, std::clamp(int_value(i) + delta * i.int_step, i.int_min, i.int_max));
         break;
     case Kind::Enum: {
         const int count = static_cast<int>(i.options.size());
@@ -328,8 +387,10 @@ void adjust(const Item& i, int delta)
     }
     case Kind::Action:
         if (i.action) i.action();
+        if(i.cue!=sound::cues::Id::Count) sound::preview(i.cue);
         break;
     case Kind::Header:
+    case Kind::Submenu:
         break;
     }
 }
@@ -346,12 +407,15 @@ void activate(const Item& i)
         set_int(i, int_value(i) == 0 ? 50 : 0);
         break;
     case Kind::Enum:
+    case Kind::Range:
         adjust(i, 1);
         break;
     case Kind::Action:
         if (i.action) i.action();
+        if(i.cue!=sound::cues::Id::Count) sound::preview(i.cue);
         break;
     case Kind::Header:
+    case Kind::Submenu:
         break;
     }
 }
@@ -392,7 +456,7 @@ std::wstring format_current_item()
 
 void announce_current_item(bool interrupt = true)
 {
-    ffpr::say(format_current_item(), interrupt);
+    ffpr::say_menu(format_current_item(), interrupt);
 }
 
 void announce_current_item_description()
@@ -401,7 +465,7 @@ void announce_current_item_description()
     if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return;
 
     const std::wstring desc = description(s.items[static_cast<size_t>(s.index)]);
-    ffpr::say(text::is_blank(desc) ? T(L"No description") : desc, true);
+    ffpr::say_menu(text::is_blank(desc) ? T(L"No description") : desc, true);
 }
 
 /// FF1 ControllerRouter.SyncWithModMenu(open): the router follows the menu however it was
@@ -498,7 +562,7 @@ void open()
     // the D-pad / stick drive the menu instead of acting underneath it.
     sync_router(true);
 
-    ffpr::say_sequence({T(L"Mod menu"), format_current_item()}, true,
+    ffpr::say_menu_sequence({T(L"Mod menu"), format_current_item()}, true,
         {speech::Feature::ModMenu, requested_at, requested_at});
 }
 
@@ -510,7 +574,7 @@ void close()
     s.open = false;
     // Every close path (keyboard, menu item, controller) returns the controller to NORMAL.
     sync_router(false);
-    ffpr::say(T(L"Mod menu closed"), true);
+    ffpr::say_menu(T(L"Mod menu closed"), true);
 }
 
 void back()
@@ -520,8 +584,8 @@ void back()
     if (!s.open) return;
     if (s.page < 0) { close(); return; }
     s.index = s.page;
-    s.page = -1;
-    ffpr::say_sequence({T(L"Mod menu"), format_current_item()}, true,
+    s.page = s.items[s.page].parent;
+    ffpr::say_menu_sequence({s.page<0?T(L"Mod menu"):T(s.items[s.page].name), format_current_item()}, true,
         {speech::Feature::ModMenu, requested_at, requested_at});
 }
 
@@ -561,7 +625,7 @@ void adjust_current_item(int delta)
     if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return;
 
     const Item& item = s.items[static_cast<size_t>(s.index)];
-    if (item.kind == Kind::Header) {
+    if (item.kind == Kind::Header || item.kind == Kind::Submenu) {
         if (delta > 0) enter_page(s.index);
         return;
     }
@@ -576,7 +640,7 @@ void toggle_current_item()
     if (s.index < 0 || s.index >= static_cast<int>(s.items.size())) return;
 
     const Item& item = s.items[static_cast<size_t>(s.index)];
-    if (item.kind == Kind::Header) { enter_page(s.index); return; }
+    if (item.kind == Kind::Header || item.kind == Kind::Submenu) { enter_page(s.index); return; }
 
     activate(item);
 

@@ -143,7 +143,7 @@ Detection skip() { return {Result::Skip, nullptr}; }
 Detection not_handled() { return {}; }
 Detection detected(EntityPtr e) { return {Result::Detected, std::move(e)}; }
 
-EntityPtr make(Kind kind, const Context& c, const std::wstring& name)
+EntityPtr make(Kind kind, Context& c, const std::wstring& name)
 {
     auto e = std::make_shared<Entity>();
     e->kind = kind;
@@ -152,6 +152,10 @@ EntityPtr make(Kind kind, const Context& c, const std::wstring& name)
     e->pos = c.position;
     e->name = name;
     e->converted_name = name;
+    e->audio_hint = (c.property() ? ref::rd_str(c.property(),r::fPropName) : std::wstring()).substr(0,256);
+    e->audio_hint += L" " + c.go_name.substr(0,255);
+    e->audio_door = (kind==Kind::MapExit || kind==Kind::Event || kind==Kind::ScriptTrigger)
+        && (contains(c.go_lower,L"door") || contains(e->audio_hint,L"ドア") || contains(e->audio_hint,L"扉"));
     return e;
 }
 
@@ -168,14 +172,14 @@ bool placeholder(Context& c)
     return fn(raw.c_str());
 }
 
-EntityPtr make_event(const Context& c, const std::wstring& type)
+EntityPtr make_event(Context& c, const std::wstring& type)
 {
     EntityPtr e = make(Kind::Event, c, safe_event_label(c.fe, type));
     e->event_type = type;
     return e;
 }
 
-EntityPtr make_vehicle(const Context& c, const std::wstring& name, int type, const std::wstring& message_id = L"",
+EntityPtr make_vehicle(Context& c, const std::wstring& name, int type, const std::wstring& message_id = L"",
                        int transportation_id = 0)
 {
     EntityPtr e = make(Kind::Vehicle, c, name);
@@ -185,7 +189,7 @@ EntityPtr make_vehicle(const Context& c, const std::wstring& name, int type, con
     return e;
 }
 
-EntityPtr make_exit(const Context& c, const std::wstring& name, int dest_id, const std::wstring& dest_name)
+EntityPtr make_exit(Context& c, const std::wstring& name, int dest_id, const std::wstring& dest_name)
 {
     EntityPtr e = make(Kind::MapExit, c, name);
     e->dest_map_id = dest_id;
@@ -235,7 +239,9 @@ EntityPtr create_map_exit(Context& c)
     int dest = goto_map_destination_id(c.fe);
     std::wstring dest_name = resolve_map_name(dest);
     std::wstring exit_name = !dest_name.empty() ? TF(L"Exit to {0}", {dest_name}) : T(L"Exit");
-    return make_exit(c, exit_name, dest, dest_name);
+    auto exit=make_exit(c,exit_name,dest,dest_name);
+    exit->audio_exit=true;
+    return exit;
 }
 
 /// GotoMapDetector (50): map exits (GotoMapEventEntity, ObjectType 3) and same-map warp tiles
@@ -410,6 +416,7 @@ EntityPtr convert(void* fe)
 std::vector<std::pair<void*, EntityPtr>> g_entity_map;   // FieldEntity -> conversion, in insertion order
 std::vector<EntityPtr> g_entities;
 std::array<std::vector<EntityPtr>, 6> g_category_views;
+uint64_t g_audio_revision = 1;
 std::vector<Vec3> g_exit_positions; // worker-compiled unfiltered live exits, for wall tones
 int g_index = 0;
 Category g_category = Category::All;
@@ -653,6 +660,7 @@ void apply_filter() {
                         }
                     }
                     g_category_views.swap(*handles); g_exit_positions.swap(all.exits);
+                    ++g_audio_revision;
                     auto& current = result->views[static_cast<size_t>(g_category)];
                     // Input can move selection while this refresh is running. Keep
                     // the latest owner-side identity, not the capture's old index.
@@ -716,6 +724,7 @@ void ensure_correct_map()
 // =========================================================================================
 namespace scanner {
 void when_filter_ready(std::function<void()> ready, bool existing_selection) {
+    if (!ffpr::system::is_field_navigation_ready() || ffpr::system::input_transition_blocked()) return;
     ensure_correct_map();
     // Directions to a selected destination do not require re-sorting every
     // destination or preparing another reachability flood after each move.
@@ -741,7 +750,7 @@ void when_filter_ready(std::function<void()> ready, bool existing_selection) {
     }
     const int map_id = current_map_id_or_user_data();
     auto attempt = [map_id, ready = std::move(ready)]() mutable {
-        if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) return false;
+        if (!ffpr::system::is_field_navigation_ready() || ffpr::system::input_transition_blocked() || map_id != current_map_id_or_user_data()) return false;
         // A live refresh must not put each browse input behind a full map scan.
         // Map/settings invalidation clears readiness; ordinary refresh keeps it.
         if (!g_views_ready) return true;
@@ -791,6 +800,7 @@ void invalidate_map()
     g_remote.clear();
     g_entities.clear();
     for (auto& view : g_category_views) view.clear();
+    ++g_audio_revision;
     g_views_ready = false;
     g_view_origin.reset();
     g_navigation_filtered=false; g_view_vehicle=0;
@@ -1030,5 +1040,37 @@ std::vector<unity::Vec3> map_exit_positions()
 } // namespace scanner
 
 std::vector<unity::Vec3> map_exit_positions() { return scanner::map_exit_positions(); }
+
+int capture_soundscape(sound::scape::Snapshot& output,size_t& next,uint64_t& revision)
+{
+    const auto& entities=g_category_views[0];
+    if(g_last_scanned_map_id!=current_map_id_or_user_data()) return -1;
+    if(!revision) revision=g_audio_revision;
+    if(revision!=g_audio_revision || entities.size()>sound::scape::max_rows) return -1;
+    const double until=frame::now()+.00025;
+    size_t count=0;
+    while(next<entities.size() && count++<512 && frame::now()<until) {
+        const auto& e=entities[next++];
+        if(!e || e->remote() || !e->is_alive()) continue;
+        sound::scape::Row row;
+        row.id=uint64_t(reinterpret_cast<uintptr_t>(e.get()));
+        switch(e->kind) {
+        case Kind::TreasureChest: row.kind=sound::scape::Kind::Chest; row.opened=e->is_opened(); break;
+        case Kind::NPC: row.kind=sound::scape::Kind::NPC; break;
+        case Kind::MapExit: row.kind=sound::scape::Kind::Exit; break;
+        case Kind::SavePoint: row.kind=sound::scape::Kind::SavePoint; break;
+        case Kind::Vehicle: row.kind=sound::scape::Kind::Vehicle; break;
+        case Kind::ScriptTrigger: row.kind=sound::scape::Kind::Script; break;
+        default: row.kind=sound::scape::Kind::Event; break;
+        }
+        const auto position=e->position();
+        row.x=position.x/16; row.north=position.y/16; row.layer=e->cell_layer;
+        row.destination=e->dest_map_id; row.door=e->audio_door;
+        row.verified_exit=e->audio_exit;
+        row.hint=e->audio_hint; row.event_type=e->event_type;
+        output.rows.push_back(std::move(row));
+    }
+    return next==entities.size()?1:0;
+}
 
 } // namespace field

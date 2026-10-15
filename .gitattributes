@@ -12,3 +12,5 @@
 *.exe binary
 # Byte-locked upstream SDK/runtime notices: preserve the official package hashes.
 third_party/prism/** -text
+third_party/openal-soft/** -text
+*.wav binary

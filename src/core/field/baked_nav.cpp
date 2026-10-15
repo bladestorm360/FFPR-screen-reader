@@ -28,6 +28,7 @@
 #include "../say.h"
 #include "../text.h"
 #include "../fieldnav/move_state.h"
+#include "../ui/preferences.h"
 
 namespace field::baked_nav {
 namespace {
@@ -43,6 +44,13 @@ struct ActiveRoute {
     int next_map_id = 0;          // the route goes on there after its last leg (0 = ends at the target)
     int transportation_id = 0;
     std::vector<Phase> phases;
+    bool requires_trap = false;
+};
+
+struct TrapVisit {
+    int map_id = 0, entity_id = 0, destination = 0, x = 0, y = 0;
+    Cell entry, arrival;
+    bool observed = false;
 };
 
 struct Pending {
@@ -50,7 +58,11 @@ struct Pending {
     MapGoal goal;
     TargetKind kind = TargetKind::Infer;
     std::wstring name;
+    std::vector<TrapVisit> completed_traps;
+    std::optional<TrapVisit> incoming_trap;
 };
+thread_local Pending* g_pending = nullptr;
+Pending* g_preview_pending = nullptr; // native-owner receipt for the latest guide/follower request
 std::shared_ptr<const ActiveRoute> g_published_route; // native-owner handle to immutable worker data
 
 struct RouteSnapshot;
@@ -203,7 +215,7 @@ void annotate_facing(Phase& phase, const baked_route::Goals& goals)
 /// event"); an NPC that stands still is a wall while it stands there; a wandering NPC is a
 /// passing obstacle. Cells the route may end on are never obstacles. World maps: gates only.
 struct Blockers {
-    std::vector<Cell> chests, gates, fixed_npcs, moving_npcs, triggers;
+    std::vector<Cell> chests, gates, fixed_npcs, moving_npcs, triggers, traps;
     std::vector<baked_route::Request::Directional> directional;
     std::vector<Cell> hard(bool with_gates = true) const
     {
@@ -260,16 +272,37 @@ bool planning_cancelled() {
     return g_route_snapshot && g_route_snapshot->epoch &&
         g_route_snapshot->epoch->load() != g_route_snapshot->generation;
 }
+
+bool event_on_route(const std::vector<Cell>& cells, const std::vector<Cell>& triggers, const std::vector<Cell>& selected_event = {}) {
+    std::vector<Cell> other;
+    for (const auto& trigger : triggers) {
+        const bool selected = std::any_of(selected_event.begin(), selected_event.end(), [&](const auto& cell) {
+            return cell.x == trigger.x && cell.y == trigger.y && (trigger.layer < 0 || cell.layer == trigger.layer);
+        });
+        if (!selected) other.push_back(trigger);
+    }
+    return baked_route::crosses_event(cells, other);
+}
+std::wstring route_warning(const PathInfo& path, const MapGoal& goal) {
+    if (path.required_trap) {
+        const auto* map = baked::submap_by_map_id(goal.map_id);
+        bool chest = false;
+        if (map) for (const auto& object : baked::grids(*map).objects)
+            chest |= object.type == baked::ObjType::TreasureBox && object.contains(goal.cell.x, goal.cell.y);
+        return T(chest ? L"Warning: a trap is required to reach this chest." : L"Warning: a trap is required on this route.");
+    }
+    return path.event_on_route ? T(L"Event trigger on the route") : std::wstring();
+}
 constexpr int kObjCollisionEntity = 19, kObjEntity = 5, kObjAnimEntity = 10;   // MapConstants.ObjectType
 constexpr int kFlagCollision = 1, kFlagWanders = 16;                           // bake field d
 
 const baked::Object* baked_by_entity_id(const baked::Grids& g, int entity_id, baked::ObjType type, const Cell& live)
 {
-    if (entity_id <= 0) return nullptr;
+    if (entity_id < 0 || (entity_id == 0 && type != baked::ObjType::Event && type != baked::ObjType::RandomEvent && type != baked::ObjType::Warp)) return nullptr;
     const baked::Object* best = nullptr;
     int nearest = INT_MAX;
     for (const baked::Object& o : g.objects)
-        if (o.type == type && o.entity_id() == entity_id) {
+        if (o.type == type && o.entity_id() == entity_id && (entity_id != 0 || o.contains(live.x,live.y))) {
             const int d = std::abs(o.tx - live.x) + std::abs(o.ty - live.y);
             if (d < nearest) { best = &o; nearest = d; }
         }
@@ -307,9 +340,10 @@ Blockers live_blockers(const baked::Submap& sm, const baked::Grids& g, const std
                     else out.gates.push_back(at);
                 }
             } else if (raw.trigger) {
-                const auto* o = baked_by_entity_id(g, raw.id, baked::ObjType::Event, c);
+                const auto* o = baked_by_entity_id(g, raw.id, raw.type == 28 ? baked::ObjType::RandomEvent : baked::ObjType::Event, c);
                 if (!o) o = baked_by_entity_id(g, raw.id, baked::ObjType::Warp, c);
                 add_footprint(out.triggers, o, c, false);
+                if (o && baked::is_trap(*o)) add_footprint(out.traps, o, c, false);
             } else if (raw.type == kObjEntity || raw.type == kObjAnimEntity) {
                 const auto* o = baked_by_entity_id(g, raw.id, raw.type == kObjEntity ? baked::ObjType::Entity : baked::ObjType::AnimEntity, c);
                 if (o && (o->d & kFlagCollision)) add_footprint(out.gates, o, c, false);
@@ -555,6 +589,8 @@ bool boarding_route(const baked::Submap& sm, const baked::Grids& g, const baked_
         ride.goals_open = false;
         ride.blocked = walk.blocked; ride.directional = walk.directional;
         ride.live_hazards = walk.live_hazards; ride.hazards = walk.hazards;
+        ride.live_traps = walk.live_traps; ride.traps = walk.traps;
+        ride.allow_trap_goal = walk.allow_trap_goal;
         ride.ignore_hazards = walk.ignore_hazards;
         const auto reachable_ride = baked_route::flood(ride);
         int best_landing = INT_MAX;
@@ -760,12 +796,12 @@ struct Edge {
     bool warp;        // a script warp (step-on or examined), else a GotoMap exit
 };
 
-std::vector<Edge> edges_of(const baked::Grids& g)
+std::vector<Edge> edges_of(const baked::Grids& g, int map_id)
 {
     std::vector<Edge> out;
     for (const baked::Object& o : g.objects) {
         if (o.type == baked::ObjType::GotoMap && o.a > 0) out.push_back(Edge{&o, o.a, o.b, false});
-        else if (o.type == baked::ObjType::Warp && o.a > 0) out.push_back(Edge{&o, o.a, o.b, true});
+        else if (o.type == baked::ObjType::Warp && (o.a > 0 || o.a == -1)) out.push_back(Edge{&o, o.a == -1 ? map_id : o.a, o.b, true});
     }
     return out;
 }
@@ -833,7 +869,7 @@ std::wstring map_name_of(int map_id) {
     return resolve_map_name_by_id(map_id);
 }
 
-CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool with_gates)
+CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool with_gates, bool allow_traps)
 {
     CrossLeg out;
     const baked::Submap* here = current_submap(map_handle);
@@ -872,10 +908,10 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         }
 
         // Dijkstra over (sub-map, arrival cell): the whole map is flooded from the arrival once.
-        struct State { int submap; Cell at; int cost; int parent; const baked::Object* via; int via_dest; };
+        struct State { int submap; Cell at; int cost; int parent; const baked::Object* via; int via_dest; int traps; };
         std::vector<State> states;
         std::vector<int> order;   // indices sorted by cost on each pop (small graphs)
-        states.push_back(State{baked::submap_index(here), start, 0, -1, nullptr, 0});
+        states.push_back(State{baked::submap_index(here), start, 0, -1, nullptr, 0, 0});
         std::vector<bool> done;
         int goal_state = -1;
         int goal_steps = 0;
@@ -886,7 +922,8 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
             int best = -1;
             for (size_t i = 0; i < states.size(); ++i) {
                 if (i < done.size() && done[i]) continue;
-                if (best < 0 || states[i].cost < states[static_cast<size_t>(best)].cost) best = static_cast<int>(i);
+                if (best < 0 || states[i].traps < states[static_cast<size_t>(best)].traps ||
+                    (states[i].traps == states[static_cast<size_t>(best)].traps && states[i].cost < states[static_cast<size_t>(best)].cost)) best = static_cast<int>(i);
             }
             if (best < 0) break;
             if (done.size() < states.size()) done.resize(states.size(), false);
@@ -902,6 +939,7 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
                 if (with_gates) req.directional = live.directional;
                 req.live_hazards = true;
                 req.hazards = live.triggers;
+                req.live_traps = true; req.traps = live.traps;
             } else map_state::add_obstacles(state, *sm, req, with_gates);
             // Keep destinations behind a visible event available; warn on the actual leg.
             req.ignore_hazards = true;
@@ -927,7 +965,22 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
                     break;
                 }
             }
-            for (const Edge& e : edges_of(g)) {
+            for (const Edge& e : edges_of(g, sm == here ? planning_map_id() : sm->first_map_id)) {
+                const bool trap = baked::is_trap(*e.object);
+                if (trap && !allow_traps) continue;
+                if (trap) {
+                    bool repeated = false;
+                    for (int parent = best; parent >= 0; parent = states[static_cast<size_t>(parent)].parent)
+                        repeated |= states[static_cast<size_t>(parent)].via == e.object;
+                    if (g_pending && g_pending->goal.map_id == goal.map_id &&
+                        g_pending->goal.cell == goal.cell) {
+                        repeated |= g_pending->completed_traps.size() >= static_cast<size_t>(kMaxVisitedMaps);
+                        for (const auto& used : g_pending->completed_traps)
+                            repeated |= used.map_id == sm->first_map_id && used.entity_id == e.object->entity_id() &&
+                                used.x == e.object->tx && used.y == e.object->ty;
+                    }
+                    if (repeated) { out.trap_repeat_blocked = true; continue; }
+                }
                 if (!state.active(*sm, *e.object)) continue;
                 const baked::Submap* dest = baked::submap_by_map_id(e.dest_map_id);
                 if (!dest) continue;
@@ -939,24 +992,31 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
                 Cell at{arrival->layer, arrival->tx, arrival->ty};
                 if (dest->world) at.layer = 1;
                 const int cost = cur.cost + d + 1;
+                const int traps = cur.traps + (trap ? 1 : 0);
                 // keep the cheapest arrival per (map, cell)
                 bool known = false;
                 for (size_t i = 0; i < states.size(); ++i) {
                     if (states[i].submap == baked::submap_index(dest) && states[i].at == at) {
                         known = true;
-                        if (cost < states[i].cost && !(i < done.size() && done[i])) {
+                        if ((traps < states[i].traps || (traps == states[i].traps && cost < states[i].cost)) && !(i < done.size() && done[i])) {
                             states[i].cost = cost;
                             states[i].parent = best;
                             states[i].via = e.object;
                             states[i].via_dest = e.dest_map_id;
+                            states[i].traps = traps;
                         }
                         break;
                     }
                 }
-                if (!known) states.push_back(State{baked::submap_index(dest), at, cost, best, e.object, e.dest_map_id});
+                if (!known) states.push_back(State{baked::submap_index(dest), at, cost, best, e.object, e.dest_map_id, traps});
             }
         }
-        if (goal_state < 0) return out;
+        if (goal_state < 0) {
+            out.incomplete = visited >= kMaxVisitedMaps &&
+                (done.size() < states.size() || std::any_of(done.begin(), done.end(), [](bool finished) { return !finished; }));
+            return out;
+        }
+        out.requires_trap = states[static_cast<size_t>(goal_state)].traps > 0;
 
         // Walk back to the first hop taken from the start state.
         int first = goal_state;
@@ -974,6 +1034,10 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
             if (with_gates) req.directional = live.directional;
             req.live_hazards = true;
             req.hazards = live.triggers;
+            req.live_traps = true; req.traps = live.traps;
+            req.allow_trap_goal = std::any_of(gh.objects.begin(), gh.objects.end(), [&](const auto& object) {
+                return baked::is_trap(object) && object.contains(goal.cell.x, goal.cell.y);
+            });
             baked_route::Route route = baked_route::find(req);
             if (!route.found && !req.hazards.empty()) { req.ignore_hazards = true; route = baked_route::find(req); }
             if (!route.found) return out;
@@ -984,8 +1048,7 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
             out.on_this_map = true;
             out.phases = phases;
             out.description = describe(phases);
-            if (baked_route::crosses_event(route.cells, req.hazards))
-                out.description = T(L"Event trigger on the route") + L", " + out.description;
+            out.event_on_route = event_on_route(route.cells, req.hazards, req.allow_trap_goal ? req.goals : std::vector<Cell>{});
             out.cells = route.cells;
             out.steps_here = route.steps();
             out.steps_total = goal_steps;
@@ -995,6 +1058,9 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         const State& hop = states[static_cast<size_t>(first)];
         if (!hop.via) return out;
         const baked::Object& o = *hop.via;
+        out.trap_leg = baked::is_trap(o);
+        out.trap_arrival = hop.at;
+        out.trap_entity = o.entity_id(); out.trap_x = o.tx; out.trap_y = o.ty;
         const bool examine_warp = o.type == baked::ObjType::Warp && o.d != 1;
         const auto warp_goals = goals_for(*here, Cell{o.layer, o.tx, o.ty}, TargetKind::Interact);
         if (examine_warp) req.goals = warp_goals.cells;
@@ -1005,6 +1071,8 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         if (with_gates) req.directional = live.directional;
         req.live_hazards = true;
         req.hazards = live.triggers;
+        req.live_traps = true; req.traps = live.traps;
+        req.allow_trap_goal = out.trap_leg;
         baked_route::Route route = baked_route::find(req);
         if (!route.found && !req.hazards.empty()) { req.ignore_hazards = true; route = baked_route::find(req); }
         if (!route.found) return out;
@@ -1012,7 +1080,7 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         p.cells = route.cells;
         std::wstring dest_name = map_name_of(hop.via_dest);
         if (o.type == baked::ObjType::Warp) {
-            p.action_after = o.d == 1 ? T(L"step on the warp") : T(L"examine the warp");
+            p.action_after = out.trap_leg ? T(L"step on the trap") : o.d == 1 ? T(L"step on the warp") : T(L"examine the warp");
             p.manual_after = o.d != 1;
             if (examine_warp) annotate_facing(p, warp_goals);
         } else {
@@ -1025,8 +1093,7 @@ CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool w
         out.cells = route.cells;
         out.phases = phases;
         out.description = describe(phases);
-        if (baked_route::crosses_event(route.cells, req.hazards))
-            out.description = T(L"Event trigger on the route") + L", " + out.description;
+        out.event_on_route = event_on_route(route.cells, req.hazards, req.goals);
         out.steps_here = route.steps();
         out.steps_total = goal_steps;
         return out;
@@ -1061,6 +1128,7 @@ void set_active(int map_id, const Cell& target, int goal_map_id, const std::vect
     active.valid = true; active.map_id = map_id; active.target = target;
     active.goal_map_id = goal_map_id; active.next_map_id = next_map_id; active.phases = phases;
     active.transportation_id = g_route_snapshot->vehicle.valid ? g_route_snapshot->vehicle.id : 0;
+    active.requires_trap = false;
 }
 
 /// The rest of the active route from the player's cell, when the cell lies on it (the last
@@ -1146,11 +1214,15 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
         req.directional = live.directional;
         req.live_hazards = true;
         req.hazards = live.triggers;
+        req.live_traps = true; req.traps = live.traps;
+        const bool selected_event = kind == TargetKind::Infer && std::any_of(g.objects.begin(), g.objects.end(), [&](const auto& object) {
+            return baked_route::step_event(object) && object.contains(target.x, target.y);
+        });
+        req.allow_trap_goal = selected_event;
         auto annotate_events = [&](const std::vector<Phase>& phases) {
             for (const Phase& p : phases)
-                if (baked_route::crosses_event(p.cells, live.triggers)) {
-                    out.description = T(L"Event trigger on the route") + L", " + out.description;
-                    out.full_description = T(L"Event trigger on the route") + L", " + out.full_description;
+                if (event_on_route(p.cells, live.triggers, selected_event ? req.goals : std::vector<Cell>{})) {
+                    out.event_on_route = true;
                     return;
                 }
         };
@@ -1163,6 +1235,13 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
                 bool blocked = false;
                 for (const Phase& phase : rest) for (size_t i = 1; i < phase.cells.size(); ++i) {
                     if (!baked_route::direction_allowed(req, phase.cells[i-1], phase.cells[i])) blocked = true;
+                    const bool planned_drop = g_active->requires_trap && g_active->next_map_id > 0 && i+1 == phase.cells.size() &&
+                        std::any_of(g.objects.begin(),g.objects.end(),[&](const auto& object) {
+                            return baked::is_trap(object) && object.type==baked::ObjType::Warp &&
+                                (object.a==g_active->next_map_id || (object.a==-1 && g_active->next_map_id==map_id)) && object.contains(phase.cells[i].x,phase.cells[i].y);
+                        });
+                    if (baked_route::trap_cell(req, g, phase.cells[i]) && !planned_drop &&
+                        !(req.allow_trap_goal && std::find(req.goals.begin(), req.goals.end(), phase.cells[i]) != req.goals.end())) blocked = true;
                     for (const Cell& obstacle : req.blocked) {
                         const Cell& c = phase.cells[i];
                         if (c.x == obstacle.x && c.y == obstacle.y && (obstacle.layer < 0 || c.layer == obstacle.layer)) blocked = true;
@@ -1171,6 +1250,7 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
                 if (blocked) invalidate_active();
                 else {
                 fill_result(*sm, rest, out);
+                out.required_trap = g_active->requires_trap;
                 annotate_events(rest);
                 out.next_map_id = g_active->next_map_id;
                 LOGF("[BakedNav] route kept: at (%d,%d) L%d, %d steps left to (%d,%d)", req.start.x, req.start.y,
@@ -1229,12 +1309,17 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
             mg.cell = target;
             mg.cells = req.goals;
             CrossLeg leg = find_across(map_handle, player, mg, true);
+            if (!leg.found && !leg.incomplete) leg = find_across(map_handle, player, mg, true, true);
+            out.trap_repeat_blocked = leg.trap_repeat_blocked;
             if (leg.found && !leg.on_this_map) {
                 phases = leg.phases;
                 next_map = leg.next_map_id;
+                out.required_trap = leg.requires_trap; out.event_on_route = leg.event_on_route;
             } else if (!live.gates.empty() && find_across(map_handle, player, mg, false).found) {
                 reason = T(L"Story gated");
             }
+            if (!leg.found && leg.trap_repeat_blocked) reason = T(L"Trap route would repeat. Choose another route.");
+            if (!leg.found && leg.incomplete) reason = T(L"No safe route found");
         }
         if (phases.empty()) {
             out.error = L"No path found";
@@ -1248,6 +1333,7 @@ bool find(Vec3 from, Vec3 to, void* map_handle, void* player, bool full, TargetK
         }
         if (phases.back().action_after.empty()) annotate_facing(phases.back(), goals);
         set_active(map_id, target, map_id, phases, next_map);
+        if (g_route_snapshot) g_route_snapshot->active.requires_trap = out.required_trap;
         fill_result(*sm, phases, out);
         annotate_events(phases);
         out.next_map_id = next_map;
@@ -1444,7 +1530,7 @@ std::vector<Floor> connected_floors(const baked::Submap* here, int here_map_id, 
     std::vector<Floor> queue{Floor{here, here_map_id}};
     for (size_t qi = 0; qi < queue.size() && queue.size() < static_cast<size_t>(kMaxVisitedMaps); ++qi) {
         const Floor f = queue[qi];
-        for (const Edge& e : edges_of(baked::grids(*f.submap))) {
+        for (const Edge& e : edges_of(baked::grids(*f.submap), f.map_id)) {
             if (!state.active(*f.submap, *e.object)) continue;
             const baked::Submap* dest = baked::submap_by_map_id(e.dest_map_id);
             if (!dest || dest->world) continue;
@@ -1459,7 +1545,6 @@ std::vector<Floor> connected_floors(const baked::Submap* here, int here_map_id, 
 }
 
 
-thread_local Pending* g_pending = nullptr;
 
 } // namespace
 
@@ -1550,26 +1635,56 @@ bool route_to_goal(void* map_handle, void* player, const MapGoal& goal_in, Targe
             if (!tr && !g_route_snapshot) return false;
             if (!find(g_route_snapshot ? snapshot_position() : unity::local_position(tr), world_of_cell(*here, goal.cell), map_handle, player, true, kind, false, out))
                 return false;
-            if (out.success && out.next_map_id > 0) remember_destination(goal, kind, name);
+            if (out.success && out.next_map_id > 0) {
+                remember_destination(goal, kind, name);
+                if (g_pending) {
+                    g_pending->incoming_trap.reset();
+                    if (!out.walk_phases.empty() && !out.walk_phases.front().cells.empty()) {
+                        const auto cell = out.walk_phases.front().cells.back();
+                        for (const auto& object : baked::grids(*here).objects)
+                            if (baked::is_trap(object) && object.type == baked::ObjType::Warp &&
+                                (object.a == out.next_map_id || (object.a == -1 && out.next_map_id == map_id)) && object.contains(cell.x, cell.y)) {
+                                auto state = planning_state();
+                                const auto* dest = baked::submap_by_map_id(out.next_map_id);
+                                const auto* arrival = dest ? point_in(*dest,object.b,state) : nullptr;
+                                if (arrival) g_pending->incoming_trap = TrapVisit{here->first_map_id, object.entity_id(), out.next_map_id, object.tx, object.ty,
+                                    cell, {arrival->layer,arrival->tx,arrival->ty}};
+                            }
+                    }
+                }
+            } else if (out.trap_repeat_blocked && g_pending) { g_pending->valid = false; g_pending->incoming_trap.reset(); }
             else clear_pending();
             return true;
         }
         CrossLeg leg = find_across(map_handle, player, goal, true);
+        if (!leg.found && !leg.incomplete) leg = find_across(map_handle, player, goal, true, true);
         if (!leg.found) {
             out.error = L"No path found";
+            out.trap_repeat_blocked = leg.trap_repeat_blocked;
             const Blockers live = live_blockers(*here, baked::grids(*here), {});
             if (!live.gates.empty() && find_across(map_handle, player, goal, false).found) out.reason = T(L"Story gated");
-            clear_pending();
+            if (leg.trap_repeat_blocked) out.reason = T(L"Trap route would repeat. Choose another route.");
+            if (leg.incomplete) out.reason = T(L"No safe route found");
+            if (leg.trap_repeat_blocked && g_pending) { g_pending->valid = false; g_pending->incoming_trap.reset(); }
+            else clear_pending();
             LOGF("[BakedNav] no route to map %d (%d,%d) from map %d; %ls", goal.map_id, goal.cell.x, goal.cell.y, map_id,
                  out.reason.empty() ? L"no reason known" : out.reason.c_str());
             return true;
         }
         const int next = leg.on_this_map ? 0 : leg.next_map_id;
         set_active(map_id, goal.cell, goal.map_id, leg.phases, next);
+        if (g_route_snapshot) g_route_snapshot->active.requires_trap = leg.requires_trap;
         fill_result(*here, leg.phases, out);
         out.description = leg.description;
+        out.required_trap = leg.requires_trap; out.event_on_route = leg.event_on_route;
         out.next_map_id = next;
-        if (next > 0) remember_destination(goal, kind, name);
+        if (next > 0) {
+            remember_destination(goal, kind, name);
+            if (g_pending) g_pending->incoming_trap.reset();
+            if (leg.trap_leg && g_pending)
+                g_pending->incoming_trap = TrapVisit{here->first_map_id, leg.trap_entity, next, leg.trap_x, leg.trap_y,
+                    leg.cells.back(),leg.trap_arrival};
+        }
         else clear_pending();
         LOGF("[BakedNav] route to map %d (%d,%d) from map %d: %d steps here, %d in all, %ls", goal.map_id, goal.cell.x,
              goal.cell.y, map_id, leg.steps_here, leg.steps_total, next > 0 ? L"goes on" : L"ends there");
@@ -1589,15 +1704,53 @@ bool pending_goal(MapGoal& goal, TargetKind& kind, std::wstring& name)
 void remember_destination(const MapGoal& goal, TargetKind kind, const std::wstring& name)
 {
     if (!g_pending) g_pending = new Pending();
+    const bool same = g_pending->goal.map_id == goal.map_id &&
+        g_pending->goal.cell == goal.cell;
+    if (!same) { g_pending->completed_traps.clear(); g_pending->incoming_trap.reset(); }
     g_pending->valid = true;
     g_pending->goal = goal;
     g_pending->kind = kind;
     g_pending->name = name;
 }
 
-void clear_pending()
+bool note_trap_start(int map_id, const Cell& at)
 {
-    if (g_pending) g_pending->valid = false;
+    auto observe = [&](Pending* pending) {
+        if (!pending || !pending->valid || !pending->incoming_trap) return false;
+        auto& trap = *pending->incoming_trap;
+        if (baked::submap_by_map_id(trap.map_id) != baked::submap_by_map_id(map_id) ||
+            at.layer != trap.entry.layer || std::abs(at.x-trap.entry.x)+std::abs(at.y-trap.entry.y)>1) return false;
+        trap.observed = true;
+        return baked::submap_by_map_id(trap.destination) == baked::submap_by_map_id(map_id);
+    };
+    bool same = observe(g_pending);
+    same |= observe(g_preview_pending);
+    return same;
+}
+void record_map_arrival(int map_id, const Cell& at)
+{
+    auto record = [&](Pending* pending) {
+        if (!pending || !pending->valid || !pending->incoming_trap) return;
+        const auto trap = *pending->incoming_trap;
+        const bool same_map = baked::submap_by_map_id(trap.map_id) == baked::submap_by_map_id(trap.destination);
+        if (trap.observed && baked::submap_by_map_id(trap.destination) == baked::submap_by_map_id(map_id) &&
+            (!same_map || at == trap.arrival) && pending->completed_traps.size() < static_cast<size_t>(kMaxVisitedMaps)) {
+            pending->completed_traps.push_back(trap);
+            pending->incoming_trap.reset();
+        }
+    };
+    record(g_pending); record(g_preview_pending);
+}
+void clear_preview_destination(const MapGoal& goal)
+{
+    if (g_preview_pending && g_preview_pending->goal.map_id==goal.map_id && g_preview_pending->goal.cell==goal.cell)
+        *g_preview_pending = Pending{};
+}
+
+void clear_pending(bool include_preview)
+{
+    if (g_pending) { g_pending->valid = false; g_pending->incoming_trap.reset(); g_pending->completed_traps.clear(); }
+    if (include_preview && g_preview_pending) *g_preview_pending = Pending{};
 }
 
 void continue_pending()
@@ -1612,7 +1765,8 @@ void continue_pending()
             std::wstring line = name.empty() ? std::wstring() : name + L": ";
             if (info.success && !info.description.empty()) line += info.description;
             else line += !info.reason.empty() ? info.reason : T(L"No path");
-            ffpr::say(line, false);
+            if (!info.warning.empty() && ui::prefs::mod_warnings_enabled()) ffpr::say_sequence({info.warning, line}, false);
+            else ffpr::say(line, false);
         });
     });
 }
@@ -1753,7 +1907,6 @@ Planned plan_snapshot(RouteSnapshot& snapshot) {
     if (snapshot.previous_active) snapshot.active = *snapshot.previous_active;
     modtext::LocaleScope locale(snapshot.locale);
     SnapshotScope scope(snapshot);
-    const Pending previous_pending = snapshot.pending;
     Planned result;
     result.requested_at = snapshot.requested_at;
     result.vehicle = snapshot.vehicle;
@@ -1766,8 +1919,8 @@ Planned plan_snapshot(RouteSnapshot& snapshot) {
     if (!route_to_goal(nullptr, nullptr, snapshot.goal, snapshot.kind, snapshot.name, result.path)) {
         result.path.reason = result.path.error = T(L"Navigation map data unavailable");
     }
-    if (!snapshot.keep_destination) snapshot.pending = previous_pending;
     result.active = std::make_shared<ActiveRoute>(std::move(snapshot.active)); result.pending = std::move(snapshot.pending);
+    result.path.warning = route_warning(result.path, snapshot.goal);
     result.compute_ms = (frame::now() - compute_started) * 1000;
     return result;
 }
@@ -1797,9 +1950,10 @@ bool still_current(const Planned& result) {
 }
 void commit_plan(Planned& result) {
     g_request_pending = false;
-    if (!g_pending) g_pending = new Pending();
+    auto& pending = result.keep_destination ? g_pending : g_preview_pending;
+    if (!pending) pending = new Pending();
     g_published_route = std::move(result.active); g_active = g_published_route.get();
-    *g_pending = std::move(result.pending);
+    *pending = std::move(result.pending);
     LOGF("[BakedNav] ready map %d: capture %.3f ms, compute %.3f ms, total %.3f ms",
         result.map_id, result.capture_ms, result.compute_ms, (frame::now() - result.requested_at) * 1000);
 }
@@ -1862,6 +2016,28 @@ void finish_exit_capture(ExitSnapshot& capture) {
     }
 }
 bool exit_snapshot_world(const ExitSnapshot& capture) { return capture.route.submap->world; }
+bool teleport_landing_safe(ExitSnapshot& capture, Vec3 target) {
+    auto& snapshot = capture.route;
+    if (!snapshot.submap || !std::isfinite(target.x) || !std::isfinite(target.y) || !std::isfinite(target.z)) return false;
+    SnapshotScope scope(snapshot);
+    const auto& sm = *snapshot.submap;
+    // Validate coordinates before conversion; float-to-int overflow is undefined.
+    const double x = sm.width * .5 + target.x / kTile, y = sm.height * .5 - target.y / kTile;
+    if (x < 0 || y < 0 || x >= sm.width || y >= sm.height) return false;
+    const auto& g = baked::grids(sm);
+    auto req = walk_request(sm, {snapshot.layer, static_cast<int>(x), static_cast<int>(y)});
+    world_mode(req);
+    req.passages = game::flags().has_hidden_passages;
+    const auto live = live_blockers(sm, g, {});
+    req.blocked = live.hard(); req.directional = live.directional;
+    // World-map NPCs/chests are also solid teleport landings, even though world routing
+    // normally only collects story gates there.
+    if (sm.world) for (const auto& raw : snapshot.obstacles)
+        if (raw.npc || raw.chest) req.blocked.push_back(raw.cell);
+    req.live_hazards = true; req.hazards = live.triggers;
+    req.live_traps = true; req.traps = live.traps;
+    return baked_route::safe_landing(req, g, req.start);
+}
 int exit_snapshot_vehicle(const ExitSnapshot& capture) { return capture.route.vehicle.valid ? capture.route.vehicle.id : 0; }
 std::vector<int> exit_distances(ExitSnapshot& capture, const std::vector<ExitTarget>& targets,
                               std::function<bool()> cancelled) {
@@ -1875,6 +2051,7 @@ std::vector<int> exit_distances(ExitSnapshot& capture, const std::vector<ExitTar
     const auto live = live_blockers(*sm,g,{});
     req.blocked = live.hard(); req.directional = live.directional;
     req.live_hazards = true; req.hazards = live.triggers;
+    req.live_traps = true; req.traps = live.traps;
     const auto reach = baked_route::flood(req);
     const auto landed = land_after_ride(req,reach);
     auto foot = req; foot.vehicle_group = foot.vehicle_type = foot.landing_group = 0;
@@ -1884,7 +2061,8 @@ std::vector<int> exit_distances(ExitSnapshot& capture, const std::vector<ExitTar
         const auto& target = targets[i];
         if (target.map_id > 0 && target.map_id != snapshot.map_id) {
             MapGoal goal; goal.map_id = target.map_id; goal.cell = target.cell;
-            const auto leg = find_across(nullptr,nullptr,goal);
+            auto leg = find_across(nullptr,nullptr,goal);
+            if (!leg.found && !leg.incomplete) leg = find_across(nullptr,nullptr,goal,true,true);
             if (leg.found) result[i] = leg.steps_total;
             continue;
         }
@@ -1944,13 +2122,15 @@ void request_route(MapGoal goal, TargetKind kind, std::wstring name,
     snapshot->map_id = field::current_map_id(); snapshot->submap = submap;
     snapshot->position = unity::local_position(unity::transform(pl));
     snapshot->layer = submap->world ? 1 : player_layer(pl);
+    record_map_arrival(snapshot->map_id,cell_of(*submap,snapshot->position,snapshot->layer));
     snapshot->vehicle = field::current_vehicle();
     snapshot->locale = modtext::lang();
     snapshot->epoch = g_route_owner.epoch(); snapshot->generation = snapshot->epoch->load();
     snapshot->goal = std::move(goal); snapshot->kind = kind; snapshot->name = std::move(name);
     snapshot->keep_destination = keep_destination;
     snapshot->previous_active = g_published_route;
-    if (g_pending) snapshot->pending = *g_pending;
+    const auto* pending = keep_destination ? g_pending : g_preview_pending;
+    if (pending) snapshot->pending = *pending;
     // Native pointers stay in this owner-thread capture closure, never in Snapshot/Work.
     auto entities = std::make_shared<EntityCursor>();
     g_request_pending = true;

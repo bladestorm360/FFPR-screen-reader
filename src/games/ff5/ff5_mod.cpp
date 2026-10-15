@@ -1,13 +1,11 @@
 // Ports the FF5-only parts of FF5 Core/FFV_ScreenReaderMod.cs, Core/InputManager.cs and
 // Core/AudioLoopManager.cs that the core (FF1's) does not have:
-//   * the 9 key for beacons (FF3-FF5; F6 is the core's),
-//   * Shift+; and the "LandingPings" setting (AudioLoopManager.ToggleLandingPings),
 //   * the "EnemyLetters" setting toggle (FFV_ScreenReaderMod.ToggleEnemyLetters).
 //
 // The landing-ping loop itself is in the core (src/core/fieldnav/landing_spots.cpp and
 // audio_loops.cpp, every game with a ship), and the core mod menu lists LandingPings,
-// LandingPingVolume and, for FF5, EnemyLetters. "Settings.Changed.LandingPings" is run after
-// the toggle so the core loop starts and stops. EnemyLetters has no effect until FF5's own
+// LandingPingVolume and, for FF5, EnemyLetters. Landing pings use that shared settings menu;
+// keyboard bindings follow FF1. EnemyLetters has no effect until FF5's own
 // battle target reader is ported.
 #include <string>
 #include "ff5_internal.h"
@@ -15,7 +13,6 @@
 #include "../../core/modtext.h"
 #include "../../core/say.h"
 #include "../../core/settings.h"
-#include "../../core/input/input.h"
 
 namespace ffpr::ff5 {
 namespace {
@@ -23,14 +20,6 @@ namespace {
 void run_if_defined(const char* name)
 {
     if (actions::defined(name)) actions::run(name);
-}
-
-/// AudioLoopManager.ToggleLandingPings.
-void toggle_landing_pings()
-{
-    bool value = settings::toggle("LandingPings", false);
-    run_if_defined("Settings.Changed.LandingPings");
-    ffpr::say(TF(L"Landing Pings {0}", {value ? T(L"on") : T(L"off")}));
 }
 
 /// FFV_ScreenReaderMod.ToggleEnemyLetters.
@@ -43,15 +32,10 @@ void toggle_enemy_letters()
 
 int install()
 {
-    actions::define("Mod.ToggleLandingPings", [] { toggle_landing_pings(); });
     actions::define("Mod.ToggleEnemyLetters", [] { toggle_enemy_letters(); });
     queries::define("PreferencesManager.LandingPingsEnabled", [] { return settings::get_bool("LandingPings", false); });
     queries::define("PreferencesManager.EnemyLettersEnabled", [] { return settings::get_bool("EnemyLetters", false); });
 
-    input::add_binding(input::Key::Alpha9, input::Mod::None, input::Context::Field, "Mod.ToggleAudioBeacons",
-                       "Toggle audio beacons (alt)");
-    input::add_binding(input::Key::Semicolon, input::Mod::Shift, input::Context::Field, "Mod.ToggleLandingPings",
-                       "Toggle landing pings");
     return 0;
 }
 

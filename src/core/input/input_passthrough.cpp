@@ -255,6 +255,16 @@ bool d_listener_held(void* self, void* key, int32_t device, bool ignore, const v
     if (native_input_blocked()) return false;
     const bool r = o_listener_held(self, key, device, ignore, mi) ||
         (ffpr::fieldnav::autowalk::virtual_input_active() && ffpr::fieldnav::autowalk::virtual_key(listener_action(key)));
+    // BattleMenuController.IsEscapeInput reads held SwitchLeft/Right directly through
+    // InputListener, bypassing the manager. Unity pads are disabled while SDL owns them.
+    // Forward only these two native actions in battle; mod mode/modal ownership above
+    // still consumes them, and the game retains escape eligibility and timing.
+    if (!r && (device == 1 || device == 3) && gamepad_available()
+        && queries::is("BattleStateHelper.IsInBattle")) {
+        const int action = listener_action(key);
+        if (action == kActionSwitchLeft || action == kActionSwitchRight)
+            return sdl_key_held(action);
+    }
     return result_listener_passthrough(r, device, [&] { return sdl_key_held(listener_action(key)); });
 }
 bool d_listener_up(void* self, void* key, int32_t device, bool ignore, const void* mi)

@@ -1,0 +1,17 @@
+{
+  "version": "1.25.2",
+  "archive_url": "https://openal-soft.org/openal-binaries/openal-soft-1.25.2-bin.zip",
+  "archive_sha256": "67a0c4b800bd860c93c04f38caf8cbe4875f9c84700ac430efc451f70e265434",
+  "source_url": "https://openal-soft.org/openal-releases/openal-soft-1.25.2.tar.bz2",
+  "source_sha256": "1dbaac44e7579d5bc8847ca8db4b2e8b9fd3961041f35ee20def4958301e1089",
+  "files": {
+    "soft_oal.dll": "3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4",
+    "COPYING": "d808ce217e5b611854da622b57ec29fe545584c48bc5352fae72a4b6e5074a15",
+    "LICENSE-pffft": "64056328b3e7bc104e24ef96accc1a7abead156f0c02d1b87c97e3f3a28030de",
+    "LICENSE-fmt": "07580f2a3b35709ce703d523f447b242f6dfec7582a8c0df102c7fa2849375f8",
+    "LICENSE-gsl": "4c21dc82a1c7186ea754fd59d504c00947953a3401fe8e24eaa44109ef8e2555",
+    "BSD-3Clause": "b5a08cf98996dd83aa906a72c163600f6cb17a65ce546a553815a1267abd43ff",
+    "HRTF.txt": "efca3106588a0d35d8aefc4650a98a6e6044cbe432d7c6c34c7e912ce85f0311",
+    "SOURCE.txt": "aea2ed3f1d377f06006fb1ce62f2ab8de92a592ab46c406d2f967944797e19e9"
+  }
+}

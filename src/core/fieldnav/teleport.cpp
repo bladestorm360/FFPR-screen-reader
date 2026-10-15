@@ -11,12 +11,25 @@
 #include "../say.h"
 #include "../unity.h"
 #include "../field/field_api.h"
+#include "../field/baked_nav.h"
+#include "../field/field_internal.h"
+#include "../field/capture_budget.h"
+#include "../input/input.h"
+#include "../ui/preferences.h"
+#include "../ui/mod_ui.h"
+#include "../worker_job.h"
+#include "autowalk.h"
 
 namespace ffpr::fieldnav::teleport {
 namespace {
 
 ref::Class  kTransform{"UnityEngine", "Transform"};
 ref::Method mSetLocalPosition{kTransform, "set_localPosition", 1};
+ref::Class kFieldEntity{"Last.Entity.Field", "FieldEntity"};
+ref::Method mPlayerIsMoving{kFieldEntity, "get_IsMoving", 0};
+worker_job::Owner g_owner;
+constexpr double kMaxLandingAge = 0.5; // fail closed if capture/worker publication becomes stale
+constexpr size_t kMaxEntities = 8192;
 
 std::wstring direction_from_offset(float ox, float oy)
 {
@@ -28,6 +41,13 @@ std::wstring direction_from_offset(float ox, float oy)
 /// Teleport the player to the selected entity's position plus an offset (16 units = 1 tile).
 void teleport_in_direction(float ox, float oy)
 {
+    g_owner.cancel();
+    frame::cancel_label("Teleport.");
+    if (!ui::prefs::teleport_shortcuts_enabled() ||
+        !queries::is("GameStatePatches.IsFieldNavigationReady") ||
+        queries::is("GameStatePatches.IsInputTransitionBlocked") ||
+        queries::is("MessageWindowPatches.IsInDialogue") ||
+        queries::is("BattleStateHelper.IsInBattle") || menu_state::any_active() || ui::any_modal_open()) return;
     try {
         void* player = ::field::player();
         if (!player) {
@@ -45,22 +65,88 @@ void teleport_in_direction(float ox, float oy)
             ffpr::say(T(L"Not on map"), true);
             return;
         }
-
-        // Target position: entity position + offset
-        unity::Vec3 target{entity.position.x + ox, entity.position.y + oy, entity.position.z + 0.0f};
-
-        // player.transform.localPosition = target
-        void* tr = unity::transform(player);
-        void* fp = mSetLocalPosition.ptr();
-        if (!tr || !fp) {
-            ffpr::say(T(L"Teleport failed"), true);
+        if (!mPlayerIsMoving.ptr() || ref::call<bool>(mPlayerIsMoving, player)) {
+            ffpr::say(T(L"Teleport cancelled."), true); return;
+        }
+        const auto vehicle = ::field::current_vehicle();
+        if (!vehicle.valid || (vehicle.type != 0 && vehicle.type != 1)) {
+            ffpr::say(T(L"Teleport unavailable while riding."), true);
             return;
         }
-        using F = void (*)(void*, unity::Vec3, const void*);
-        reinterpret_cast<F>(fp)(tr, target, mSetLocalPosition.get());
-
-        std::wstring direction = direction_from_offset(ox, oy);
-        ffpr::say(TF(L"Teleported to {0} of {1}", {direction, entity.name}), true);
+        void* map = ::field::map_handle();
+        ::field::baked_route::Cell origin;
+        auto snapshot = ::field::baked_nav::begin_exit_capture(false, true);
+        if (!snapshot || !::field::baked_nav::player_cell(map, player, origin)) {
+            ffpr::say(T(L"Teleport blocked: no safe landing."), true); return;
+        }
+        autowalk::cancel();
+        unity::Vec3 target{entity.position.x + ox, entity.position.y + oy, entity.position.z + 0.0f};
+        const int map_id = ::field::current_map_id();
+        const double started = frame::now();
+        auto current = [map_id, origin, entity, vehicle, started, player] {
+            if (frame::now() - started > kMaxLandingAge || !ui::prefs::teleport_shortcuts_enabled() ||
+                !input::game_window_focused() || !queries::is("GameStatePatches.IsFieldNavigationReady") ||
+                queries::is("GameStatePatches.IsInputTransitionBlocked") ||
+                queries::is("MessageWindowPatches.IsInDialogue") ||
+                queries::is("BattleStateHelper.IsInBattle") || menu_state::any_active() || ui::any_modal_open() ||
+                ::field::current_map_id() != map_id || ::field::player() != player ||
+                ref::call<bool>(mPlayerIsMoving, player)) return false;
+            ::field::baked_route::Cell now;
+            const auto selected = ::field::selected();
+            const auto riding = ::field::current_vehicle();
+            return ::field::baked_nav::player_cell(::field::map_handle(), ::field::player(), now) && now == origin &&
+                riding.valid && riding.id == vehicle.id && riding.type == vehicle.type &&
+                selected.valid && selected.identity == entity.identity && selected.remote_map_id == 0 &&
+                selected.position.x == entity.position.x && selected.position.y == entity.position.y;
+        };
+        auto cancel_notice = [map_id] {
+            if (input::game_window_focused() && queries::is("GameStatePatches.IsFieldNavigationReady") &&
+                ::field::current_map_id() == map_id && !queries::is("MessageWindowPatches.IsInDialogue") &&
+                !queries::is("BattleStateHelper.IsInBattle") && !menu_state::any_active() && !ui::any_modal_open())
+                ffpr::say(T(L"Teleport cancelled."), true);
+        };
+        auto cursor = std::make_shared<::field::EntityCursor>();
+        auto count = std::make_shared<size_t>(0);
+        auto epoch = g_owner.epoch(); const auto generation = epoch->load();
+        ffpr::say(T(L"Checking teleport landing."), true);
+        frame::every_frame([=]() mutable {
+            if (epoch->load() != generation) return false;
+            if (!current()) { cancel_notice(); return false; }
+            ::field::CaptureBudget budget;
+            void* entity_ptr = nullptr;
+            bool more = true;
+            while (budget.available() && (more = cursor->next(entity_ptr))) {
+                if (++*count > kMaxEntities) { cancel_notice(); return false; }
+                if (entity_ptr && entity_ptr != ::field::player())
+                    ::field::baked_nav::capture_exit_obstacle(*snapshot, entity_ptr);
+            }
+            if (more) return true;
+            ::field::baked_nav::finish_exit_capture(*snapshot);
+            auto completed = std::make_shared<bool>(false);
+            worker_job::start(g_owner, std::pair{snapshot, target},
+                [](auto& work) { return ::field::baked_nav::teleport_landing_safe(*work.first, work.second); },
+                [=](bool safe) {
+                    *completed = true;
+                    if (!current() || input::suppress_game_input()) { cancel_notice(); return; }
+                    if (!safe) { ffpr::say(T(L"Teleport blocked: no safe landing."), true); return; }
+                    void* tr = unity::transform(::field::player());
+                    void* fp = mSetLocalPosition.ptr();
+                    if (!tr || !fp) { ffpr::say(T(L"Teleport failed"), true); return; }
+                    auto landing = target;
+                    landing.z = unity::local_position(tr).z; // retain the native player's current layer/depth
+                    using F = void (*)(void*, unity::Vec3, const void*);
+                    reinterpret_cast<F>(fp)(tr, landing, mSetLocalPosition.get());
+                    ::field::baked_nav::invalidate();
+                    LOGF("[Teleport] landing checked: %zu entities, %.3f ms request-to-move", *count, (frame::now()-started)*1000);
+                    ffpr::say(TF(L"Teleported to {0} of {1}", {direction_from_offset(ox, oy), entity.name}), true);
+                }, background::Lane::Navigation);
+            frame::every_frame([=] {
+                if (*completed || epoch->load() != generation) return false;
+                if (current() && !input::suppress_game_input()) return true;
+                g_owner.cancel(); cancel_notice(); return false;
+            }, "Teleport.Expiry");
+            return false;
+        }, "Teleport.Capture");
     } catch (...) {
         LOGF("Error teleporting");
         ffpr::say(T(L"Teleport failed"), true);

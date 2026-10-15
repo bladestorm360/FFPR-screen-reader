@@ -14,6 +14,7 @@
 #include <string>
 #include "core.h"
 #include "settings.h"
+#include "../audio/volume_settings.h"
 
 namespace ui::prefs {
 
@@ -32,11 +33,19 @@ inline constexpr const char* kToLayerFilter = "ToLayerFilter";              // L
 inline constexpr const char* kWallTones = "WallTones";                      // Wall Tones
 inline constexpr const char* kFootsteps = "Footsteps";                      // Footsteps
 inline constexpr const char* kAudioBeacons = "AudioBeacons";                // Beacon Navigation
+inline constexpr const char* kBeaconMode = "BeaconMode";
+inline constexpr int kBeaconFollowRoute = 0, kBeaconObjectLocation = 1;
+inline constexpr int kBeaconModeDefault = kBeaconFollowRoute, kBeaconModeMax = kBeaconObjectLocation;
+inline const wchar_t* const kBeaconModeNames[2] = {L"Follow route", L"Object location"};
 inline constexpr const char* kAutowalk = "Autowalk";
+inline constexpr const char* kNavigationKeymap = "NavigationKeymap";
+inline constexpr const char* kTeleportShortcuts = "TeleportShortcuts";
+inline constexpr const char* kSpeechEnabled = "SpeechEnabled";
 inline constexpr const char* kSpeakAutowalkPath = "SpeakAutowalkPath";
 inline constexpr const char* kBeaconWithDirections = "BeaconWithDirections";
 inline constexpr const char* kAutoDetail = "AutoDetail";                    // Auto Announcement Detail
 inline constexpr const char* kStatusDamage = "StatusDamage";                // Status Damage Announcements
+inline constexpr const char* kModWarnings = "ModWarnings";
 inline constexpr const char* kSpoilTreasureChestContents = "SpoilTreasureChestContents";
 inline constexpr const char* kStickClickNormalization = "StickClickNormalization"; // Stick Click Normalization
 inline constexpr const char* kAnnounceOnBeaconRestart = "AnnounceOnBeaconRestart"; // Announce Destination on Beacon Restart
@@ -66,10 +75,14 @@ inline constexpr bool kWallTonesDefault = false;
 inline constexpr bool kFootstepsDefault = false;
 inline constexpr bool kAudioBeaconsDefault = false;
 inline constexpr bool kAutowalkDefault = false;
+inline constexpr int kNavigationKeymapDefault = 0;
+inline constexpr bool kTeleportShortcutsDefault = false;
+inline constexpr bool kSpeechEnabledDefault = true;
 inline constexpr bool kSpeakAutowalkPathDefault = false;
 inline constexpr bool kBeaconWithDirectionsDefault = false;
 inline constexpr bool kAutoDetailDefault = false;
 inline constexpr bool kStatusDamageDefault = true;
+inline constexpr bool kModWarningsDefault = true;
 inline constexpr bool kSpoilTreasureChestContentsDefault = false;
 inline constexpr bool kStickClickNormalizationDefault = false;
 inline constexpr bool kAnnounceOnBeaconRestartDefault = false;
@@ -96,6 +109,7 @@ inline constexpr int kMultiHitDamageMax = 1;
 inline constexpr int kStatDeltaModeMax = 1;
 inline constexpr int kPathfindingFilterModeDefault = kFilterCurrentMap;
 inline constexpr int kPathfindingFilterModeMax = 2;
+inline constexpr int kNavigationKeymapMax = 1;
 /// The spoken names of the three modes, mod-text keys in mode order.
 inline const wchar_t* const kPathfindingFilterModeNames[3] = {L"Current floor", L"Current map with vehicles", L"Current map"};
 
@@ -114,11 +128,15 @@ inline bool to_layer_filter_enabled() { return settings::get_bool(kToLayerFilter
 inline bool wall_tones_enabled() { return settings::get_bool(kWallTones, kWallTonesDefault); }
 inline bool footsteps_enabled() { return settings::get_bool(kFootsteps, kFootstepsDefault); }
 inline bool audio_beacons_enabled() { return settings::get_bool(kAudioBeacons, kAudioBeaconsDefault); }
+inline int beacon_mode() { return std::clamp(settings::get_int(kBeaconMode,kBeaconModeDefault),0,kBeaconModeMax); }
 inline bool autowalk_enabled() { return settings::get_bool(kAutowalk, kAutowalkDefault); }
+inline bool teleport_shortcuts_enabled() { return settings::get_bool(kTeleportShortcuts, kTeleportShortcutsDefault); }
+inline bool speech_enabled() { return settings::get_bool(kSpeechEnabled, kSpeechEnabledDefault); }
 inline bool speak_autowalk_path_enabled() { return settings::get_bool(kSpeakAutowalkPath, kSpeakAutowalkPathDefault); }
 inline bool beacon_with_directions_enabled() { return settings::get_bool(kBeaconWithDirections, kBeaconWithDirectionsDefault); }
 inline bool auto_detail_enabled() { return settings::get_bool(kAutoDetail, kAutoDetailDefault); }
 inline bool status_damage_enabled() { return settings::get_bool(kStatusDamage, kStatusDamageDefault); }
+inline bool mod_warnings_enabled() { return settings::get_bool(kModWarnings, kModWarningsDefault); }
 inline bool spoil_treasure_chest_contents_enabled() { return settings::get_bool(kSpoilTreasureChestContents, kSpoilTreasureChestContentsDefault); }
 inline bool stick_click_normalization_enabled() { return settings::get_bool(kStickClickNormalization, kStickClickNormalizationDefault); }
 inline bool announce_on_beacon_restart_enabled() { return settings::get_bool(kAnnounceOnBeaconRestart, kAnnounceOnBeaconRestartDefault); }
@@ -129,16 +147,17 @@ inline bool enemy_letters_enabled() { return settings::get_bool(kEnemyLetters, k
 inline bool announce_result_stat_changes_enabled() { return settings::get_bool(kAnnounceResultStatChanges, kAnnounceResultStatChangesDefault); }
 
 // --- value getters ------------------------------------------------------------------------
-inline int wall_bump_volume() { return settings::get_int(kWallBumpVolume, kWallBumpVolumeDefault); }
-inline int footstep_volume() { return settings::get_int(kFootstepVolume, kFootstepVolumeDefault); }
-inline int wall_tone_volume() { return settings::get_int(kWallToneVolume, kWallToneVolumeDefault); }
-inline int beacon_volume() { return settings::get_int(kBeaconVolume, kBeaconVolumeDefault); }
-inline int exp_counter_volume() { return settings::get_int(kExpCounterVolume, kExpCounterVolumeDefault); }
-inline int landing_ping_volume() { return settings::get_int(kLandingPingVolume, kLandingPingVolumeDefault); }
+inline int wall_bump_volume() { return sound::levels::get(kWallBumpVolume, kWallBumpVolumeDefault); }
+inline int footstep_volume() { return sound::levels::get(kFootstepVolume, kFootstepVolumeDefault); }
+inline int wall_tone_volume() { return sound::levels::get(kWallToneVolume, kWallToneVolumeDefault); }
+inline int beacon_volume() { return sound::levels::get(kBeaconVolume, kBeaconVolumeDefault); }
+inline int exp_counter_volume() { return sound::levels::get(kExpCounterVolume, kExpCounterVolumeDefault); }
+inline int landing_ping_volume() { return sound::levels::get(kLandingPingVolume, kLandingPingVolumeDefault); }
 inline int enemy_hp_display() { return settings::get_int(kEnemyHPDisplay, kEnemyHPDisplayDefault); }
 /// FF1 PreferencesManager.DamageDisplay (stored as MultiHitDamage).
 inline int damage_display() { return settings::get_int(kMultiHitDamage, kMultiHitDamageDefault); }
 inline int stat_delta_mode() { return settings::get_int(kStatDeltaMode, kStatDeltaModeDefault); }
+inline int navigation_keymap() { return std::clamp(settings::get_int(kNavigationKeymap, kNavigationKeymapDefault), 0, kNavigationKeymapMax); }
 
 // --- value setters (FF1: clamp, then save) --------------------------------------------------
 /// FF1 SetIntPreference.
@@ -146,12 +165,12 @@ inline void set_int_clamped(const char* key, int value, int min, int max)
 {
     settings::set_int(key, std::clamp(value, min, max));
 }
-inline void set_wall_bump_volume(int v) { set_int_clamped(kWallBumpVolume, v, kVolumeMin, kVolumeMax); }
-inline void set_footstep_volume(int v) { set_int_clamped(kFootstepVolume, v, kVolumeMin, kVolumeMax); }
-inline void set_wall_tone_volume(int v) { set_int_clamped(kWallToneVolume, v, kVolumeMin, kVolumeMax); }
-inline void set_beacon_volume(int v) { set_int_clamped(kBeaconVolume, v, kVolumeMin, kVolumeMax); }
-inline void set_exp_counter_volume(int v) { set_int_clamped(kExpCounterVolume, v, kVolumeMin, kVolumeMax); }
-inline void set_landing_ping_volume(int v) { set_int_clamped(kLandingPingVolume, v, kVolumeMin, kVolumeMax); }
+inline void set_wall_bump_volume(int v) { sound::levels::set(kWallBumpVolume, v); }
+inline void set_footstep_volume(int v) { sound::levels::set(kFootstepVolume, v); }
+inline void set_wall_tone_volume(int v) { sound::levels::set(kWallToneVolume, v); }
+inline void set_beacon_volume(int v) { sound::levels::set(kBeaconVolume, v); }
+inline void set_exp_counter_volume(int v) { sound::levels::set(kExpCounterVolume, v); }
+inline void set_landing_ping_volume(int v) { sound::levels::set(kLandingPingVolume, v); }
 inline void set_enemy_hp_display(int v) { set_int_clamped(kEnemyHPDisplay, v, 0, kEnemyHPDisplayMax); }
 inline void set_damage_display(int v) { set_int_clamped(kMultiHitDamage, v, 0, kMultiHitDamageMax); }
 

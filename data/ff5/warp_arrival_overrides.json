@@ -1,0 +1,249 @@
+[
+  {
+    "submap": "Map_30191_5",
+    "entity_id": 83,
+    "destination_map": 305,
+    "original_point": 1,
+    "continuation": "sc_map_30191_6_fall",
+    "continuation_sha256": "32d8726ea99a00eeb185bea2bb3d620690b4b59e1a9a230e423ee1d619b93c7a",
+    "arrival_cell": [
+      30,
+      25,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      30,
+      25,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30191_5",
+    "entity_id": 84,
+    "destination_map": 305,
+    "original_point": 1,
+    "continuation": "sc_map_30191_6_fall_1",
+    "continuation_sha256": "1b964aa1d4d5890c8ffc58d05ea0783c7cb85c099b9dd116e5f226033735e819",
+    "arrival_cell": [
+      37,
+      12,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      37,
+      12,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30191_5",
+    "entity_id": 85,
+    "destination_map": 305,
+    "original_point": 1,
+    "continuation": "sc_map_30191_6_fall_2",
+    "continuation_sha256": "3beb864f1c81873527939e08a2e622f7f1f6d1d7a84b29a38f3830dcb6b42423",
+    "arrival_cell": [
+      38,
+      12,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      38,
+      12,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30361_1",
+    "entity_id": 1,
+    "destination_map": 361,
+    "original_point": 1,
+    "continuation": "sc_30361_1_fall_1",
+    "continuation_sha256": "6ee20e7e02583954ffbe73355beca4201e7a9968a949b1bda2dcb7e34a9aa89f",
+    "arrival_cell": [
+      8,
+      10,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      8,
+      10,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30441_17",
+    "entity_id": 39,
+    "destination_map": 400,
+    "original_point": 3,
+    "continuation": "sc_map_30441_16_fall_1",
+    "continuation_sha256": "91560f8aa4cefdfe7fdb8e9611acceefbe9e39d1e6f8009b56639725b7305611",
+    "arrival_cell": [
+      21,
+      6,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      21,
+      6,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30441_17",
+    "entity_id": 40,
+    "destination_map": 400,
+    "original_point": 3,
+    "continuation": "sc_map_30441_16_fall_2",
+    "continuation_sha256": "cd35f637f85a12037b9bad04ab088af562cd54450a9a9a3832d690e89f18c1cc",
+    "arrival_cell": [
+      22,
+      6,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      22,
+      6,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30441_17",
+    "entity_id": 41,
+    "destination_map": 400,
+    "original_point": 3,
+    "continuation": "sc_map_30441_16_fall_3",
+    "continuation_sha256": "c21ba5b5fa96356fb7d41c26046006e869a0a50e1784a9efb7569ea338de6676",
+    "arrival_cell": [
+      20,
+      8,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      20,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30441_17",
+    "entity_id": 42,
+    "destination_map": 400,
+    "original_point": 3,
+    "continuation": "sc_map_30441_16_fall_4",
+    "continuation_sha256": "22167339bd8ce31a674cc85a34b75c839604590247bc320f2e33ff225583a80d",
+    "arrival_cell": [
+      22,
+      8,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      22,
+      8,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30441_17",
+    "entity_id": 43,
+    "destination_map": 400,
+    "original_point": 3,
+    "continuation": "sc_map_30441_16_fall_5",
+    "continuation_sha256": "9c990b480a59218c315876f6490d74aec0ed924d0c06e08eac7f606f1d496131",
+    "arrival_cell": [
+      24,
+      9,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      24,
+      9,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30441_17",
+    "entity_id": 44,
+    "destination_map": 400,
+    "original_point": 3,
+    "continuation": "sc_map_30441_16_fall_6",
+    "continuation_sha256": "51350a92951867471e5e6463c499cc39ddc278459a557cb068844dfe354ac663",
+    "arrival_cell": [
+      23,
+      10,
+      1
+    ],
+    "evidence": "Reviewed native grid SetPos/Lerp/Move/MoveTo operands; final player landing, docs/re/TRAPS.md",
+    "arrival_baked_cell": [
+      23,
+      10,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30191_11",
+    "entity_id": 83,
+    "destination_map": 305,
+    "original_point": 1,
+    "continuation": "sc_map_30191_6_fall",
+    "continuation_sha256": "32d8726ea99a00eeb185bea2bb3d620690b4b59e1a9a230e423ee1d619b93c7a",
+    "arrival_cell": [
+      30,
+      25,
+      1
+    ],
+    "arrival_baked_cell": [
+      30,
+      25,
+      1
+    ],
+    "evidence": "Shared named trap script via native resident fallback; final player position, docs/re/TRAPS.md"
+  },
+  {
+    "submap": "Map_30191_11",
+    "entity_id": 84,
+    "destination_map": 305,
+    "original_point": 1,
+    "continuation": "sc_map_30191_6_fall_1",
+    "continuation_sha256": "1b964aa1d4d5890c8ffc58d05ea0783c7cb85c099b9dd116e5f226033735e819",
+    "arrival_cell": [
+      37,
+      12,
+      1
+    ],
+    "arrival_baked_cell": [
+      37,
+      12,
+      1
+    ],
+    "evidence": "Shared named trap script via native resident fallback; final player position, docs/re/TRAPS.md"
+  },
+  {
+    "submap": "Map_30191_11",
+    "entity_id": 85,
+    "destination_map": 305,
+    "original_point": 1,
+    "continuation": "sc_map_30191_6_fall_2",
+    "continuation_sha256": "3beb864f1c81873527939e08a2e622f7f1f6d1d7a84b29a38f3830dcb6b42423",
+    "arrival_cell": [
+      38,
+      12,
+      1
+    ],
+    "arrival_baked_cell": [
+      38,
+      12,
+      1
+    ],
+    "evidence": "Shared named trap script via native resident fallback; final player position, docs/re/TRAPS.md"
+  }
+]

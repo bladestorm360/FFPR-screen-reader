@@ -74,6 +74,7 @@ const Toggle kToggles[] = {
     {"Mod.ToggleWallTones", prefs::kWallTones, prefs::kWallTonesDefault, L"Wall tones"},
     {"Mod.ToggleFootsteps", prefs::kFootsteps, prefs::kFootstepsDefault, L"Footsteps"},
     {"Mod.ToggleAudioBeacons", prefs::kAudioBeacons, prefs::kAudioBeaconsDefault, L"Beacon navigation"},
+    {"Mod.ToggleSoundscape", "Soundscape", false, L"Soundscape"},
     {"Mod.ToggleAutowalk", prefs::kAutowalk, prefs::kAutowalkDefault, L"Autowalk"},
     {"Mod.ToggleSpeakAutowalkPath", prefs::kSpeakAutowalkPath, prefs::kSpeakAutowalkPathDefault, L"Speak autowalk path"},
     {"Mod.ToggleBeaconWithDirections", prefs::kBeaconWithDirections, prefs::kBeaconWithDirectionsDefault, L"Beacon with directions"},

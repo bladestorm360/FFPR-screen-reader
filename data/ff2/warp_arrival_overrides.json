@@ -1,0 +1,12 @@
+[
+  {
+    "submap": "Map_30071_3",
+    "entity_id": 9,
+    "destination_map": 186,
+    "original_point": 1,
+    "continuation": "sc_e_0112_1",
+    "continuation_sha256": "9b1505fd89ff7192d91264c30be7ba161b55e98a543217c3b7d64364d112f1e8",
+    "arrival_point": 5,
+    "evidence": "Player SetPos[9,28,1], then Y-axis direct MoveTo[1,0,32,1,4]: (9,32) Bottom, matching PointIn5. Native Puppet/AxisAccessor evidence: docs/re/TRAPS.md. ChangeMap's PointIn1 is an intermediate scene placement."
+  }
+]

@@ -1,5 +1,71 @@
 # Testing the native mod
 
+## Keyboard, flee and safe teleport follow-up, October 15
+
+Implemented, offline verified and deployed/hash-verified in all six games on October 15
+after the user lifted the hold. The public release is unchanged. Check these first
+where your current save permits:
+
+1. On an active field, press F6 twice: beacon state should change once per press. Field 9
+   should not toggle it. F7 and F8 retain Autodetail/settings behavior in every game.
+2. F8 > Navigation > Navigation keymap: Letters uses J/L to browse, K to announce and P to
+   navigate. Brackets and backslash uses brackets to browse, P to announce and backslash
+   to navigate; K must do nothing. Shift+P resets All in the brackets layout; Shift+backslash
+   cycles its filter. Close/reopen settings to confirm the selection remains saved.
+3. Teleport shortcuts defaults off: Ctrl+arrow and mod-mode right stick must not teleport.
+   Enable it in Navigation, while standing on foot near an accessible entity. A wall or
+   occupied side should say no safe landing and leave you where you were. An open side
+   should announce the teleport and allow normal movement afterward. Try a different side
+   when refused; the mod does not choose an undisclosed fallback location.
+4. In an escapable FF4-FF6 battle, hold the main keyboard 2+3, or both shoulder buttons
+   (Xbox LB+RB, PlayStation L1+R1, Nintendo L+R), with controller mod mode off. The native
+   escape attempt should run. A boss/no-escape battle cannot confirm this check. FF1-FF3
+   retain their Flee menu command. Controller mod-mode shoulders still review the party.
+5. When an FF4-FF6 timer is available, T announces it; Shift+F5 freezes/resumes it.
+   Shift+T no longer changes that setting. Landing Pings remains in Navigation audio for
+   FF1/FF2/FF3/FF5.
+
+Failure symptoms: two layouts acting together, brackets-layout P navigating, 9 changing
+beacons, an off/blocked/stale teleport moving you, movement stuck after a clear landing,
+or held shoulders failing only with the mod. Retain the affected game's own session log
+and the selected keymap/destination. No broad recording or tester-log access is requested.
+Offline evidence covers actual dispatch/menu/listener code, production terrain/blocker
+clearance, queued-worker cancellation and native-owner position writes. Moving actors
+can change after observation; actual native timing and gameplay remain unconfirmed.
+[Controls, native evidence, ownership and bounds](INPUT_BINDINGS.md#keyboard-flee-and-safe-teleport-audit-october-15).
+
+Latest trap follow-up: deployed/hash-verified in all six. Full build/offline checks and isolated smoke pass for safe-first
+drop routing, repeat protection, same-map recovery, selected-event warnings and Deist
+guidance. Final deployment status is in [TRAPS.md](re/TRAPS.md). Test these first
+when progression permits; new gameplay confirmation remains pending:
+
+1. FF2 Deist: select the former Scene trigger. It should say Trap. Request directions
+   to it; it should not add an event-along-route warning. Trigger it and wait for normal
+   control on B4. P and destination browsing should work again.
+2. From B3 select chests on other floors, or press Shift+G. Routes should use safe
+   stairs across floors rather than send you into that avoidable pitfall. Follow the
+   guide to B5; it should finish on arrival.
+3. When a destination truly needs a drop, expect a brief trap warning. After falling,
+   the next route should move toward the destination, without taking stairs back to
+   the same trap. Repeat this on available FF5/FF6 pits; same-map falls should recover.
+4. F8 > Speech > Mod warnings: turn Off. Directions should still work and the route
+   warning should be quiet. Turn On to restore it.
+5. During loading, map changes and battle transitions, press/hold navigation keys or
+   LT. No mod action should fire while loading or replay a held press on return;
+   release and press again once control returns.
+
+Failure symptoms: permanent loading state, missing safe stairs, repeated fall,
+incorrect landing directions, warning for the selected event, or warning-Off hiding
+directions. Record the floor/target and retain that game's own log. Unnamed/conditional
+mechanics and live all-area coverage remain gameplay checks; do not infer universal
+coverage from the extracted named-trap inventory. World-map refresh latency still
+has a separate diagnosed fix plan below.
+
+Latest October 14: the new transition input guard is built/offline-verified and
+deployed/hash-verified in all six after FF2 closed. Intermittent world-map refresh
+lag is diagnosed and its broader fix is still planned. Do not treat this build as that
+complete lag fix. [Scoped status and pending checks](#world-map-refresh-and-transition-input-october-14).
+
 Offline checks pass; user gameplay testing has identified regressions recorded in the
 [October 11 follow-up](FOLLOWUP_2026_10_11.md). Test one game at a time. Report what you hear,
 and attach `ffpr_screen_reader.log` from that game's folder if something is wrong.
@@ -755,3 +821,135 @@ Esper mastery explanation is verified: the star means all that Esper's taught sp
 learned for the selected character, independent of having equipped that specific Esper.
 The supplied Terra/Valigarmanda screenshot displays all three spells at 100% with stars;
 the mod's reading matches it. No reader change is required for that screenshot.
+
+
+## World-map refresh and transition input, October 14
+
+Transition guard: implemented/offline-verified and **deployed/hash-verified in all six**
+after FF2 closed; gameplay confirmation pending. Broader world-map lag fix: diagnosed
+and planned, not implemented.
+[Evidenced causes, guard ownership and fix plan](re/THREADING.md#intermittent-world-refresh-and-transition-input-october-14).
+All-six hit speech is renderer-based; asset/high-count regressions pass. No additional
+hit-count gameplay test is required merely to confirm absence of mod hit mathematics.
+
+Prioritize these short guard checks when progression permits:
+
+1. During a map change or battle entry/exit, tap P/backslash, brackets/J/L, Shift+brackets
+   and backtick; include Shift+M. Expected: no pathfinder speech/settings effect or added
+   input-caused stall. Once control returns, a fresh press works normally. Failure: delayed
+   old key speech, a changed filter or immediate loading lag caused by the key.
+2. Controller: hold LT across one transition, then release it and press again. Expected:
+   the held trigger starts nothing after loading; the fresh trigger navigates. Pending
+   stick-click gestures must also be discarded. Native game controls remain usable.
+3. If a mod menu can remain open through a native transition, held arrows/confirm must
+   neither change a setting during loading nor replay on return. Fresh input works afterward.
+
+For the future complete refresh fix, retain the user's current world-map scenario as
+its first performance confirmation: select a destination near Deist, walk several steps,
+request directions, finish a battle and immediately request again. Include repeated
+requests during refresh, a parked ship and one dungeon comparison. Expected: current
+usable directions and prompt post-battle readiness, without waiting for full list rebuilds;
+old requests cancel safely. Continued ~one-second waits or several-second silence are
+failures. Existing own-session log plus new stage correlation will separate blocked native
+readiness from registry/filter work, queue wait and speech submission. Exact audible and
+comparable modded/unmodded timing remain user-side; the present guard is not certification
+of the future full fix. No broad capture, game automation or code review is requested.
+# Soundscape and masters — October 15
+
+This build is installed and hash-verified in all six games. Test these first when the relevant locations are available.
+All six games share these controls. Agent game launch/control was not used.
+
+1. F8, Speech: turn Game speech off. The mod menu, I descriptions and close announcement
+   should still speak. Game announcements should stop. Reopen F8 and restore Game speech.
+   Repeat menu navigation with the controller if available.
+2. Navigation audio: turn its first master off. Every mod sound, including previews,
+   should stop; native game sounds remain. Turn it on: individual saved settings remain.
+3. Enable Soundscape, then open Soundscape settings. Preview each sound and adjust its
+   volume/master volume. Set a category to zero or off: only that category is silent.
+   Escape returns to the Soundscape settings entry in the parent menu.
+4. Near several NPCs/chests, listen while moving around them. Each eligible nearby entity
+   should have a repeating positioned cue; opened chests stop. Shift+semicolon reduces
+   range and Shift+apostrophe increases it, by five from 5 to 25. Default is 10. With
+   Soundscape off, both shifted keys do nothing; wall/beacon choices still work.
+5. At a doorway/map exit, expect a knock; a door without an adjacent exit is silent.
+   An exit without a door uses a rising triple tone. ToLayer stays silent. When available,
+   compare a real pitfall/collapsing hazard (lower double beep, quicker within two steps)
+   with a progress warp or FF1 trial pad (ordinary event cue). Report the map and entity
+   label for a wrong classification; no broad database re-audit is required beforehand.
+6. With headphones, enable HRTF and repeat the spatial check: map north is ahead,
+   south behind, east right and west left, independent of facing. Category/directional
+   pitch shifts stop; the four wall tones retain their pitches. Turn HRTF off to compare.
+7. Optional replacements: follow README filenames/PCM format, replace one cue and restart.
+   That cue changes; absent or invalid replacements retain defaults. Check long clips do
+   not overlap themselves. Menu/battle/loading/focus changes should not leave field audio
+   playing or replay an old ping. Crowded scenes should remain playable.
+
+Offline evidence and precise performance limits: [SOUNDSCAPE.md](re/SOUNDSCAPE.md).
+
+
+## Soundscape follow-up — October 15
+
+User has confirmed the entity soundscape and cadence. After this correction, check these
+first when convenient; no code review or agent runtime capture is needed.
+
+1. In FF2, turn Footsteps On with apostrophe; walk several tiles and bump a wall.
+   Expect the familiar click and thud at the existing 50% default, with HRTF Off and On.
+   Footsteps was last saved Off after the user's test; deployment preserves that choice.
+2. FF2 is set to the user's Brackets/backslash layout at deployment. First browse with
+   brackets and request directions with backslash while Soundscape remains On. Expect
+   spoken selection/directions; if still silent, report that separately. Ctrl+Apostrophe
+   stops/restarts only the entity soundscape. Enable F6 and request a
+   destination using P (Letters) or backslash (Brackets), or controller LT. Beacon-only,
+   spoken directions and Beacon with directions should remain usable with soundscape On.
+   Unexpected silence or a changed navigation preference is a failure.
+3. When riding a ship/canoe in FF1–3 or a ship/submarine in FF5, enable F8 > Navigation
+   audio > Landing Pings. Adjacent legal shores ping in their directions; open water and
+   walls do not. Check a save loaded aboard a craft as well as boarding normally.
+   FF2 snowcraft, aircraft, FF4 and FF6 stay silent. Settings remain default Off.
+
+The restored stereo samples are verified offline; physical audibility/levels and these
+watercraft cases still need user confirmation. See [evidence](re/SOUNDSCAPE.md#legacy-effect-and-watercraft-follow-up--october-15).
+
+
+## HRTF contextual volume follow-up — October 15
+
+The user confirms the previous fixes work well. After the new build, test these first:
+
+1. In F8 > Navigation audio with HRTF Off, set Wall Bump Volume to 30. Turn HRTF On:
+   the same slider uses its independent HRTF value (initially 50). Set it to 70.
+   Switching Off should restore 30; switching On should restore 70. Restart once to
+   confirm both saved values remain. Existing stereo levels are retained by deployment.
+2. Bump a wall and preview footsteps/wall tones with HRTF On. All HRTF sounds now have
+   one 2x output boost. Volume zero should still mute. Turning HRTF Off retains the
+   original stereo output level. Adjust normal sliders to taste.
+3. Soundscape master and individual cue volumes should remember both modes in the
+   same way. The soundscape switch/range, beacon choices and other settings stay shared.
+
+Offline checks compare actual HRTF output for all 18 cues and retain original stereo
+sample parity. Physical speaker/headphone audibility and saved-value restart behavior
+remain for user confirmation; no agent game launch/control was used.
+
+
+## Route/object beacon modes — October 15
+
+After deployment, test these first when a suitable destination is available:
+
+1. Select an entity with a wall or turn between you and it. Turn beacons On with F6.
+   Follow route (default) should point toward each route leg. Shift+F6 announces Object
+   location and should point directly at the entity instead. Press again to restore
+   Follow route. F6 continues to turn either mode off/on. Use P or backslash for an
+   explicit restart according to your selected keymap.
+2. F8 > Navigation audio > Beacon mode shows the same choice. Switching while beacons
+   are off should save the choice without enabling them. Both HRTF modes, their volumes,
+   soundscape and Beacon with directions remain available. Manual keys still stop an
+   active autowalk; the Autowalk setting remains unchanged.
+3. A waypoint uses the same two behaviors. An object on another floor has no direct
+   bearing: requesting it in Object mode explains the current-floor requirement. Switch
+   to Follow route for cross-floor guidance. No repeating warning should occur.
+4. Object mode should stop within the existing arrival radius and resume when you move
+   away. On a world-map edge it should point across the nearer wrapped edge. Menus,
+   loading, dialogue, lost focus and the navigation-audio master retain suppression.
+
+Offline evidence uses the actual beacon loop, action registry, menu and input dispatch;
+user gameplay/physical audio confirmation remains separate. No tester log or tester save
+was accessed. See [implementation/evidence](re/SOUNDSCAPE.md#beacon-targeting-modes--october-15).

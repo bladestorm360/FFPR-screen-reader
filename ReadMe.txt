@@ -10,12 +10,12 @@ V0.9.2 is an early combined release. Some game-specific screens, airships and sc
 
 Install
 
-Requires 64-bit Windows, a Steam Pixel Remaster game and a running screen reader such as NVDA or JAWS. Prism 0.18.3 and SDL3 are included in this V0.9.2 bundle. MelonLoader, BepInEx, Python and separate dependency downloads are not required.
+Requires 64-bit Windows, a Steam Pixel Remaster game and a running screen reader such as NVDA or JAWS. Release bundles include Prism 0.18.3 and SDL3; builds with the soundscape also include OpenAL Soft for optional HRTF. MelonLoader, BepInEx, Python and separate dependency downloads are not required.
 
 1. Close the game and extract the zip.
 2. Open the game's installation folder using Steam's Manage, Browse local files command. This is the folder containing FINAL FANTASY.exe, FINAL FANTASY II.exe, and so on.
 3. If an older screen reader is installed, remove its DLL from the game's Mods folder: FFI_ScreenReader.dll, FFII_ScreenReader.dll, FFIII_ScreenReader.dll, FFIV_ScreenReader.dll, FFV_ScreenReader.dll or FFVI_ScreenReader.dll, as appropriate. Keep your UserData folder.
-4. Open the extracted Final Fantasy Pixel Master Core Screen Reader V0.9.2 folder. Copy its contents into the game folder, including the .ffpr-deps folder. hid.dll and SDL3.dll must sit beside the game's EXE, and Prism must remain at .ffpr-deps/prism/prism.dll.
+4. Open the extracted Final Fantasy Pixel Master Core Screen Reader folder. Copy its contents into the game folder, including the .ffpr-deps folder. hid.dll and SDL3.dll must sit beside the game's EXE. Keep Prism at .ffpr-deps/prism/prism.dll and the soundscape build's OpenAL Soft at .ffpr-deps/openal-soft/soft_oal.dll, with their notices.
 5. Start your screen reader, then the game. The title screen should speak. Repeat these steps for each game you use.
 
 The included license files should stay with the mod. Other mods' MelonLoader or BepInEx installations may remain; remove only the old screen reader DLL.
@@ -26,7 +26,7 @@ To update, close the game and replace the release files. To uninstall, remove hi
 
 Keys
 
-Mod keys require the game window to have focus. Field controls require the field to be active with no menu open. Mod keys are disabled while typing in the game's name fields. There is no keyboard mod mode.
+Mod keys require the game window to have focus. Field controls require the field to be active with no menu open. Mod keys are disabled while typing in the game's name fields. There is no keyboard mod mode. Shared mod commands use the same keys in all six games.
 
 Game
 
@@ -41,18 +41,33 @@ Game
 
 Mod
 
-- J or left bracket: previous pathfinder destination.
-- L or right bracket: next destination.
-- Shift+J, Shift+left bracket or Minus: previous destination category.
-- Shift+L, Shift+right bracket or Equals: next category.
+Choose a pathfinding layout in F8, Navigation, Navigation keymap. Letters is the default; only the selected layout is active. The choice is saved separately for each game.
+
+Letters layout:
+
+- J / L: previous / next destination.
+- K: announce the selected destination.
+- P: request directions or beacon navigation. With Autowalk enabled, start walking; press again to stop.
+- Shift+J / Shift+L: previous / next destination category.
 - Shift+K: reset to All.
-- K: repeat the selected destination.
-- Backslash or P: request directions or beacon navigation. With Autowalk enabled, start walking; press again to stop.
-- Shift+Backslash or Shift+P: cycle Current floor, Current map with vehicles, Current map.
-- Ctrl+Backslash or Ctrl+P: toggle the layer transition filter.
+- Shift+P: cycle Current floor, Current map with vehicles, Current map.
+- Ctrl+P: toggle the layer transition filter.
+
+Brackets and backslash layout:
+
+- Left bracket / right bracket: previous / next destination.
+- P: announce the selected destination. K is inactive in this layout.
+- Backslash: request directions or beacon navigation; start/stop Autowalk when enabled.
+- Shift+left bracket / Shift+right bracket: previous / next destination category.
+- Shift+P: reset to All.
+- Shift+Backslash: cycle Current floor, Current map with vehicles, Current map.
+- Ctrl+Backslash: toggle the layer transition filter.
+
+Common commands in both layouts:
+
 - Backtick, above Tab: rescan the map.
 - Shift+M: toggle the map exit filter, grouping exits by destination and preferring the nearest reachable entrance.
-- Ctrl+arrow: teleport north, south, west or east of the selected destination.
+- Ctrl+arrow: teleport north, south, west or east of the selected destination, if Navigation / Teleport shortcuts is enabled (default off).
 - Shift+G: start or repeat the current puzzle-guide step.
 - Ctrl+G: stop the puzzle guide.
 - G: announce gil.
@@ -85,14 +100,68 @@ Other toggles
 
 - Apostrophe: toggle footsteps.
 - Semicolon: toggle wall tones.
+- Shift+Semicolon / Shift+Apostrophe: reduce / increase soundscape distance by five steps, from 5 to 25. These do nothing when Soundscape is off. They do not change the unshifted wall-tone and footstep toggles.
+- Ctrl+Apostrophe: turn the soundscape on or off. Beacon navigation and spoken pathfinding remain available with either setting.
 - F6: toggle beacon navigation.
+- Shift+F6: switch the beacon between Follow route and Object location. The choice is saved even while the beacon is off.
 - F5 in battle: cycle enemy HP Numbers, Percentage or Hidden. Enemy HP is an optional extra; the native target panel does not display it.
 - F7: toggle Autodetail.
 - F8 on the field: open the mod menu. F8 closes it directly.
 
-The mod menu has Speech, Navigation, Navigation audio and Battle categories. Speech includes Autodetail, Verbose/Brief stat deltas, Status damage (default on) and Spoil treasure chest contents (default off). Navigation includes Autowalk, Speak autowalk path, filters and Stick Click Normalization. Navigation audio contains sound toggles and their volume controls, including Beacon with directions and the EXP counter sound where supported. Autowalk, Speak autowalk path and Beacon with directions remain independently default off.
+The mod menu has Speech, Navigation, Navigation audio and Battle categories. Speech starts with Game speech (default on). Turning it off mutes game and gameplay announcements; the speech-only mod menu continues speaking, including its help and close announcement. Speech also includes Autodetail, Verbose/Brief stat deltas, Status damage (default on) and Spoil treasure chest contents (default off). Navigation includes Autowalk, Navigation keymap, Teleport shortcuts, Speak autowalk path, filters and Stick Click Normalization. Navigation audio starts with its master switch (default on), followed by HRTF, Soundscape and Soundscape settings. The audio master silences every mod sound while preserving individual preferences. It also contains the existing sound toggles and volumes, Beacon with directions, the EXP counter where supported, and Sound previews. Autowalk, Speak autowalk path, Beacon with directions, Soundscape and HRTF remain independently default off.
 
-In the mod menu, Up/Down selects a category or setting, Enter/Space opens or toggles it, Left/Right changes a value, I reads its description, and Escape returns to categories or closes from the root.
+Landing Pings is available through Navigation audio in FFI, FFII, FFIII and FFV, default off. It identifies adjacent legal shores while sailing a ship or submarine, and also while using the canoe in FFI–FFIII. It works after loading a save aboard a watercraft. FFII's snowcraft and aircraft are excluded, as are FFIV and FFVI. The old field 9 beacon alias, Minus/Equals category aliases, FFIII status R and FFV Shift+Semicolon shortcuts are removed. F6 toggles beacons in every game. There are no diagnostic or data-dumping hotkeys. Backtick refreshes the navigation list without writing a data dump.
+
+Teleport shortcuts require clear terrain and an unoccupied landing with a legal way out. A blocked, unknown or stale landing leaves you in place. Teleporting while riding is unavailable.
+
+In the mod menu, Up/Down selects a category or setting, Enter/Space opens or toggles it, Left/Right changes a value, I reads its description, and Escape returns to the parent menu or closes from the root. Controller navigation uses the same menu and settings.
+
+Beacon mode is also available in F8 > Navigation audio. Follow route (the default) guides you to each leg of the route. Object location pings the selected entity or waypoint directly, even through walls, without checking whether you can walk straight to it. Object mode works on the current floor; for a destination on another floor, use Follow route. On world maps, object bearings follow the shortest direction across the map edges. Both modes keep the existing arrival silence and resume when you move away. F6 stays the on/off switch, and Beacon with directions can still be used with either mode. Soundscape, the Autowalk setting, spoken directions and volume settings remain independent. Like other manual keys, Shift+F6 stops an active autowalk.
+
+Soundscape and spatial audio
+
+In F8, Navigation audio, turn on Soundscape, or press Ctrl+Apostrophe on the field. Soundscape settings contains its master volume, distance (10 steps by default), and a switch, volume and preview for each cue. Volumes run from 0 to 100. Previews use your volume settings even if that individual cue is switched off; the Navigation audio master still applies. Soundscape, beacon navigation and spoken directions work independently and can be used together. Existing wall bumps, footsteps, wall tones, beacon, EXP counter and landing pings retain their original synthesis, envelopes and default levels; optional HRTF spatializes those original signals.
+
+Each nearby entity has its own repeating cue, independent of the selected destination and beacon. Only entities already eligible for the pathfinder participate; entries on another floor, opened chests and ToLayer transitions are silent. Distance is straight-line tile distance, with wrapping at world-map edges.
+
+- NPC: mid-range chirp.
+- Chest: muted chime, without revealing contents.
+- Map exit: rising harmonic triple tone.
+- Exit door: synthesized knock when a verified map exit has a door on its tile or within one tile, including diagonals. A standalone door is silent. The exit owns the cue, so the door event does not add a second sound.
+- Event: mid-range double beep for eligible story, interaction and progress events, including ordinary warps and trial pads.
+- Trap: lower double beep for explicitly identified falling, collapsing or resetting hazards. It repeats faster within two steps. A warp or forced battle alone does not classify an event as a trap.
+- Vehicle: lower double chirp.
+- Save point: gentle two-note cue.
+
+Sounds pan left/right. Without HRTF, the southern half of the map uses a lower pitch to distinguish behind from ahead. Nearby cues of the same kind vary slightly in pathfinder order: normal, higher, lower, then further small variations. Long replacement clips automatically leave a gap before repeating. Every in-range entity retains a voice schedule; crowded scenes defer starts rather than selecting only the nearest entities.
+
+Volume controls automatically remember separate HRTF and stereo levels. Use the same existing sliders with HRTF on or off; switching modes restores that mode's saved values. Each HRTF volume initially defaults to 50%, while your existing stereo levels are preserved. Active HRTF applies a single 2× output boost to every mod sound, including wall bumps, footsteps and previews. Zero volume still mutes.
+
+HRTF is an independent, default-off setting for headphones. It places the wall tones, beacon, landing pings and soundscape in spatial audio, with map north ahead, south behind, east right and west left. This frame stays fixed when your character turns. With HRTF active, the renderer does not shift cue pitch for direction or for neighboring entities. Wall tones retain their distinct directional pitches. If HRTF is unavailable, stereo and pitch cues take over automatically. OpenAL Soft runs privately through the existing SDL output; no system OpenAL installation or audio-device change is needed. Its DLL is independently replaceable; retain the accompanying license and source notices.
+
+Replacing mod sounds
+
+Create a folder named sounds beside the game's EXE. Put replacement WAV files directly inside it using the exact filenames below. Restart the game after changing files. The folder is optional: a missing folder, empty folder, missing file or invalid individual file uses that cue's embedded default. Do not put these files in the game's own audio data folders.
+
+Use uncompressed 16-bit PCM WAV, mono or stereo, 8,000–96,000 Hz, at most four seconds per file. Stereo is mixed to mono so the mod can position the sound. WAV files with other encodings, including floating-point or compressed audio, fall back to the embedded cue. Keep replacements comfortably quiet; the menu's volume controls still apply. Continuous wall and EXP clips loop, so seamless starts and ends work best.
+
+- footstep.wav: each tile of movement.
+- wall_bump.wav: collision thud.
+- wall_north.wav, wall_south.wav, wall_east.wav, wall_west.wav: continuous wall proximity tones. Retain distinct pitches if you want the existing direction cues.
+- beacon.wav: ordinary route or object beacon; fallback rear-direction pitch is applied by the mod.
+- beacon_blocked.wav: lower beacon for a blocked or distant route.
+- exp_counter.wav: looping battle-results EXP tick, where supported.
+- landing.wav: vehicle landing ping, where supported; fallback directional pitches are applied by the mod.
+- npc.wav: NPC chirp.
+- chest.wav: unopened chest chime.
+- exit.wav: map-exit triple tone.
+- door.wav: exit-door knock.
+- event.wav: meaningful event double beep.
+- trap.wav: hazard double beep.
+- vehicle.wav: vehicle double chirp.
+- save_point.wav: save-point cue.
+
+These are all mod-generated sound effects. Native game music, footsteps and menu/battle sounds remain under the game's own audio settings. The embedded defaults are original procedural sounds; their source generator is included in the repository.
 
 Battle results and information buffers
 
@@ -110,14 +179,19 @@ Status, bestiary and controls lists
 - Ctrl+Up/Down: first/last entry; Ctrl+W/S also works.
 - Native page and character-switch controls remain available.
 
+Fleeing from battle
+
+- FFI-III: choose Flee from the battle command menu.
+- FFIV-VI: hold the main keyboard 2 and 3 keys together. On Xbox hold LB+RB; on PlayStation hold L1+R1; on Nintendo hold L+R. Use normal game mode, with controller mod mode off. Keep both held to attempt escape; some battles do not allow fleeing.
+
+These are the native default previous/next-character controls. If you remapped the keyboard, hold the corresponding previous/next-character keys instead.
+
 Game-specific keys
 
 - FFI: I in the 15-puzzle reads the tile's row and column; I on new-game class selection reads the class description. F1 runs in towns/dungeons; the world map is walk-only.
 - FFII: I in Ask/Learn and key-term lists reads the selected term's description.
-- FFIII: R on status repeats the current stat; I in job selection reads the displayed Equippable equipment types.
-- FFIII-VI: 9 on the field toggles beacon navigation, like F6.
-- FFIV-VI: T outside battle reads active timers; Shift+T freezes/resumes them.
-- FFV: Shift+Semicolon toggles landing pings on the field.
+- FFIII: I in job selection reads the displayed Equippable equipment types.
+- FFIV-VI: T outside battle reads active timers; Shift+F5 freezes/resumes them.
 - FFI-VI: extra equipment/item detail screens support arrow-key review; native page controls remain available.
 
 Game controller
@@ -157,7 +231,7 @@ Press Back/Select, then the action button. Simple actions return to normal mode;
 - Results/information buffers: LB/RB or D-pad Up/Down reviews lines; D-pad Left/Right goes first/last; X (Square) reads details. On growth/weapon phases, details reads all current-phase deltas.
 - Field: X (Square) reads gil; Y (Triangle) reads the map; A (Cross) reads vehicle state.
 - Field: RB (R1) starts/repeats the puzzle guide; LB (L1) stops it.
-- Field: right stick directions teleport beside the selected destination.
+- Field: right stick directions teleport beside the selected destination only when Navigation / Teleport shortcuts is enabled.
 
 Stick clicks
 

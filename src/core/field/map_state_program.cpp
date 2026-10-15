@@ -130,6 +130,7 @@ std::optional<bool> Resolver::treasure_opened(const baked::Submap& sm, const bak
 void add_obstacles(Resolver& resolver, const baked::Submap& sm, baked_route::Request& request, bool gates)
 {
     request.live_hazards = true;
+    request.live_traps = true;
     for (const auto& o : baked::grids(sm).objects) {
         if (!resolver.active(sm, o, true)) continue;
         const bool npc = o.type == baked::ObjType::NPC || o.type == baked::ObjType::ShopNPC;
@@ -147,6 +148,7 @@ void add_obstacles(Resolver& resolver, const baked::Submap& sm, baked_route::Req
                 else request.blocked.push_back(cell);
             }
             if (trigger) request.hazards.push_back(cell);
+            if (baked::is_trap(o)) request.traps.push_back(cell);
         }
     }
 }

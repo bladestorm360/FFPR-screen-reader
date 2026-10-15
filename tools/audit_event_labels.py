@@ -27,7 +27,7 @@ NOUNS = {
     'Ladder': ('ladder', '梯子', 'はしご'), 'Stairs': ('stairs', '階段'),
     'Barrel': ('barrel', '樽'), 'Pot': ('pot', '壺'),
 }
-SAFE = set(NOUNS) | {'Party chat', 'Conversation', 'Scene trigger',
+SAFE = set(NOUNS) | {'Party chat', 'Conversation', 'Scene trigger', 'Trap',
                     'Event trigger', 'Interactive object', 'Layer transition',
                     'Warp tile', 'Vehicle interaction', 'Switch trigger', 'Magic Circle'}
 
@@ -43,6 +43,9 @@ def infer(o, commands):
     if t == 21: return 'Vehicle interaction', 'native vehicle action type'
     if t == 30: return 'Switch trigger', 'native switch-event type'
     name = unicodedata.normalize('NFKC', raw).lower()
+    if t in {2, 28} and (any(word in name for word in ('落とし穴', '落し穴', '穴に落ちる', '地割れに落ちる', 'pitfall', 'trapdoor'))
+                         or re.fullmatch(r'落ちる\d*', name)):
+        return 'Trap', 'environmental pit/drop identifier; story and reward withheld'
     if any(word in name for word in ('party chat', 'パーティ会話', 'パーティー会話')):
         return 'Party chat', 'conversation identifier; actors/outcome withheld'
     if any(word in name for word in ('conversation', ' talks ', ' speaks ', '会話', '話しかけ')):

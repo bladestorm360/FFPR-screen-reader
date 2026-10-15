@@ -84,6 +84,8 @@ struct MapGoal {
 
 /// Capture bounded native state on its owner, then plan/format on an owned worker.
 /// Publication returns to the native owner only for the current map/request.
+/// keep_destination=false keeps a separate latest guide/follower trap receipt;
+/// it does not replace the manually selected destination.
 void request_route(MapGoal goal, TargetKind kind, std::wstring name,
                    std::function<void(PathInfo)> publish, bool keep_destination = true);
 void cancel_requests();
@@ -96,6 +98,8 @@ struct ExitTarget { unity::Vec3 position; int map_id = 0, destination = 0; baked
 std::shared_ptr<ExitSnapshot> begin_exit_capture(bool with_vehicles, bool indoor);
 void capture_exit_obstacle(ExitSnapshot& snapshot, void* entity);
 void finish_exit_capture(ExitSnapshot& snapshot);
+/// Worker-only teleport clearance using the same copied native obstacles and movement rules.
+bool teleport_landing_safe(ExitSnapshot& snapshot, unity::Vec3 target);
 bool exit_snapshot_world(const ExitSnapshot& snapshot);
 int exit_snapshot_vehicle(const ExitSnapshot& snapshot);
 std::vector<int> exit_distances(ExitSnapshot& snapshot, const std::vector<ExitTarget>& targets,
@@ -108,6 +112,12 @@ std::vector<int> exit_distances(ExitSnapshot& snapshot, const std::vector<ExitTa
 /// ("take the exit to Castle Cornelia 2F", "step on the warp"). False when unreachable.
 struct CrossLeg {
     bool found = false;
+    bool requires_trap = false;
+    bool trap_leg = false;
+    int trap_entity = 0, trap_x = 0, trap_y = 0;
+    baked_route::Cell trap_arrival;
+    bool trap_repeat_blocked = false;
+    bool event_on_route = false, incomplete = false;
     bool on_this_map = false;        // the goal itself is the end of this leg
     int next_map_id = 0;             // the map the exit / warp leads to (when !on_this_map)
     std::vector<baked_route::Cell> cells;
@@ -119,7 +129,12 @@ struct CrossLeg {
 /// `with_gates`: the current map's live story gates (a sealed door, a locked gate) close the
 /// cells and exits they stand on; false ignores them, which tells whether a gate alone is
 /// what cuts the goal off.
-CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool with_gates = true);
+CrossLeg find_across(void* map_handle, void* player, const MapGoal& goal, bool with_gates = true, bool allow_traps = false);
+/// Retain a bounded completed-trap history for the current destination, preventing repeated legs.
+bool note_trap_start(int map_id, const baked_route::Cell& at);
+void record_map_arrival(int map_id, const baked_route::Cell& at);
+/// Retire only the guide/follower receipt matching this goal, preserving manual navigation.
+void clear_preview_destination(const MapGoal& goal);
 
 /// The map master name of a baked map id, through the game ("Citadel of Trials 2F"), or empty.
 std::wstring map_name_of(int map_id);
@@ -159,7 +174,7 @@ bool route_to_goal(void* map_handle, void* player, const MapGoal& goal, TargetKi
 /// The pending destination (a spoken route that continues on another floor), or false.
 bool pending_goal(MapGoal& goal, TargetKind& kind, std::wstring& name);
 void remember_destination(const MapGoal& goal, TargetKind kind, const std::wstring& name);
-void clear_pending();
+void clear_pending(bool include_preview = false);
 /// After a map change (entity_nav subscribes, 0.8 s after "Entering X"): speaks "<name>: <the
 /// next leg>" to the pending destination from where the player arrived. Cleared when that leg
 /// ends at the destination or nothing reaches it any more.

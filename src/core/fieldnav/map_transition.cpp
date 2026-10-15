@@ -2,7 +2,7 @@
 // FFI_ScreenReaderMod.ClearMenuFlagsForMapTransition (called only from the map transition).
 //
 // SubSceneManagerMainGame.ChangeState(State) has one RVA hit in every dump.cs (not folded).
-// FadeManager.IsFadeFinish is called, not hooked (FF1 avoided hooking FadeManager).
+// Read the native transparent fade state; IsFadeFinish mishandles script color alpha zero.
 #include <windows.h>
 #include <cstdint>
 #include <string>
@@ -18,6 +18,7 @@
 #include "../text.h"
 #include "../field/field_api.h"
 #include "../field/field_internal.h"
+#include "../field/baked_nav.h"
 
 namespace ffpr::fieldnav::location_message {
 namespace {
@@ -99,7 +100,7 @@ namespace ffpr::fieldnav::map_transition {
 namespace {
 
 ref::Class  kFadeManager{"System.Fade", "FadeManager"};
-ref::Method mIsFadeFinish{kFadeManager, "IsFadeFinish", 0};
+ref::Method mIsStateFadeIn{kFadeManager, "IsStateFadeIn", 0};
 
 ref::Class  kSubSceneManagerMainGame{"Last.Management", "SubSceneManagerMainGame"};
 ref::Method mChangeState{kSubSceneManagerMainGame, "ChangeState", 1};
@@ -108,9 +109,11 @@ ref::Method mChangeState{kSubSceneManagerMainGame, "ChangeState", 1};
 constexpr int32_t kStateChangeMap = 1;
 constexpr int32_t kStatePlayer = 3;
 constexpr int32_t kStateTransport = 4;
+constexpr int32_t kStateEvent = 12;
 
 int g_last_announced_map_id = -1;
 bool g_needs_map_scan = true;
+bool g_script_refresh = false;
 
 /// FFI_ScreenReaderMod.ClearMenuFlagsForMapTransition: clear menu and popup flags a set/clear
 /// mismatch left behind, so they cannot block the field on the new map. Battle flags stay.
@@ -151,12 +154,14 @@ void check_map_transition()
 
     // Same map: no announcement
     if (current_map_id == g_last_announced_map_id && !g_needs_map_scan) {
-        if (::field::scanner::needs_scan(current_map_id)) ::field::request_rescan();
+        if (g_script_refresh || ::field::scanner::needs_scan(current_map_id)) ::field::request_rescan();
+        g_script_refresh = false;
         return;
     }
 
     g_last_announced_map_id = current_map_id;
     g_needs_map_scan = false;
+    g_script_refresh = false;
 
     // The map really changed, so the transition is over (no menu is possible during it).
     clear_menu_flags_for_map_transition();
@@ -182,7 +187,17 @@ ChangeState_t o_ChangeState = nullptr;
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
     const double started = frame::now();
-    if (state == kStateChangeMap) {
+    bool same_map_drop = false;
+    if (state == kStateEvent || state == kStateChangeMap) {
+        same_map_drop = hooks::guarded_r("MapTransition.TrapStart", false, [] {
+            ::field::baked_route::Cell at;
+            const int map_id = ::field::current_map_id();
+            return map_id > 0 && ::field::baked_nav::player_cell(::field::map_handle(),::field::player(),at) &&
+                ::field::baked_nav::note_trap_start(map_id,at);
+        });
+    }
+    if (state == kStateEvent) g_script_refresh = true;
+    if (state == kStateChangeMap || same_map_drop) {
         events::fire(events::Kind::MapChanging);
         g_needs_map_scan = true;
         ::field::scanner::invalidate_map();
@@ -204,8 +219,8 @@ int install()
 {
     if (!kFadeManager.get())
         LOGF("[MapTransition] FadeManager type not found");
-    else if (!mIsFadeFinish.get())
-        LOGF("[MapTransition] IsFadeFinish not found - fade detection disabled");
+    else if (!mIsStateFadeIn.get())
+        LOGF("[MapTransition] IsStateFadeIn not found - fade detection disabled");
 
     queries::define("MapTransitionPatches.IsScreenFading", [] { return is_screen_fading(); });
     queries::define("LocationMessageTracker.InMapTransition", [] { return location_message::in_map_transition(); });
@@ -226,7 +241,7 @@ core::Install s_install{"MapTransition", &install, 110};
 
 bool is_screen_fading()
 {
-    void* fp = mIsFadeFinish.ptr();
+    void* fp = mIsStateFadeIn.ptr();
     if (!fp) return false;
     try {
         void* instance = ref::instance(kFadeManager);
@@ -234,7 +249,10 @@ bool is_screen_fading()
         // Called directly rather than through ref::call: a failed call must read as "not
         // fading" (FF1's catch), not as IsFadeFinish() == false.
         using F = bool (*)(void*, const void*);
-        bool finished = reinterpret_cast<F>(fp)(instance, mIsFadeFinish.get());
+        // IsFadeFinish rejects alpha==0 when the script also made the Image's
+        // color transparent (Deist pitfall FadeIn). IsStateFadeIn tests the
+        // actual CanvasRenderer alpha==0, so completed script fades can resume.
+        bool finished = reinterpret_cast<F>(fp)(instance, mIsStateFadeIn.get());
         return !finished;
     } catch (...) {
         return false;   // treat as not fading

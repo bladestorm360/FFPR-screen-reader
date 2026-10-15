@@ -53,6 +53,7 @@ void seed()
 
 void sample()
 {
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) { seed(); return; }
     const uint64_t f = frame::count();
     // Every modal (including direct HandleInput actions and the late UI tick) shares this
     // gate. Never read another application's keys; seed held keys when focus returns.
@@ -78,6 +79,10 @@ bool held(int vk) { return vk >= 0 && vk < 256 && g_cur[vk]; }
 
 bool handle_modal_input()
 {
+    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) {
+        if (any_modal_open()) modal_keys::seed();
+        return any_modal_open();
+    }
     // FF1 InputManager.Update: "Modal dialogs consume all keyboard input when open", then the
     // mod menu. Each returns early when it took the input.
     if (text_input::handle_input()) return true;

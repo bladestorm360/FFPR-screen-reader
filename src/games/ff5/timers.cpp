@@ -1,5 +1,5 @@
 // Ports FF5 Patches/TimerPatches.cs (Timer_Update_Patch, TimerHelper) and its two key bindings
-// from Core/InputManager.cs (T: announce timers, Shift+T: freeze/resume), gated on
+// from Core/InputManager.cs (T: announce timers, Shift+F5: freeze/resume), gated on
 // game::flags().timer_freeze.
 //
 // Timer.Update is detoured ONLY while the freeze is on, as in the C#, which patched and unpatched
@@ -183,7 +183,7 @@ int install()
         if (!ok) ffpr::say(T(L"Error reading timers"), true);
     });
     queries::define("TimerHelper.TimersFrozen", [] { return g_frozen; });
-    input::add_binding(input::Key::T, input::Mod::Shift, input::Context::Global, "TimerHelper.ToggleTimerFreeze",
+    input::add_binding(input::Key::F5, input::Mod::Shift, input::Context::Global, "TimerHelper.ToggleTimerFreeze",
                        "Toggle timer freeze");
     input::add_binding(input::Key::T, input::Mod::None, input::Context::Global, "TimerHelper.AnnounceActiveTimers",
                        "Announce active timers");

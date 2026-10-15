@@ -12,7 +12,9 @@ std::function<void(field::PathInfo)> route;
 field::EntityPtr entity = std::make_shared<field::Entity>();
 field::Category category = field::Category::All;
 int next = 0, previous = 0, cancelled = 0;
-bool selectable = true;
+bool selectable = true, transition = false, field_ready = true, battle = false;
+bool soundscape=true,beacons=false,combined=false;int beacon_requests=0;
+int scans = 0, cache_reads = 0;
 void finish() { auto callbacks = std::move(pending); pending.clear(); for (auto& callback : callbacks) callback(); }
 }
 namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
@@ -59,16 +61,31 @@ std::wstring TF(std::wstring_view value, std::initializer_list<std::wstring> arg
     return result;
 }
 }
-namespace actions { bool defined(const char*) { return false; } bool run(const char*) { return false; } void define(const char*, Fn) {} }
-namespace queries { bool is(const char*) { return true; } void define_text(const char*, std::function<std::wstring()>) {} }
+namespace actions { bool defined(const char*) { return false; } bool run(const char* name) { if(std::strcmp(name,"Mod.RestartEntityBeacon")==0)++fixture::beacon_requests;return true; } void define(const char*, Fn) {} }
+namespace queries {
+bool is(const char* name) {
+    if (std::strcmp(name, "GameStatePatches.IsInputTransitionBlocked") == 0) return fixture::transition;
+    if (std::strcmp(name, "GameStatePatches.IsFieldNavigationReady") == 0) return fixture::field_ready;
+    if (std::strcmp(name, "BattleStateHelper.IsInBattle") == 0) return fixture::battle;
+    return true;
+}
+void define_text(const char*, std::function<std::wstring()>) {}
+}
 namespace menu_state { bool any_active() { return false; } }
 namespace events { void on(Kind, Handler) {} void fire(Kind) {} }
-namespace frame { double now() { return GetTickCount64()/1000.0; } void after_seconds(double, Task, const char*) {} void cancel_label(const char*) {} }
-namespace settings { bool get_bool(const char*, bool def) { return def; } }
+namespace frame { double now() { return GetTickCount64()/1000.0; } void after_seconds(double, Task, const char*) {} void cancel_label(const char*) {} int every_frame(Step, const char*, int) { return 0; } }
+namespace fixture { bool warnings = true; }
+namespace settings { bool get_bool(const char* key, bool def) {
+    if(std::strcmp(key,"ModWarnings")==0)return fixture::warnings;
+    if(std::strcmp(key,"Soundscape")==0)return fixture::soundscape;
+    if(std::strcmp(key,"AudioBeacons")==0)return fixture::beacons;
+    if(std::strcmp(key,"BeaconWithDirections")==0)return fixture::combined;
+    return def;
+} }
 namespace ffpr::fieldnav::autowalk { bool active() { return false; } bool stop_requested() { return false; } void request(field::baked_nav::MapGoal, field::TargetKind, std::wstring) {} }
-namespace ffpr::fieldnav::audio_loops { void restart_beacon() {} }
+namespace ffpr::fieldnav::audio_loops { void restart_beacon() { ++fixture::beacon_requests; } }
 namespace field::cache {
-void* get_or_refresh(ref::Class& type) { return std::strcmp(type.name, "FieldPlayerController") == 0 ? &fixture::controller : reinterpret_cast<void*>(1); }
+void* get_or_refresh(ref::Class& type) { ++fixture::cache_reads; return std::strcmp(type.name, "FieldPlayerController") == 0 ? &fixture::controller : reinterpret_cast<void*>(1); }
 void* refresh(ref::Class& type) { return get_or_refresh(type); }
 void clear(ref::Class&) {}
 }
@@ -84,7 +101,7 @@ FilterContext::FilterContext() { field_player = map_handle = reinterpret_cast<vo
 }
 namespace field::scanner {
 void when_filter_ready(std::function<void()> ready, bool) { fixture::pending.push_back(std::move(ready)); }
-void scan_entities() {} void force_rescan() {} void invalidate_map() {} void schedule_scan() {} void cancel_scan() {}
+void scan_entities() { ++fixture::scans; } void force_rescan() { ++fixture::scans; } void invalidate_map() {} void schedule_scan() {} void cancel_scan() {}
 void reapply_filter() {} void set_filter_to_layer(bool) {}
 void next_entity() { ++fixture::next; } void previous_entity() { ++fixture::previous; }
 bool no_reachable_entities() { return false; } bool select_first_reachable() { return fixture::selectable; }
@@ -93,7 +110,7 @@ EntityPtr current_entity() { return fixture::entity; } int current_index() { ret
 double captured_at() { return frame::now(); }
 }
 namespace field::baked_nav {
-void clear_pending() {} void continue_pending() {} void invalidate() {}
+void clear_pending(bool) {} void continue_pending() {} void invalidate() {}
 void cancel_requests() { ++fixture::cancelled; }
 bool cell_at(void*, unity::Vec3, baked_route::Cell&) { return true; }
 void request_route(MapGoal, TargetKind, std::wstring, std::function<void(PathInfo)> publish, bool) { fixture::route = std::move(publish); }
@@ -101,6 +118,17 @@ void request_route(MapGoal, TargetKind, std::wstring, std::function<void(PathInf
 int main() {
     int failures = 0;
     auto expect = [&](bool ok, const char* reason) { if (!ok) { ++failures; std::printf("FAIL %s\n", reason); } };
+    for (int condition = 0; condition < 3; ++condition) {
+        fixture::transition = condition == 0;
+        fixture::field_ready = condition != 1;
+        fixture::battle = condition == 2;
+        field::cycle(true); field::cycle(false); field::category_next(); field::category_previous();
+        field::category_reset_to_all(); field::announce_current_entity(); field::navigate_to_entity();
+        field::announce_entity_only(); field::force_entity_rescan();
+        expect(fixture::scans == 0 && fixture::cache_reads == 0 && fixture::pending.empty() && fixture::output.empty(),
+            "every navigation entry rejects fades/loading/battle before cache reads, scans, speech or queued work");
+    }
+    fixture::transition = fixture::battle = false; fixture::field_ready = true;
     fixture::entity->kind = field::Kind::TreasureChest;
     field::cycle(true); // old category input, still waiting for readiness
     field::category_next();
@@ -137,6 +165,30 @@ int main() {
     fixture::route={};
     field::announce_current_entity();field::category_next();fixture::finish();
     expect(!fixture::route,"new category retires directions still waiting for nearest-exit readiness");
-    std::printf("Navigation speech: ordered category/focus, stale-event rejection, FIFO browse, async route: %d failures\n", failures);
+    fixture::output.clear(); fixture::route = {};
+    field::announce_current_entity(); fixture::transition = true; fixture::finish(); fixture::transition = false;
+    expect(!fixture::route && fixture::output.empty(), "directions waiting for entities cannot start a route during a fade");
+    field::announce_current_entity(); fixture::finish();
+    fixture::transition = true; fixture::route(path); fixture::transition = false;
+    expect(fixture::output.empty(), "a completed route cannot speak during a transition");
+    path.warning=L"Warning: a trap is required to reach this chest.";
+    field::announce_current_entity(); fixture::finish(); fixture::route(path);
+    expect(fixture::output.size()==1 && fixture::output.back().parts==std::vector<std::wstring>{path.warning,path.description},
+        "enabled warnings precede directions in one correctly ordered speech event");
+    fixture::output.clear(); fixture::warnings=false;
+    field::announce_current_entity(); fixture::finish(); fixture::route(path);
+    expect(fixture::output.size()==1 && fixture::output.back().parts==std::vector<std::wstring>{path.description},
+        "disabling mod warnings preserves route directions");
+    fixture::output.clear();fixture::route={};
+    field::navigate_to_entity();fixture::finish();
+    expect(bool(fixture::route),"soundscape leaves turn-by-turn route producer available");
+    fixture::route(path);expect(!fixture::output.empty(),"soundscape leaves actual directions audible");
+    fixture::beacons=true;fixture::route={};fixture::output.clear();
+    field::navigate_to_entity();fixture::finish();
+    expect(fixture::beacon_requests==1&&!fixture::route,"soundscape leaves beacon-only navigation available");
+    fixture::combined=true;field::navigate_to_entity();fixture::finish();
+    expect(fixture::beacon_requests==2&&bool(fixture::route),"soundscape permits simultaneous beacon and directions");
+    fixture::route(path);expect(!fixture::output.empty()&&fixture::soundscape,"combined navigation never changes soundscape preference");
+    std::printf("Navigation speech: ordered category/focus, stale-event rejection, FIFO browse, async route and concurrent soundscape/beacon/directions: %d failures\n", failures);
     return failures ? 1 : 0;
 }

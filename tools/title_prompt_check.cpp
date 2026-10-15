@@ -122,7 +122,7 @@ namespace ffpr::system { void wait_and_read_cursor(void*) { ++fixture::focus_rea
 namespace game { const Flags& flags() { return fixture::flags; } }
 namespace modtext { std::wstring T(std::wstring_view v) { return std::wstring(v); } }
 namespace log_ { void write(const char*, ...) {} void writeW(const wchar_t*, const wchar_t*) {} }
-namespace settings { void save_pending() {} }
+namespace settings { bool get_bool(const char*, bool def) { return def; } void save_pending() {} }
 
 int main() {
     using namespace fixture;

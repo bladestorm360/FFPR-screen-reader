@@ -1,15 +1,16 @@
 #pragma once
 #include <vector>
+#include "cue_bank.h"
 
-// The mod's sound effects (FF1 Utils/SoundPlayer.cs). Implemented in src/core/audio/ on the
-// SDL3 audio engine (FF1 AudioEngine.cs + ToneGenerator.cs). This header is the contract the
+// The mod's sound effects, through the shared embedded/custom WAV cue bank and
+// worker-owned SDL3 mixer with optional OpenAL Soft loopback HRTF. This contract is what the
 // field, battle and audio-loop code call; every function is safe to call when audio is
 // unavailable (it does nothing).
 namespace sound {
 
 enum class Direction { North, South, East, West };
 
-/// Open the SDL3 audio device and pre-generate the tones. Idempotent; main thread.
+/// Request the SDL owner/device worker without waiting. Idempotent; native owner.
 void initialize();
 void shutdown();
 bool available();
@@ -33,5 +34,8 @@ void stop_exp_counter();
 /// Vehicle landing ping (FF1 ToneGenerator.GenerateLandingPing), panned. `frequency` 0 = the
 /// default tone; FF5 gave each direction its own (sound::constants::LandingPingFrequencies).
 void play_landing_ping(float pan, float volume_scale, int frequency = 0);
+
+/// Settings preview through the same cue bank and spatial renderer.
+void preview(cues::Id cue);
 
 } // namespace sound

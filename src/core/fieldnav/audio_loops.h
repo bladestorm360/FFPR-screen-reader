@@ -15,6 +15,8 @@
 // Actions defined:
 //   "Settings.Changed.WallTones"    start/stop the wall-tone loop to match the "WallTones" setting
 //   "Settings.Changed.AudioBeacons" start/stop the beacon loop to match "AudioBeacons"
+//   "Settings.Changed.BeaconMode" reset cadence for route/object targeting
+//   "Mod.ToggleBeaconMode" switch saved route/object targeting (Shift+F6)
 //   "Settings.Changed.LandingPings" start/stop the landing-ping loop to match "LandingPings"
 //   "Mod.RestartBeacon"             FFI_ScreenReaderMod.RestartBeacon
 //   "Mod.RestartEntityBeacon"       FFI_ScreenReaderMod.RestartEntityBeacon

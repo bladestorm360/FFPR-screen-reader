@@ -71,12 +71,15 @@ struct Grids {
     std::vector<Object> objects;
     std::vector<uint8_t> hazard;         // 1 = a step-on warp / trapdoor cell: never crossed by
                                          // an ordinary route, only entered as its goal
+    std::vector<uint8_t> traps[3];       // identified pitfalls, retaining their native layer
 };
 
 /// Bind the baked data (the bytes must outlive the process; a resource does). False when the
 /// header is not FFPRMAP1 / the sizes do not fit.
 bool load(const void* data, size_t size);
 bool loaded();
+/// Native object identifiers for an environmental pitfall; no dialogue/outcome inference.
+bool is_trap(const Object& object);
 /// The game byte of the file (1-6), 0 when not loaded.
 int game_number();
 

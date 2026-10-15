@@ -87,6 +87,17 @@ bool direction_allowed(const Request& r, const Cell& from, const Cell& to)
     return true;
 }
 
+bool trap_cell(const Request& r, const baked::Grids& g, const Cell& c)
+{
+    if (r.live_traps) {
+        for (const auto& trap : r.traps)
+            if (c.x == trap.x && c.y == trap.y && (trap.layer < 0 || c.layer == trap.layer)) return true;
+        return false;
+    }
+    return c.layer >= 0 && c.layer < 3 && baked::in_bounds(g, c.x, c.y) &&
+        !g.traps[c.layer].empty() && g.traps[c.layer][static_cast<size_t>(c.y) * g.width + c.x];
+}
+
 int step_direction(const Cell& from, const Cell& to, int w, int h) {
     int dx = to.x-from.x, dy = to.y-from.y;
     if (w > 0 && std::abs(dx) > w/2) dx += dx > 0 ? -w : w;
@@ -144,6 +155,7 @@ void neighbours(const Request& r, const baked::Grids& g, const Cell& from, F&& v
         if (!ok && nl != from.layer && open(r, g, n)) ok = true;
         if (!ok && r.goals_open && is_goal_cell(r, moved)) ok = true;   // a closed goal cell (town tile)
         if (!ok || blocked_by_caller(r, moved)) continue;
+        if (trap_cell(r, g, moved) && !(r.allow_trap_goal && is_goal_cell(r, moved))) continue;
         // A step-on warp or trapdoor is crossed only as the goal itself.
         bool hazard = false;
         if (!r.ignore_hazards) {
@@ -158,6 +170,22 @@ void neighbours(const Request& r, const baked::Grids& g, const Cell& from, F&& v
 }
 
 } // namespace
+
+bool safe_landing(const Request& movement, const baked::Grids& g, const Cell& landing)
+{
+    if (!movement.submap || landing.layer < 0 || landing.layer > 2) return false;
+    Request r = movement;
+    r.start = landing;
+    r.goals.clear(); r.goals_open = false; r.allow_trap_goal = false; r.ignore_hazards = false;
+    if (!open(r, g, landing) || blocked_by_caller(r, landing) || trap_cell(r, g, landing)) return false;
+    if (r.live_hazards) {
+        for (const auto& hazard : r.hazards)
+            if (hazard.x == landing.x && hazard.y == landing.y && (hazard.layer < 0 || hazard.layer == landing.layer)) return false;
+    } else if (!g.hazard.empty() && g.hazard[static_cast<size_t>(landing.y) * g.width + landing.x]) return false;
+    bool escape = false;
+    neighbours(r, g, landing, [&](const Cell&) { escape = true; return false; });
+    return escape;
+}
 
 Route find(const Request& r)
 {

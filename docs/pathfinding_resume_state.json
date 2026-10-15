@@ -1,0 +1,41 @@
+{
+  "phase": "reset_confirmed_engineering_complete",
+  "engineering_complete": true,
+  "deployed_sha256": "C8FD888C133131CDC0D061D7CEDADCFD08F3B7015B29A18867F6C88BE14667CB",
+  "automation_id": "ffpr-usage-reset-and-pathfinding-resume",
+  "stop_at_remaining_percent": 1,
+  "current_usage": {
+    "used_percent": 0,
+    "remaining_percent": 100,
+    "window_duration_minutes": 10080,
+    "resets_at": 1792649728,
+    "ordinary_usage_allowed": true,
+    "observed_at_utc": "2026-10-15T06:15:23.706Z"
+  },
+  "checkpoint": "docs/pathfinding_checkpoint_2026_10_14.md",
+  "note": "Fresh core allowance increased from the saved 1% stop baseline to 100%, ordinary usage is allowed, and the only available core window is not exhausted. Reset confirmed. Scoped engineering remains complete and deployed; gameplay confirmation remains user-side. The one-time reset watch was paused through the app automation tool. No completed work was restarted and the broader world refresh change remains planned only.",
+  "stop_baseline": {
+    "used_percent": 99,
+    "remaining_percent": 1,
+    "window_duration_minutes": 10080,
+    "resets_at": 1792472324,
+    "ordinary_usage_allowed": true,
+    "observed_at_utc": "2026-10-15T04:00:21.601Z"
+  },
+  "stop_limits_by_limit_id": {
+    "codex": {
+      "primary": {
+        "used_percent": 99,
+        "remaining_percent": 1,
+        "window_duration_minutes": 10080,
+        "resets_at": 1792472324,
+        "ordinary_usage_allowed": true,
+        "observed_at_utc": "2026-10-15T04:00:21.601Z"
+      },
+      "secondary": null
+    }
+  },
+  "reset_confirmed": true,
+  "reset_allowance_increase_percentage_points": 99,
+  "watch_status": "PAUSED"
+}

@@ -7,6 +7,10 @@
 // for CheckOkList, which reads as "land" - so these calls report failure instead).
 #include <cstdint>
 #include "landing_spots.h"
+#include "watercraft.h"
+#include "../game.h"
+#include "../field/field_api.h"
+#include "../field/baked_map.h"
 #include "../hooks.h"
 #include "../log.h"
 #include "../refs.h"
@@ -72,9 +76,8 @@ bool current_transport_id(void* transport_controller, int32_t& id)
     return try_call(mInfoGetId, current, id);
 }
 
-/// CheckAdjacentLanding: a landing spot when CheckLandingList(attribute) holds (explicit landing
-/// tiles, e.g. airship landing spots) OR the attribute is NOT in the vehicle's OkList (a tile the
-/// ship cannot sail on = land).
+/// A legal shore must accept walking, reject the currently ridden watercraft, and satisfy
+/// its explicit landing list when it has one. Non-sailable walls are never landing spots.
 void check_adjacent(void* field_controller, void* transport_controller, int32_t transport_id, Vec3 player_world,
                     Vec3 offset, sound::Direction direction, std::vector<sound::Direction>& out)
 {
@@ -85,19 +88,26 @@ void check_adjacent(void* field_controller, void* transport_controller, int32_t 
     if (!try_call(mGetCellAttribute, field_controller, attribute, Vec2{cell.x, cell.y})) return;
 
     bool in_landing_list = false;
-    bool in_ok_list = false;
+    bool in_ok_list = false,walking=false;
     if (!try_call(mCheckLandingList, transport_controller, in_landing_list, transport_id, attribute)) return;
     if (!try_call(mCheckOkList, transport_controller, in_ok_list, transport_id, attribute)) return;
-
-    if (in_landing_list || !in_ok_list) out.push_back(direction);
+    if (!try_call(mCheckOkList, transport_controller, walking, int32_t(1), attribute)) return;
+    const auto* row=::field::baked::transport(transport_id);
+    if (!row) return; // unknown landing policy must not announce a wall as a shore
+    if (legal_shore(walking,in_ok_list,in_landing_list,row->landing_group>0)) out.push_back(direction);
 }
 
 } // namespace
 
+bool riding_watercraft() {
+    const auto v=::field::current_vehicle();
+    return v.valid && watercraft(game::number(),v.id,v.type);
+}
+
 void nearby(void* field_player, std::vector<sound::Direction>& out)
 {
     out.clear();
-    if (!field_player) return;
+    if (!field_player || !riding_watercraft()) return;
 
     hooks::guarded("LandingPing.GetNearbyLandingSpots", [&] {
         void* tr = unity::transform(field_player);

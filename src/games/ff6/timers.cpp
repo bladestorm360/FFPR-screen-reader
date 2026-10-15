@@ -1,5 +1,5 @@
 // Ports FF6 Patches/TimerPatches.cs (Timer_Update_Patch, TimerHelper) and its two key bindings
-// from Core/InputManager.cs (T: announce timers, Shift+T: freeze/resume), gated on
+// from Core/InputManager.cs (T: announce timers, Shift+F5: freeze/resume), gated on
 // game::flags().timer_freeze. Wording and keys follow FF4/FF5 (src/games/ff5/timers.cpp): the
 // lines are identical in every game, so FF6's own "{0} minute" keys are not used.
 //
@@ -188,7 +188,7 @@ int install()
         if (!ok) ffpr::say(T(L"Error reading timers"), true);
     });
     queries::define("TimerHelper.TimersFrozen", [] { return g_frozen; });
-    input::add_binding(input::Key::T, input::Mod::Shift, input::Context::Global, "TimerHelper.ToggleTimerFreeze",
+    input::add_binding(input::Key::F5, input::Mod::Shift, input::Context::Global, "TimerHelper.ToggleTimerFreeze",
                        "Toggle timer freeze");
     input::add_binding(input::Key::T, input::Mod::None, input::Context::Global, "TimerHelper.AnnounceActiveTimers",
                        "Announce active timers");

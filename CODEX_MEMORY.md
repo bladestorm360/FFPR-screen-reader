@@ -1,5 +1,140 @@
 # Native FFPR durable memory
 
+- October15 beacon modes: Shift+F6 switches saved Follow route (default) / Object
+  location; F6 remains on/off, with the same choice in Navigation audio. Object mode
+  uses selected entity/waypoint position and wrapped world bearing without any
+  follow/route/quick/accessor call; retains proximity/arrival/resume/context gates.
+  Other-floor projected targets remain silent with one explicit-request explanation;
+  Route preserves cross-floor/corner/blocked behavior. Preference changes do not
+  enable an off beacon or alter soundscape, directions, HRTF volume banks or Autowalk
+  setting; existing manual-input safety still stops an active walk on Shift+F6.
+  Production loop/action, all-six menu and both-layout dispatch checks, canonical
+  build and isolated smoke pass (6,736 names/zero missing; zero undefined; 47 exports).
+  Luna gpt-6-luna supplied only six labels/help entries in 12 locales; Sol reviewed
+  against prior embedded catalog (all previous entries preserved), corrected the
+  scope of duplicate-validation evidence and ran all checks. No handoff issue remains.
+  Deployed/hash-verified all six closed games: DLL
+  816E5DB3F6B1816DA2E74A75653ECCC5298C33DE418A8B3E0F0DDF7D7774499C
+  (9,482,240 bytes), SDL3/pinned HRTF match; Prism/settings/waypoints unchanged.
+  Recovery/receipts: build_check/beacon_mode_recovery_2026_10_15,
+  beacon_mode_{before,deploy}_2026_10_15.json and beacon_mode_2026_10_15.json.
+  [Implementation, delegation review and evidence](docs/re/SOUNDSCAPE.md#beacon-targeting-modes--october-15),
+  [first user checks](docs/TESTING.md#routeobject-beacon-modes--october-15).
+  No game launch/control/probe, tester-file access or publication. Gameplay/audio
+  confirmation remains user-side. Prior dirty work preserved.
+
+- October15 HRTF volume follow-up: user confirms prior fixes are excellent; requested
+  2x HRTF master and separate remembered HRTF/stereo volumes through existing controls.
+  Implemented one OpenAL listener gain=2 after source gains; stereo/fallback unboosted.
+  Native-owner audio/volume_settings.h selects original stereo keys or internal HRTF.*
+  bank for all existing volume sliders/APIs and soundscape master/categories. HRTF
+  independently defaults 50; existing stereo values preserved, no new menu settings.
+  Toggles/range/keymap remain shared; settings I/O/worker ownership unchanged.
+  Actual all-18 HRTF output confirms 2x amplitude, zero-mute dither at most 1 PCM16 unit;
+  all-six real menu bank switching/default/bounds/no-extra-row and producer tests pass,
+  as do original 79 stereo PCM comparisons, canonical checks and isolated smoke
+  (6,736 names/zero missing; zero undefined; 47 exports). Deployed/hash-verified all six
+  closed games: C2042BDF2B58114F9F79F850C1B5FECD978F990AF5B24D9821A6AF77F00E9A27
+  (9,472,000 bytes). SDL3/pinned HRTF match; Prism/settings/waypoints unchanged.
+  Recovery/receipts: build_check/hrtf_volume_recovery_2026_10_15,
+  hrtf_volume_{before,deploy}_2026_10_15.json and hrtf_volume_2026_10_15.json.
+  [Implementation and evidence](docs/re/SOUNDSCAPE.md#hrtf-output-level-and-contextual-volumes--october-15),
+  [first user checks](docs/TESTING.md#hrtf-contextual-volume-follow-up--october-15).
+  Sol alone, no game launch/control/probe or publication. Physical levels/profile
+  restart remain user checks; prior dirty work preserved.
+
+- October15 follow-up: restored every legacy default signal/envelope/pan/gain using
+  the original tone generator; 79 actual stereo PCM comparisons and real HRTF
+  input/output/tail checks pass. Soundscape stale data now retires only entity voices.
+  Ctrl+Apostrophe toggles Soundscape; route/beacon/directions remain independent.
+  Watercraft pings use current native ownership (including loaded boarded saves),
+  FF1–3 canoes and FF1/2/3/5 ships/submarines, and legal walking/landing shore checks;
+  snowcraft/aircraft/FF4/6 excluded. User confirms entity soundscape/cadence work well.
+  Broader FF2 pathfinder report used brackets/backslash while INI selected default
+  Letters; full input tick reproduces that no-op and the selected-layout correction.
+  Actual scanner capture/readiness/selection checks also pass. FF2 now explicitly
+  selects Brackets/backslash (NavigationKeymap=1); other preferences unchanged,
+  including Footsteps Off. Canonical build/all checks and isolated smoke pass
+  (6,736 names/zero missing; zero undefined; 47 exports). Deployed/hash-verified all
+  six closed games: DLL 6499036C6CF512AD921CADB75D700CC2738CBECCB9A1FC31371CF065C0765A49
+  (9,469,440 bytes), SDL3 and pinned HRTF payload. Prism/waypoints unchanged.
+  Recovery/receipts: build_check/soundscape_fix_recovery_2026_10_15,
+  soundscape_fix_{before,deploy}_2026_10_15.json and soundscape_fix_2026_10_15.json.
+  [Evidence, diagnosis/limits and deployment](docs/re/SOUNDSCAPE.md#legacy-effect-and-watercraft-follow-up--october-15),
+  [first user checks](docs/TESTING.md#soundscape-follow-up--october-15).
+  Sol alone; no game launch/control/probe or publication. Physical levels, FF2 controls
+  and watercraft cases still need user confirmation; retain a separate issue if selected
+  Brackets still fails. Prior dirty work preserved.
+
+- October 15: user lifted the deployment hold; soundscape/masters and earlier keyboard/
+  flee/safe-teleport fixes are now deployed and hash-verified in all six closed games.
+  Independent pathfinder-eligible cues, 18 embedded/custom WAVs,
+  default-off HRTF with pinned private OpenAL Soft, range10 (5–25), nested cue controls,
+  previews and navigation-audio master. Game speech master leaves only explicit mod-menu
+  ingress audible at central say; backend/order/braille intact. Canonical build/all checks
+  and isolated smoke pass (6,736 names/zero missing, zero undefined; 47 exports).
+  Installed DLL `4FE4FB6594E4082FD619B49D7EB8C17C79E9533032964062CE56B0B53E51DB58`
+  (9,448,960 bytes), plus pinned eight-file HRTF payload. Prism/settings/waypoint hashes
+  and timestamps unchanged; SDL bytes match the checked source. Recovery and before/deploy
+  receipts: build_check/soundscape_recovery_2026_10_15, soundscape_{before,deploy}_2026_10_15.json.
+  Luna's bounded speech/menu/12-locale work reviewed,
+  corrected and fully checked by Sol; no remaining handoff issue. [Scope, ownership,
+  bounds/performance, receipt and limits](docs/re/SOUNDSCAPE.md#deployment-october-15), [pending user checks](docs/TESTING.md#soundscape-and-masters--october-15).
+  Gameplay remains pending. Sol handled deployment alone; no game launch/probe,
+  commit/push or publication. Prior dirty work preserved.
+
+- October 15 keyboard/flee/teleport follow-up is implemented and offline-verified.
+  The initial deployment hold was later lifted; the combined build is installed above.
+  F6 is the only beacon hotkey in every game; redundant legacy aliases removed.
+  F8 Navigation selects Letters (default) or Brackets/backslash; brackets P announces,
+  K is inactive, and backslash navigates. Teleport shortcuts is default off with owned
+  worker clearance of terrain/blockers/escape and stale/context cancellation. Timer
+  freeze is Shift+F5 in FF4-FF6. README/TXT includes FF4-FF6 native flee chords;
+  direct held-listener SDL shoulder passthrough corrected. No diagnostic/dump hotkeys.
+  Canonical build (6,736 names/zero missing, zero undefined), dispatch/menu/flee/terrain/
+  actual-snapshot/cancellation checks and isolated smoke pass. Local DLL `97F3865A178EC511EEEBD6E99BB55543A75059D861C340093B2CD2DEE8F695E1`
+  (9,153,024 bytes); not installed. Luna's bounded settings/translations/modal checks
+  were reviewed and verified by Sol; no remaining handoff issues. Gameplay pending.
+  [Controls/evidence/ownership/bounds](docs/INPUT_BINDINGS.md#keyboard-flee-and-safe-teleport-audit-october-15),
+  [pending user checks](docs/TESTING.md#keyboard-flee-and-safe-teleport-follow-up-october-15).
+  Prior dirty work preserved; no game launch/probe, dependency change, commit/push or publication.
+
+- October14 trap follow-up: actual all-six fade-alpha predicate fixes FF2 Deist's
+  transparent-fade readiness latch. Safe-first trap routing, required-drop fallback,
+  actual landing/relocation arcs and bounded per-goal repeat protection implemented;
+  same-map script recovery, selected-event warning suppression and Deist safe-stair
+  guidance included. Speech > Mod warnings is persistent/default on; Luna's bounded
+  setting/translations were reviewed and full checks passed by Sol. All52 reviewed
+  arrival arcs, real-bake safe/required/repeated drops, guide/modal/input/speech,
+  canonical checks and isolated smoke pass. Checked DLL C8FD888C133131CDC0D061D7CEDADCFD08F3B7015B29A18867F6C88BE14667CB
+  (9,101,824 bytes), deployed/hash-verified in all six with games closed; SDL unchanged,
+  Prism checked read-only. Recovery/receipts: build_check/trap_recovery_2026_10_14 and
+  trap_{before,deploy}_2026_10_14.json. [Evidence and precise limits](docs/re/TRAPS.md).
+  Original world filter/parked-vehicle latency remains diagnosed/planned, not fixed.
+  User requested usage stop at1% remaining; current monitor and checkpoint are
+  docs/pathfinding_resume_state.json and docs/pathfinding_checkpoint_2026_10_14.md.
+  No game launch/control/probe, save/dependency change or public publication.
+
+- October 14 new FF2 world-map investigation: directions generations 75/79/83 waited
+  1.177–1.181 seconds although their route stage took ~33 ms. Actual scanner fixtures
+  reproduce selected-target bypass failure after stale-origin publication and refresh
+  starvation under repeated scans. Same-map post-battle recovery also lacks an explicit
+  filter-readiness rescan condition; exact failed return is not fully logged. Parked
+  vehicle exit preparation/cancellation was absent from earlier performance coverage.
+  [Evidence and prioritized fix plan](docs/re/THREADING.md#intermittent-world-refresh-and-transition-input-october-14).
+  User additionally requested transition guards: shared keyboard/controller/modal,
+  navigation/waypoint and autowalk input gates implemented; canonical build/all checks
+  and isolated smoke pass. Local DLL `B32DBD80307EBD0E118918A06AB74D8F4744C4294556511C80A753546D5619D9`
+  (9,073,152 bytes) is deployed/hash-verified in all six after FF2 closed. Recovery:
+  build_check/transition_guard_recovery_2026_10_14; before/deploy receipts named
+  transition_guard_*_2026_10_14.json. World refresh redesign remains planned.
+  No game launch/control/probe or delegation; SDL bytes/Prism, saves, bakes and public
+  V0.9.2 unchanged. Guard gameplay confirmation remains pending.
+  Secondary audit confirms all-six multi-hit speech decodes current visible sprites,
+  with no hit calculation; all-six asset and 20/27/99 renderer regressions pass.
+  [Hit-count audit](docs/re/RESULTS.md#all-six-hit-count-recheck-october-14),
+  [short pending gameplay checks](docs/TESTING.md#world-map-refresh-and-transition-input-october-14).
+
 - October 14 V0.9.2 published as Latest from annotated tag/source
   `d0a7a478b37bd08092fc83e7571db04a23b3d845`; all October 14 fixes are committed/pushed.
   Complete 20-file/4,081,872-byte dependency ZIP, README/TXT and 0.9.2.0 metadata verified.

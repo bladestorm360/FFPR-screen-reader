@@ -125,7 +125,7 @@ void* Method::ptr() {
 }
 void call_failed_note(const char*) { std::abort(); }
 bool Class::is(void* o) { return o && (std::string(name)!="SkillLevelContentController" || static_cast<fixture::Node*>(o)->skill); }
-std::wstring rd_str(void*, Field&) { return L"Action"; }
+std::wstring rd_str(void* key, Field&) { return key ? static_cast<fixture::Node*>(key)->name : L"Action"; }
 }
 namespace hooks {
 bool attach_raw(ref::Method& method, void* hook, void** original) {
@@ -474,6 +474,17 @@ int main()
     spoken.clear(); word.visible = false; ffpr::battle::rendered::hit_count(&counter); tick();
     expect(spoken.empty(), "hit count waits for the visible word and digits");
     word.visible = true; tick(); expect(contains(L"12 hits"), "hit count decodes the current drawn digits");
+    for (auto game : {game::Id::FF1, game::Id::FF2, game::Id::FF3, game::Id::FF4, game::Id::FF5, game::Id::FF6}) {
+        game_id = game;
+        for (int hits : {20, 27, 99}) {
+            one.name = L"Battle_Common_DamageNumber_" + std::to_wstring(hits / 10);
+            two.name = L"Battle_Common_DamageNumber_" + std::to_wstring(hits % 10);
+            spoken.clear(); ffpr::battle::rendered::hit_count(&counter); tick();
+            expect(contains(std::to_wstring(hits) + L" hits"), "all-six high hit counts decode only the two visible renderer glyphs");
+        }
+    }
+    game_id = game::Id::FF2;
+    one.name = L"Battle_Common_DamageNumber_1"; two.name = L"Battle_Common_DamageNumber_2";
     count_images = {&image_one}; spoken.clear(); ffpr::battle::rendered::hit_count(&counter); tick();
     expect(contains(L"1 hit") && !contains(L"7 hits"), "a single displayed hit is read without attack-capacity math");
     damage_renderer.fields["prefab"] = &prefab;
@@ -567,6 +578,29 @@ int main()
     buttons[input::kSouth] = false; pad = false;
     result_reset_state(); native_result = true; keys[static_cast<int>(input::Key::UpArrow)] = true;
     native_calls = 0; expect(all_checks() && native_calls == 10, "review input ownership releases outside results");
+    keys[static_cast<int>(input::Key::UpArrow)] = false;
+    bool in_combat = true;
+    queries::define("BattleStateHelper.IsInBattle", [&] { return in_combat; });
+    Node left_key, right_key, other_key;
+    left_key.name = L"SwitchLeft"; right_key.name = L"SwitchRight"; other_key.name = L"Action";
+    native_result = false; pad = true;
+    auto flee = [&] { return input::d_listener_held(nullptr, &left_key, 3, false, nullptr) &&
+                            input::d_listener_held(nullptr, &right_key, 3, false, nullptr); };
+    for (auto game : {game::Id::FF1, game::Id::FF2, game::Id::FF3, game::Id::FF4, game::Id::FF5, game::Id::FF6}) {
+        game_id = game;
+        buttons[input::kLeftShoulder] = true;
+        expect(!flee(), "one shoulder alone cannot satisfy native flee chord");
+        buttons[input::kRightShoulder] = true;
+        expect(flee(), "both held SDL shoulders reach native battle escape in every game");
+        expect(!input::d_listener_held(nullptr, &left_key, 0, false, nullptr), "keyboard-only query never receives SDL shoulders");
+        buttons[input::kSouth] = true;
+        expect(!input::d_listener_held(nullptr, &other_key, 3, false, nullptr), "battle escape fix forwards no other listener actions");
+        suppress = true; expect(!flee(), "mod mode/modal ownership prevents flee injection"); suppress = false;
+        in_combat = false; expect(!flee(), "escape-only listener injection stops outside battle"); in_combat = true;
+        buttons[input::kLeftShoulder] = buttons[input::kRightShoulder] = buttons[input::kSouth] = false;
+    }
+    native_result = true; pad = false; game_id = game::Id::FF2;
+    expect(flee(), "native keyboard escape result is preserved");
     delta_mode = 1;
     rate_view.text = {{"categoryText", L"Evasion"}, {"beforValueText", L"51"}, {"afterValueText", L"55"},
         {"beforeMultipleSymbolText", L"x"}, {"afterMultipleSymbolText", L"x"}, {"beforePercentValueText", L"2"},

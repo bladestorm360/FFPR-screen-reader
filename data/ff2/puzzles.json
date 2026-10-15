@@ -1,4 +1,20 @@
 {
-  "_comment": "Guided puzzle solutions for FINAL FANTASY II (src/core/field/puzzle_guide.cpp). FF2's dungeons have no switch, clock or ordering puzzles in the dumps (tools/mapdump/ff2_objects.jsonl, scanned 2026-10-10): the Snow Cavern's passage opens by defeating the Adamantoise, Pandaemonium's warp zones are plain exits, and secret passages are routed through by the baked router itself. Nothing to guide yet.",
-  "puzzles": []
+  "_comment": "Guided navigation includes dungeon routing puzzles. Deist's safe stairs weave between floors; B3's pitfall is avoidable. Target is B5 PointIn1, from the extracted map; no hidden treasure or story disclosure. Actual planner regression: tools/trap_route_check.cpp.",
+  "puzzles": [
+    {
+      "id": "deist_safe_stairs",
+      "maps": [183, 184, 185, 186, 187, 188, 189, 190],
+      "steps": [
+        {
+          "map": 187,
+          "x": 9,
+          "y": 8,
+          "layer": 1,
+          "examine": false,
+          "text": "Reach {0} by the safe stairs. Avoid the trap on B3.",
+          "arg": "map:187"
+        }
+      ]
+    }
+  ]
 }
