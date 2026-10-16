@@ -1,0 +1,396 @@
+[
+  {
+    "game": 1,
+    "dump_sha256": "8313bacc58a606108db7dc0786b4fc5bcd57dc07e171cb8b051c2a68cd817740",
+    "game_sha256": "33f001b4420bea06b44740c07c4afcf92547e7196bdfd3ec27ae5feaf0229108",
+    "fields": {
+      "Last.Defaine.UI.CharacterSelectCommnadId": [
+        "public int value__; // 0x0",
+        "public const CharacterSelectCommnadId Non = 0;",
+        "public const CharacterSelectCommnadId Job = 1;",
+        "public const CharacterSelectCommnadId CharaName = 2;",
+        "public const CharacterSelectCommnadId AllDecision = 3;"
+      ],
+      "Last.UI.CharacterSelectCommandData": [
+        "private readonly CharacterSelectCommnadId <Id>k__BackingField; // 0x10",
+        "private readonly string <Name>k__BackingField; // 0x18"
+      ],
+      "Last.UI.KeyInput.CharacterContentController": [
+        "private readonly List<CharacterSelectCommandContentView> <CommandList>k__BackingField; // 0x18",
+        "private string <CharacterName>k__BackingField; // 0x20",
+        "private NewGameSelectData <Data>k__BackingField; // 0x28",
+        "private readonly CharacterStatus <CharacterData>k__BackingField; // 0x30",
+        "private GameObject contentParent; // 0x38",
+        "private CharacterContentView view; // 0x40"
+      ],
+      "Last.UI.KeyInput.CharacterSelectCommandContentView": [
+        "private CharacterSelectCommandData <Data>k__BackingField; // 0x18",
+        "private GUIClickController clickController; // 0x20",
+        "private GameObject cursorParent; // 0x28",
+        "private Text text; // 0x30",
+        "private Text categoryText; // 0x38",
+        "private bool isFocus; // 0x40",
+        "private int contentIndex; // 0x44"
+      ]
+    },
+    "methods": [
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetJobName",
+        "rva": "0x87aac0",
+        "signature": "public void SetJobName(string name)",
+        "bytes": 112,
+        "sha256": "8615536fa6f3dde103a821f82c576abfe959e5d73825e2751cb8b20f459f431e",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetData",
+        "rva": "0x87a350",
+        "signature": "public void SetData(NewGameSelectData data, bool isSelect = False)",
+        "bytes": 768,
+        "sha256": "bda7128eac63d2833888ec0372acd38740641a67877673687bbe1eedc1cb1fca",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentListController.SelectContent",
+        "rva": "0x87c6e0",
+        "signature": "private void SelectContent(Cursor targetCursor)",
+        "bytes": 128,
+        "sha256": "687a8d1d491731047caed0ca22b210b27b27b119583837ef522ce111fd7bf624",
+        "aliases": 1
+      },
+      {
+        "target": "Serial.FF1.UI.KeyInput.NewGameWindowController.InitJobSelect",
+        "rva": "0x4c4820",
+        "signature": "private void InitJobSelect()",
+        "bytes": 672,
+        "sha256": "4ed238bcf3ff4679c3f528cb22567ef118260894ea7896f8c0b60fcfeb3999c6",
+        "aliases": 1
+      }
+    ]
+  },
+  {
+    "game": 2,
+    "dump_sha256": "2cd79f198f2792c2a5c274833b94a7daeaa522cf67aff35f2e867d66be6422c4",
+    "game_sha256": "dbc8d9f674d3097b5bfa3c3b3ab877c32d92947bb40df545202ee574f2b0b19b",
+    "fields": {
+      "Last.Defaine.UI.CharacterSelectCommnadId": [
+        "public int value__; // 0x0",
+        "public const CharacterSelectCommnadId Non = 0;",
+        "public const CharacterSelectCommnadId Job = 1;",
+        "public const CharacterSelectCommnadId CharaName = 2;",
+        "public const CharacterSelectCommnadId AllDecision = 3;"
+      ],
+      "Last.UI.CharacterSelectCommandData": [
+        "private readonly CharacterSelectCommnadId <Id>k__BackingField; // 0x10",
+        "private readonly string <Name>k__BackingField; // 0x18"
+      ],
+      "Last.UI.KeyInput.CharacterContentController": [
+        "private readonly List<CharacterSelectCommandContentView> <CommandList>k__BackingField; // 0x18",
+        "private string <CharacterName>k__BackingField; // 0x20",
+        "private NewGameSelectData <Data>k__BackingField; // 0x28",
+        "private readonly CharacterStatus <CharacterData>k__BackingField; // 0x30",
+        "private GameObject contentParent; // 0x38",
+        "private CharacterContentView view; // 0x40"
+      ],
+      "Last.UI.KeyInput.CharacterSelectCommandContentView": [
+        "private CharacterSelectCommandData <Data>k__BackingField; // 0x18",
+        "private GUIClickController clickController; // 0x20",
+        "private GameObject cursorParent; // 0x28",
+        "private Text text; // 0x30",
+        "private Text categoryText; // 0x38",
+        "private bool isFocus; // 0x40",
+        "private int contentIndex; // 0x44"
+      ]
+    },
+    "methods": [
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetJobName",
+        "rva": "0x2cb2c0",
+        "signature": "public void SetJobName(string name)",
+        "bytes": 112,
+        "sha256": "2af1e280f33bcc0bb993c8088f8512049f6cc9c99bbb1ea81c16135c52ce2988",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetData",
+        "rva": "0x2cab40",
+        "signature": "public void SetData(NewGameSelectData data, bool isSelect = False)",
+        "bytes": 768,
+        "sha256": "13e9fdfefaadce0c829e332dc5859cba5125b58625905262635d451339633f51",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentListController.SelectContent",
+        "rva": "0x2ccee0",
+        "signature": "private void SelectContent(Cursor targetCursor)",
+        "bytes": 128,
+        "sha256": "fcbe8efeba489855e471b536bd2e977763e1f06f49adc5dcd7e20aaca65783c7",
+        "aliases": 1
+      },
+      {
+        "target": "Serial.FF2.UI.KeyInput.NewGameWindowController.InitJobSelect",
+        "absent": true
+      }
+    ]
+  },
+  {
+    "game": 3,
+    "dump_sha256": "cf74887b07f39807182c95701b3888ebfe171f0c9f7afbe8f33811b47c3d4b15",
+    "game_sha256": "8db9ab31a893ca4b13e5e4d2e2b1b086ac6e3fb5699b9be1d8037dafaaa3ae31",
+    "fields": {
+      "Last.Defaine.UI.CharacterSelectCommnadId": [
+        "public int value__; // 0x0",
+        "public const CharacterSelectCommnadId Non = 0;",
+        "public const CharacterSelectCommnadId Job = 1;",
+        "public const CharacterSelectCommnadId CharaName = 2;",
+        "public const CharacterSelectCommnadId AllDecision = 3;"
+      ],
+      "Last.UI.CharacterSelectCommandData": [
+        "private readonly CharacterSelectCommnadId <Id>k__BackingField; // 0x10",
+        "private readonly string <Name>k__BackingField; // 0x18"
+      ],
+      "Last.UI.KeyInput.CharacterContentController": [
+        "private readonly List<CharacterSelectCommandContentView> <CommandList>k__BackingField; // 0x18",
+        "private string <CharacterName>k__BackingField; // 0x20",
+        "private NewGameSelectData <Data>k__BackingField; // 0x28",
+        "private readonly CharacterStatus <CharacterData>k__BackingField; // 0x30",
+        "private GameObject contentParent; // 0x38",
+        "private CharacterContentView view; // 0x40"
+      ],
+      "Last.UI.KeyInput.CharacterSelectCommandContentView": [
+        "private CharacterSelectCommandData <Data>k__BackingField; // 0x18",
+        "private GUIClickController clickController; // 0x20",
+        "private GameObject cursorParent; // 0x28",
+        "private Text text; // 0x30",
+        "private Text categoryText; // 0x38",
+        "private bool isFocus; // 0x40",
+        "private int contentIndex; // 0x44"
+      ]
+    },
+    "methods": [
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetJobName",
+        "rva": "0x2f2e10",
+        "signature": "public void SetJobName(string name)",
+        "bytes": 112,
+        "sha256": "79a6ce1c42c4c7696bd7ede13ac725e1081576ed4640d51d2088ac9167f60b5d",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetData",
+        "rva": "0x2f2690",
+        "signature": "public void SetData(NewGameSelectData data, bool isSelect = False)",
+        "bytes": 768,
+        "sha256": "79929a79dad3136fb6a3ae1a9c878f2299f1815dd66b3e95181bb7030afc3a56",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentListController.SelectContent",
+        "rva": "0x2f4a30",
+        "signature": "private void SelectContent(Cursor targetCursor)",
+        "bytes": 128,
+        "sha256": "57149b89c159338f17fa35ad57b0b1c6ce04afa97232961060dfe7a94fce11bb",
+        "aliases": 1
+      },
+      {
+        "target": "Serial.FF3.UI.KeyInput.NewGameWindowController.InitJobSelect",
+        "absent": true
+      }
+    ]
+  },
+  {
+    "game": 4,
+    "dump_sha256": "011bc480d50bba3784b001844f854eae9abbe7a0050cb91c6e82146dffacc916",
+    "game_sha256": "bb2f4c9db44c8ee9b065696aeafb77561a1709492130f045433e6d215abc42ed",
+    "fields": {
+      "Last.Defaine.UI.CharacterSelectCommnadId": [
+        "public int value__; // 0x0",
+        "public const CharacterSelectCommnadId Non = 0;",
+        "public const CharacterSelectCommnadId Job = 1;",
+        "public const CharacterSelectCommnadId CharaName = 2;",
+        "public const CharacterSelectCommnadId AllDecision = 3;"
+      ],
+      "Last.UI.CharacterSelectCommandData": [
+        "private readonly CharacterSelectCommnadId <Id>k__BackingField; // 0x10",
+        "private readonly string <Name>k__BackingField; // 0x18"
+      ],
+      "Last.UI.KeyInput.CharacterContentController": [
+        "private readonly List<CharacterSelectCommandContentView> <CommandList>k__BackingField; // 0x18",
+        "private string <CharacterName>k__BackingField; // 0x20",
+        "private NewGameSelectData <Data>k__BackingField; // 0x28",
+        "private readonly CharacterStatus <CharacterData>k__BackingField; // 0x30",
+        "private GameObject contentParent; // 0x38",
+        "private CharacterContentView view; // 0x40"
+      ],
+      "Last.UI.KeyInput.CharacterSelectCommandContentView": [
+        "private CharacterSelectCommandData <Data>k__BackingField; // 0x18",
+        "private GUIClickController clickController; // 0x20",
+        "private GameObject cursorParent; // 0x28",
+        "private Text text; // 0x30",
+        "private Text categoryText; // 0x38",
+        "private bool isFocus; // 0x40",
+        "private int contentIndex; // 0x44"
+      ]
+    },
+    "methods": [
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetJobName",
+        "rva": "0x8b52e0",
+        "signature": "public void SetJobName(string name)",
+        "bytes": 112,
+        "sha256": "2c25118dbb804d03844a78155b3bc1628be1227327bc0be984aeb57be6849248",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetData",
+        "rva": "0x8b4b70",
+        "signature": "public void SetData(NewGameSelectData data, bool isSelect = False)",
+        "bytes": 768,
+        "sha256": "84c04917c80359f5e125188ff0f95b0160b69b4db2b9b731c6b4ebeac77f2ef6",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentListController.SelectContent",
+        "rva": "0x8b6f00",
+        "signature": "private void SelectContent(Cursor targetCursor)",
+        "bytes": 128,
+        "sha256": "2a27fdc3f28da25b018ce0264a17667971bde7a37e863c83f53a7f94b5bef794",
+        "aliases": 1
+      },
+      {
+        "target": "Serial.FF0.UI.KeyInput.NewGameWindowController.InitJobSelect",
+        "absent": true
+      }
+    ]
+  },
+  {
+    "game": 5,
+    "dump_sha256": "99239a856351c4cc7310bae2679af73085efebc765a00459b4d64cf088ee7aa3",
+    "game_sha256": "355bb0eccd3cf6a2cb70d48f2329379eb98d4b5085971d46985154a882dcfb17",
+    "fields": {
+      "Last.Defaine.UI.CharacterSelectCommnadId": [
+        "public int value__; // 0x0",
+        "public const CharacterSelectCommnadId Non = 0;",
+        "public const CharacterSelectCommnadId Job = 1;",
+        "public const CharacterSelectCommnadId CharaName = 2;",
+        "public const CharacterSelectCommnadId AllDecision = 3;"
+      ],
+      "Last.UI.CharacterSelectCommandData": [
+        "private readonly CharacterSelectCommnadId <Id>k__BackingField; // 0x10",
+        "private readonly string <Name>k__BackingField; // 0x18"
+      ],
+      "Last.UI.KeyInput.CharacterContentController": [
+        "private readonly List<CharacterSelectCommandContentView> <CommandList>k__BackingField; // 0x18",
+        "private string <CharacterName>k__BackingField; // 0x20",
+        "private NewGameSelectData <Data>k__BackingField; // 0x28",
+        "private readonly CharacterStatus <CharacterData>k__BackingField; // 0x30",
+        "private GameObject contentParent; // 0x38",
+        "private CharacterContentView view; // 0x40"
+      ],
+      "Last.UI.KeyInput.CharacterSelectCommandContentView": [
+        "private CharacterSelectCommandData <Data>k__BackingField; // 0x18",
+        "private GUIClickController clickController; // 0x20",
+        "private GameObject cursorParent; // 0x28",
+        "private Text text; // 0x30",
+        "private Text categoryText; // 0x38",
+        "private bool isFocus; // 0x40",
+        "private int contentIndex; // 0x44"
+      ]
+    },
+    "methods": [
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetJobName",
+        "rva": "0x93ee90",
+        "signature": "public void SetJobName(string name)",
+        "bytes": 112,
+        "sha256": "240f6230d91444140417f9a3db61771fee71a4b1ff360601d25505a3893ecd60",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetData",
+        "rva": "0x93e720",
+        "signature": "public void SetData(NewGameSelectData data, bool isSelect = False)",
+        "bytes": 768,
+        "sha256": "3903d1427c4c670c71942b8a9c05207e62c5b1f9f34026a37b7af513b9a46bb3",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentListController.SelectContent",
+        "rva": "0x940ab0",
+        "signature": "private void SelectContent(Cursor targetCursor)",
+        "bytes": 128,
+        "sha256": "b17a9f24638056765a1f2d34c9233d7d0873cf032ed7cafeee4aac5cff905ed5",
+        "aliases": 1
+      },
+      {
+        "target": "Serial.FF5.UI.KeyInput.NewGameWindowController.InitJobSelect",
+        "absent": true
+      }
+    ]
+  },
+  {
+    "game": 6,
+    "dump_sha256": "38aa9c54abe1c712ffd3c6e88a893ea6428f6df7001718b754b21afba7f4a61b",
+    "game_sha256": "0029a22ed933aa3b6ea3b1290060502267f514d61ba6e6619308d844557f2ffd",
+    "fields": {
+      "Last.Defaine.UI.CharacterSelectCommnadId": [
+        "public int value__; // 0x0",
+        "public const CharacterSelectCommnadId Non = 0;",
+        "public const CharacterSelectCommnadId Job = 1;",
+        "public const CharacterSelectCommnadId CharaName = 2;",
+        "public const CharacterSelectCommnadId AllDecision = 3;"
+      ],
+      "Last.UI.CharacterSelectCommandData": [
+        "private readonly CharacterSelectCommnadId <Id>k__BackingField; // 0x10",
+        "private readonly string <Name>k__BackingField; // 0x18"
+      ],
+      "Last.UI.KeyInput.CharacterContentController": [
+        "private readonly List<CharacterSelectCommandContentView> <CommandList>k__BackingField; // 0x18",
+        "private string <CharacterName>k__BackingField; // 0x20",
+        "private NewGameSelectData <Data>k__BackingField; // 0x28",
+        "private readonly CharacterStatus <CharacterData>k__BackingField; // 0x30",
+        "private GameObject contentParent; // 0x38",
+        "private CharacterContentView view; // 0x40"
+      ],
+      "Last.UI.KeyInput.CharacterSelectCommandContentView": [
+        "private CharacterSelectCommandData <Data>k__BackingField; // 0x18",
+        "private GUIClickController clickController; // 0x20",
+        "private GameObject cursorParent; // 0x28",
+        "private Text text; // 0x30",
+        "private Text categoryText; // 0x38",
+        "private bool isFocus; // 0x40",
+        "private int contentIndex; // 0x44"
+      ]
+    },
+    "methods": [
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetJobName",
+        "rva": "0x67d270",
+        "signature": "public void SetJobName(string name)",
+        "bytes": 112,
+        "sha256": "0f549d8ced3db9e7718603da126285d3c1de2e0cf8fc133a777cb2a1b14c60cc",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentController.SetData",
+        "rva": "0x67cb00",
+        "signature": "public void SetData(NewGameSelectData data, bool isSelect = False)",
+        "bytes": 768,
+        "sha256": "91bdb60c761b8442b595d331e9ea2fdea44a63788314a8ac0232c984fc588297",
+        "aliases": 1
+      },
+      {
+        "target": "Last.UI.KeyInput.CharacterContentListController.SelectContent",
+        "rva": "0x67ee90",
+        "signature": "private void SelectContent(Cursor targetCursor)",
+        "bytes": 128,
+        "sha256": "3c71d73804cdc814ca48da38498706339b8a76ce62c420b593fc3d2a093da15e",
+        "aliases": 1
+      },
+      {
+        "target": "Serial.FF6.UI.KeyInput.NewGameWindowController.InitJobSelect",
+        "absent": true
+      }
+    ]
+  }
+]

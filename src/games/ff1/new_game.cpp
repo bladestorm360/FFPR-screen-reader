@@ -16,7 +16,7 @@
 //
 // Shared engine classes used here (Last.UI.KeyInput CharacterContentListController,
 // CharacterContentController, NameContentListController, Last.Data.NewGameSelectData,
-// Last.Data.Master MasterManager/CharacterStatus/Job, Last.Management.MessageManager) exist in
+// CharacterSelectCommandContentView/CharacterSelectCommandData) exist in
 // all five games; they are masked to FF1 because only FF1's module hooks them here.
 #include <windows.h>
 #include <cstdint>
@@ -51,34 +51,24 @@ ref::Method mInitStartPopup{kNewGameWindow, "InitStartPopup", 0};
 ref::Method mGetAutoName{kNewGameWindow, "GetAutoName", 1};
 
 ref::Class kSelectData{"Last.Data", "NewGameSelectData", game::kFF1};
-ref::Field fSelStatusId{kSelectData, "<CharacterStatusId>k__BackingField"};
 ref::Field fSelName{kSelectData, "<CharacterName>k__BackingField"};
 
 ref::Class kCharList{"Last.UI.KeyInput", "CharacterContentListController", game::kFF1};
 ref::Field fCharListContent{kCharList, "contentList"};
-ref::Field fCharListStatuses{kCharList, "characterStatuses"};
 ref::Method mCharSelectContent{kCharList, "SelectContent", 1};
 ref::Method mCharSetTarget{kCharList, "SetTargetSelectContent", 1};
 ref::Method mCharUpdateView{kCharList, "UpdateView", 1};
 
 ref::Class kCharContent{"Last.UI.KeyInput", "CharacterContentController", game::kFF1};
 ref::Field fContentName{kCharContent, "<CharacterName>k__BackingField"};
-ref::Field fContentData{kCharContent, "<Data>k__BackingField"};
+ref::Field fContentCommands{kCharContent, "<CommandList>k__BackingField"};
+ref::Class kCreationCommandView{"Last.UI.KeyInput", "CharacterSelectCommandContentView", game::kFF1};
+ref::Field fCreationCommandData{kCreationCommandView, "<Data>k__BackingField"};
+ref::Class kCreationCommandData{"Last.UI", "CharacterSelectCommandData", game::kFF1};
+ref::Field fCreationCommandId{kCreationCommandData, "<Id>k__BackingField"};
 
 ref::Class kNameList{"Last.UI.KeyInput", "NameContentListController", game::kFF1};
 ref::Method mNameSetFocus{kNameList, "SetFocus", 1};
-
-ref::Class kMasterManager{"Last.Data.Master", "MasterManager", game::kFF1};
-ref::Field fMasterList{kMasterManager, "masterList"};
-ref::Field fMasterTypeList{kMasterManager, "masterTypeList"};
-ref::Class kMasterDataType{"Last.Data.Master", "MasterManager.DataType", game::kFF1};
-ref::Class kMasterStatus{"Last.Data.Master", "CharacterStatus", game::kFF1};
-ref::Method mStatusJobId{kMasterStatus, "get_JobId", 0};
-ref::Class kMasterJob{"Last.Data.Master", "Job", game::kFF1};
-ref::Method mJobMesIdName{kMasterJob, "get_MesIdName", 0};
-
-ref::Class kMessageManager{"Last.Management", "MessageManager", game::kFF1};
-ref::Method mGetMessage{kMessageManager, "GetMessage", 2};
 
 // --- state (NewGamePatches statics) --------------------------------------------------------
 void* g_controller = nullptr;     // currentController: the NewGameWindowController
@@ -148,136 +138,27 @@ std::wstring auto_name(void* controller, int index)
     return ref::call_str(mGetAutoName, controller, static_cast<int32_t>(index));
 }
 
-// --- master data (MasterManager.GetData<T>(id)) ----------------------------------------------
-// GetData<T> is a generic method, so it is read the way GetList<T> works: masterTypeList maps
-// typeof(T) to a DataType, masterList maps the DataType to the Dictionary<int, T> of rows.
-struct DictFind {
-    uint64_t key;
-    uint64_t value;
-    bool found;
-};
-
-void dict_find_cb(uint64_t k, uint64_t v, void* state)
-{
-    auto* f = static_cast<DictFind*>(state);
-    if (!f->found && k == f->key) {
-        f->value = v;
-        f->found = true;
-    }
-}
-
-bool dict_find(void* dict, uint64_t key, int key_size, int value_size, uint64_t& out)
-{
-    DictFind f{key, 0, false};
-    if (dict) unity::dict_for_each(dict, &dict_find_cb, &f, key_size, value_size);
-    out = f.value;
-    return f.found;
-}
-
-int master_data_type(void* mm, ref::Class& type)
-{
-    void* type_obj = il2cpp::class_type_object(type.get());
-    uint64_t v = 0;
-    if (type_obj && dict_find(ref::rd<void*>(mm, fMasterTypeList), reinterpret_cast<uint64_t>(type_obj), 8, 4, v))
-        return static_cast<int32_t>(static_cast<uint32_t>(v));
-    // Fallback: the DataType enum constant of the same name (CharacterStatus, Job).
-    int literal = -1;
-    if (il2cpp::Class* k = kMasterDataType.get())
-        if (il2cpp::read_static_int(k, type.name, literal)) return literal;
-    return -1;
-}
-
-/// The master row of `type` with this id, or null (data not loaded yet, unknown id).
-void* master_get(ref::Class& type, int& data_type_cache, int id)
-{
-    void* mm = ref::instance(kMasterManager);
-    if (!mm) return nullptr;
-    if (data_type_cache < 0) data_type_cache = master_data_type(mm, type);
-    if (data_type_cache < 0) return nullptr;
-    uint64_t rows = 0;
-    if (!dict_find(ref::rd<void*>(mm, fMasterList), static_cast<uint32_t>(data_type_cache), 4, 8, rows) || !rows)
-        return nullptr;
-    void* dict = reinterpret_cast<void*>(rows);
-    if (!strstr(il2cpp::object_class_name(dict), "Dictionary")) return nullptr;
-    uint64_t row = 0;
-    if (!dict_find(dict, static_cast<uint32_t>(id), 4, 8, row) || !row) return nullptr;
-    void* obj = reinterpret_cast<void*>(row);
-    return type.is(obj) ? obj : nullptr;
-}
-
-// --- NewGameHelpers: job / class names -------------------------------------------------------
-/// GetLocalizedJobName: Job master -> MesIdName -> MessageManager.GetMessage(mesId, false).
-std::wstring localized_job_name(int job_id)
-{
-    static int s_job_type = -1;
-    void* job = master_get(kMasterJob, s_job_type, job_id);
-    if (!job) return {};
-    std::wstring mes_id = ref::call_str(mJobMesIdName, job);
-    if (mes_id.empty()) return {};
-    void* mm = ref::instance(kMessageManager);
-    if (!mm) return {};
-    std::wstring name = ref::str(ref::call<void*>(mGetMessage, mm, ref::new_str(mes_id), false));
-    if (text::is_blank(name)) return {};
-    return text::trim(text::strip_markup(name));
-}
-
-/// GetJobNameById: the game's own localized name first, then an English last resort.
-std::wstring job_name_by_id(int job_id)
-{
-    std::wstring localized = hooks::guarded_r("NewGame.JobName", std::wstring(), [&] { return localized_job_name(job_id); });
-    if (!text::is_blank(localized)) return localized;
-    switch (job_id) {
-    case 1: return L"Warrior";
-    case 2: return L"Thief";
-    case 3: return L"Monk";
-    case 4: return L"Red Mage";
-    case 5: return L"White Mage";
-    case 6: return L"Black Mage";
-    case 7: return L"Knight";
-    case 8: return L"Ninja";
-    case 9: return L"Master";
-    case 10: return L"Red Wizard";
-    case 11: return L"White Wizard";
-    case 12: return L"Black Wizard";
-    default: return TF(L"Job {0}", {text::num(job_id)});
-    }
-}
-
-/// GetJobIdFromMasterData: CharacterStatus master row -> JobId.
-int job_id_from_master(int character_status_id)
-{
-    static int s_status_type = -1;
-    void* status = master_get(kMasterStatus, s_status_type, character_status_id);
-    if (!status) return 0;
-    return ref::call<int32_t>(mStatusJobId, status);
-}
-
-/// GetJobName: Characterstatuses[index].JobId, then ContentList[index].Data.CharacterStatusId
-/// through the master data. Empty when neither gives a job (C# null).
+// --- class field: the native summary's rendered value --------------------------------------
+// SetJobName/SetData write CommandList[1].text in all six native bodies. The
+// command's Data.Id is Job (1); validate it so missing/reordered pooled rows can
+// never turn another slot or the character name into the class. Only FF1 exposes
+// class selection during character creation. Other games' naming adapters don't
+// use this reader. Never reconstruct a displayed label through master dictionaries.
 std::wstring job_name(void* list_ctrl, int character_index)
 {
-    // Strategy 1: the list's CharacterStatus entries.
-    void* statuses = ref::rd<void*>(list_ctrl, fCharListStatuses);
-    if (statuses && character_index >= 0 && character_index < unity::list_count(statuses)) {
-        void* status = unity::list_at(statuses, character_index);
-        if (status && kMasterStatus.is(status) && mStatusJobId)
-            return job_name_by_id(ref::call<int32_t>(mStatusJobId, status));
-    }
-
-    // Strategy 2: ContentList -> CharacterContentController.Data -> CharacterStatusId.
     void* content = ref::rd<void*>(list_ctrl, fCharListContent);
-    if (content && character_index >= 0 && character_index < unity::list_count(content)) {
-        void* item = unity::list_at(content, character_index);
-        void* data = item ? ref::rd<void*>(item, fContentData) : nullptr;
-        if (data) {
-            int status_id = ref::rd<int32_t>(data, fSelStatusId);
-            if (status_id > 0) {
-                int job_id = job_id_from_master(status_id);
-                if (job_id > 0) return job_name_by_id(job_id);
-            }
-        }
-    }
-    return {};
+    if (!content || character_index < 0 || character_index >= 4) return {};
+    const int count = unity::list_count(content);
+    if (count <= character_index || count > 4) return {};
+    void* slot = unity::list_at(content, character_index);
+    if (!kCharContent.is(slot) || !displayed::container_visible(slot)) return {};
+    void* commands = ref::rd<void*>(slot, fContentCommands);
+    if (unity::list_count(commands) != 2) return {};
+    void* command = unity::list_at(commands, 1);
+    if (!kCreationCommandView.is(command) || !displayed::container_visible(command)) return {};
+    void* data = ref::rd<void*>(command, fCreationCommandData);
+    if (!kCreationCommandData.is(data) || ref::rd<int32_t>(data, fCreationCommandId) != 1) return {};
+    return displayed::text_field(command, "text");
 }
 
 // --- SelectContent (primary navigation) --------------------------------------------------------
@@ -305,8 +186,7 @@ void announce_field(void* list_ctrl, int cursor_index)
 
     std::wstring field_value;
     if (g.is_class) {
-        field_value = job_name(list_ctrl, g.character);                       // formula
-        if (field_value.empty()) field_value = job_name(list_ctrl, cursor_index);   // direct
+        field_value = job_name(list_ctrl, g.character);
         if (field_value.empty()) field_value = T(L"unknown");
     } else {
         field_value = slot_name(list_ctrl, g.character);

@@ -94,7 +94,7 @@ Current map includes connected dungeon/town floors. Chests use generic labels un
 Every other-floor object keeps its floor name, including known opened/unopened chest state. An object on this floor that needs a detour through another floor says "Requires travelling through [floor] first". Browsing announces steps and direction only when a current route reaches the object directly, without another floor, warp, trap or intervening event.
 Use Current map to keep eligible events and interactive objects available while travelling between floors. Tracking retains the original object and its floor through each leg. If the object becomes unavailable, tracking stops instead of switching to a different object.
 
-World map exit lists include reachable transition trigger tiles. The map exit filter updates the nearest entrance after movement; turn it off to browse individual reachable entrances.
+Each individual map exit routes to its highlighted tile, including entrances that lead to the same floor. World map exit lists include reachable transition trigger tiles. The map exit filter updates the nearest entrance after movement; turn it off to browse individual reachable entrances.
 
 Waypoints (field only)
 

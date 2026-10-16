@@ -17,6 +17,53 @@ int main() {
         expect(field::baked::load(storage.back().data(),storage.back().size()),"real game bake loads");
         for(int i=0;i<field::baked::submap_count();++i)field::baked::grids(*field::baked::submap_at(i));
         g_loaded=true;g_prepared=true;
+        // Actual route worker: distinct selected town triggers must not collapse
+        // to a sibling endpoint. Exercise a real entrance in every world bake.
+        int explicit_exits=0;
+        for(int i=0;i<field::baked::submap_count();++i) {
+            const auto* map=field::baked::submap_at(i);if(!map->world)continue;
+            const auto& grid=field::baked::grids(*map);
+            field::baked_route::Request walking;walking.submap=map;
+            for(const auto& object:grid.objects) {
+                if(object.type!=field::baked::ObjType::GotoMap)continue;
+                Cell target{1,object.tx,object.ty};
+                if(field::baked_route::goals_for(walking,target,field::baked_route::GoalKind::Transition).cells.empty())continue;
+                for(const auto& delta:{Cell{1,0,-1},Cell{1,1,0},Cell{1,0,1},Cell{1,-1,0}}) {
+                    Cell start{1,(target.x+delta.x+grid.width)%grid.width,(target.y+delta.y+grid.height)%grid.height};
+                    if(!field::baked_route::open(walking,grid,start))continue;
+                    RouteSnapshot snapshot(field::map_state::Resolver(field::map_state::Flags{},fixture::records));
+                    snapshot.submap=map;snapshot.map_id=map->first_map_id;snapshot.layer=1;snapshot.position=world_of_cell(*map,start);
+                    snapshot.goal.map_id=snapshot.map_id;snapshot.goal.cell=target;snapshot.kind=field::TargetKind::Transition;snapshot.locale=L"en";
+                    Planned planned;std::thread worker([&]{planned=plan_snapshot(snapshot);});worker.join();
+                    const bool found=planned.path.success&&!planned.path.walk_phases.empty()&&!planned.path.walk_phases.back().cells.empty();
+                    if(!found)continue;
+                    const auto end=planned.path.walk_phases.back().cells.back();
+                    expect(end.x==target.x&&end.y==target.y,"actual all-six explicit route ends at selected exit rather than sibling");
+                    ++explicit_exits;break;
+                }
+            }
+            if(number==1) {
+                // Six actual Cornelia triggers flank x145, at x144/146,y154..156.
+                // The central corridor is not itself an entrance.
+                int cornelia_count=0;
+                for(const auto& object:grid.objects) {
+                    if(object.type!=field::baked::ObjType::GotoMap||object.a!=4||
+                        (object.tx!=144&&object.tx!=146)||object.ty<154||object.ty>156)continue;
+                    RouteSnapshot cornelia(field::map_state::Resolver(field::map_state::Flags{},fixture::records));
+                    cornelia.submap=map;cornelia.map_id=map->first_map_id;cornelia.layer=1;
+                    cornelia.position=world_of_cell(*map,{1,145,object.ty});cornelia.goal.map_id=cornelia.map_id;
+                    cornelia.goal.cell={1,object.tx,object.ty};cornelia.kind=field::TargetKind::Transition;cornelia.locale=L"en";
+                    Planned planned;std::thread worker([&]{planned=plan_snapshot(cornelia);});worker.join();
+                    expect(planned.path.success&&planned.path.step_count==1&&planned.path.description==(object.tx==146?L"1 East":L"1 West"),
+                        "each Cornelia entrance one tile east/west announces the selected direction and endpoint");
+                    ++cornelia_count;
+                }
+                expect(cornelia_count==6,"all six real Cornelia entrance triggers are replayed");
+
+            }
+        }
+        expect(explicit_exits>0,"each game exercises actual worker routes to real world exits");
+        std::printf("FF%d: %d world exit objectives verified through actual route worker\n",number,explicit_exits);
         bool checked=false;
         for(int i=0;i<field::baked::submap_count()&&!checked;++i) {
             const auto* sm=field::baked::submap_at(i);if(sm->world||sm->first_map_id<=0)continue;

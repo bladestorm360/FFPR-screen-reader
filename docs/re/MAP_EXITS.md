@@ -257,3 +257,15 @@ no walls were opened to force them to pass. Original objects/scripts for all
 flagged cases are preserved in `flagged_native_records.json`. Absent native
 geometry is recorded explicitly rather than invented. No further conversion or
 bundle-overwrite fault was found in the fresh extraction.
+
+
+## Exact selected entrance correction, October16
+
+The shared goal builder previously merged sibling entrances to the same floor/arrival.
+Explicitly selected transitions now retain their own x/y, including multi-cell trigger
+footprints. Eligibility distance, browse and explicit planning use that same point;
+optional exit grouping selects its representative before planning. No unselected sibling
+can rescue an invalid or unreachable selected tile. Native terrain/layer, story state,
+vehicles, interaction facing and cross-floor transition rules remain in effect.
+[All-six evidence and Cornelia replay](BASELINE_FIXES_2026_10_16.md#exact-transition-goals).
+This supersedes older nearby-arc goal-union descriptions; bakes are unchanged.

@@ -2382,18 +2382,13 @@ std::vector<int> exit_distances(ExitSnapshot& capture, const std::vector<ExitTar
         for (const auto& object : g.objects) {
             if (object.type != baked::ObjType::GotoMap || object.a != target.destination || !object.contains(at.x,at.y)) continue;
             if (!snapshot.state.active(*sm,object)) continue;
-            // Exact trigger footprint: sibling arcs may improve a selected route,
-            // but cannot make a decorative or unreachable list row eligible.
+            // The displayed point, eligibility distance and explicit route must
+            // use the same tile, including within a multi-cell trigger footprint.
             auto movement = req;
-            movement.goals.clear();
-            for (int y=object.ty; y<object.ty+object.th; ++y) for (int x=object.tx; x<object.tx+object.tw; ++x) {
-                if (baked_route::transition_enterable(movement,g,x,y)) movement.goals.push_back({sm->world ? 1 : object.layer,x,y});
-            }
+            movement.goals = baked_route::goals_for(movement,at,baked_route::GoalKind::Transition).cells;
             int distance = baked_route::transition_distance(movement,reach);
             if (sm->world && req.vehicle_group > 0) {
-                foot.goals.clear();
-                for (int y=object.ty; y<object.ty+object.th; ++y) for (int x=object.tx; x<object.tx+object.tw; ++x)
-                    if (baked_route::transition_enterable(foot,g,x,y)) foot.goals.push_back({1,x,y});
+                foot.goals = baked_route::goals_for(foot,at,baked_route::GoalKind::Transition).cells;
                 const int land = baked_route::transition_distance(foot,landed);
                 if (land >= 0 && (distance < 0 || land < distance)) distance = land;
             }

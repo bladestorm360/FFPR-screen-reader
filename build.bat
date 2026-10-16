@@ -241,6 +241,11 @@ if not "%errorlevel%"=="0" (
     echo Modal speech check FAILED - see build_check\modal_speech_report.txt
     exit /b 1
 )
+"out\checks\creation_fields_check.exe" > build_check\creation_fields_report.txt 2>&1
+if errorlevel 1 (
+    echo Character creation field check FAILED - see build_check\creation_fields_report.txt
+    exit /b 1
+)
 "out\checks\title_prompt_check.exe" > build_check\title_prompt_report.txt 2>&1
 if errorlevel 1 (
     echo Title prompt check FAILED - see build_check\title_prompt_report.txt

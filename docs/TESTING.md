@@ -1106,3 +1106,22 @@ checks, hold each assigned stick direction briefly: it must not fire the opposit
 command on the following frame. The intermittent lag has reproduced in the own FFII
 log; targeted wall/owner-CPU diagnostics now run automatically. Its full cause is
 still open. See STALL_2026_10_16.md for the exact observed versus unobserved intervals.
+
+
+## Creation summary and individual exit tiles, October16
+
+Offline checks are complete in the local correction; actual gameplay remains distinct.
+The user is out of testing time and explicitly authorized replacing V0.9.3 after these
+current fixes. These checks are retained for when ordinary progression permits:
+
+1. FFI New Game: move to each Light Warrior's Class field. Hear its actual displayed
+   class; change it and return to the summary to hear the new class. Names/Done and
+   the class-choice list should retain their existing behavior.
+2. With Group exits off, browse distinct entrances to one floor. Request directions:
+   the route must reach that highlighted tile, including Cornelia's east/west entries.
+   Grouped exits must describe and route to their chosen representative consistently.
+3. As I–VI progression permits, repeat individual exits, existing vehicle/cross-floor
+   routes and transition cancellation. No unmeasured game-frame/audible claim follows
+   from the offline route replays.
+
+[Source/native evidence and explicit limits](re/BASELINE_FIXES_2026_10_16.md).

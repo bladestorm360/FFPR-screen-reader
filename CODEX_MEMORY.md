@@ -1,5 +1,19 @@
 # Native FFPR durable memory
 
+- October16 V0.9.3 correction: user withdrew the initialization report (default layout),
+  then authorized replacing existing0.9.3 after current tasks without further gameplay
+  testing. [All-six findings](docs/re/BASELINE_FIXES_2026_10_16.md),
+  [replacement record](docs/release.md#v093-replacement-preparation-october16).
+  Creation summary uses displayed localized class text (I only; all-six adapters audited).
+  Shared exit goals/filter/browse keep exact selected coordinates:8,710 cells,571 real
+  worker routes and all six Cornelia entrances pass. Canonical build/all checks/smoke
+  pass:6,864 names/zero missing, zero undefined,47 exports. All six closed games now
+  match FAB8C9650055D7F3A51EB654905339AB2C28E4C2553737FC098CF40AF27A52E7
+  (9,708,032 bytes); settings/waypoints/dependencies unchanged. Original release files
+  retained in releases/archive_v093_original_20261016; new28-file ZIP verified.
+  User requires cross-game bug audits, fixing every applicable occurrence; see AGENTS.
+  Other bugs deferred; no new game control/probe/delegation. Sol owns correction/release.
+
 - October16 V0.9.3 published as Latest: [release/package/source record](docs/release.md#v093-preparation-and-publication-october16).
   Native opening conditions queue before formation/first turn; explicit Control cancellation
   retained. Both sticks' held remaps now use positive Y for Up. Actual producer, speech

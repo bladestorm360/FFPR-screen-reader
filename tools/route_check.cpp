@@ -285,36 +285,24 @@ void check_ff2()
         std::printf("     Salamand -> Semitt Falls with the canoe: %d steps, %s\n", by_canoe.steps(), legs_text(by_canoe.cells).c_str());
         expect(by_canoe.found && by_canoe.steps() >= 26, "world: Salamand to Semitt Falls with the canoe owned");
 
-        // A town is entered on its exit arc of three tiles (user, 2026-10-11: Salamand and
-        // Altair once sent the player to a corner outside the walls). With tile objects anchored
-        // at their top row, Salamand's arc is (123,33) (124,32) (125,33), Bafsk's (172,58)
-        // (173,57) (174,58), Altair's (90,116) (91,115) (92,116): all three stand on the town's
-        // own arc attribute 20, which walking crosses, and the wall tiles (attribute 19) around
-        // them never become goals. Any tile of the arc selected gives the same three goals.
+        // Each selected entrance tile stays exact, including sibling town arcs.
         r::Request walk_mode;
         walk_mode.submap = world;
-        auto arc_ok = [&](const char* town, int x, int y, int cx, int cy) {
-            r::Goals gl = r::goals_for(walk_mode, r::Cell{1, x, y}, r::GoalKind::Infer);
-            bool ok = gl.cells.size() == 3 && !gl.face;
-            bool has_centre = false;
-            for (const r::Cell& c : gl.cells) {
-                if (b::attribute(g, c.x, c.y) == 19) ok = false;
-                if (c.x == cx && c.y == cy) has_centre = true;
-            }
-            std::printf("     %s from (%d,%d): %zu goal cells\n", town, x, y, gl.cells.size());
-            expect(ok && has_centre, town);
+        auto arc_ok = [&](const char* town, int x, int y) {
+            const auto gl = r::goals_for(walk_mode,{1,x,y},r::GoalKind::Infer);
+            expect(gl.cells.size()==1&&!gl.face&&gl.cells[0].x==x&&gl.cells[0].y==y,town);
         };
-        arc_ok("Salamand: the three arc tiles are the goals, none on a wall", 123, 33, 124, 32);
-        arc_ok("Salamand: the same from its centre tile", 124, 32, 124, 32);
-        arc_ok("Altair: the three arc tiles are the goals, none on a wall", 90, 116, 91, 115);
-        arc_ok("Bafsk: the three arc tiles are the goals, none on a wall", 172, 58, 173, 57);
+        arc_ok("Salamand: selected west arc stays exact",123,33);
+        arc_ok("Salamand: selected centre stays exact",124,32);
+        arc_ok("Altair: selected west arc stays exact",90,116);
+        arc_ok("Bafsk: selected west arc stays exact",172,58);
         expect(b::attribute(g, 125, 34) == 19 && !b::vehicle_open(g, 1, 125, 34), "Salamand: (125,34) is a wall tile, where the player was once sent");
         r::Request into_salamand = walk_mode;
         into_salamand.start = r::Cell{1, 124, 36};
         into_salamand.goals = r::goals_for(walk_mode, r::Cell{1, 125, 33}, r::GoalKind::Transition).cells;
         r::Route in = r::find(into_salamand);
         std::printf("     into Salamand from (124,36): %d steps, %s\n", in.steps(), legs_text(in.cells).c_str());
-        expect(in.found && legs_text(in.cells) == "North 4", "Salamand: from the field south of the town, North 4 through the gap onto the arc");
+        expect(in.found && in.cells.back().x==125 && in.cells.back().y==33, "Salamand: route ends on selected east arc rather than centre entrance");
 
         // The ship (group 4) cannot enter a town tile; the snowcraft (group 5) has its field
         // around the Snow Cavern (177,15), which only it reaches.

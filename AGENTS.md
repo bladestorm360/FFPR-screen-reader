@@ -124,3 +124,11 @@ Build now includes `tools/autowalk_check.cpp` route replay across all six bakes.
 confirmation is still separate from offline verification.
 
 Authoritative task/evidence records: `docs/AUDIT_2026_10.md`, existing `docs/PORT_STATUS.md`, `docs/INPUT_BINDINGS.md`, `docs/TESTING.md`, and `../tools/mapdump/`. Keep evidence and unresolved issues current; distinguish implemented, offline verified and gameplay confirmed.
+
+
+October16 user clarification: treat a reported bug as potentially affecting all six
+games. Audit the shared path and each applicable game adapter; correct every occurrence
+found, rather than assuming FFII-only scope. Explain genuinely inapplicable screens.
+The user subsequently lifted the testing hold: after finishing the current class-field
+and exact-exit tasks, commit/push, rebuild and explicitly overwrite the existing V0.9.3
+release. Preserve the original source/assets for recovery. Other bugs are deferred.

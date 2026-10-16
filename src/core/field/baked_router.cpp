@@ -541,35 +541,19 @@ Goals goals_for(const Request& r, const Cell& target, GoalKind kind)
     }
 
     if (kind == GoalKind::Transition) {
-        // The exit's own cells, with those of its sibling tiles (the same destination and
-        // arrival point within two cells: a town's arc of three tiles is one entrance).
-        std::vector<Cell> footprint;
+        // The selected tile is the destination. Sibling triggers and other tiles
+        // in a multi-cell footprint must not silently replace the browsed point.
         const baked::Object* anchor = exit ? exit : pad;
         if (world && !anchor) return out; // only an actual transition trigger is an exit
         const int layer = anchor ? anchor->layer : target.layer;
-        if (anchor) {
-            footprint_of(*anchor, footprint, world ? target.layer : layer);
-            if (exit) {
-                for (const baked::Object& o : g.objects) {
-                    if (!exit_pred(o) || &o == exit || o.a != exit->a || o.b != exit->b) continue;
-                    if (std::abs(o.tx - exit->tx) > 2 || std::abs(o.ty - exit->ty) > 2) continue;
-                    for (int y = o.ty; y < o.ty + o.th; ++y)
-                        for (int x = o.tx; x < o.tx + o.tw; ++x) push_unique(footprint, Cell{world ? target.layer : o.layer, x, y});
-                }
-            }
-        } else {
-            footprint.push_back(target);
-        }
+        const Cell selected{world ? target.layer : layer,target.x,target.y};
         if (world) {
-            for (const Cell& c : footprint)
-                if (transition_enterable(r, g, c.x, c.y)) out.cells.push_back(c);
+            if (transition_enterable(r,g,selected.x,selected.y)) out.cells.push_back(selected);
         } else {
             // Entered although closed (the game opens GotoMap cells for a route), on the exit's
             // layer and on any other layer the cell is open on.
-            for (const Cell& c : footprint) {
-                push_unique(out.cells, c);
-                add_open_layers(r, g, c.x, c.y, -1, out.cells);
-            }
+            push_unique(out.cells,selected);
+            add_open_layers(r,g,selected.x,selected.y,-1,out.cells);
         }
         return out;
     }

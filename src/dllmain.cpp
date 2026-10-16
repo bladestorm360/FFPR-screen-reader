@@ -37,6 +37,7 @@
 
 namespace {
 
+// V0.9.3 rebuild: rendered creation class and exact selected transition tile.
 constexpr const char* kBuild = "Final Fantasy Pixel Master Core Screen Reader V0.9.3 (" __DATE__ " " __TIME__ ")";
 constexpr int kSpeechWaitMs = 30000;
 constexpr int kMaxWaitMs = 120000;

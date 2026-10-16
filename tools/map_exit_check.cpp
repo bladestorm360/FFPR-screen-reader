@@ -7,12 +7,26 @@
 namespace b = field::baked;
 namespace r = field::baked_route;
 int main() {
-    int failures=0, south_figaro=0;
+    int failures=0, south_figaro=0, exact_total=0;
     for (int game = 1; game <= 6; ++game) {
         std::ifstream file("data/ff" + std::to_string(game) + "/maps.bin", std::ios::binary);
         std::string bytes((std::istreambuf_iterator<char>(file)), {});
         if (!b::load(bytes.data(), bytes.size())) return 1;
-        int total = 0, unreachable = 0;
+        int total = 0, unreachable = 0, exact=0;
+        for(int i=0;i<b::submap_count();++i) {
+            const auto* map=b::submap_at(i);const auto& grid=b::grids(*map);
+            r::Request request;request.submap=map;
+            for(const auto& object:grid.objects) {
+                if(object.type!=b::ObjType::GotoMap&&!(object.type==b::ObjType::Warp&&object.d==1))continue;
+                for(int y=object.ty;y<object.ty+object.th;++y)for(int x=object.tx;x<object.tx+object.tw;++x) {
+                    if(!b::in_bounds(grid,x,y))continue;
+                    const auto goals=r::goals_for(request,{map->world?1:object.layer,x,y},r::GoalKind::Transition);
+                    for(const auto& cell:goals.cells)if(cell.x!=x||cell.y!=y)++failures;
+                    if(!goals.cells.empty()){++exact;++exact_total;}
+                }
+            }
+        }
+        std::printf("ff%d: %d selected transition cells retain exact x/y across sibling and multi-cell exits/pads\n",game,exact);
         for (int i = 0; i < b::submap_count(); ++i) {
             const auto* sm = b::submap_at(i);
             const auto& g = b::grids(*sm);
@@ -84,7 +98,7 @@ int main() {
             }
         }
     }
-    if (south_figaro<100) ++failures;
+    if (south_figaro<100 || exact_total<1000) ++failures;
     std::printf("South Figaro: %d floor exits checked; native room bounds, stair and Karnak regressions: %d failures\n",south_figaro,failures);
     return failures ? 1 : 0;
 }

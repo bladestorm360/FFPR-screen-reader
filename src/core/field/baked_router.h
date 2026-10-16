@@ -83,8 +83,8 @@ Route find(const Request& r);
 ///  Interact    an NPC, chest, switch: end on a neighbouring cell the target is used from (a
 ///              service NPC: its counter's RelayInteraction tile) and say which way to face;
 ///  Transition  an exit, a town tile, a warp pad: end ON it, on a cell the player can really
-///              step onto (world maps: the terrain attribute the current transport crosses;
-///              Salamand's two side tiles stand on wall attribute 19 and are never goals);
+///              step onto, at the selected x/y (no sibling/footprint substitution). World
+///              maps validate terrain against the current transport; decorative walls are excluded;
 ///  Spot        a waypoint, a vehicle, a save point: end on the cell itself;
 ///  Infer       by what is baked at the target cell (an exit or warp pad: Transition; a talk
 ///              object: Interact; else Spot).
