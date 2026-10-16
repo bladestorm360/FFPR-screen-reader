@@ -1,6 +1,6 @@
 # Native FFPR durable memory
 
-- October16 V0.9.3 correction: user withdrew the initialization report (default layout),
+- October16 V0.9.3 replacement published and verified: user withdrew the initialization report (default layout),
   then authorized replacing existing0.9.3 after current tasks without further gameplay
   testing. [All-six findings](docs/re/BASELINE_FIXES_2026_10_16.md),
   [replacement record](docs/release.md#v093-replacement-preparation-october16).
@@ -12,6 +12,9 @@
   (9,708,032 bytes); settings/waypoints/dependencies unchanged. Original release files
   retained in releases/archive_v093_original_20261016; new28-file ZIP verified.
   User requires cross-game bug audits, fixing every applicable occurrence; see AGENTS.
+  Corrected tag/source:5b2b9165435293f6c1db5913a4ae6e4e0ef40411; original annotated tag
+  preserved as v0.9.3-original-20261016. Same public release ID415310275/Latest, new
+  asset648509278; downloaded public ZIP hash matches02b2505d133a75141f6aae8dead8f139a6e8cb6480418442abebd4cfc9c82280.
   Other bugs deferred; no new game control/probe/delegation. Sol owns correction/release.
 
 - October16 V0.9.3 published as Latest: [release/package/source record](docs/release.md#v093-preparation-and-publication-october16).

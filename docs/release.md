@@ -362,11 +362,11 @@ and exit eligibility now use the selected x/y, with no sibling/footprint substit
 Both fixes preserve native owner/thread, presentation/event guards, transport/layer
 and live-state semantics. No fallback to native route searching or game-data write.
 
-Canonical build/all regressions and isolated smoke pass:6,864 native names/zero
-missing,119 used/323 defined wiring names/zero undefined,47/47 proxy exports.
+Canonical build/all regressions and isolated smoke pass: 6,864 native names/zero
+missing, 119 used/323 defined wiring names/zero undefined, 47/47 proxy exports.
 The actual creation reader covers four slots, six classes/localized names, changed
-class, visibility/bounds and no master invoke. All-six exact-goal checks cover8,710
-transition cells; actual worker routes cover571 world exits and all six Cornelia
+class, visibility/bounds and no master invoke. All-six exact-goal checks cover 8,710
+transition cells; actual worker routes cover 571 world exits and all six Cornelia
 west/east triggers, plus existing cross-floor/vehicle/state/trap/cancel checks.
 Two fixture-only issues (missing speech stub, then a non-trigger corridor coordinate)
 were corrected from actual production API/bake evidence; final checks all pass.
@@ -375,24 +375,47 @@ control, runtime probe or new delegation was performed. Sol owns this correction
 
 All six games were closed; installed DLLs were recovered, then the tested correction
 deployed/hash-verified. SDL matches; HRTF/Prism/settings/waypoints unchanged. Recovery
-and before/after receipts:build_check/v093_rebuild_20261016/. Source metadata remains
+and before/after receipts: build_check/v093_rebuild_20261016/. Source metadata remains
 0.9.3.0 with a refreshed boot compile stamp. README and plain text agree.
 
-The original5,876,783-byte folder/ZIP is preserved inside
+The original 5,876,783-byte folder/ZIP is preserved inside
 releases/archive_v093_original_20261016 with its verified original SHA256
 8f147dfebcc16994dfc0ea5a14495ce0d8999abc5a63549a92346991f465639a.
 Original public metadata is retained in the investigation folder. Prior source/history
 is preserved, including an archival reference to the original annotated tag.
 
 The replacement folder/ZIP retains the exact V0.9.3 name. 7-Zip and independent checks
-pass CRCs, exact28-file single-root payload, source/folder/archive byte equality,
+pass CRCs, exact 28-file single-root payload, source/folder/archive byte equality,
 README conversion, complete manifest, locked Prism/HRTF runtime/data/notices/source
-attribution, x64 and numeric/string version0.9.3.0. No dependency install or upgrade.
+attribution, x64 and numeric/string version 0.9.3.0. No dependency install or upgrade.
 
-- Replacement DLL SHA256:`fab8c9650055d7f3a51eb654905339ab2c28e4c2553737fc098cf40af27a52e7` (9,708,032 bytes).
-- Replacement ZIP SHA256:`02b2505d133a75141f6aae8dead8f139a6e8cb6480418442abebd4cfc9c82280` (5,874,232 bytes).
+- Replacement DLL SHA256: `fab8c9650055d7f3a51eb654905339ab2c28e4c2553737fc098cf40af27a52e7` (9,708,032 bytes).
+- Replacement ZIP SHA256: `02b2505d133a75141f6aae8dead8f139a6e8cb6480418442abebd4cfc9c82280` (5,874,232 bytes).
 
 Verification scripts/reports and final checks are in build_check/v093_rebuild_20261016.
 Original publication evidence above is historical and is superseded by this explicitly
 authorized replacement. Exact source/tag, remote download and publication verification
-are recorded below when complete. The remaining intermittent stall cause stays open.
+are recorded below. The remaining intermittent stall cause stays open.
+
+
+Replacement publicly verified at 2026-10-16T20:21:02Z. The existing
+[V0.9.3 release](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/tag/v0.9.3) retains release ID 415310275 and Latest status,
+with one uploaded 5,874,232-byte replacement asset ID 648509278.
+The original release was not deleted. Its source and annotated tag object are preserved
+at `v0.9.3-original-20261016` (object `aff940527797eeb87a4a417db84a3b0f33620e10`,
+source `9298f14407f6a28fbfd14a9a3a37294e916f19da`). The original local folder/ZIP also remains archived.
+
+Corrected annotated v0.9.3 is object `359c20630279a053735f807b43eddcb5281b6196`, resolving locally/remotely to
+source `5b2b9165435293f6c1db5913a4ae6e4e0ef40411`. Its exact old-tag lease protected against concurrent
+replacement; master was pushed normally without rewriting branch history. The user
+explicitly authorized replacing this published version. Release notes tell earlier
+V0.9.3 users to download again and replace their files.
+
+The replacement public ZIP was downloaded into
+build_check/v093_rebuild_20261016/remote_verify/rebuilt.zip. Its SHA256 matches the
+independently verified local archive exactly. Public checks verify source/tag,
+backup tag/source, ancestor history, unchanged release identity, single uploaded asset,
+file size/digest, Latest status and draft=false/prerelease=false. Metadata and scripts
+are retained in this correction's public_release.json/public_verification.json and
+verify_remote.py. Final documentation commits follow the corrected source tag without
+changing installed DLLs or distributed bytes. No additional gameplay claim is made.
