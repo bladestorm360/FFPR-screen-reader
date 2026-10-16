@@ -50,7 +50,7 @@ struct Corner {
     int steps_to_corner = 0;
     int steps_left = 0;            // to the end of the route
 };
-bool follow(void* map_handle, void* player, unity::Vec3 target, TargetKind kind, Corner& out);
+bool follow(void* map_handle, void* player, unity::Vec3 target, TargetKind kind, Corner& out, int entity_id = -1);
 
 /// The player's cell and layer on the current map's baked grid (false off the field).
 bool player_cell(void* map_handle, void* player, baked_route::Cell& out);
@@ -72,6 +72,7 @@ bool walk_edge(void* map_handle, void* player, const baked_route::Cell& from, co
 
 /// Forget the cached reachability flood (a scan or a map change).
 void invalidate();
+void reset_transition_history(); // native same-floor entity-group change, not a floor load
 
 // --- across maps -----------------------------------------------------------------------------
 /// A destination on any sub-map of this game, by map master id and baked cell.
@@ -80,6 +81,8 @@ struct MapGoal {
     baked_route::Cell cell;
     bool examine = false;   // the target is examined from a neighbouring cell (a switch, a clock)
     std::vector<baked_route::Cell> cells;   // explicit goal cells (baked_router goals_for), else from cell/examine
+    int entity_id = -1;            // -1 for coordinate-only goals; zero is a valid native identity
+    std::wstring raw_name;         // developer identity only, never spoken; separates story variants
 };
 
 /// Capture bounded native state on its owner, then plan/format on an owned worker.
@@ -89,6 +92,7 @@ struct MapGoal {
 void request_route(MapGoal goal, TargetKind kind, std::wstring name,
                    std::function<void(PathInfo)> publish, bool keep_destination = true);
 void cancel_requests();
+void interrupt_requests(); // epochs only; retain owner callbacks until normal cleanup
 bool request_pending();
 /// Read-only browsing evidence, on its own cancellable capture/worker lane owner.
 /// Never publishes an active route or changes the manually tracked destination.
@@ -122,6 +126,7 @@ struct CrossLeg {
     int trap_entity = 0, trap_x = 0, trap_y = 0;
     baked_route::Cell trap_arrival;
     bool trap_repeat_blocked = false;
+    bool transition_repeat_blocked = false;
     bool event_on_route = false, incomplete = false;
     bool on_this_map = false;        // the goal itself is the end of this leg
     int next_map_id = 0;             // the map the exit / warp leads to (when !on_this_map)
@@ -146,8 +151,8 @@ std::wstring map_name_of(int map_id);
 
 // --- other floors (user, 2026-10-11: "destinations from other floors need to be visible ...
 // current map should include all dungeon floors, town floors etc") ---------------------------
-/// A baked object on another floor of the current map: a talk target, a chest, a save point or
-/// an exit that leads out of the group. `raw_name` is the developer's name (PropertyEntity.Name,
+/// A baked object on another floor: a talk target, chest, save point, eligible event/interaction,
+/// teleport/vehicle pad or outward exit. `raw_name` is the developer's name (PropertyEntity.Name,
 /// to be translated like a live entity's).
 struct RemoteObject {
     int map_id = 0;                 // the floor's map master id (the id its exit was reached by)
@@ -160,6 +165,8 @@ struct RemoteObject {
     int dest_map_id = 0;            // GotoMap: where it leads (never a floor of this group)
     bool shop = false;              // ShopNPC
     bool scripted = false;          // NPC/ShopNPC: an interaction script, not a name-only placeholder
+    int entity_id = -1;
+    std::wstring event_type;        // nonempty only for eligible event/interactive targets
 };
 /// The objects of every sub-map connected to the current one through exits and warps without
 /// crossing a world map (a dungeon's floors, a town's houses and castle), in breadth-first
@@ -167,7 +174,8 @@ struct RemoteObject {
 /// off the field, or on a map the baked data does not know.
 std::vector<RemoteObject> connected_objects(void* map_handle);
 /// Pure immutable bake/state projection, safe on the data worker after prepared().
-std::vector<RemoteObject> connected_objects_snapshot(int map_id, map_state::Resolver& state);
+std::vector<RemoteObject> connected_objects_snapshot(int map_id, map_state::Resolver& state,
+                                                  std::function<bool()> cancelled = {});
 
 /// The route to `goal` wherever it is: on this floor the ordinary kept route (find); on another
 /// floor the first leg ("..., take the exit to X") and `out.next_map_id`. A route that goes on

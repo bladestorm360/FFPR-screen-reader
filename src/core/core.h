@@ -105,7 +105,8 @@ enum class Kind : uint8_t {
     SceneLoaded,      // a Unity scene finished loading (arg: none)
     MapChanged,       // field map id changed
     MapChanging,      // native ChangeMap entry, before old map objects are invalidated
-    BattleStart,
+    BattleEntering,   // transition prefix: flags/epochs only; no cleanup or native reads
+    BattleStart,      // native opening presentation is ready, after its original call
     BattleEnd,
     MenuOpened,
     MenuClosed,

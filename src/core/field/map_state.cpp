@@ -39,7 +39,11 @@ void copy_flags(void* source, std::array<std::optional<int>, 1024>& target)
 {
     void* bits = ref::rd<void*>(source, fBits);
     const int length = ref::rd<int32_t>(source, fLength);
-    if (length != 1024 || unity::array_length(bits) != 32) return;
+    // All six native Flags constructors allocate ceil(bitLength / 8) uints,
+    // although Get indexes 32 bits per uint. A 1024-flag bank therefore has
+    // 128 backing words; only its first 32 words contain logical flags.
+    const int words = unity::array_length(bits);
+    if (length != 1024 || words < 32 || words > 128) return;
     for (int word = 0; word < 32; ++word) {
         const uint32_t v = unity::array_value<uint32_t>(bits, word);
         for (int bit = 0; bit < 32; ++bit) target[static_cast<size_t>(word * 32 + bit)] = (v >> bit) & 1;
@@ -60,6 +64,7 @@ Flags snapshot()
 }
 void observe_current(int map_id, std::wstring group)
 {
+    if (map_id==g_observed_map && group!=g_observed_group) baked_nav::reset_transition_history();
     g_observed_map = map_id; g_observed_group = std::move(group);
 }
 Resolver::Resolver() : Resolver(snapshot(), data::game_json("mapstate"))

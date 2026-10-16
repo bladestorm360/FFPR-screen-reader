@@ -141,6 +141,7 @@ int layer_after(const baked::Grids& g, int from_layer, int x, int y);
 /// "steps", no totals (user rule). The direction words are the caller's (mod text); this
 /// returns direction indices: 0 north, 1 east, 2 south, 3 west, with counts.
 struct Leg { int dir; int count; };
-std::vector<Leg> legs(const std::vector<Cell>& cells, int wrap_width = 0, int wrap_height = 0);
+std::vector<Leg> legs(const std::vector<Cell>& cells, int wrap_width = 0, int wrap_height = 0,
+                      const std::function<bool()>& cancelled = {});
 
 } // namespace field::baked_route

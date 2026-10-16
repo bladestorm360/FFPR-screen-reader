@@ -186,12 +186,15 @@ void announce_ready_entity(bool walking, double requested_at)
             speak(T(L"Navigation map data unavailable")); return;
         }
     }
+    walk_goal.entity_id = e->entity_id;
+    if(e->raw_name_known&&e->audio_hint.size()<256)walk_goal.raw_name=e->audio_hint;
     // No route: the reason when the router knows it ("Story gated", "Blocked by an NPC",
     // "Requires Ship"; user, 2026-10-11), else "No path".
+    const auto floor = e->remote() ? e->floor_name : current_map_name();
+    const auto name = e->display_name() + (floor.empty() ? std::wstring() : L" (" + floor + L")");
     if (walking) {
-        ffpr::fieldnav::autowalk::request(walk_goal, kind, e->display_name());
+        ffpr::fieldnav::autowalk::request(walk_goal, kind, name);
     } else {
-        const auto name = e->display_name() + (e->remote() ? L" (" + e->floor_name + L")" : std::wstring());
         baked_nav::request_route(walk_goal, kind, name, [e, category_generation = g_category_generation, requested_at](PathInfo p) {
             if (category_generation != g_category_generation || !ensure_field_context() || scanner::current_entity() != e || !e->is_alive()) return;
             auto message = p.success && !p.description.empty() ? p.description : (!p.reason.empty() ? p.reason : T(L"No path"));
@@ -431,13 +434,24 @@ int install()
             return false;
         }, "BakedNav.ContinuePending", INT_MAX);
     });
+    events::on(events::Kind::BattleEntering, [] {
+        ++g_category_generation;
+        scanner::interrupt_navigation_work();
+        baked_nav::interrupt_requests();
+    });
     events::on(events::Kind::BattleStart, [] {
         ++g_category_generation;
-        scanner::cancel_scan();
+        scanner::cancel_navigation_work();
         frame::cancel_label("BakedNav.ContinuePending");
         baked_nav::invalidate();
     });
-    events::on(events::Kind::MapChanging, [] { ++g_category_generation; });
+    events::on(events::Kind::BattleEnd, [] { scanner::refresh_state(); });
+    events::on(events::Kind::MapChanging, [] {
+        ++g_category_generation;
+        scanner::cancel_navigation_work();
+        frame::cancel_label("BakedNav.ContinuePending");
+        baked_nav::invalidate();
+    });
     events::on(events::Kind::SceneLoaded, [] {
         if (scene_name() == L"Title") {
             scanner::invalidate_map(); baked_nav::clear_pending(true); baked_nav::invalidate();
@@ -474,6 +488,7 @@ Target selected()
         t.cell_layer = e->cell_layer;
         t.cell_x = e->cell_x;
         t.cell_y = e->cell_y;
+        t.entity_id = e->entity_id;
     });
     return t;
 }
@@ -481,7 +496,10 @@ Target selected()
 /// Event-bound, asynchronous scan after native field readiness.
 void request_rescan()
 {
-    scanner::schedule_scan();
+    // A script may finish before an older route worker returns. Retire its
+    // captured gates/actions even when the player and map have not moved.
+    baked_nav::invalidate();
+    scanner::refresh_state();
 }
 
 } // namespace field

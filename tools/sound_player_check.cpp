@@ -7,6 +7,7 @@
 namespace fixture {
 std::map<std::string,int> settings;
 std::map<std::string,actions::Fn> actions;
+std::map<events::Kind,std::vector<events::Handler>> handlers;
 double at=1;bool ready=true,focused=true,active=true,dialogue=false,accept=true;
 int map=1,captures=0,published=0,discarded=0,plays=0,previews=0,requests=0;
 unsigned walls=0;bool counter=false;uint64_t epoch=1;
@@ -27,6 +28,7 @@ void set_int(const char* key,int value) { fixture::settings[key]=value; }
 }
 namespace core { Install::Install(const char* n,int(*f)(),int o,uint8_t g):name(n),fn(f),order(o),games(g) {} }
 namespace actions { void define(const char* key,Fn fn) { fixture::actions[key]=std::move(fn); } }
+namespace events { void on(Kind kind,Handler handler){fixture::handlers[kind].push_back(std::move(handler));} void fire(Kind kind){for(auto& handler:fixture::handlers[kind])handler();} }
 namespace queries { bool is(const char* key) {
     const std::string k=key;
     if(k=="ControllerRouter.IsFieldActive")return fixture::active;
@@ -105,5 +107,16 @@ int main(){
     expect(fixture::plays==plays&&!fixture::counter&&!fixture::walls,"navigation master gates every old sound path");
     fixture::settings["NavigationAudio"]=1;sound::preview(sound::cues::Id::NPC);
     expect(fixture::previews==1,"preview uses central cue path");
+    sound::field_active=true;sound::capture=std::make_unique<sound::scape::Snapshot>();
+    auto* retained=sound::capture.get();
+    sound::play_wall_tones_looped({sound::Direction::North});
+    const auto epoch_before=fixture::epoch;const int discarded_before=fixture::discarded;
+    events::fire(events::Kind::BattleEntering);
+    expect(fixture::epoch==epoch_before+1 && !fixture::walls && !sound::field_active &&
+        sound::capture.get()==retained && fixture::discarded==discarded_before,
+        "battle entry cancels playing field audio atomically without device calls, snapshot return or destruction");
+    fixture::ready=false;sound::tick();
+    expect(!sound::capture && fixture::discarded==discarded_before+1,
+        "ordinary owner tick returns the retained snapshot after immediate audio cancellation");
     std::printf("%s cue producer/range/context: %d failures\n",failures?"FAIL":"PASS",failures);return failures?1:0;
 }

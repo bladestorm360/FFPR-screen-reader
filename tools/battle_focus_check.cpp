@@ -35,6 +35,11 @@
 #include "../src/games/ff3/magic_menu.cpp"
 #undef install
 #undef s_install
+#define install ff2_magic_install
+#define s_install ff2_magic_registration
+#include "../src/games/ff2/magic_menu.cpp"
+#undef install
+#undef s_install
 #define install formation_install
 #define s_install formation_registration
 #include "../src/games/ff6/status_list.cpp"
@@ -53,7 +58,7 @@ std::map<std::string,bool> states;
 std::map<std::string,void*> owners;
 std::map<std::string,std::wstring> guard;
 game::Id game=game::Id::FF6;
-bool player_rendered=true, nested=false,menu_open=true,side_only=false;Node manager;int original_calls=0;
+bool player_rendered=true, nested=false,menu_open=true,side_only=false,cursor_row_first=false;Node manager;int original_calls=0;
 std::function<void()> on_item_init;
 void item_entry(void*,const void*){++original_calls;if(on_item_init)on_item_init();}
 void phase(void*,const void*){++original_calls;}
@@ -67,6 +72,7 @@ bool is_open(void*,const void*){return menu_open;}
 bool side_range(int,const void*){return side_only;}
 void* party(void*p,const void*){return static_cast<Node*>(p)->list;}
 void spell_cursor(void*,void*,bool,int32_t,const void*){++original_calls;}
+void use_target_cursor(void*,void*,const void*){++original_calls;}
 }
 namespace core {Install::Install(const char*n,int(*f)(),int o,uint8_t g):name(n),fn(f),order(o),games(g){} }
 namespace ref {
@@ -76,7 +82,7 @@ bool Class::is(void*p){return p!=nullptr;}il2cpp::Class*Class::get(){return null
 int32_t Field::get(){std::string n=name;if(n=="rangeType")return offsetof(fixture::Node,state);if(n=="isMachineState")return offsetof(fixture::Node,machine);if(n=="contentList")return offsetof(fixture::Node,list);if(n=="enemyDataList"||n=="<TargetEnamyList>k__BackingField")return offsetof(fixture::Node,enemies);if(n=="playerDataList"||n=="<TargetPlayerList>k__BackingField")return offsetof(fixture::Node,players);if(n=="selectCursor")return offsetof(fixture::Node,cursor);if(n=="listController")return offsetof(fixture::Node,list);if(n=="<TargetCommand>k__BackingField"||n=="<Data>k__BackingField"||n=="<CurrentData>k__BackingField"||n=="<CharacterData>k__BackingField")return offsetof(fixture::Node,data);return -1;}
 void* instance(Class&){return &fixture::manager;}
 void*Method::ptr(){if(std::string(name)=="IsPlayerSingleSideAll"||std::string(name)=="IsEnemySingleSideAll")return reinterpret_cast<void*>(&fixture::side_range);if(std::string(name)=="get_IsOpen")return reinterpret_cast<void*>(&fixture::is_open);if(std::string(name)=="get_PartyList")return reinterpret_cast<void*>(&fixture::party);if(std::string(name)=="get_Name")return reinterpret_cast<void*>(&fixture::managed_name);return std::string(name).find("MesId")!=std::string::npos?reinterpret_cast<void*>(&fixture::managed_name):nullptr;}il2cpp::Method*Method::get(){return nullptr;}
-std::wstring str(void*p){return p?static_cast<fixture::Node*>(p)->name:L"";}void call_failed_note(const char*){std::abort();}
+std::wstring str(void*p){return p?static_cast<fixture::Node*>(p)->name:L"";}std::wstring rd_str(void*p,Field&){return str(p);}void call_failed_note(const char*){std::abort();}
 }
 namespace hooks {bool attach_raw(ref::Method&,void*,void**){return false;}bool attach_addr(void*,const char*,void*,void**){return false;}void note_fault(const char*){std::abort();}}
 namespace unity {void*transform(void*p){return p;}void*parent(void*p){return p?static_cast<fixture::Node*>(p)->parent:nullptr;}void*get_component_in_parent(void*p,ref::Class&){return parent(p);}void*get_component(void*p,ref::Class&){return p;}void*get_component_in_children(void*p,ref::Class&,bool){return p;}void*find_descendant(void*,const wchar_t*,int){return nullptr;}int child_count(void*){return 0;}void*child(void*,int){return nullptr;}std::wstring name(void*p){return p?static_cast<fixture::Node*>(p)->name:L"";}std::wstring ui_text(void*p){return name(p);}bool alive(void*p){return p&&static_cast<fixture::Node*>(p)->alive;}bool active_in_hierarchy(void*p){return alive(p)&&static_cast<fixture::Node*>(p)->visible;}int list_count(void*p){return p?static_cast<int>(static_cast<fixture::List*>(p)->size()):0;}void*list_at(void*p,int i){return p&&i>=0&&i<list_count(p)?(*static_cast<fixture::List*>(p))[i]:nullptr;}
@@ -88,7 +94,7 @@ namespace displayed {
 std::wstring text(void*p){return visible(p)?unity::ui_text(p):L"";}
 std::wstring character(void*p){return text_field(p,"nameText");}std::wstring target(void*p){return visible(p)?character(field(p,"view")):L"";}
 int target_count(void*p){int n=0;for(int i=0;i<unity::list_count(p);++i)if(!target(unity::list_at(p,i)).empty())++n;return n;}
-void*cursor_row(void*,void*){return nullptr;}
+void*cursor_row(void*,void*p){return fixture::cursor_row_first&&unity::list_count(p)>0?unity::list_at(p,0):nullptr;}
 std::wstring formation_row(void*,void*){return {};}
 std::wstring spell_row(void*p){return text_field(field(p,"view"),"spell");}
 }
@@ -98,6 +104,7 @@ namespace game {Id current(){return fixture::game;}}
 namespace settings {bool get_bool(const char*,bool d){return d;}}
 namespace modtext {std::wstring T(std::wstring_view v){return std::wstring(v);}std::wstring TF(std::wstring_view v,std::initializer_list<std::wstring>a){return text::format(v,a);}}
 namespace menu_state {void set_active(const char*n,bool v){fixture::states[n]=v;}bool is_active(const char*n){return fixture::states[n];}void reset(const char*n){fixture::states[n]=false;}void set_active_exclusive(const char*n){fixture::states.clear();fixture::states[n]=true;}void register_reset(const char*,std::function<void()>){}}
+namespace ffpr::ff2 {void set_active_exclusive(const char*n){menu_state::set_active_exclusive(n);}}
 namespace dedup {bool text(const char*k,std::wstring_view v,Scope){if(fixture::guard[k]==v)return false;fixture::guard[k]=v;return true;}bool index(const char*,long long,Scope){return true;}void reset(const char*k){fixture::guard.erase(k);}}
 namespace field::cache {void*get(ref::Class&c){return fixture::owners[c.name];}void register_object(ref::Class&c,void*p){fixture::owners[c.name]=p;}void clear(ref::Class&c){fixture::owners.erase(c.name);}}
 namespace actions {void define(const char*,Fn){}}
@@ -105,12 +112,13 @@ namespace queries {void define(const char*,std::function<bool()>){ }void define_
 namespace cursor {void add_suppressor(const char*){}}
 namespace log_ {void write(const char*,...){}}
 namespace ffpr::system {void clear_other_menu_states(const std::string&){}bool is_field_state(){return false;}std::wstring ability_command_name(int){return L"Use";}void announce_command(const std::wstring&s,int,int){ffpr::say(s);}}
-namespace ffpr::menus {std::wstring spell_description(void*){return L"Removes poison.";}}
+namespace ffpr::menus {std::wstring spell_description(void*){return L"Removes poison.";}std::wstring spell_name(void*p){return p?static_cast<fixture::Node*>(p)->name:L"";}void set_last_announced_ability(void*){}}
 
 namespace ffpr::dialogue {std::wstring read_focused_button(void*,ref::Field&,ref::Field&){return {};}void read_popup_when_ready(void*,const char*,std::function<std::wstring()>,std::function<bool()>){ }
 namespace popup_state {void*active_popup(){return nullptr;}void set_active(const char*,void*,ref::Field*,bool){}void clear(){}}}
 namespace il2cpp {void*method_pointer(Method*){return nullptr;}}
 namespace ffpr::battle {
+bool formation_first_turn(){return false;}
 void observe_target_party(void*){}
 void clear_other_menu_states(const char*){}
 bool state_active(const char*k){return menu_state::is_active(k);}void state_set(const char*k,bool v){menu_state::set_active(k,v);}void set_target_selection_active(bool v){menu_state::set_active(menu_state::BATTLE_TARGET,v);}void set_last_selected_command_index(int){}void set_current_actor(void*){}
@@ -155,6 +163,22 @@ int main(){using namespace fixture;namespace b=ffpr::battle;int failures=0;auto 
  fm::g_pending_spell_window=&field_window;fm::on_set_next_state(&field_window,2);field_window.state=2;fm::d_WindowUpdate(&field_window,nullptr);expect(spoken.empty()&&!fm::g_pending_spell_window,"spell target entry cancels pending list speech before the target owns focus");
  Node empty_first,terra,terra_view,target_cursor,field_use;empty_first.visible=false;terra.data=&ally;terra.view=&terra_view;terra_view.texts["nameText"]=L"Terra";List field_members{&empty_first,&terra};field_use.list=&field_members;target_cursor.parent=&terra;
  spoken.clear();fm::on_use_set_cursor(&field_use,&target_cursor);fm::on_use_set_cursor(&field_use,&target_cursor);expect(spoken==std::vector<std::wstring>{L"Terra (1 of 1)",L"Terra (1 of 1)"},"compacted field target is read from native cursor parent and deliberate arrows repeat it");
+ namespace f2=ffpr::ff2;Node target_window,target_list,target_cursor2,target_data[4],target_views[4],target_rows[4];List target_contents;
+ target_window.state=2;target_window.view=&target_window;owners["AbilityWindowController"]=&target_window;target_cursor2.parent=&target_rows[0];
+ const wchar_t* target_names[]={L"Firion",L"Maria",L"Guy",L"Leon"};for(int i=0;i<4;++i){target_data[i].name=target_names[i];target_rows[i].data=&target_data[i];target_rows[i].view=&target_views[i];target_views[i].texts["nameText"]=target_names[i];target_contents.push_back(&target_rows[i]);}
+ target_list.list=&target_contents;f2::o_UseSetCursor=&use_target_cursor;cursor_row_first=true;spoken.clear();
+ for(int state:{2,8}){target_window.state=state;for(int index:{0,1,2,3,2,1,0}){target_cursor2.index=index;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);}}
+ expect(spoken.size()==14,"FF2 target cursor reads every actual row in both target states, including backtracking");
+ for(int state:{2,8})for(int index=0;index<4;++index){const size_t n=(state==2?0:7)+index;expect(spoken[n]==std::wstring(target_names[index])+L" ("+std::to_wstring(index+1)+L" of 4)","FF2 target cursor selects the row at native cursor.Index despite first-row ancestry");}
+ target_window.state=2;spoken.clear();target_cursor2.index=-1;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_cursor2.index=4;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);
+ target_cursor2.index=1;target_views[1].visible=false;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_views[1].visible=true;
+ target_cursor2.index=1;target_rows[1].data=nullptr;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_rows[1].data=&target_data[1];
+ target_cursor2.index=1;target_views[1].texts["nameText"].clear();f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_views[1].texts["nameText"]=target_names[1];
+ target_cursor2.index=2;target_contents[2]=nullptr;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_contents[2]=&target_rows[2];
+ target_cursor2.index=0;target_list.visible=false;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_list.visible=true;
+ target_window.state=1;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_window.state=2;
+ List too_many(10,&target_rows[0]);target_list.list=&too_many;target_cursor2.index=0;f2::d_UseSetCursor(&target_list,&target_cursor2,nullptr);target_list.list=&target_contents;
+ expect(spoken.empty(),"FF2 target cursor stays silent for hidden, invalid, out-of-range, hole and oversized-party rows");cursor_row_first=false;
  namespace form=ffpr::ff6;Node empty_slot;empty_slot.view=&empty_slot;List formation{&empty_slot,&terra,&empty_slot,&empty_slot};target_cursor.parent=&empty_slot;spoken.clear();form::on_select_content(&formation,2,&target_cursor);form::on_select_content(&formation,3,&target_cursor);expect(spoken==std::vector<std::wstring>{L"Empty",L"Empty"},"consecutive highlighted empty formation slots are distinct audible events");
  Node save,save_view,save_data,cecil,tellah;save.view=&save_view;cecil.name=L"Cecil";tellah.name=L"Tellah";List saved_party{&cecil,nullptr,&tellah};save_data.list=&saved_party;
  save_view.texts={{"slotNameText",L"Quick Save"},{"areaNameText",L"Underground Waterway"},{"floorNameText",L"South Entrance"},{"charaNameText",L"Cecil"},{"fixedLevelText",L"Lv."},{"levelText",L"12"},{"timeStampDate",L"03/02/2026"},{"timeStampTime",L"13:58"},{"fixedTimeText",L"Time"},{"hourText",L"03"},{"timeSeparateText",L":"},{"minuteText",L"03"}};

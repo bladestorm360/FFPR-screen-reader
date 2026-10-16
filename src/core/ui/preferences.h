@@ -44,6 +44,7 @@ inline constexpr const char* kSpeechEnabled = "SpeechEnabled";
 inline constexpr const char* kSpeakAutowalkPath = "SpeakAutowalkPath";
 inline constexpr const char* kBeaconWithDirections = "BeaconWithDirections";
 inline constexpr const char* kAutoDetail = "AutoDetail";                    // Auto Announcement Detail
+inline constexpr const char* kResultNotificationsOnce = "ResultNotificationsOnce";
 inline constexpr const char* kStatusDamage = "StatusDamage";                // Status Damage Announcements
 inline constexpr const char* kModWarnings = "ModWarnings";
 inline constexpr const char* kSpoilTreasureChestContents = "SpoilTreasureChestContents";
@@ -81,6 +82,7 @@ inline constexpr bool kSpeechEnabledDefault = true;
 inline constexpr bool kSpeakAutowalkPathDefault = false;
 inline constexpr bool kBeaconWithDirectionsDefault = false;
 inline constexpr bool kAutoDetailDefault = false;
+inline constexpr bool kResultNotificationsOnceDefault = false;
 inline constexpr bool kStatusDamageDefault = true;
 inline constexpr bool kModWarningsDefault = true;
 inline constexpr bool kSpoilTreasureChestContentsDefault = false;
@@ -135,6 +137,7 @@ inline bool speech_enabled() { return settings::get_bool(kSpeechEnabled, kSpeech
 inline bool speak_autowalk_path_enabled() { return settings::get_bool(kSpeakAutowalkPath, kSpeakAutowalkPathDefault); }
 inline bool beacon_with_directions_enabled() { return settings::get_bool(kBeaconWithDirections, kBeaconWithDirectionsDefault); }
 inline bool auto_detail_enabled() { return settings::get_bool(kAutoDetail, kAutoDetailDefault); }
+inline bool result_notifications_once_enabled() { return settings::get_bool(kResultNotificationsOnce, kResultNotificationsOnceDefault); }
 inline bool status_damage_enabled() { return settings::get_bool(kStatusDamage, kStatusDamageDefault); }
 inline bool mod_warnings_enabled() { return settings::get_bool(kModWarnings, kModWarningsDefault); }
 inline bool spoil_treasure_chest_contents_enabled() { return settings::get_bool(kSpoilTreasureChestContents, kSpoilTreasureChestContentsDefault); }

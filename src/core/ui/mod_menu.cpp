@@ -32,12 +32,13 @@
 #include "modal_keys.h"
 #include "preferences.h"
 #include "../audio/sound.h"
+#include "../input/bindings.h"
 #include "../audio/volume_settings.h"
 
 namespace ui::mod_menu {
 namespace {
 
-enum class Kind : uint8_t { Header, Submenu, Toggle, Volume, Range, Enum, Action };
+enum class Kind : uint8_t { Header, Submenu, Toggle, Volume, Range, Enum, Action, BindingInput, BindingModifier, BindingCapture, BindingUnbind, BindingReset };
 
 struct Item {
     Kind kind = Kind::Header;
@@ -52,6 +53,7 @@ struct Item {
     const wchar_t* desc = nullptr;          // description (Toggle: when on)
     const wchar_t* desc_off = nullptr;      // Toggle: description when off
     void (*action)() = nullptr;             // Action
+    int binding = -1;
     sound::cues::Id cue = sound::cues::Id::Count;
 };
 
@@ -62,8 +64,10 @@ struct State {
     std::vector<Item> items;
     uint64_t input_frame = UINT64_MAX;
     bool input_result = false;
+    bool feedback = false;
 };
 
+int menu_key_close,menu_key_back,menu_key_previous,menu_key_next,menu_key_decrease,menu_key_increase,menu_key_select,menu_key_select_space,menu_key_help;
 State* g_state = nullptr;
 State& st()
 {
@@ -148,6 +152,8 @@ void initialize()
     v.push_back(toggle(L"Auto Detail", p::kAutoDetail, p::kAutoDetailDefault,
                        L"On. Reads displayed descriptions and current information buffers after their titles, including status and battle results.",
                        L"Off. Use the I key to read descriptions on demand."));
+    v.push_back(toggle(L"Battle results: notifications once", p::kResultNotificationsOnce, p::kResultNotificationsOnceDefault,
+                       L"Battle results: notifications once on", L"Battle results: notifications once off"));
     v.push_back(enumeration(L"Stat delta detail", {L"Verbose", L"Brief"},
                             p::kStatDeltaMode, p::kStatDeltaModeDefault, p::kStatDeltaModeMax,
                             L"Stat delta detail help"));
@@ -192,6 +198,31 @@ void initialize()
     v.push_back(toggle(L"Stick Click Normalization", p::kStickClickNormalization, p::kStickClickNormalizationDefault,
                        L"On. L3 and R3 pass through to the game (auto-dash and encounter toggle). Mod functions move to mod mode.",
                        L"Off. L3 toggles beacon navigation; R3 toggles pathfinding filter; game cannot see them."));
+
+    const int controls_page=int(v.size());
+    Item controls=header(L"Controls");controls.kind=Kind::Submenu;controls.desc=L"Keyboard bindings help";v.push_back(controls);
+    for(bool controller:{false,true}) {
+        const int list_page=int(v.size());
+        Item list=header(controller?L"Controller bindings":L"Keyboard bindings");list.kind=Kind::Submenu;list.parent=controls_page;list.desc=controller?L"Controller bindings help":L"Keyboard bindings help";v.push_back(list);
+        const auto& bindings=input::bindings::entries();
+        for(size_t n=0;n<bindings.size();++n) {
+            const auto& binding=bindings[n];if(binding.controller!=controller)continue;
+            const int binding_page=int(v.size());
+            Item row=header(L"");row.name=binding.label;
+            row.name+=L" ("+input::bindings::scope_name(binding.scope)+L")";
+            if(binding.layout>=0)row.name+=binding.layout?L" [Brackets]":L" [Letters]";
+            row.kind=Kind::Submenu;row.parent=list_page;row.binding=int(n);v.push_back(row);
+            auto child=[&](Kind kind,const wchar_t* label) {Item item=header(label);item.kind=kind;item.parent=binding_page;item.binding=int(n);v.push_back(item);};
+            child(Kind::BindingCapture,controller?L"Capture controller input":L"Capture keyboard input");
+            child(Kind::BindingInput,controller?L"Primary input":L"Key");
+            child(Kind::BindingModifier,controller?L"Modifier input":L"Modifiers");
+            child(Kind::BindingUnbind,L"Unbind");
+            child(Kind::BindingReset,L"Reset binding");
+        }
+    }
+    Item reset=action(L"Reset all bindings",[] {
+        ui::confirmation::open(T(L"Restore all bindings to their defaults?"),[] {input::bindings::reset_all();ffpr::say_menu(T(L"All bindings restored"),false);});
+    },L"Reset all bindings help");reset.parent=controls_page;v.push_back(reset);
 
     // All audio settings, including the results-screen EXP sound, live together.
     v.push_back(header(L"Navigation audio"));
@@ -345,6 +376,15 @@ void set_int(const Item& i, int value)
 /// MenuItem.GetValueString.
 std::wstring value_string(const Item& i)
 {
+    if(i.binding>=0) {
+        const auto& b=input::bindings::entries()[i.binding];
+        if(i.kind==Kind::BindingModifier) {
+            if(b.controller)return b.modifier<0?T(L"None"):input::bindings::input_name(true,b.modifier);
+            const wchar_t* names[]={L"None",L"Shift",L"Control",L"Control + Shift",L"Alt",L"Alt + Shift",L"Alt + Control",L"Alt + Control + Shift"};
+            return T(names[b.modifier]);
+        }
+        if(i.kind==Kind::Submenu || i.kind==Kind::BindingInput || i.kind==Kind::BindingCapture)return input::bindings::value(i.binding);
+    }
     switch (i.kind) {
     case Kind::Toggle:
         return toggle_value(i) ? T(L"On") : T(L"Off");
@@ -369,6 +409,24 @@ std::wstring value_string(const Item& i)
 /// MenuItem.Adjust.
 void adjust(const Item& i, int delta)
 {
+    if(i.binding>=0 && (i.kind==Kind::BindingInput || i.kind==Kind::BindingModifier)) {
+        const auto b=input::bindings::entries()[i.binding];
+        const int count=i.kind==Kind::BindingInput ? (b.controller?input::bindings::kPadInputs:int(input::Key::Count)) : (b.controller?input::bindings::kPadInputs:8);
+        const int min=i.kind==Kind::BindingModifier&&!b.controller?0:-1;
+        const int old=i.kind==Kind::BindingInput?b.primary:b.modifier;
+        int value=old;
+        // Cycle available inputs; an occupied key must not trap the picker before
+        // every later option. Capture is the exact-input conflict-reporting path.
+        for(int attempt=0;attempt<=count-min;++attempt) {
+            value+=delta;if(value>=count)value=min;if(value<min)value=count-1;
+            const int primary=i.kind==Kind::BindingInput?value:b.primary;
+            const int modifier=i.kind==Kind::BindingModifier?value:b.modifier;
+            if(b.controller && primary>=0 && primary==modifier)continue;
+            std::wstring conflict;
+            if(input::bindings::set(i.binding,primary,modifier,conflict))break;
+        }
+        return;
+    }
     switch (i.kind) {
     case Kind::Toggle:
         flip(i);
@@ -398,6 +456,18 @@ void adjust(const Item& i, int delta)
 /// MenuItem.Toggle.
 void activate(const Item& i)
 {
+    if(i.binding>=0) {
+        if(i.kind==Kind::BindingCapture) {input::bindings::capture(i.binding);return;}
+        if(i.kind==Kind::BindingReset) {
+            st().feedback=true;
+            const auto b=input::bindings::entries()[i.binding];std::wstring conflict;
+            if(input::bindings::set(i.binding,b.default_primary,b.default_modifier,conflict))ffpr::say_menu(T(L"Binding restored"),true);
+            else ffpr::say_menu(TF(L"Already assigned to {0}. Unbind it first.",{T(conflict)}),true);
+            return;
+        }
+        if(i.kind==Kind::BindingUnbind) {std::wstring ignored;input::bindings::set(i.binding,-1,input::bindings::entries()[i.binding].modifier,ignored);st().feedback=true;ffpr::say_menu(T(L"Binding removed"),true);return;}
+        if(i.kind==Kind::BindingInput || i.kind==Kind::BindingModifier) {adjust(i,1);return;}
+    }
     switch (i.kind) {
     case Kind::Toggle:
         flip(i);
@@ -482,41 +552,42 @@ bool handle_input_now()
     if (!s.open) return false;
     if (s.items.empty()) return false;
 
+    if(input::bindings::update_capture())return true;
     modal_keys::sample();
     using modal_keys::pressed;
 
-    if (pressed(VK_F8)) {
+    if (input::bindings::pressed(menu_key_close)) {
         close();
         return true;
     }
-    if (pressed(VK_ESCAPE)) { back(); return true; }
+    if (input::bindings::pressed(menu_key_back)) { back(); return true; }
     // Up arrow - previous item
-    if (pressed(VK_UP)) {
+    if (input::bindings::pressed(menu_key_previous)) {
         navigate_previous();
         return true;
     }
     // Down arrow - next item
-    if (pressed(VK_DOWN)) {
+    if (input::bindings::pressed(menu_key_next)) {
         navigate_next();
         return true;
     }
     // Left arrow - decrease value
-    if (pressed(VK_LEFT)) {
+    if (input::bindings::pressed(menu_key_decrease)) {
         adjust_current_item(-1);
         return true;
     }
     // Right arrow - increase value
-    if (pressed(VK_RIGHT)) {
+    if (input::bindings::pressed(menu_key_increase)) {
         adjust_current_item(1);
         return true;
     }
     // Enter or Space - toggle/activate
-    if (pressed(VK_RETURN) || pressed(VK_SPACE)) {
+    if (input::bindings::pressed(menu_key_select) || input::bindings::pressed(menu_key_select_space)) {
         toggle_current_item();
         return true;
     }
     // I - read the current item's description
-    if (pressed('I')) {
+    if (input::bindings::pressed(menu_key_help)) {
         announce_current_item_description();
         return true;
     }
@@ -525,6 +596,15 @@ bool handle_input_now()
 
 int install()
 {
+    menu_key_help=input::bindings::add("key.menu.help","Read mod setting help",false,-1,int(input::Key::I));
+    menu_key_select_space=input::bindings::add("key.menu.select.space","Select mod setting (Space)",false,-1,int(input::Key::Space));
+    menu_key_select=input::bindings::add("key.menu.select","Select mod setting",false,-1,int(input::Key::Return));
+    menu_key_increase=input::bindings::add("key.menu.increase","Increase mod setting",false,-1,int(input::Key::RightArrow));
+    menu_key_decrease=input::bindings::add("key.menu.decrease","Decrease mod setting",false,-1,int(input::Key::LeftArrow));
+    menu_key_next=input::bindings::add("key.menu.next","Next mod setting",false,-1,int(input::Key::DownArrow));
+    menu_key_previous=input::bindings::add("key.menu.previous","Previous mod setting",false,-1,int(input::Key::UpArrow));
+    menu_key_back=input::bindings::add("key.menu.back","Back in mod menu",false,-1,int(input::Key::Escape));
+    menu_key_close=input::bindings::add("key.menu.close","Close mod menu",false,-1,int(input::Key::F8));
     initialize();
 
     queries::define("ModMenu.IsOpen", [] { return is_open(); });
@@ -553,6 +633,7 @@ void open()
     State& s = st();
     if (s.open) return;
 
+    initialize();
     s.open = true;
     s.index = 0;
     s.page = -1;
@@ -572,6 +653,7 @@ void close()
     if (!s.open) return;
 
     s.open = false;
+    input::bindings::cancel_capture();
     // Every close path (keyboard, menu item, controller) returns the controller to NORMAL.
     sync_router(false);
     ffpr::say_menu(T(L"Mod menu closed"), true);
@@ -606,7 +688,7 @@ void navigate_next()
     if (items.empty()) return;
     auto it = std::find(items.begin(), items.end(), s.index);
     s.index = it == items.end() || ++it == items.end() ? items.front() : *it;
-    announce_current_item();
+    if(!input::bindings::capturing())announce_current_item();
 }
 
 void navigate_previous()
@@ -616,7 +698,7 @@ void navigate_previous()
     if (items.empty()) return;
     auto it = std::find(items.begin(), items.end(), s.index);
     s.index = it == items.end() || it == items.begin() ? items.back() : *--it;
-    announce_current_item();
+    if(!input::bindings::capturing())announce_current_item();
 }
 
 void adjust_current_item(int delta)
@@ -630,8 +712,9 @@ void adjust_current_item(int delta)
         return;
     }
 
+    s.feedback=false;
     adjust(item, delta);
-    announce_current_item();
+    if(!input::bindings::capturing())announce_current_item(!s.feedback);
 }
 
 void toggle_current_item()
@@ -642,12 +725,13 @@ void toggle_current_item()
     const Item& item = s.items[static_cast<size_t>(s.index)];
     if (item.kind == Kind::Header || item.kind == Kind::Submenu) { enter_page(s.index); return; }
 
+    s.feedback=false;
     activate(item);
 
     // For action items (like Close Menu), don't re-announce
     if (item.kind == Kind::Action) return;
 
-    announce_current_item();
+    if(!input::bindings::capturing())announce_current_item(!s.feedback);
 }
 
 } // namespace ui::mod_menu

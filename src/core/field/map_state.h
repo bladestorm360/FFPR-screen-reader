@@ -25,11 +25,14 @@ public:
     bool active(const baked::Submap& sm, const baked::Object& object, bool obstacle = false);
     std::optional<bool> treasure_opened(const baked::Submap& sm, const baked::Object& object) const;
     bool known(const baked::Submap& sm);
+    bool consumed(const baked::Submap& sm, const baked::Object& object);
+    uint64_t signature() const; // copied persistent state only; worker-safe
 private:
     Selection selection(const baked::Submap& sm);
     Flags flags_;
     const json::Value& records_;
     std::map<int, Selection> cache_;
+    std::map<const baked::Object*,bool> consumed_;
 };
 void add_obstacles(Resolver& resolver, const baked::Submap& sm, baked_route::Request& request, bool gates = true);
 }

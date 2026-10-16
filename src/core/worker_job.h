@@ -17,8 +17,11 @@ public:
     Owner() = default;
     Owner(const Owner&) = delete;
     ~Owner() { cancel(); }
+    // Transition admission must not destroy captured native-owner callbacks.
+    // Retire them with cancel() at the next safe lifecycle boundary.
+    void interrupt() { ++*epoch_; }
     void cancel() {
-        ++*epoch_;
+        interrupt();
         for (auto& [id, erase] : erase_) erase();
         erase_.clear();
     }

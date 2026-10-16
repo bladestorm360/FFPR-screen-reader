@@ -114,6 +114,7 @@ constexpr int32_t kStateEvent = 12;
 int g_last_announced_map_id = -1;
 bool g_needs_map_scan = true;
 bool g_script_refresh = false;
+int g_change_depth = 0;
 
 /// FFI_ScreenReaderMod.ClearMenuFlagsForMapTransition: clear menu and popup flags a set/clear
 /// mismatch left behind, so they cannot block the field on the new map. Battle flags stay.
@@ -186,6 +187,10 @@ ChangeState_t o_ChangeState = nullptr;
 
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
+    struct Changing {
+        Changing() { ++g_change_depth; }
+        ~Changing() { --g_change_depth; }
+    } changing;
     const double started = frame::now();
     bool same_map_drop = false;
     if (state == kStateEvent || state == kStateChangeMap) {
@@ -258,6 +263,8 @@ bool is_screen_fading()
         return false;   // treat as not fading
     }
 }
+
+bool is_state_changing() { return g_change_depth != 0; }
 
 void reset_map_tracking()
 {

@@ -245,5 +245,518 @@
       1
     ],
     "evidence": "Shared named trap script via native resident fallback; final player position, docs/re/TRAPS.md"
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 65,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 78,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_3",
+    "continuation_sha256": "66a2536c05268070ecc6907ed116b7c3622b3f6840f576af1425d87c884bc832",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 66,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 67,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 68,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 69,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 70,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 71,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 72,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 73,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 74,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 75,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 76,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 77,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_2",
+    "continuation_sha256": "6e6e8920a823de940571c516d8cff4ca15d081fb704c17effcc960e12ec8cb64",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 79,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_3",
+    "continuation_sha256": "66a2536c05268070ecc6907ed116b7c3622b3f6840f576af1425d87c884bc832",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 80,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_3",
+    "continuation_sha256": "66a2536c05268070ecc6907ed116b7c3622b3f6840f576af1425d87c884bc832",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 81,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_3",
+    "continuation_sha256": "66a2536c05268070ecc6907ed116b7c3622b3f6840f576af1425d87c884bc832",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 82,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_3",
+    "continuation_sha256": "66a2536c05268070ecc6907ed116b7c3622b3f6840f576af1425d87c884bc832",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30461_14",
+    "entity_id": 83,
+    "destination_map": 423,
+    "original_point": 3,
+    "continuation": "sc_e_0522_3",
+    "continuation_sha256": "66a2536c05268070ecc6907ed116b7c3622b3f6840f576af1425d87c884bc832",
+    "arrival_cell": [
+      16,
+      13,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      16,
+      13,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30471_10",
+    "entity_id": 1,
+    "destination_map": 435,
+    "original_point": 2,
+    "continuation": "sc_map_30471_10_fall_1",
+    "continuation_sha256": "48e0e59cdc0bd725d3827cae9e99a573404badcb0847db8587cc5ff3bb517397",
+    "arrival_cell": [
+      22,
+      7,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      22,
+      7,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30471_13",
+    "entity_id": 1,
+    "destination_map": 440,
+    "original_point": 1,
+    "continuation": "sc_map_30471_13_fall_1_1",
+    "continuation_sha256": "daad24846dee92a926e308a4844a5e96c71edbaf0c2ff0fcd8f5e6bc6531fb18",
+    "arrival_cell": [
+      11,
+      7,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      11,
+      7,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30471_13",
+    "entity_id": 14,
+    "destination_map": 440,
+    "original_point": 1,
+    "continuation": "sc_map_30471_13_fall_2_1",
+    "continuation_sha256": "33060763e26c83f8dc0f7bd9cfa8ea0e3df28f62e337b75e831149d498ada3c5",
+    "arrival_cell": [
+      15,
+      7,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      15,
+      7,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30471_13",
+    "entity_id": 15,
+    "destination_map": 440,
+    "original_point": 1,
+    "continuation": "sc_map_30471_13_fall_3_1",
+    "continuation_sha256": "8ebff49159b16592bd5221c6a24f3ae71303401f7c0c2356dca7fc257172092f",
+    "arrival_cell": [
+      13,
+      12,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      13,
+      12,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30471_13",
+    "entity_id": 16,
+    "destination_map": 440,
+    "original_point": 1,
+    "continuation": "sc_map_30471_13_fall_4_1",
+    "continuation_sha256": "7f853ad14a3199857d61faf16de3dfcd930142fb47b35895d0d6cea4ecd2931b",
+    "arrival_cell": [
+      17,
+      11,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      17,
+      11,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30531_2",
+    "entity_id": 19,
+    "destination_map": 487,
+    "original_point": 1,
+    "continuation": "sc_map_30531_3_fall_1",
+    "continuation_sha256": "b2c9e120201692322f82119a1a0c86ae5e473e546a981cdde1a510ff95d8814a",
+    "arrival_cell": [
+      8,
+      8,
+      0
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      8,
+      8,
+      0
+    ]
+  },
+  {
+    "submap": "Map_30531_2",
+    "entity_id": 21,
+    "destination_map": 487,
+    "original_point": 1,
+    "continuation": "sc_map_30531_3_fall_3",
+    "continuation_sha256": "b4397dc82669094344fa19e470b9322af49720a93fd6452f402e1070bbbac848",
+    "arrival_cell": [
+      10,
+      12,
+      0
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      10,
+      12,
+      0
+    ]
+  },
+  {
+    "submap": "Map_30531_6",
+    "entity_id": 12,
+    "destination_map": 491,
+    "original_point": 1,
+    "continuation": "sc_map_30531_7_fall",
+    "continuation_sha256": "4628fb51369a363be91a9331d286cef571b03b859d3a9772d07daddb7a251d6c",
+    "arrival_cell": [
+      7,
+      8,
+      0
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      7,
+      8,
+      0
+    ]
   }
 ]

@@ -11,6 +11,7 @@
 // See docs/re/RESULTS.md for caller paths and verified listener signatures.
 #include <cstdint>
 #include "input_internal.h"
+#include "bindings.h"
 #include "../core.h"
 #include "../hooks.h"
 #include "../refs.h"
@@ -34,18 +35,16 @@ bool g_owned_buttons[kButtonCount]{};
 bool native_input_blocked()
 {
     if (suppress_game_input()) return true;
+    if(bindings::remapped_keyboard_in_use())return true;
     if (queries::is("ReviewBuffer.IsInformation")) {
         // Arrows review the copied comparison. WASD, native confirm/cancel and
         // the description/page toggle keep their ordinary menu ownership.
-        for (Key k : {Key::UpArrow, Key::DownArrow, Key::LeftArrow, Key::RightArrow, Key::I})
-            if (key_in_use(k)) return true;
+        if(bindings::keyboard_in_use(Context::Information))return true;
         for (int i = 0; i < kButtonCount; ++i)
             if (g_owned_buttons[i] && (button_held(i) || button_released(i))) return true;
     }
     if (!queries::is("ReviewBuffer.IsResults")) return false;
-    for (Key k : {Key::UpArrow, Key::DownArrow, Key::LeftArrow, Key::RightArrow,
-                  Key::W, Key::S, Key::A, Key::D, Key::I, Key::F7, Key::F8, Key::F5})
-        if (key_in_use(k)) return true;
+    if(bindings::keyboard_in_use(Context::Results))return true;
     for (int i = 0; i < kButtonCount; ++i)
         if (g_owned_buttons[i] && (button_held(i) || button_released(i))) return true;
     return false;
@@ -108,8 +107,11 @@ bool check_directional(int32_t action, Check check, bool use_edge)
     default:
         return false;
     }
-    if (field_active()) return lstick;
-    return check(dpad) || lstick;
+    int stick=bindings::kLeftUp;
+    if(action==kActionDown)stick=bindings::kLeftDown;
+    if(action==kActionLeft)stick=bindings::kLeftLeft;
+    if(action==kActionRight)stick=bindings::kLeftRight;
+    return pass(dpad,check) || (lstick&&!bindings::consumed(stick));
 }
 
 bool check_sdl(int32_t action, Check check, bool use_direction_edge)
@@ -128,12 +130,11 @@ bool check_sdl(int32_t action, Check check, bool use_direction_edge)
     case kActionSwitchRight: return pass(kRightShoulder, check);
     case kActionPageUp:
         // Left trigger: the mod's pathfind key on the active field, the game's elsewhere.
-        if (field_active()) return false;
-        return left_trigger() > 0.5f;
+        return !bindings::consumed(bindings::kLeftTrigger) && left_trigger() > 0.5f;
     case kActionPageDown:
-        return right_trigger() > 0.5f;
+        return !bindings::consumed(bindings::kRightTrigger) && right_trigger() > 0.5f;
     case kActionStart:
-        return false;   // never: the mod menu owns Start
+        return pass(kStart,check);
     case kActionStickL: return pass(kLeftStick, check);
     case kActionStickR: return pass(kRightStick, check);
     default:

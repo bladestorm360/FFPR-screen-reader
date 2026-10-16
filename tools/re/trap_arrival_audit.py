@@ -9,6 +9,7 @@ import re
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import bake_maps as b
+from audit_event_labels import trap_identifier
 
 ROOT = Path(__file__).resolve().parents[2]
 DUMP = ROOT.parent / 'tools/mapdump'
@@ -25,7 +26,7 @@ for n in range(1, 7):
     position_changes = 0
     for o in objects:
         name = o.get('name', '')
-        if o['type_name'] not in ('Event','RandomEvent') or not (any(k in name for k in ('落とし穴','落し穴','穴に落ちる','地割れに落ちる','pitfall','trapdoor')) or re.fullmatch(r'落ちる[0-9０-９]*', name)):
+        if o['type_name'] not in ('Event','RandomEvent') or not trap_identifier(name):
             continue
         candidates += 1
         script_name = masters.get(o['props'].get('script_id'), '')

@@ -1,5 +1,36 @@
 # Testing the native mod
 
+## Persistent cross-floor chest state, October 15
+
+Test first in the next FFII session: choose F8 > Navigation > Current map, then browse
+an already-opened Deist chest on another floor. Expect `Opened Treasure Chest ([floor])`.
+An unopened chest should say Unopened and its floor; neither should reveal contents
+with treasure spoilers off. Change floors and repeat: the state must remain available.
+Then repeat the Conversation route below, now using correctly copied story flags.
+
+The native flag-array mismatch was confirmed in all six games and reproduced/fixed in
+the actual-reader offline check. See [persistent-state evidence](re/MAP_STATE.md).
+
+## Event tracking across floors, October 15
+
+Test this first when resuming the reported FFII route:
+
+1. In F8 > Navigation, set the filter to Current map. Other-floor events are deliberately
+   excluded by Current floor and Current map with vehicles.
+2. Select Conversation on Deist B2 and follow the route into B1. Repeat the selected
+   object: it should still be Conversation, with Deist Cavern B2 as its floor.
+3. The B1 leg reaches a different B2 entrance. After entering B2 there, the remaining
+   route should be three steps to the interaction, followed by facing guidance. It
+   must not choose a new object or send you back around the same detour.
+4. Try both spoken directions and Follow route beacon, with soundscape on if desired.
+   An event in another connected multi-floor area should also retain its identity.
+   After a story event genuinely disappears, tracking should stop. Explicit next/previous
+   browsing should still work, without automatically selecting an unrelated target.
+
+The production three-leg replay and all-six bake audit are offline evidence; the full
+in-game traversal remains to be confirmed. See [event tracking evidence](re/EVENT_TRACKING.md).
+
+
 ## Object browsing floors and chest state, October 15
 
 After the offline checks pass, test these first when a suitable dungeon is available:
@@ -973,3 +1004,105 @@ After deployment, test these first when a suitable destination is available:
 Offline evidence uses the actual beacon loop, action registry, menu and input dispatch;
 user gameplay/physical audio confirmation remains separate. No tester log or tester save
 was accessed. See [implementation/evidence](re/SOUNDSCAPE.md#beacon-targeting-modes--october-15).
+
+## Event and navigation follow-up — October16
+
+After deployment, prioritize these when progression permits. Offline checks pass;
+these confirm actual gameplay and speech timing.
+
+1. In Deist, browse the Dragoon before and after triggering it. The one-off event
+   should disappear after use, including when browsing from another floor. A reusable
+   door, warp or NPC interaction should remain available after use.
+2. Follow a real cross-floor destination. Its identity/floor must stay fixed through
+   each leg, including a legitimate B2–B1–different B2 region route. A stale repeated
+   crossing should stop with an explanation. Metadata-only Warp Tile ghosts should
+   no longer appear. Already-opened remote chests should retain Opened and the floor.
+3. On a large world map, select a distant destination requiring a ship. Move and
+   request directions several times while lists refresh. Expect the newest request
+   to respond without waiting for old refresh work. Near shore, guidance must say
+   which way to board and land. Battle/map loading should retire pending navigation.
+4. In FFII, highlight each ally while targeting Cure out of battle. Expect the actual
+   selected ally; casting should retain its existing correct vitals announcement.
+   In available item/weapon/armor/magic/relic shops, highlight a purchase and expect
+   its displayed price with either AutoDetail setting or native detail panel.
+5. F8 > Speech > Battle results: notifications once defaults Off. Turn it On and
+   finish a battle with a growth notification. It should speak once across that
+   battle's result pages, while new notifications/totals/rows remain available.
+   A subsequent battle may announce the same notification again. Off restores repeats.
+
+Report the map, destination and symptom if a check fails. No code review, broad
+capture, tester files or agent game launch is needed. [Evidence and limits](re/EVENT_CONTEXT.md).
+
+## Intermittent lag diagnostics — October16
+
+Automatic timing diagnostics are installed in all six games and run from startup.
+No toggle, hotkey or special test procedure is needed. If lag returns, report the
+game and action; the affected ffpr_screen_reader.log can be checked directly.
+Restarting retains the prior run in .1.log; five previous logs are kept.
+
+The user confirmed a clean FFII run during the explicitly authorized short profile.
+That did not establish the intermittent cause. The new diagnostic build passed
+offline overhead/backpressure checks and isolated smoke; its actual-game evidence
+will come from ordinary play. [Scope, provenance and limitations](re/STALL_2026_10_16.md).
+
+## Battle entry and formations — October16
+
+Check battle-entry timing first during normal play. No special key enables tracing.
+
+1. In FFII, request directions, then enter a normal encounter. Native entrance audio
+   should start promptly; navigation must not run or replay while battle loads.
+   If the pause returns, report the action and game so the automatic log can be read.
+2. In each of I–VI as progression permits, enter a battle with two or more enemy
+   groups. Hear `Enemy formation`, each current enemy name/count, then the first
+   turn/command without cutting off the roster. The roster must not repeat on
+   cursor moves, damage, enemy deaths or later UI redraws.
+3. When a preemptive/ambush battle naturally occurs, hear its native opening message
+   before the formation, then the first turn/command. Let speech finish without Control;
+   separately confirm Control still stops the opening speech. Start another battle
+   with a different group; no previous roster should
+   carry over. Later scripted reinforcements must not repeat the opening roster.
+4. With Game speech off, battle/formation speech should stop and the mod menu should
+   still speak. Autodetail off should retain the roster when Game speech is on.
+
+Offline native/body/asset/ownership checks are separate from these audible/gameplay
+checks. The full one-second stall cause remains unproven. [Current evidence](re/BATTLE_ENTRY.md).
+
+## Autowalk modes and remapping — October 16
+
+Check ordinary autowalk and a remapped route request first. These are remaining gameplay
+checks, separate from the completed offline controller, steering, input and map replays.
+
+1. In Navigation, turn Autowalk on. Select a nearby reachable object and use the selected
+   layout's route key. Walk, stop with the same key, restart, then stop with manual movement.
+   Enter a battle or game menu: movement must stop immediately and must not restart later.
+2. In Navigation → Controls → Keyboard bindings, select the current layout's navigation
+   request and capture Control+F6. Close the menu. Control+F6 should start/stop the walk;
+   the old route key should do nothing. F6 alone should still toggle the beacon. Reset
+   that command afterwards. Both Letters and Brackets layouts must remain selectable.
+3. With a controller, remap `Navigate to selected destination` in the Field context from
+   LT to RT. RT should start/stop the walk, including while held briefly. The mod must not
+   also send its game action. Restore that binding, then try a two-input chord. A held
+   input on reconnect or focus return must not fire until released and pressed again.
+4. In Controller bindings → Global, change Toggle controller mod mode to a free button.
+   Use it to enter and cancel Mod Mode. The old button must no longer toggle the mode.
+   Remap Read Gil in Mod mode: field to that old button; enter with the new mode button,
+   then use the old one to hear Gil. Reset the function before resetting the mode button.
+5. Try assigning an occupied shortcut: hear the conflicting command and keep the old
+   binding. Check Unbind, individual Reset and Reset all. Reopen/restart to confirm saved
+   values. With Game speech off, the editor, capture and reset confirmation must still speak.
+6. As normal progression permits in I–VI, test a route while already aboard available
+   watercraft, mounts and airships. Turning mounts should align before moving forward;
+   corners must not drift to another tile. III/VI airship boarding remains manual.
+   Normal free movement should not produce the old generic unsupported-mode message.
+   A native up/down choice asks you to select an option first. Report any remaining failure
+   with the game/mode/action and that run's log; no diagnostic key is required.
+
+Offline findings and limits: [AUTOWALK](re/AUTOWALK.md) and [binding contracts](INPUT_BINDINGS.md).
+
+
+V0.9.3 follow-up: user reports autowalk now appears to work and is still testing
+remapping; this does not confirm every vehicle/controller profile. During remap
+checks, hold each assigned stick direction briefly: it must not fire the opposite
+command on the following frame. The intermittent lag has reproduced in the own FFII
+log; targeted wall/owner-CPU diagnostics now run automatically. Its full cause is
+still open. See STALL_2026_10_16.md for the exact observed versus unobserved intervals.

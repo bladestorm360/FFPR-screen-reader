@@ -56,6 +56,7 @@ int state_library_info() { return state_library_ui() + 1; }
 // re-checked by class before each use, and dropped on the title (FF1 ResetMainGameState).
 void* g_main_game = nullptr;
 int g_state_change_depth = 0; // native owner only; nested ChangeState calls remain blocked
+int g_requested_state = -1; // ChangeState can queue its target before GetCurrentState updates
 
 void run_action(const char* name)
 {
@@ -93,17 +94,23 @@ ChangeState_t o_ChangeState;
 
 void d_ChangeState(void* self, int32_t state, const void* mi)
 {
+    timing::mark("Main game state begin",state);
     struct ChangingState {
         ChangingState() { ++g_state_change_depth; }
         ~ChangingState() { --g_state_change_depth; }
     } changing;
     hooks::guarded("GameState.BattleTransition", [&] {
-        if (self && kMainGame.is(self)) battle::main_game_transition(state);
+        if (self && kMainGame.is(self)) {
+            g_requested_state = state;
+            battle::main_game_transition(state);
+        }
     });
-    o_ChangeState(self, state, mi);
+    { timing::Scope native("Main game ChangeState",timing::Kind::Original);
+      o_ChangeState(self, state, mi); }
     hooks::guarded("GameState.ChangeState", [&] {
         if (self && kMainGame.is(self)) change_state_postfix(self, state);
     });
+    timing::mark("Main game state end",state);
 }
 
 // MenuResumedAfterLibrary_Postfix: the config menu is back on screen after the bestiary.
@@ -171,6 +178,8 @@ bool is_field_player_state()
 
 bool is_field_navigation_ready()
 {
+    if (g_state_change_depth || fieldnav::map_transition::is_state_changing() || battle::in_battle() ||
+        (g_requested_state >= 0 && g_requested_state != kStatePlayer && g_requested_state != kStateTransport)) return false;
     return hooks::guarded_r("GameState.IsFieldNavigationReady", false, [] {
         if (!g_main_game || !kMainGame.is(g_main_game)) return false;
         const int state = ref::call<int32_t>(mGetCurrentState, g_main_game);
@@ -180,7 +189,10 @@ bool is_field_navigation_ready()
 
 bool input_transition_blocked()
 {
-    if (g_state_change_depth || fieldnav::map_transition::is_screen_fading()) return true;
+    if (g_state_change_depth || fieldnav::map_transition::is_state_changing()) return true;
+    if (g_requested_state == 0 || g_requested_state == 1 || g_requested_state == 2 || g_requested_state == 14 ||
+        (g_requested_state == 12 && !queries::is("MessageWindowPatches.IsInDialogue"))) return true;
+    if (fieldnav::map_transition::is_screen_fading()) return true;
     return hooks::guarded_r("GameState.InputTransition", true, [] {
         if (!g_main_game) return field::scene_name() != L"Title"; // allow the stable title; block boot/loading before a manager exists
         if (!kMainGame.is(g_main_game)) return true;
@@ -212,6 +224,6 @@ bool is_field_state()
     });
 }
 
-void reset_main_game_state() { g_main_game = nullptr; }
+void reset_main_game_state() { g_main_game = nullptr; g_requested_state = -1; }
 
 } // namespace ffpr::system

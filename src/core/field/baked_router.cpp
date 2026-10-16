@@ -378,10 +378,12 @@ int facing_direction(const Cell& from, const Goals& goals)
     return direction_towards(from, *nearest);
 }
 
-std::vector<Leg> legs(const std::vector<Cell>& cells, int wrap_width, int wrap_height)
+std::vector<Leg> legs(const std::vector<Cell>& cells, int wrap_width, int wrap_height,
+                      const std::function<bool()>& cancelled)
 {
     std::vector<Leg> out;
     for (size_t i = 1; i < cells.size(); ++i) {
+        if (cancelled && cancelled()) return {};
         const int dir = step_direction(cells[i - 1], cells[i], wrap_width, wrap_height);
         if (dir < 0) continue;
         if (!out.empty() && out.back().dir == dir) ++out.back().count;

@@ -39,6 +39,11 @@ python tools\import_check.py out\hid.dll
 if errorlevel 1 exit /b 1
 
 echo Checking that hooks stack with MelonLoader / BepInEx style hooks...
+"out\checks\timing_check.exe" > build_check\timing_report.txt 2>&1
+if errorlevel 1 (
+    echo Timing diagnostics check FAILED - see build_check\timing_report.txt
+    exit /b 1
+)
 "out\checks\coexist_check.exe" > build_check\coexist_report.txt 2>&1
 if errorlevel 1 (
     echo Coexistence check FAILED - see build_check\coexist_report.txt
@@ -77,6 +82,16 @@ if errorlevel 1 (
     echo Trap routing check FAILED - see build_check\trap_route_report.txt
     exit /b 1
 )
+"out\checks\transition_route_check.exe" > build_check\transition_route_report.txt 2>&1
+if errorlevel 1 (
+    echo Transition route check FAILED - see build_check\transition_route_report.txt
+    exit /b 1
+)
+"out\checks\event_semantics_check.exe" > build_check\event_semantics_report.txt 2>&1
+if errorlevel 1 (
+    echo Event semantics check FAILED - see build_check\event_semantics_report.txt
+    exit /b 1
+)
 
 "out\checks\teleport_check.exe" > build_check\teleport_report.txt 2>&1
 if errorlevel 1 (
@@ -95,6 +110,21 @@ if errorlevel 1 (
     echo Autowalk native input check FAILED - see build_check\autowalk_native_report.txt
     exit /b 1
 )
+"out\checks\active_controller_check.exe" > build_check\active_controller_report.txt 2>&1
+if errorlevel 1 (
+    echo Active controller check FAILED - see build_check\active_controller_report.txt
+    exit /b 1
+)
+"out\checks\autowalk_steering_check.exe" > build_check\autowalk_steering_report.txt 2>&1
+if errorlevel 1 (
+    echo Native steering check FAILED - see build_check\autowalk_steering_report.txt
+    exit /b 1
+)
+"out\checks\bindings_check.exe" > build_check\bindings_report.txt 2>&1
+if errorlevel 1 (
+    echo Input binding check FAILED - see build_check\bindings_report.txt
+    exit /b 1
+)
 "out\checks\equipment_party_check.exe" > build_check\equipment_party_report.txt 2>&1
 if errorlevel 1 (
     echo Equipment and party check FAILED - see build_check\equipment_party_report.txt
@@ -103,6 +133,11 @@ if errorlevel 1 (
 "out\checks\mapstate_check.exe" > build_check\mapstate_report.txt 2>&1
 if errorlevel 1 (
     echo Map-state check FAILED - see build_check\mapstate_report.txt
+    exit /b 1
+)
+"out\checks\mapstate_native_check.exe" > build_check\mapstate_native_report.txt 2>&1
+if errorlevel 1 (
+    echo Native map-state check FAILED - see build_check\mapstate_native_report.txt
     exit /b 1
 )
 "out\checks\frame_check.exe" > build_check\frame_report.txt 2>&1
@@ -151,6 +186,16 @@ if errorlevel 1 (
     echo Battle context check FAILED - see build_check\battle_context_report.txt
     exit /b 1
 )
+"out\checks\battle_entry_check.exe" > build_check\battle_entry_report.txt 2>&1
+if errorlevel 1 (
+    echo Battle entry check FAILED - see build_check\battle_entry_report.txt
+    exit /b 1
+)
+"out\checks\battle_formation_check.exe" > build_check\battle_formation_report.txt 2>&1
+if errorlevel 1 (
+    echo Battle formation check FAILED - see build_check\battle_formation_report.txt
+    exit /b 1
+)
 "out\checks\battle_focus_check.exe" > build_check\battle_focus_report.txt 2>&1
 if errorlevel 1 (
     echo Battle focus check FAILED - see build_check\battle_focus_report.txt
@@ -184,6 +229,11 @@ if not "%errorlevel%"=="0" (
 "out\checks\browse_route_check.exe" > build_check\browse_route_report.txt 2>&1
 if errorlevel 1 (
     echo Browse route check FAILED - see build_check\browse_route_report.txt
+    exit /b 1
+)
+"out\checks\event_tracking_check.exe" > build_check\event_tracking_report.txt 2>&1
+if errorlevel 1 (
+    echo Event tracking check FAILED - see build_check\event_tracking_report.txt
     exit /b 1
 )
 "out\checks\modal_speech_check.exe" > build_check\modal_speech_report.txt 2>&1

@@ -15,6 +15,7 @@
 #include "text.h"
 #include "mod_ui.h"
 #include "modal_keys.h"
+#include "../input/bindings.h"
 
 namespace ui::text_input {
 namespace {
@@ -30,6 +31,7 @@ struct State {
     bool input_result = false;
 };
 
+int binding_confirm,binding_cancel,binding_erase,binding_left,binding_right,binding_up,binding_down,binding_home,binding_end;
 State* g_state = nullptr;
 State& st()
 {
@@ -100,7 +102,7 @@ bool handle_input_now()
     using modal_keys::pressed;
     using modal_keys::held;
 
-    if (pressed(VK_RETURN)) {
+    if ((input::bindings::pressed(binding_confirm) || input::bindings::pad("pad.text.confirm"))) {
         const std::wstring final_text = text::trim(s.buffer);
         if (final_text.empty()) {
             ffpr::say(T(L"Name cannot be empty"), true);
@@ -114,13 +116,13 @@ bool handle_input_now()
         return true;
     }
 
-    if (pressed(VK_ESCAPE)) {
+    if ((input::bindings::pressed(binding_cancel) || input::bindings::pad("pad.text.cancel"))) {
         Cancel callback = s.on_cancel;
         complete_input(T(L"Cancelled"), std::move(callback));
         return true;
     }
 
-    if (pressed(VK_BACK)) {
+    if (input::bindings::pressed(binding_erase)) {
         if (s.cursor > 0) {
             const wchar_t deleted = s.buffer[static_cast<size_t>(s.cursor - 1)];
             s.buffer.erase(static_cast<size_t>(s.cursor - 1), 1);
@@ -130,7 +132,7 @@ bool handle_input_now()
         return true;
     }
 
-    if (pressed(VK_LEFT)) {
+    if (input::bindings::pressed(binding_left)) {
         if (s.cursor > 0) {
             --s.cursor;
             ffpr::say(character_name(s.buffer[static_cast<size_t>(s.cursor)]), true);
@@ -138,7 +140,7 @@ bool handle_input_now()
         return true;
     }
 
-    if (pressed(VK_RIGHT)) {
+    if (input::bindings::pressed(binding_right)) {
         if (s.cursor < static_cast<int>(s.buffer.size())) {
             ffpr::say(character_name(s.buffer[static_cast<size_t>(s.cursor)]), true);
             ++s.cursor;
@@ -146,18 +148,18 @@ bool handle_input_now()
         return true;
     }
 
-    if (pressed(VK_UP) || pressed(VK_DOWN)) {
+    if (input::bindings::pressed(binding_up) || input::bindings::pressed(binding_down)) {
         ffpr::say(!s.buffer.empty() ? s.buffer : T(L"empty"), true);
         return true;
     }
 
-    if (pressed(VK_HOME)) {
+    if (input::bindings::pressed(binding_home)) {
         s.cursor = 0;
         if (!s.buffer.empty()) ffpr::say(character_name(s.buffer[0]), true);
         return true;
     }
 
-    if (pressed(VK_END)) {
+    if (input::bindings::pressed(binding_end)) {
         s.cursor = static_cast<int>(s.buffer.size());
         return true;
     }
@@ -205,6 +207,17 @@ bool handle_input_now()
 
 int install()
 {
+    binding_confirm=input::bindings::add("key.text.confirm","Confirm text",false,-3,int(input::Key::Return));
+    binding_cancel=input::bindings::add("key.text.cancel","Cancel text input",false,-3,int(input::Key::Escape));
+    binding_erase=input::bindings::add("key.text.erase","Erase previous character",false,-3,int(input::Key::Backspace));
+    binding_left=input::bindings::add("key.text.left","Previous character",false,-3,int(input::Key::LeftArrow));
+    binding_right=input::bindings::add("key.text.right","Next character",false,-3,int(input::Key::RightArrow));
+    binding_up=input::bindings::add("key.text.up","Read text",false,-3,int(input::Key::UpArrow));
+    binding_down=input::bindings::add("key.text.down","Read text (down)",false,-3,int(input::Key::DownArrow));
+    binding_home=input::bindings::add("key.text.home","Start of text",false,-3,int(input::Key::Home));
+    binding_end=input::bindings::add("key.text.end","End of text",false,-3,int(input::Key::End));
+    input::bindings::add("pad.text.confirm","Confirm text",true,-3,0,-1);
+    input::bindings::add("pad.text.cancel","Cancel text input",true,-3,1,-1);
     queries::define("TextInputWindow.IsOpen", [] { return is_open(); });
     actions::define("TextInputWindow.HandleInput", [] { handle_input(); });
     return 0;

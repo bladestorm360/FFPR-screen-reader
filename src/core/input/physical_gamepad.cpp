@@ -73,7 +73,7 @@ DWORD WINAPI worker(void*) {
             current.ready = gamepads;
             if (g_pad) {
                 current.available = true; current.type = static_cast<int>(sdl::SDL_GetGamepadType(g_pad));
-                for (int i = 0; i < 15; ++i) if (sdl::SDL_GetGamepadButton(g_pad, static_cast<SDL_GamepadButton>(i))) current.held |= 1u << i;
+                for (int i = 0; i < SDL_GAMEPAD_BUTTON_COUNT; ++i) if (sdl::SDL_GetGamepadButton(g_pad, static_cast<SDL_GamepadButton>(i))) current.held |= 1u << i;
                 const int16_t x = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_LEFTX), y = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_LEFTY);
                 const int16_t rx = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_RIGHTX), ry = sdl::SDL_GetGamepadAxis(g_pad, SDL_GAMEPAD_AXIS_RIGHTY);
                 auto axis = [](int16_t value) { return std::abs(static_cast<int>(value)) < 8000 ? 0.0f : float(value) / 32767.0f; };

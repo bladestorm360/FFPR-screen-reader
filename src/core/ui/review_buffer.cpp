@@ -98,29 +98,49 @@ void show_impl(void* owner, const std::wstring& headline, std::vector<std::wstri
     g_options = options; // available to same-page replacements while this build is pending
     g_build_pending = true; // this displayed context owns review input immediately
     const auto generation = g_generation;
+    auto notification_session = options.notification_session;
+    // Keep mutable native-owned session state out of the worker snapshot.
+    const auto notification_history = notification_session ? notification_session->history : nullptr;
+    options.notification_session.reset();
+    const bool filter_notifications = notification_session && !preserve_actions &&
+        !options.notifications.empty();
     // Essential ready text goes straight to the speech worker. It must not wait
     // behind route computation or full-table assembly on the compute lane.
     if (options.announce && !preserve_actions) {
         std::vector<std::wstring> ready;
         if (!headline.empty()) ready.push_back(headline);
         for (const auto& total : options.summary) if (!total.empty()) ready.push_back(total);
+        if (!filter_notifications)
+            for (const auto& line : options.notifications) if (!line.empty()) ready.push_back(line);
         if (!ready.empty()) ffpr::say_parts(std::move(ready), true);
     }
-    struct Input { std::wstring headline; std::vector<std::wstring> lines; Options options; bool autodetail; };
+    struct Input {
+        std::wstring headline; std::vector<std::wstring> lines; Options options; bool autodetail;
+        std::shared_ptr<const ResultNotificationHistory> history;
+        bool filter_notifications;
+    };
     struct Built {
         NavigationBuffer buffer;
         std::vector<std::wstring> lines;
         Options options;
         std::wstring full, headline, details, brief;
         bool autodetail = false;
+        std::shared_ptr<const ResultNotificationHistory> notification_history;
     };
-    worker_job::start(g_work, Input{headline, std::move(lines), std::move(options), prefs::auto_detail_enabled()},
+    worker_job::start(g_work, Input{headline, std::move(lines), std::move(options), prefs::auto_detail_enabled(),
+                                  notification_history, filter_notifications},
         [](Input& input) {
             Built built; auto& options = input.options;
+            if (input.filter_notifications) {
+                auto selection = select_result_notifications(options.notifications, input.history);
+                options.notifications = std::move(selection.lines);
+                built.notification_history = std::move(selection.history);
+            }
             built.details = text::join(input.lines, L". ");
             built.headline = std::move(input.headline);
             if (options.include_headline && !built.headline.empty()) built.lines.push_back(built.headline);
             for (const auto& line : options.summary) if (!line.empty()) built.lines.push_back(line);
+            for (const auto& line : options.notifications) if (!line.empty()) built.lines.push_back(line);
             for (auto& line : input.lines) if (!line.empty()) built.lines.push_back(std::move(line));
             std::vector<NavigationBuffer::Entry> entries;
             for (const auto& line : built.lines) entries.push_back([line] { return line; });
@@ -132,13 +152,20 @@ void show_impl(void* owner, const std::wstring& headline, std::vector<std::wstri
             if (options.brief) built.brief = text::join(*options.brief, L". ");
             built.options = std::move(options); built.autodetail = input.autodetail;
             return built;
-        }, [owner, generation](Built built) {
+        }, [owner, generation, notification_session, filter_notifications](Built built) {
             if (generation != g_generation || g_owner != owner || !displayed::container_visible(owner)) return;
             g_build_pending = false;
             g_options = std::move(built.options); g_lines = std::move(built.lines);
+            g_options.notification_session = notification_session;
             g_buffer = std::move(built.buffer); g_full_details = std::move(built.full);
             g_phase_changes = std::move(built.brief);
             if (g_options.announce) {
+                if (filter_notifications) {
+                    if (!g_options.notifications.empty()) ffpr::say_parts(g_options.notifications, false);
+                    // A cancelled/hidden build or muted game speech must not count
+                    // an unseen notification as announced in a later buffer.
+                    if (prefs::speech_enabled()) notification_session->history = std::move(built.notification_history);
+                }
                 if (built.autodetail && !g_options.defer_details) {
                     const auto& details = g_options.brief_details ? g_phase_changes : built.details;
                     if (!details.empty()) ffpr::say(details, false);

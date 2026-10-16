@@ -30,6 +30,27 @@ int main()
             std::chrono::steady_clock::now() - decoding_started).count();
         json::Value records;
         expect(json::parse(read(root + "mapstate.json"), records), "navigation decisions parse");
+        int event_guards=0;
+        for(int i=0;i<baked::submap_count();++i) {
+            const auto& sm=*baked::submap_at(i);const auto* record=records.get(baked::name_of(sm));
+            const auto* guards=record?record->get(L"events"):nullptr;if(!guards)continue;
+            for(const auto& guard:guards->arr) {
+                ++event_guards;expect(guard.get(L"code")->arr.size()<=256,"event predicate retains only bounded native entry control flow");
+                const baked::Object* object=nullptr;
+                for(const auto& row:baked::grids(sm).objects)
+                    if(static_cast<int>(row.type)==guard.get(L"type")->n&&row.entity_id()==guard.get(L"id")->n&&
+                        baked::object_identifier(row)==guard.get(L"raw")->s&&baked::str(row.group)==guard.get(L"group")->s&&
+                        row.layer==guard.get(L"cell")->arr[0].n&&row.tx==guard.get(L"cell")->arr[1].n&&row.ty==guard.get(L"cell")->arr[2].n)object=&row;
+                expect(object!=nullptr,"every native entry guard has its exact original bake identity");if(!object)continue;
+                for(int profile=0;profile<3;++profile) {
+                    map_state::Flags copied;if(profile<2){for(auto& v:copied.scenario)v=profile;for(auto& v:copied.treasure)v=profile;for(auto& v:copied.global)v=profile;}
+                    map_state::Resolver state(copied,records);const auto availability=map_state::project(guard,copied);
+                    expect(state.consumed(sm,*object)==(availability.known&&availability.group.empty()),"entry guards retire an event only when all native prefix paths skip every action");
+                    if(profile==2)expect(!state.consumed(sm,*object),"unknown persistent flags cannot consume a potentially actionable event");
+                }
+            }
+        }
+        std::printf("FF%d: %d exact native entry guards checked in known/unknown flag states\n",n,event_guards);
         map_state::Flags flags;
         for (auto& v : flags.scenario) v = 0;
         for (auto& v : flags.treasure) v = 0;

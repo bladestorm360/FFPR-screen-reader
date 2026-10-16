@@ -147,13 +147,16 @@ EntityPtr make(Kind kind, Context& c, const std::wstring& name)
 {
     auto e = std::make_shared<Entity>();
     e->kind = kind;
+    if (void* property = c.property(); property && r::fPropEntityId.get() >= 0)
+        e->entity_id = ref::rd<int32_t>(property, r::fPropEntityId);
     e->game = c.fe;
     e->game_class = il2cpp::object_class(c.fe);
     e->pos = c.position;
     e->name = name;
     e->converted_name = name;
     e->audio_hint = (c.property() ? ref::rd_str(c.property(),r::fPropName) : std::wstring()).substr(0,256);
-    e->audio_hint += L" " + c.go_name.substr(0,255);
+    e->raw_name_known=!e->audio_hint.empty();
+    if (e->audio_hint.empty()) e->audio_hint = c.go_name.substr(0,256);
     e->audio_door = (kind==Kind::MapExit || kind==Kind::Event || kind==Kind::ScriptTrigger)
         && (contains(c.go_lower,L"door") || contains(e->audio_hint,L"ドア") || contains(e->audio_hint,L"扉"));
     return e;
@@ -244,7 +247,7 @@ EntityPtr create_map_exit(Context& c)
     return exit;
 }
 
-/// GotoMapDetector (50): map exits (GotoMapEventEntity, ObjectType 3) and same-map warp tiles
+/// GotoMapDetector (50): map exits (GotoMapEventEntity, ObjectType 3).
 /// (PropertyTelepoPoint).
 Detection goto_map_detector(Context& c)
 {
@@ -253,7 +256,7 @@ Detection goto_map_detector(Context& c)
 
     void* prop = c.property();
     if (prop && r::kPropertyTelepoPoint.is(prop)) {
-        return detected(make_event(c, L"Warp Tile"));
+        return skip(); // Teleport return-cache metadata; no native entity is created
     }
     return not_handled();
 }
@@ -446,6 +449,8 @@ Category g_sel_category = Category::All;
 std::wstring g_sel_name;
 int g_sel_remote = 0;            // another floor's entry: its floor and cell identify it
 int g_sel_cx = 0, g_sel_cy = 0;
+int g_sel_entity_id = -1;
+int g_sel_map = 0;
 
 bool player_local_position(Vec3& out)
 {
@@ -461,6 +466,7 @@ bool player_local_position(Vec3& out)
 /// FF2 EntityScanner.VehiclePadName: the developer name of a vehicle trigger pad tile.
 std::wstring vehicle_pad_name(const EntityPtr& e)
 {
+    if (e->remote() && !e->vehicle_pad.empty()) return std::to_wstring(e->remote_map_id) + L":" + e->vehicle_pad;
     if (e->kind != Kind::Event || !live_entity(e->game)) return L"";
     void* prop = entity_property(e->game);
     if (!prop || ref::rd<int32_t>(prop, r::fPropObjectType) != kObjTransportationEventAction) return L"";
@@ -481,14 +487,14 @@ std::wstring remote_guard_base(const std::wstring& name)
 
 /// The entries of the other floors (user, 2026-10-11: "destinations from other floors need to
 /// be visible ... current map should include all dungeon floors, town floors etc"): the talk
-/// targets, chests, save points and outward exits of every sub-map connected to this one by
+/// targets, chests, save points, actionable events/interactions and outward exits connected by
 /// exits and warps without crossing a world map, from the baked data
 /// (baked_nav::connected_objects). Named as the live list names them, the floor's title after
 /// the name ("Potion (Kashuan Keep 2F)"); NPCs are numbered within their floor as on this one.
 /// Story groups and chest opened state are projected from a copied native flag snapshot.
 /// Formatting reads native names on the main thread in bounded batches.
 struct RemoteRow { baked_nav::RemoteObject object; std::wstring floor, name, destination; };
-struct RemoteInput { std::vector<RemoteRow> rows; std::wstring locale; };
+struct RemoteInput { std::vector<RemoteRow> rows; std::wstring locale; std::function<bool()> cancelled; };
 struct RemoteBuilder {
     std::vector<baked_nav::RemoteObject> objects;
     RemoteInput input;
@@ -502,6 +508,11 @@ struct RemoteBuilder {
         for (; next < objects.size() && budget.available(); ++next) {
             const auto& object = objects[next];
             RemoteRow row; row.object = object; row.floor = resolve_map_name(object.map_id);
+            if (!object.event_type.empty()) {
+                if (object.event_type != L"Warp Tile" && placeholder_fn && placeholder_fn(object.raw_name.c_str())) continue;
+                input.rows.push_back(std::move(row));
+                continue;
+            }
             switch (object.type) {
             case baked::ObjType::NPC:
             case baked::ObjType::ShopNPC:
@@ -525,12 +536,20 @@ std::vector<EntityPtr> build_remote(RemoteInput& input) {
     std::vector<EntityPtr> result;
     std::unordered_set<std::wstring> seen;
     for (auto& row : input.rows) {
+        if (input.cancelled && input.cancelled()) return {};
         const auto& object = row.object;
         auto entity = std::make_shared<Entity>(); // new owned mod data; no engine pointers
+        entity->entity_id = object.entity_id;
+        entity->audio_hint = object.raw_name;
+        entity->raw_name_known=!object.raw_name.empty();
         entity->remote_map_id = object.map_id; entity->cell_layer = object.cell.layer;
         entity->cell_x = object.cell.x; entity->cell_y = object.cell.y; entity->floor_name = std::move(row.floor);
         std::wstring base;
-        switch (object.type) {
+        if (!object.event_type.empty()) {
+            entity->kind = Kind::Event; entity->event_type = object.event_type;
+            entity->name = safe_event_label(object.raw_name, object.event_type);
+            if (object.type == baked::ObjType::TransportationEventAction) entity->vehicle_pad = object.raw_name;
+        } else switch (object.type) {
         case baked::ObjType::NPC:
         case baked::ObjType::ShopNPC:
             entity->kind = Kind::NPC; entity->shop = object.shop;
@@ -547,7 +566,9 @@ std::vector<EntityPtr> build_remote(RemoteInput& input) {
         default: continue;
         }
         entity->converted_name = entity->name;
-        const std::wstring where = entity->kind == Kind::MapExit ? std::to_wstring(object.dest_map_id)
+        const std::wstring where = entity->kind == Kind::Event
+            ? std::to_wstring(object.entity_id) + L":" + object.group + L":" + std::to_wstring(object.cell.layer) + L":" + std::to_wstring(object.cell.x) + L"," + std::to_wstring(object.cell.y)
+            : entity->kind == Kind::MapExit ? std::to_wstring(object.dest_map_id)
             : std::to_wstring(object.cell.x) + L"," + std::to_wstring(object.cell.y);
         const std::wstring key = entity->floor_name + L"\n" + std::to_wstring(static_cast<int>(entity->kind)) + L"\n" +
             (entity->kind == Kind::NPC ? base : entity->name) + L"\n" + where;
@@ -563,7 +584,8 @@ using namespace filter_worker;
 
 void cancel_filter() {
     g_filter_work.cancel(); ++g_filter_generation; g_filter_pending = false;
-    frame::cancel_label("EntityScanner.Filter");
+    frame::cancel_label("EntityScanner.FilterCapture");
+    frame::cancel_label("EntityScanner.FilterPublish");
 }
 void save_selected_identifier();
 void apply_filter() {
@@ -574,6 +596,7 @@ void apply_filter() {
     const auto map_id = current_map_id_or_user_data();
     auto entities = std::make_shared<std::vector<EntityPtr>>(g_entities); // owner registry only
     auto input = std::make_shared<FilterInput>();
+    input->state=std::make_shared<map_state::Resolver>();
     input->category = g_category; input->sort = player_local_position(input->player);
     input->pads = game::flags().has_vehicle_pads; input->exits = settings::get_bool("MapExitFilter", false);
     input->navigation = baked_nav::begin_exit_capture(pathfinding_mode() == ui::prefs::kFilterCurrentMapWithVehicles,input->exits);
@@ -587,15 +610,22 @@ void apply_filter() {
     input->layer = to_layer_enabled(); input->selected_has = g_sel_has;
     input->selected_position = g_sel_pos; input->selected_category = g_sel_category; input->selected_name = g_sel_name;
     input->selected_remote = g_sel_remote; input->selected_x = g_sel_cx; input->selected_y = g_sel_cy;
+    input->selected_entity_id = g_sel_entity_id;
+    input->selected_map = g_sel_map;
+    input->selected_raw=g_sel&&g_sel->raw_name_known?g_sel->audio_hint:std::wstring();
     baked_nav::MapGoal continued;
     TargetKind continued_kind;
     std::wstring continued_name;
     input->continued_goal = baked_nav::pending_goal(continued, continued_kind, continued_name);
     input->current_map = map_id; input->continued_map = continued.map_id;
     input->continued_x = continued.cell.x; input->continued_y = continued.cell.y;
-    const int continued_map = input->continued_map, continued_x = input->continued_x, continued_y = input->continued_y;
+    input->continued_entity_id = continued.entity_id;
+    input->continued_raw=continued.raw_name;
+    const auto continued_raw=input->continued_raw;
+    const int continued_map = input->continued_map, continued_x = input->continued_x, continued_y = input->continued_y,
+        continued_id = input->continued_entity_id;
     auto obstacles = std::make_shared<EntityCursor>(); // native pointers remain in this closure
-    frame::every_frame([entities, input, obstacles, captured = false, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y, captured_at, navigation_filtered, vehicle]() mutable {
+    frame::every_frame([entities, input, obstacles, captured = false, next = size_t(0), generation, map_id, continued_map, continued_x, continued_y, continued_id, continued_raw, captured_at, navigation_filtered, vehicle]() mutable {
         if (generation != g_filter_generation) return false;
         if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) { cancel_filter(); return false; }
         CaptureBudget budget;
@@ -603,10 +633,13 @@ void apply_filter() {
             const auto& entity = (*entities)[next];
             FilterRow row;
             row.index = next; row.kind = entity->kind; row.category = entity->category();
+            row.entity_id = entity->entity_id;
+            row.raw_name=entity->raw_name_known?entity->audio_hint:std::wstring();
             row.position = entity->position(); row.numbering_position = entity->pos;
             row.remote_map = entity->remote_map_id; row.cell_x = entity->cell_x; row.cell_y = entity->cell_y;
             row.cell_layer = entity->cell_layer;
-            if (input->continued_goal && !row.remote_map && map_id == continued_map) {
+            if (!row.remote_map && ((input->continued_goal && map_id == continued_map) ||
+                (input->selected_has && map_id == input->selected_map && row.entity_id == input->selected_entity_id))) {
                 baked_route::Cell cell;
                 row.cell_valid = baked_nav::cell_at(field::map_handle(), row.position, cell);
                 if (row.cell_valid) { row.cell_x = cell.x; row.cell_y = cell.y; }
@@ -631,12 +664,12 @@ void apply_filter() {
         }
         const auto origin = input->sort ? std::optional<Vec3>(input->player) : std::nullopt;
         worker_job::start(g_filter_work, std::move(*input), &filter_worker::build_categories,
-            [entities, generation, map_id, continued_map, continued_x, continued_y, origin, captured_at, navigation_filtered, vehicle](Categories filtered) {
+            [entities, generation, map_id, continued_map, continued_x, continued_y, continued_id, continued_raw, origin, captured_at, navigation_filtered, vehicle](Categories filtered) {
                 if (generation != g_filter_generation || map_id != current_map_id_or_user_data()) return;
                 auto result = std::make_shared<Categories>(std::move(filtered));
                 auto handles = std::make_shared<std::array<std::vector<EntityPtr>, 6>>(); // native owner registry only
                 frame::every_frame([entities, result, handles, named = size_t(0), ordered = size_t(0), view = size_t(0),
-                                    generation, map_id, continued_map, continued_x, continued_y, origin, captured_at, navigation_filtered, vehicle]() mutable {
+                                    generation, map_id, continued_map, continued_x, continued_y, continued_id, continued_raw, origin, captured_at, navigation_filtered, vehicle]() mutable {
                     if (generation != g_filter_generation) return false;
                     if (!ffpr::system::is_field_navigation_ready() || map_id != current_map_id_or_user_data()) {
                         cancel_filter(); return false;
@@ -667,10 +700,11 @@ void apply_filter() {
                     const auto selected = std::find(filtered_view().begin(), filtered_view().end(), g_sel);
                     if (g_sel && selected != filtered_view().end())
                         g_index = static_cast<int>(selected - filtered_view().begin());
-                    else if (g_sel_has && current.restored >= 0) g_index = current.restored;
+                    else if (g_sel_has) g_index = current.restored; // -1 keeps a missing target unselected
                     baked_nav::MapGoal goal; TargetKind kind; std::wstring name;
                     const bool continued_current = current.continued >= 0 && baked_nav::pending_goal(goal, kind, name)
-                        && goal.map_id == continued_map && goal.cell.x == continued_x && goal.cell.y == continued_y;
+                        && goal.map_id == continued_map && goal.cell.x == continued_x && goal.cell.y == continued_y
+                        && goal.entity_id == continued_id && goal.raw_name==continued_raw;
                     if (continued_current) g_index = current.continued;
                     if (g_index >= static_cast<int>(filtered_view().size())) g_index = 0;
                     g_views_ready = true;
@@ -678,8 +712,10 @@ void apply_filter() {
                     g_navigation_filtered = navigation_filtered; g_view_vehicle = vehicle;
                     g_view_captured_at = captured_at;
                     g_filter_pending = false;
-                    if (continued_current) {
+                    if (continued_current || (g_sel_has && g_index >= 0 && current.restored >= 0)) {
                         save_selected_identifier();
+                    }
+                    if (continued_current) {
                         LOGF("[EntityScanner] destination kept through the transition: %ls", name.c_str());
                     }
                     return false;
@@ -695,6 +731,8 @@ void clear_selected_identifier()
     g_sel_has = false;
     g_sel_name.clear();
     g_sel_remote = 0;
+    g_sel_entity_id = -1;
+    g_sel_map = 0;
 }
 
 void save_selected_identifier()
@@ -709,6 +747,12 @@ void save_selected_identifier()
     g_sel_remote = e->remote_map_id;
     g_sel_cx = e->cell_x;
     g_sel_cy = e->cell_y;
+    g_sel_entity_id = e->entity_id;
+    g_sel_map = e->remote() ? e->remote_map_id : current_map_id_or_user_data();
+    if (!e->remote()) {
+        baked_route::Cell cell;
+        if (baked_nav::cell_at(field::map_handle(), e->position(), cell)) { g_sel_cx = cell.x; g_sel_cy = cell.y; }
+    }
 }
 
 void ensure_correct_map()
@@ -730,16 +774,23 @@ void when_filter_ready(std::function<void()> ready, bool existing_selection) {
     // destination or preparing another reachability flood after each move.
     // The route captures current pose, vehicle and live gates independently.
     // Cold entry, map/settings invalidation and dead selections still wait.
-    if (existing_selection && g_views_ready && g_sel && g_sel->is_alive() &&
+    if (existing_selection && g_sel && current_entity() == g_sel && g_sel->is_alive() &&
         g_last_scanned_map_id == current_map_id_or_user_data()) {
-        Vec3 at; const auto vehicle = current_vehicle();
-        // Do not leave an obsolete flood ahead of the interactive route on the
-        // Navigation lane. Its owned cancellation is checked inside search;
-        // the owner never waits. The scheduled live refresh supplies a new list.
-        if (g_filter_pending && (!g_filter_origin || !player_local_position(at) ||
-            at.x != g_filter_origin->x || at.y != g_filter_origin->y || at.z != g_filter_origin->z ||
-            (vehicle.valid ? vehicle.id : 0) != g_filter_vehicle)) cancel_filter();
-        ready(); return;
+        // Each explicit request supersedes the refresh, even at the same pose.
+        // Never queue a list flood ahead of the interactive route. Restart from
+        // fresh native collections after its answer; repeated input retires this
+        // continuation too. Keep the published view and exact selected identity.
+        cancel_navigation_work();
+        const int map_id = current_map_id_or_user_data();
+        ready();
+        frame::every_frame([map_id] {
+            if (!ffpr::system::is_field_navigation_ready() ||
+                ffpr::system::input_transition_blocked() || map_id != current_map_id_or_user_data()) return false;
+            if (baked_nav::request_pending()) return true;
+            schedule_scan();
+            return false;
+        }, "EntityScanner.RefreshAfterDirections", INT_MAX);
+        return;
     }
     if (g_views_ready && g_navigation_filtered) {
         Vec3 at; const auto transport=field::current_vehicle();
@@ -764,6 +815,7 @@ void when_filter_ready(std::function<void()> ready, bool existing_selection) {
 
 namespace {
 std::atomic<uint64_t> g_scan_generation{0};
+uint64_t g_state_revision = 1, g_converted_revision = 0;
 bool g_scan_running = false;
 worker_job::Owner g_scan_work;
 void finish_scan(int map_id, bool remote_ready = false)
@@ -790,6 +842,22 @@ void cancel_scan()
     g_scan_running = false;
     frame::cancel_label("EntityScanner.Scan");
     frame::cancel_label("EntityScanner.ScanRemote");
+}
+void cancel_navigation_work()
+{
+    cancel_scan();
+    cancel_filter();
+    frame::cancel_label("EntityScanner.Ready");
+    frame::cancel_label("EntityScanner.RefreshAfterDirections");
+}
+void interrupt_navigation_work()
+{
+    ++g_scan_generation;
+    ++g_filter_generation;
+    g_scan_work.interrupt();
+    g_filter_work.interrupt();
+    g_scan_running = false;
+    g_filter_pending = false;
 }
 void invalidate_map()
 {
@@ -823,8 +891,10 @@ void schedule_scan()
         bool captured = false;
         size_t prune = 0;
         double started = 0;
+        uint64_t revision = 0;
     };
     auto scan = std::make_shared<Scan>();
+    scan->revision = g_state_revision;
     frame::every_frame([scan, generation]() mutable {
         if (generation != g_scan_generation) return false;
         if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return false; }
@@ -846,36 +916,41 @@ void schedule_scan()
             if (!(more = scan->cursor.next(fe))) break;
             if (!fe) continue;
             auto known = std::find_if(g_entity_map.begin(), g_entity_map.end(), [fe](const auto& kv) { return kv.first == fe; });
-            if (known != g_entity_map.end() && known->second->is_alive()) continue;
+            if (known != g_entity_map.end() && known->second && known->second->is_alive() &&
+                scan->revision == g_converted_revision) continue;
             if (!scan->asset.empty() && !entity_on_current_map(fe, scan->asset)) continue;
             auto entity = hooks::guarded_r("EntityScanner.Convert", EntityPtr(), [fe] { return convert(fe); });
             if (entity) {
                 if (known != g_entity_map.end()) known->second = std::move(entity);
                 else g_entity_map.emplace_back(fe, std::move(entity));
-            }
+            } else if (known != g_entity_map.end()) known->second.reset();
         }
         if (more) return true;
         scan->captured = true;
         for (; scan->prune < g_entity_map.size() && budget.available(); ++scan->prune) {
             auto& entry = g_entity_map[scan->prune];
-            if (!scan->cursor.seen.count(entry.first) || !entry.second->is_alive()) entry.second.reset();
+            if (!scan->cursor.seen.count(entry.first) || !entry.second || !entry.second->is_alive()) entry.second.reset();
         }
         if (scan->prune < g_entity_map.size()) return true;
         g_entity_map.erase(std::remove_if(g_entity_map.begin(), g_entity_map.end(), [](const auto& entry) {
             return !entry.second;
         }), g_entity_map.end());
+        g_converted_revision = scan->revision;
         if (pathfinding_mode() == ui::prefs::kFilterCurrentMap && g_remote_map_id != scan->map_id) {
             map_state::Resolver state; // Copy live flags here; worker receives no game pointers.
             const int map_id = scan->map_id;
             const double started = scan->started;
-            struct Projection { int map_id; map_state::Resolver state; };
-            worker_job::start(g_scan_work, Projection{map_id, std::move(state)},
-                [](Projection& input) { return baked_nav::connected_objects_snapshot(input.map_id, input.state); },
+            auto epoch = g_scan_work.epoch(); const auto work_generation = epoch->load();
+            const auto cancelled = [epoch,work_generation] { return epoch->load() != work_generation; };
+            struct Projection { int map_id; map_state::Resolver state; std::function<bool()> cancelled; };
+            worker_job::start(g_scan_work, Projection{map_id, std::move(state), cancelled},
+                [](Projection& input) { return baked_nav::connected_objects_snapshot(input.map_id, input.state, input.cancelled); },
                 [map_id, started, generation](std::vector<baked_nav::RemoteObject> objects) mutable {
                     if (generation != g_scan_generation) return;
                     if (map_id != current_map_id_or_user_data()) { g_scan_running = false; return; }
                     if (!ffpr::system::is_field_navigation_ready()) { g_scan_running = false; return; }
                     auto builder = std::make_shared<RemoteBuilder>(std::move(objects));
+                    builder->input.cancelled = [generation] { return generation != g_scan_generation; };
                     frame::every_frame([map_id, started, generation, builder]() mutable {
                         if (generation != g_scan_generation) return false;
                         if (map_id != current_map_id_or_user_data()) { g_scan_running = false; return false; }
@@ -914,6 +989,17 @@ void scan_entities()
     if (!g_scan_running) schedule_scan();
 }
 
+void refresh_state()
+{
+    // Native script return is the invalidation signal, not an interaction-count
+    // guess. Doors, repeatable conversations and puzzle warps remain available
+    // whenever the native action/state still permits them.
+    ++g_state_revision;
+    g_remote_map_id = -1;
+    cancel_filter();
+    schedule_scan();
+}
+
 void force_rescan()
 {
     if (g_scan_running) return;
@@ -950,6 +1036,7 @@ void previous_entity()
     }
     int n = static_cast<int>(filtered_view().size());
     FilterContext ctx;
+    if (g_index < 0) g_index = 0;
     int start = g_index;
     for (int attempts = 0; attempts < n; ++attempts) {
         g_index = (g_index - 1 + n) % n;
@@ -976,7 +1063,7 @@ bool select_first_reachable()
     FilterContext ctx;
     int n = static_cast<int>(filtered_view().size());
     for (int i = 0; i < n; ++i) {
-        int idx = (g_index + i) % n;
+        int idx = (std::max(g_index, 0) + i) % n;
         if (pathfinding_passes(filtered_view()[static_cast<size_t>(idx)], ctx)) {
             g_index = idx;
             save_selected_identifier();

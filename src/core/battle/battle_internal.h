@@ -19,6 +19,7 @@ void set_current_actor(void* owned_character);
 void clear_other_menu_states(const char* except_key);
 /// BattleStateHelper.OnBattleStart / TryClearOnBattleEnd / ClearAllBattleMenuFlags.
 void on_battle_start();
+bool formation_first_turn(); // first native turn queues behind the opening roster
 void try_clear_on_battle_end();
 void clear_all_battle_menu_flags();
 bool is_in_battle();

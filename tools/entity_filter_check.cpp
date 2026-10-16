@@ -1,8 +1,9 @@
-// check-sources: field/entity_filter.cpp field/npc_names.cpp
+// check-sources: field/entity_filter.cpp field/npc_names.cpp field/baked_map.cpp field/baked_router.cpp field/map_state_program.cpp json.cpp text.cpp
 #include "../src/core/field/entity_filter.h"
 #include <cstdio>
 #include <thread>
 #include <chrono>
+#include <fstream>
 namespace field::baked_nav {
 std::vector<int> exit_distances(ExitSnapshot&,const std::vector<ExitTarget>&,std::function<bool()>) { return {}; }
 }
@@ -73,6 +74,20 @@ int main() {
         expect(actual.order == expected.order && actual.restored == expected.restored && actual.continued == expected.continued,
             "prepared category matches the independent native-policy filter and selection");
     }
+    {
+        FilterInput variants;variants.current_map=50;variants.selected_has=true;variants.selected_map=50;
+        variants.selected_entity_id=32;variants.selected_category=Category::Events;variants.selected_raw=L"original";
+        variants.continued_goal=true;variants.continued_map=50;variants.continued_entity_id=32;variants.continued_raw=L"original";
+        FilterRow first;first.index=0;first.kind=Kind::Event;first.category=Category::Events;first.entity_id=32;
+        first.remote_map=50;first.raw_name=L"replacement";
+        auto original=first;original.index=1;original.raw_name=L"original";
+        variants.rows={first,original};
+        auto view=build(variants);
+        expect(view.restored>=0&&view.order[view.restored]==1&&view.continued>=0&&view.order[view.continued]==1,
+            "collocated story variants retain their exact developer identity across floor restoration");
+        variants.rows.pop_back();view=build(variants);
+        expect(view.restored==-1&&view.continued==-1,"a missing objective never rebinds to a collocated replacement story variant");
+    }
     // Large owned lists are prepared once, not recaptured/renamed for each key.
     FilterInput large;
     large.sort = true;
@@ -88,6 +103,30 @@ int main() {
     expect(prepared.views[0].order.size() == 10000 && prepared.views[3].order.size() == 10000,
         "large-list categories retain every entity without a per-frame entry cap");
     std::printf("Prepared 10,000 rows / six categories: %.3f ms (offline computation)\n", elapsed);
+    int checks=0;
+    large.cancelled=[&] { return ++checks>12000; };
+    const auto retired=build_categories(large);
+    expect(retired.views[0].order.empty()&&checks==12001,
+        "obsolete destination refresh exits during row preparation/sort without finishing all six views");
+    {
+        const auto read=[](const char* path){std::ifstream f(path,std::ios::binary);return std::string(std::istreambuf_iterator<char>(f),{});};
+        const auto bytes=read("data/ff1/maps.bin");expect(baked::load(bytes.data(),bytes.size()),"real FF1 entry-guard bake loads");
+        json::Value records;expect(json::parse(read("data/ff1/mapstate.json"),records),"real FF1 entry-guard records load");
+        const auto* sm=baked::submap_by_map_id(1);expect(sm!=nullptr,"real world event floor exists");
+        if(sm) {
+            const baked::Object* trigger=nullptr;for(const auto& object:baked::grids(*sm).objects)
+                if(object.entity_id()==89&&object.type==baked::ObjType::Event)trigger=&object;
+            expect(trigger!=nullptr,"native conditional one-use event exists");
+            if(trigger)for(int profile=0;profile<3;++profile) {
+                map_state::Flags flags;if(profile<2){for(auto& v:flags.scenario)v=profile;for(auto& v:flags.treasure)v=profile;for(auto& v:flags.global)v=profile;}
+                FilterInput stateful;stateful.current_map=1;stateful.state=std::make_shared<map_state::Resolver>(flags,records);
+                FilterRow row;row.index=0;row.kind=Kind::Event;row.category=Category::Events;row.entity_id=89;row.raw_name=baked::object_identifier(*trigger);
+                row.position={(trigger->tx-sm->width*.5f)*16+8,(sm->height*.5f-trigger->ty)*16-8,0};stateful.rows={row};
+                const auto view=build_categories(stateful);
+                expect(view.views[0].order.empty()==(profile==1),"actual list worker retires the native used-event branch while preserving unused/unknown states");
+            }
+        }
+    }
     std::printf("Entity filter: owned worker sorting, stable NPC groups, inclusion guards, selection: %d failures\n", failures);
     return failures ? 1 : 0;
 }

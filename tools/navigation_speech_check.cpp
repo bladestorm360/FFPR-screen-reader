@@ -2,6 +2,7 @@
 // Actual category/browse/route producers with manually delayed readiness; no game.
 #include <cstdio>
 #include <cstring>
+#include <map>
 #include "../src/core/field/entity_nav.cpp"
 namespace fixture {
 struct Controller { void* player = reinterpret_cast<void*>(1); } controller;
@@ -9,6 +10,8 @@ struct Output { std::vector<std::wstring> parts; bool interrupt; };
 std::vector<Output> output;
 std::vector<std::function<void()>> pending;
 std::function<void(field::PathInfo)> route;
+field::baked_nav::MapGoal requested_goal;
+std::wstring requested_name;
 std::function<void(field::baked_nav::BrowseRoute)> browse;
 bool delay_browse = false;
 field::baked_nav::BrowseRoute browse_path;
@@ -18,6 +21,8 @@ int next = 0, previous = 0, cancelled = 0;
 bool selectable = true, transition = false, field_ready = true, battle = false;
 bool soundscape=true,beacons=false,combined=false;int beacon_requests=0;
 int scans = 0, cache_reads = 0;
+int refreshes=0,scan_cancels=0,invalidations=0;
+std::map<events::Kind,std::vector<events::Handler>> handlers;
 int index = 0, total = 1;
 void finish() { auto callbacks = std::move(pending); pending.clear(); for (auto& callback : callbacks) callback(); }
 }
@@ -76,7 +81,7 @@ bool is(const char* name) {
 void define_text(const char*, std::function<std::wstring()>) {}
 }
 namespace menu_state { bool any_active() { return false; } }
-namespace events { void on(Kind, Handler) {} void fire(Kind) {} }
+namespace events { void on(Kind kind, Handler handler) {fixture::handlers[kind].push_back(std::move(handler));} void fire(Kind kind) {for(auto& handler:fixture::handlers[kind])handler();} }
 namespace frame { double now() { return GetTickCount64()/1000.0; } void after_seconds(double, Task, const char*) {} void cancel_label(const char*) {} int every_frame(Step, const char*, int) { return 0; } }
 namespace fixture { bool warnings = true; }
 namespace settings { bool get_bool(const char* key, bool def) {
@@ -107,9 +112,11 @@ std::wstring Entity::format_description(unity::Vec3, bool direct, const std::wst
 FilterContext::FilterContext() { field_player = map_handle = reinterpret_cast<void*>(1); }
 }
 namespace field::scanner {
+void interrupt_navigation_work() { ++fixture::scan_cancels; }
 void when_filter_ready(std::function<void()> ready, bool) { fixture::pending.push_back(std::move(ready)); }
-void scan_entities() { ++fixture::scans; } void force_rescan() { ++fixture::scans; } void invalidate_map() {} void schedule_scan() {} void cancel_scan() {}
+void scan_entities() { ++fixture::scans; } void force_rescan() { ++fixture::scans; } void invalidate_map() {} void schedule_scan() {} void cancel_scan() {} void cancel_navigation_work() {++fixture::scan_cancels;}
 void reapply_filter() {} void set_filter_to_layer(bool) {}
+void refresh_state() {++fixture::refreshes;}
 void next_entity() { ++fixture::next; } void previous_entity() { ++fixture::previous; }
 bool no_reachable_entities() { return false; } bool select_first_reachable() { return fixture::selectable; }
 void set_category(Category c) { fixture::category = c; } Category category() { return fixture::category; }
@@ -117,7 +124,8 @@ EntityPtr current_entity() { return fixture::entity; } int current_index() { ret
 double captured_at() { return frame::now(); }
 }
 namespace field::baked_nav {
-void clear_pending(bool) {} void continue_pending() {} void invalidate() {}
+void interrupt_requests() { ++fixture::invalidations; }
+void clear_pending(bool) {} void continue_pending() {} void invalidate() {++fixture::invalidations;}
 void cancel_requests() { ++fixture::cancelled; }
 void cancel_browse_route() { fixture::browse = {}; }
 std::wstring map_name_of(int id) { return id == 186 ? L"Deist Cavern B2" : L""; }
@@ -126,9 +134,10 @@ void request_browse_route(MapGoal, TargetKind, std::function<void(BrowseRoute)> 
     else publish(fixture::browse_path);
 }
 bool cell_at(void*, unity::Vec3, baked_route::Cell&) { return true; }
-void request_route(MapGoal, TargetKind, std::wstring, std::function<void(PathInfo)> publish, bool) { fixture::route = std::move(publish); }
+void request_route(MapGoal goal, TargetKind, std::wstring name, std::function<void(PathInfo)> publish, bool) { fixture::requested_goal=goal;fixture::requested_name=std::move(name);fixture::route = std::move(publish); }
 }
 int main() {
+    field::install();
     fixture::browse_path.direct = true;
     int failures = 0;
     auto expect = [&](bool ok, const char* reason) { if (!ok) { ++failures; std::printf("FAIL %s\n", reason); } };
@@ -144,6 +153,7 @@ int main() {
     }
     fixture::transition = fixture::battle = false; fixture::field_ready = true;
     fixture::entity->kind = field::Kind::TreasureChest;
+    fixture::entity->entity_id = 0;
     field::cycle(true); // old category input, still waiting for readiness
     field::category_next();
     auto callbacks = std::move(fixture::pending); fixture::pending.clear();
@@ -172,6 +182,7 @@ int main() {
     expect(!fixture::route,"directions wait for current grouped-exit representative before planning");
     fixture::finish();
     expect(static_cast<bool>(fixture::route), "actual route producer waits for asynchronous plan");
+    expect(fixture::requested_goal.entity_id==0&&fixture::requested_name==L"Chest (Map)","directions retain native event identity and destination floor in the continuation name");
     field::category_next(); fixture::finish();
     auto before = fixture::output.size(); field::PathInfo path; path.success = true; path.description = L"1 north";
     fixture::route(path);
@@ -228,6 +239,21 @@ int main() {
     field::announce_entity_only();
     expect(!fixture::browse && fixture::output.back().parts.front()==L"Chest (Deist Cavern B5) (1 of 1)",
         "other-floor browsing preserves floor immediately and makes no route request");
+    fixture::entity->remote_map_id=0;
+    for(const auto transition:{events::Kind::BattleEntering,events::Kind::BattleStart,events::Kind::MapChanging}) {
+        fixture::route={};field::announce_current_entity();
+        const auto before=fixture::output.size(),generation=field::g_category_generation;
+        const int cancelled=fixture::scan_cancels,invalidated=fixture::invalidations;
+        events::fire(transition);fixture::finish();
+        expect(fixture::scan_cancels==cancelled+1&&fixture::invalidations==invalidated+1&&
+            field::g_category_generation!=generation&&!fixture::route&&fixture::output.size()==before,
+            "actual battle/map entry subscribers cancel every navigation owner and retire pending speech before loading");
+    }
+    const int refreshed=fixture::refreshes;events::fire(events::Kind::BattleEnd);
+    expect(fixture::refreshes==refreshed+1,"same-map battle return requests one new state revalidation without waiting on work");
+    const int before_rescan=fixture::invalidations;field::request_rescan();
+    expect(fixture::invalidations==before_rescan+1&&fixture::refreshes==refreshed+2,
+        "native script return retires old captured routes before revalidating reusable and consumed actions");
     std::printf("Navigation speech: ordered category/focus, stale-event rejection, FIFO browse, route-aware distance/floors and concurrent soundscape/beacon/directions: %d failures\n", failures);
     return failures ? 1 : 0;
 }

@@ -1,6 +1,7 @@
-// check-sources: text.cpp
+// check-sources: input/bindings.cpp text.cpp
 // Actual modal producers, front end, worker queue and Prism adapter; fake SDK only.
 #include <windows.h>
+#include "bindings_keys_fixture.h"
 #include <cstdio>
 #include <cstring>
 #include <thread>
@@ -11,6 +12,7 @@
 #include "../src/core/ui/text_input.cpp"
 #include "../src/core/ui/confirmation_dialog.cpp"
 #include "../src/core/ui/initial_speech.h"
+#include "../src/core/battle/battle_message_line.h"
 namespace fixture {
 struct Output { std::string text; bool interrupt; double at; };
 std::vector<Output> output;
@@ -68,10 +70,11 @@ void write(const char* format, ...) {
 void writeW(const wchar_t*, const wchar_t*) {}
 }
 namespace settings {
+int get_int(const char*,int d){return d;}void set_int(const char*,int){}
 bool get_bool(const char* key, bool def) { return std::strcmp(key, "SpeechEnabled") == 0 ? fixture::game_speech : def; }
 void save_pending() {}
 }
-namespace frame { uint64_t count() { return fixture::tick; } void after_seconds(double, Task, const char*) { ++fixture::delayed; } }
+namespace frame { uint64_t count() { return fixture::tick; } void after_seconds(double, Task, const char*) { ++fixture::delayed; } void after_frames(int, Task, const char*) { ++fixture::delayed; } }
 namespace ui::modal_keys {
 void seed() {} void sample() {} bool pressed(int key) { return key == fixture::pressed; } bool held(int) { return false; }
 }
@@ -83,7 +86,21 @@ std::wstring TF(std::wstring_view value, std::initializer_list<std::wstring> arg
     return result;
 }
 }
+namespace input {
+bool game_window_focused(){return true;}
+bool key_pressed(Key k){return fixture::key_vk(k)==fixture::pressed;}bool key_held(Key){return false;}bool key_in_use(Key){return false;}
+bool shift_held(){return false;}bool ctrl_held(){return false;}bool alt_held(){return false;}
+bool gamepad_available(){return false;}bool button_held(int){return false;}bool button_pressed(int){return false;}
+float left_trigger(){return 0;}float right_trigger(){return 0;}float left_stick_x(){return 0;}float left_stick_y(){return 0;}float right_stick_x(){return 0;}float right_stick_y(){return 0;}
+std::wstring button_label(int n){return L"Button "+std::to_wstring(n);}const char* key_name(Key){return "Key";}
+namespace gamepad {
+bool lstick_up_pressed(){return false;}bool lstick_down_pressed(){return false;}bool lstick_left_pressed(){return false;}bool lstick_right_pressed(){return false;}
+bool rstick_up_pressed(){return false;}bool rstick_down_pressed(){return false;}bool rstick_left_pressed(){return false;}bool rstick_right_pressed(){return false;}
+}
+}
+
 int main() {
+    ui::text_input::install();ui::confirmation::install();
     int failures=0;
     auto expect=[&](bool ok,const char* reason) { if(!ok) { ++failures; std::printf("FAIL %s\n",reason); } };
     speech::init();
@@ -193,6 +210,28 @@ int main() {
     expect(fixture::output.size()==2 && fixture::output[0].text=="Repeated line" &&
         fixture::output[1].text=="Repeated line" && fixture::output[0].interrupt && !fixture::output[1].interrupt,
         "re-enabling restores gameplay speech and identical queued lines remain distinct");
+    fixture::output.clear();
+    {ffpr::battle::message_line::OpeningPresentation opening;
+     ffpr::battle::message_line::game_message(L"Ambushed!",false);}
+    ffpr::say_parts({L"Enemy formation",L"3 Goblin",L"2 Hornet"},false);
+    ffpr::say(L"Firion's turn",false);ffpr::say(L"Attack",false);fixture::drain();
+    expect(fixture::output.size()==4&&fixture::output[0].text=="Ambushed!"&&
+        fixture::output[1].text=="Enemy formation. 3 Goblin. 2 Hornet"&&
+        fixture::output[2].text=="Firion's turn"&&fixture::output[3].text=="Attack"&&
+        std::none_of(fixture::output.begin(),fixture::output.end(),[](const auto& out){return out.interrupt;}),
+        "opening condition, roster, turn and command traverse real front end/worker/SDK in order without interruption");
+    fixture::output.clear();
+    {ffpr::battle::message_line::OpeningPresentation opening;
+     ffpr::battle::message_line::game_message(L"Pre-emptive strike!",false);}
+    ffpr::say_parts({L"Enemy formation",L"3 Goblin"},false);ffpr::silence();fixture::drain();
+    expect(fixture::output.empty(),"explicit Control/silence still cancels pending opening condition and formation");
+    fixture::game_speech=false;
+    {ffpr::battle::message_line::OpeningPresentation opening;
+     ffpr::battle::message_line::game_message(L"Ambushed!",false);}
+    ffpr::say_parts({L"Enemy formation",L"3 Goblin"},false);fixture::drain();
+    expect(fixture::output.empty(),"opening source classification obeys the central gameplay speech master");
+    fixture::game_speech=true;
+    expect(fixture::delayed==0,"opening condition speech adds no timer or action-pair delay");
     std::printf("Speech request to fake SDK: cold %.3f ms, worst warm %.3f ms; 2,000 blocked-SDK publications %.3f ms, latest output %.3f ms; %d failures\n",
         cold_ms,worst_warm,publish_ms,busy_ms,failures);
     CloseHandle(fixture::entered); CloseHandle(fixture::release);

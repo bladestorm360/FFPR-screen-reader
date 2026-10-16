@@ -34,6 +34,7 @@
 #include <utility>
 #include <vector>
 #include "battle_internal.h"
+#include "battle_message_line.h"
 #include "rendered_feedback.h"
 #include "battle.h"
 #include "battle_util.h"
@@ -175,62 +176,8 @@ int64_t g_ff2_last_frame = -1;
 // "Actor: Action"; a game message with no action starting (results, "Stole Potion!",
 // "Couldn't escape") is spoken as the game wrote it. This pairs two halves of one event; it is
 // not a text comparison.
-constexpr int kPairFrames = 2;
-
-struct PendingAction { bool set = false; std::wstring actor, action; int id = 0; };
-struct PendingMessage { bool set = false; std::wstring text; bool interrupt = false; int id = 0; };
-PendingAction g_pending_action;
-PendingMessage g_pending_message;
-int g_pair_id = 0;
-
-void flush_action(int id)
-{
-    if (!g_pending_action.set || g_pending_action.id != id) return;
-    const PendingAction a = g_pending_action;
-    g_pending_action = {};
-    // The game named nothing: the mod's own line ("Actor: Action"; the actor alone when the
-    // action name is unknown).
-    ffpr::say(a.action.empty() ? a.actor : a.actor + L": " + a.action, false);
-}
-
-void flush_message(int id)
-{
-    if (!g_pending_message.set || g_pending_message.id != id) return;
-    const PendingMessage m = g_pending_message;
-    g_pending_message = {};
-    ffpr::say(m.text, m.interrupt);
-}
-
-void speak_paired(const std::wstring& actor, const std::wstring& game_text, bool interrupt)
-{
-    ffpr::say(actor.empty() ? game_text : actor + L": " + game_text, interrupt);
-}
-
-void action_started(const std::wstring& actor, const std::wstring& action)
-{
-    if (g_pending_message.set) {
-        const PendingMessage m = g_pending_message;
-        g_pending_message = {};
-        speak_paired(actor, m.text, m.interrupt);
-        return;
-    }
-    const int id = ++g_pair_id;
-    g_pending_action = {true, actor, action, id};
-    frame::after_frames(kPairFrames, [id] { flush_action(id); }, "Battle.ActionLine");
-}
-
-void game_message(const std::wstring& text, bool interrupt)
-{
-    if (g_pending_action.set) {
-        const PendingAction a = g_pending_action;
-        g_pending_action = {};
-        speak_paired(a.actor, text, interrupt);
-        return;
-    }
-    const int id = ++g_pair_id;
-    g_pending_message = {true, text, interrupt, id};
-    frame::after_frames(kPairFrames, [id] { flush_message(id); }, "Battle.GameMessage");
-}
+using message_line::action_started;
+using message_line::game_message;
 
 // --- InitActionState (postfix): the action's actor ------------------------------------------------
 using Void_t = void (*)(void* self, const void* mi);
@@ -238,7 +185,9 @@ Void_t o_InitActionState;
 
 void d_InitActionState(void* self, const void* mi)
 {
-    o_InitActionState(self, mi);
+    timing::mark("Battle action begin");
+    { timing::Scope native("Battle InitActionState",timing::Kind::Original);
+      o_InitActionState(self, mi); }
     hooks::guarded("BattleActExection.InitActionState", [&] {
         if (!self) return;
         void* act = ref::rd<void*>(self, fInStagingActData);
@@ -248,13 +197,16 @@ void d_InitActionState(void* self, const void* mi)
         std::wstring actor = unit_name(unit);
         action_started(actor, action_name(act));
     });
+    timing::mark("Battle action initialized");
 }
 Void_t o_EndFinishingState;
 void d_EndFinishingState(void* self, const void* mi)
 {
     // Finish before native completion callbacks can initialize the next command/action.
     hooks::guarded("Battle.ActionFinished", [] { action_actor_finished(); });
-    o_EndFinishingState(self, mi);
+    { timing::Scope native("Battle EndFinishingState",timing::Kind::Original);
+      o_EndFinishingState(self, mi); }
+    timing::mark("Battle action finished");
 }
 
 // --- CreateDamageView (postfix): damage, healing, misses -----------------------------------------
@@ -283,6 +235,7 @@ void d_CreateDamageView(void* self, void* data, int32_t value, int32_t hit_type,
 {
     DamageScope scope;
     g_damage_context = {data, hit_type};
+    timing::Scope native("Battle CreateDamageView",timing::Kind::Original);
     o_CreateDamageView(self, data, value, hit_type, is_recovery, mi);
 }
 
@@ -292,6 +245,7 @@ void d_CreateDamageViewFF2(void* self, void* data, int32_t value, int32_t hit_ty
 {
     DamageScope scope;
     g_damage_context = {data, hit_type};
+    timing::Scope native("Battle CreateDamageView FF2",timing::Kind::Original);
     o_CreateDamageViewFF2(self, data, value, hit_type, is_recovery, is_play_se, mi);
 }
 
@@ -301,6 +255,7 @@ void d_CreateDamageViewFF5(void* self, void* data, int32_t value, int32_t hit_ty
 {
     DamageScope scope;
     g_damage_context = {data, hit_type};
+    timing::Scope native("Battle CreateDamageView FF5",timing::Kind::Original);
     o_CreateDamageViewFF5(self, data, value, hit_type, is_recovery, miss_type, mi);
 }
 

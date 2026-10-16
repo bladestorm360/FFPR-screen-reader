@@ -40,6 +40,7 @@ bool g_point_animation_pending = false;
 // True only while the EXP counter tone is actually playing.
 bool g_exp_counter_playing = false;
 bool g_monitor_logged_once = false;
+std::shared_ptr<ui::review::ResultNotificationSession> g_notification_session;
 
 constexpr const char* kMonitorLabel = "BattleResult.ExpMonitor";
 constexpr double kMonitorInterval = 0.1;   // WaitForSeconds(0.1f): the allowed EXP-tick audio loop
@@ -148,7 +149,7 @@ using Configure = std::function<void(ui::review::Options&)>;
 struct PendingPage {
     void* owner;
     std::function<std::wstring()> title;
-    ReadLines read, summary;
+    ReadLines read, summary, notifications;
     Configure configure;
     unsigned generation;
     uint64_t earliest_frame;
@@ -163,14 +164,20 @@ void read_pending_page()
         !displayed::container_visible(g_pending_page->owner)) return;
     auto page = *g_pending_page;
     auto summary = page.summary ? page.summary() : std::vector<std::wstring>{};
+    auto notifications = page.notifications ? page.notifications() : std::vector<std::wstring>{};
     // Read a small rendered total first while a reward panel is fading. Do not
     // traverse its full table (or all descendant text) on every native update.
-    if ((g_phase == ResultPhase::Points || g_phase == ResultPhase::Weapon) && summary.empty()) return;
+    if ((g_phase == ResultPhase::Points || g_phase == ResultPhase::Weapon) && summary.empty() && notifications.empty()) return;
     auto lines = page.read();
     ui::review::Options options;
     options.include_headline = true;
     options.defer_details = page.owner == g_point_owner && g_point_animation_pending;
     options.summary = std::move(summary);
+    options.notifications = std::move(notifications);
+    if (ui::prefs::result_notifications_once_enabled()) {
+        if (!g_notification_session) g_notification_session = std::make_shared<ui::review::ResultNotificationSession>();
+        options.notification_session = g_notification_session;
+    }
     if (page.configure) page.configure(options);
     const auto heading = page.title();
     g_pending_page.reset();
@@ -179,12 +186,12 @@ void read_pending_page()
     ui::review::show(page.owner, heading, std::move(lines), std::move(options));
 }
 void later(void* owner, std::function<std::wstring()> title, ReadLines read,
-           ReadLines summary = {}, Configure configure = {})
+           ReadLines summary = {}, Configure configure = {}, ReadLines notifications = {})
 {
     const unsigned generation = ++g_generation;
     ui::review::clear();
     frame::cancel_label("BattleResult.Read");
-    g_pending_page = PendingPage{owner, std::move(title), std::move(read), std::move(summary),
+    g_pending_page = PendingPage{owner, std::move(title), std::move(read), std::move(summary), std::move(notifications),
                                 std::move(configure), generation, frame::count() + 1};
     // Only the result controller's post-update event can read this page. Its
     // outer init queues an inner state transition: a global next-frame callback
@@ -215,6 +222,12 @@ void append_skill_details(std::vector<std::wstring>& lines)
     lines.insert(lines.end(), learned.begin(), learned.end());
     lines.insert(lines.end(), levels.begin(), levels.end());
 }
+std::vector<std::wstring> skill_notifications()
+{
+    std::vector<std::wstring> lines;
+    append_skill_details(lines);
+    return lines;
+}
 std::vector<std::wstring> point_details(void* self)
 {
     auto lines = game::is(game::Id::FF2) ? std::vector<std::wstring>{} :
@@ -244,7 +257,7 @@ void point_rows(void* self)
     g_point_animation_pending = !game::is(game::Id::FF2) &&
         unity::list_count(displayed::field(displayed::field(self, "characterListConteroller"), "performanceList")) > 0;
     later(self, [] { return T(L"Battle results"); }, [self] { return point_details(self); },
-          [self] { auto lines = point_totals(self); append_skill_details(lines); return lines; });
+          [self] { return point_totals(self); }, {}, [] { return skill_notifications(); });
     // Counter audio follows native animation completion, never changes the game values.
     if (!game::is(game::Id::FF2) && settings::get_bool("ExpCounter", true)) {
         void* data = displayed::field(self, "targetData");
@@ -305,11 +318,11 @@ void status_rows(void* self)
         auto bonus = displayed::pair(displayed::field(self, "view"), "magicStoneBonusText", "magicStoneBonusValueText");
         if (!bonus.empty()) lines.push_back(std::move(bonus));
         return lines;
-    }, [self] { return growth_messages(self); }, [self](ui::review::Options& options) {
+    }, {}, [self](ui::review::Options& options) {
         options.brief = growth_rows(self, true);
         options.brief_details = ui::prefs::stat_delta_mode() == 1;
         options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
-    });
+    }, [self] { return growth_messages(self); });
 }
 std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = false)
 {
@@ -341,7 +354,7 @@ std::vector<std::wstring> ff2_weapon_rows(void* controller, bool changed_only = 
 }
 void skills(void* self)
 {
-    later(self, [] { return g_skill_headline; }, [] { return std::vector<std::wstring>{}; }, [self] {
+    later(self, [] { return g_skill_headline; }, [] { return std::vector<std::wstring>{}; }, {}, {}, [self] {
         auto lines = row_lines(self, "contentList");
         auto levels = row_lines(self, "levelUpContentList");
         lines.insert(lines.end(), levels.begin(), levels.end());
@@ -363,13 +376,16 @@ void weapon_page(void* point)
         // This is the actual native weapon phase, not the preceding member panel.
         if (!displayed::container_visible(displayed::field(point, "skillLevelController")))
             return std::vector<std::wstring>{};
-        auto lines = point_totals(point); append_skill_details(lines); return lines;
+        return point_totals(point);
     }, [point](ui::review::Options& options) {
         void* controller = displayed::field(point, "skillLevelController");
         options.brief = ff2_weapon_rows(controller, true);
         options.brief_details = ui::prefs::stat_delta_mode() == 1;
         options.announce_brief = ui::prefs::announce_result_stat_changes_enabled();
         options.announce_brief_with_details = !options.brief_details;
+    }, [point] {
+        return displayed::container_visible(displayed::field(point, "skillLevelController")) ?
+            skill_notifications() : std::vector<std::wstring>{};
     });
 }
 
@@ -464,7 +480,7 @@ void d_skill_page(void* self, const void* mi) {
         else if (g_phase == ResultPhase::Points && ui::review::owns(g_point_owner)) {
             void* owner = g_point_owner;
             later(owner, [] { return T(L"Battle results"); }, [owner] { return point_details(owner); },
-                  [owner] { auto lines = point_totals(owner); append_skill_details(lines); return lines; });
+                  [owner] { return point_totals(owner); }, {}, [] { return skill_notifications(); });
         } else if (g_phase == ResultPhase::Weapon && game::is(game::Id::FF2)) {
             weapon_page(g_point_owner);
         } else if (g_phase == ResultPhase::Status && ui::review::owns(g_status_owner)) {
@@ -541,12 +557,14 @@ void result_clear_all_battle_states() {
     command_reset_state(); magic_reset_state();
 }
 void result_reset_state() {
-    displayed::clear_skill_changes();
-    g_pending_page.reset();
+    { timing::Scope part("Result notification reset"); g_notification_session.reset(); }
+    { timing::Scope part("Result skill cache reset"); displayed::clear_skill_changes(); }
+    { timing::Scope part("Result pending page reset"); g_pending_page.reset(); }
     g_phase = ResultPhase::None; g_menu = nullptr; g_skill_headline.clear();
     g_announced_points = g_announced_items = false; ++g_generation;
     g_point_animation_pending = false; g_point_owner = nullptr; g_status_owner = nullptr;
-    stop_exp_counter_if_playing(); frame::cancel_label(kMonitorLabel); frame::cancel_label("BattleResult.");
-    ui::review::clear();
+    { timing::Scope part("Result counter reset"); stop_exp_counter_if_playing(); }
+    { timing::Scope part("Result frame cancellation"); frame::cancel_label(kMonitorLabel); frame::cancel_label("BattleResult."); }
+    { timing::Scope part("Result review reset"); ui::review::clear(); }
 }
 }

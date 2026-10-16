@@ -484,10 +484,12 @@ void d_UseSetCursor(void* self, void* cursor, const void* mi)
         }
         const int index = ui::cursor_index(cursor);
         void* list = ref::rd<void*>(self, fUseContentList);
+        const int slots = unity::list_count(list);
+        if (!list || slots <= 0 || slots > 9 || index < 0 || index >= slots) return;
         const int count = displayed::target_count(list);
-        if (!list || count == 0 || index < 0 || index >= count) return;
-        void* content = displayed::cursor_row(cursor, list);
-        if (!content) content = unity::get_component_in_parent(cursor, kTargetContent);
+        if (count == 0) return;
+        // The native SetCursor uses contentList[cursor.Index], regardless of parent ancestry.
+        void* content = unity::list_at(list, index);
         void* character = content ? ref::rd<void*>(content, fTargetCurrentData) : nullptr;
         if (!character) return;
         std::wstring announcement = displayed::target(content);

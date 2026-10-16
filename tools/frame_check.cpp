@@ -130,9 +130,15 @@ int main()
         SetEvent(entered); WaitForSingleObject(unblock, 5000); SetEvent(returned); return input;
     }, [&](int) { result = -1; }), "cancellable snapshot job is accepted");
     expect(WaitForSingleObject(entered, 5000) == WAIT_OBJECT_0, "worker captures the old context");
-    owner.cancel(); SetEvent(unblock); WaitForSingleObject(returned, 5000);
+    int retired = 0;
+    owner.retain([&] { ++retired; });
+    owner.interrupt();
+    expect(retired == 0, "transition interruption changes worker epochs without destroying any owner callback");
+    SetEvent(unblock); WaitForSingleObject(returned, 5000);
     for (int i = 0; i < 100; ++i) { frame::run_tick(); std::this_thread::yield(); }
     expect(result == 14, "phase cancellation cannot publish an obsolete job");
+    owner.cancel();
+    expect(retired == 1, "safe lifecycle cleanup retires retained callbacks exactly once after interruption");
     CloseHandle(entered); CloseHandle(unblock); CloseHandle(returned);
     // A ready-result burst must not keep native input inside the mod dispatcher.
     // Synthetic 50-us owner callbacks make the old unbounded 150-post drain decisive.

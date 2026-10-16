@@ -7,6 +7,7 @@
 namespace fixture {
 std::map<std::string,int> values;
 std::map<std::string,actions::Fn> actions;
+std::map<events::Kind,std::vector<events::Handler>> handlers;
 std::vector<std::wstring> speech;
 unity::Vec3 player{};
 field::Target target;
@@ -16,6 +17,7 @@ ffpr::fieldnav::waypoints::EntityPtr waypoint;
 bool ready=true,focus=true,field=true,suppress=false,dialogue=false,fading=false;
 bool map_available=true,route_found=true,arrived=false;
 int pings=0,follow=0,across=0,quick=0,map_reads=0;float pan=0,volume=0;bool south=false,low=false;
+int planned_entity=-1;
 double at=10;
 unity::Vec3 corner{0,80,0};
 void reset() {pings=follow=across=quick=map_reads=0;speech.clear();ffpr::fieldnav::audio_loops::g_last_beacon_played_at=0;}
@@ -40,7 +42,7 @@ namespace queries { bool is(const char* name){
     return false;
 } }
 namespace frame {double now(){return fixture::at;}void subscribe(void(*)(),const char*){} }
-namespace events {void on(Kind,Handler){} }
+namespace events {void on(Kind kind,Handler handler){fixture::handlers[kind].push_back(std::move(handler));} void fire(Kind kind){for(auto& handler:fixture::handlers[kind])handler();} }
 namespace hooks {void note_fault(const char*){std::abort();} }
 namespace input {bool game_window_focused(){return fixture::focus;} }
 namespace unity {void* transform(void* p){return p;}Vec3 local_position(void*){return fixture::player;} }
@@ -59,8 +61,8 @@ PathInfo find_path_to_quick(unity::Vec3,unity::Vec3,void*,void*,TargetKind,bool)
 namespace field::baked {const Submap* submap_by_map_id(int){return &fixture::submap;} }
 namespace field::baked_nav {
 bool available(void*){return fixture::map_available;}
-bool follow(void*,void*,unity::Vec3,TargetKind,Corner& out){++fixture::follow;out.point=fixture::corner;out.arrived=fixture::arrived;return fixture::route_found;}
-bool follow_goal(void*,void*,const MapGoal&,TargetKind,Corner& out){++fixture::across;out.point=fixture::corner;out.arrived=fixture::arrived;return fixture::route_found;}
+bool follow(void*,void*,unity::Vec3,TargetKind,Corner& out,int entity){++fixture::follow;fixture::planned_entity=entity;out.point=fixture::corner;out.arrived=fixture::arrived;return fixture::route_found;}
+bool follow_goal(void*,void*,const MapGoal& goal,TargetKind,Corner& out){++fixture::across;fixture::planned_entity=goal.entity_id;out.point=fixture::corner;out.arrived=fixture::arrived;return fixture::route_found;}
 }
 namespace ffpr::fieldnav {
 float distance(unity::Vec3 a,unity::Vec3 b){return std::sqrt((a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y)+(a.z-b.z)*(a.z-b.z));}
@@ -78,10 +80,11 @@ int main(){
     using namespace ffpr::fieldnav::audio_loops;
     int failures=0;auto expect=[&](bool ok,const char* why){if(!ok){++failures;std::printf("FAIL %s\n",why);}};
     install();fixture::values["AudioBeacons"]=1;fixture::values["Soundscape"]=1;fixture::values["HRTF"]=1;
-    fixture::target.valid=true;fixture::target.identity=reinterpret_cast<void*>(3);fixture::target.position={320,0,0};
+    fixture::target.valid=true;fixture::target.identity=reinterpret_cast<void*>(3);fixture::target.position={320,0,0};fixture::target.entity_id=0;
     expect(ui::prefs::beacon_mode()==0,"existing users default to route mode");
     fixture::reset();beacon_iteration(10);
     expect(fixture::pings==1&&fixture::follow==1&&fixture::pan==0&&!fixture::south&&!fixture::low,"route mode aims at northward route corner, not eastward object");
+    expect(fixture::planned_entity==0,"route beacon preserves a valid zero-valued native event identity");
     const float corner_volume=fixture::volume;
     fixture::reset();fixture::route_found=false;beacon_iteration(10.5);
     expect(fixture::pings==1&&fixture::follow==1&&fixture::low,"route mode preserves its blocked-route lower ping");
@@ -107,6 +110,7 @@ int main(){
     fixture::reset();beacon_iteration(16);expect(fixture::speech.empty(),"audio loop never repeats remote-target speech");
     actions::run("Mod.ToggleBeaconMode");fixture::route_found=true;fixture::reset();beacon_iteration(17);
     expect(fixture::pings==1&&fixture::across==1,"returning to route mode restores cross-floor routing");
+    expect(fixture::planned_entity==0,"other-floor beacon keeps the same event identity across its legs");
     fixture::target.remote_map_id=0;fixture::arrived=true;fixture::reset();beacon_iteration(18);
     expect(fixture::pings==0,"route mode retains route-arrival silence");fixture::arrived=false;
     actions::run("Mod.ToggleBeaconMode");fixture::target.position={16,0,0};fixture::player={1584,0,0};
@@ -126,6 +130,14 @@ int main(){
     fixture::ready=fixture::focus=fixture::field=true;fixture::suppress=fixture::dialogue=false;fixture::values["NavigationAudio"]=1;
     fixture::values["AudioBeacons"]=0;const auto before=fixture::values;actions::run("Mod.ToggleBeaconMode");
     expect(fixture::values["AudioBeacons"]==0&&fixture::values.size()==before.size(),"switching modes while off never enables beacon or creates other settings");
+    g_wall_running=g_beacon_running=g_landing_running=true;
+    g_last_beacon_target.keep=waypoint;g_last_beacon_target.ptr=waypoint.get();
+    events::fire(events::Kind::BattleEntering);fixture::reset();tick();
+    expect(!g_wall_running&&!g_beacon_running&&!g_landing_running &&
+        g_last_beacon_target.keep==waypoint && fixture::follow==0 && fixture::map_reads==0,
+        "battle prefix suspends every audio navigation loop without queries or destroying its retained target");
+    events::fire(events::Kind::BattleStart);
+    expect(!g_last_beacon_target.keep,"native opening ready releases the retained audio target");
     std::printf("%s beacon modes: real loop/action, route/object/remote/waypoint/wrap/arrival/gates; %d failures\n",failures?"FAIL":"PASS",failures);
     return failures?1:0;
 }

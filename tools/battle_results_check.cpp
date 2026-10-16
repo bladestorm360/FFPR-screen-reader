@@ -51,6 +51,7 @@ std::map<std::string, std::function<bool()>> queries;
 std::vector<std::wstring> spoken;
 std::vector<input::Key> bound;
 bool changed_stats = false;
+bool notifications_once = false, game_speech = true;
 int delta_mode = 0;
 int panel_reads = 0;
 bool detail = false, suppress = false, pad = false;
@@ -143,10 +144,10 @@ bool is(const char* key) { auto i = fixture::queries.find(key); return i != fixt
 namespace actions { void define(const char*, Fn) {} bool run(const char*) { ++fixture::panel_reads; return true; } }
 namespace events { void on(Kind, Handler) {} }
 namespace game { Id current() { return fixture::game_id; } }
-namespace settings { int get_int(const char* key, int def) { return std::string(key) == "StatDeltaMode" ? fixture::delta_mode : def; } bool get_bool(const char* key, bool def) { return std::string(key) == "AnnounceResultStatChanges" ? fixture::changed_stats : std::string(key) == "AutoDetail" ? fixture::detail : std::string(key) == "ExpCounter" ? false : def; } }
+namespace settings { int get_int(const char* key, int def) { return std::string(key) == "StatDeltaMode" ? fixture::delta_mode : def; } bool get_bool(const char* key, bool def) { return std::string(key) == "ResultNotificationsOnce" ? fixture::notifications_once : std::string(key) == "SpeechEnabled" ? fixture::game_speech : std::string(key) == "AnnounceResultStatChanges" ? fixture::changed_stats : std::string(key) == "AutoDetail" ? fixture::detail : std::string(key) == "ExpCounter" ? false : def; } }
 namespace ffpr {
-void say(std::wstring_view s, bool) { fixture::spoken.emplace_back(s); }
-void say_parts(std::vector<std::wstring> parts, bool) { fixture::spoken.emplace_back(text::join(parts, L". ")); }
+void say(std::wstring_view s, bool) { if (fixture::game_speech) fixture::spoken.emplace_back(s); }
+void say_parts(std::vector<std::wstring> parts, bool) { if (fixture::game_speech) fixture::spoken.emplace_back(text::join(parts, L". ")); }
 namespace battle {
 bool in_battle() { return true; }
 bool dict_int_int(void* dict, int key, int& out) {
@@ -225,6 +226,17 @@ bool lstick_left_held() { return false; } bool lstick_right_held() { return fals
 
 namespace ffpr::fieldnav::autowalk { bool virtual_key(int, bool) { return false; } bool virtual_input_active() { return false; } }
 
+namespace input::bindings {
+bool remapped_keyboard_in_use(){return false;}
+bool consumed(int){return false;}
+bool navigation_request_pressed(){return false;}
+bool navigation_controller_input(int){return false;}
+bool keyboard_in_use(Context c){
+    for(Key k:{Key::UpArrow,Key::DownArrow,Key::LeftArrow,Key::RightArrow,Key::I})if(key_in_use(k))return true;
+    if(c==Context::Results)for(Key k:{Key::W,Key::A,Key::S,Key::D,Key::F7,Key::F8,Key::F5})if(key_in_use(k))return true;
+    return false;
+}
+}
 int main()
 {
     background::prepare();
@@ -292,6 +304,54 @@ int main()
         expect(!queries::is("ReviewBuffer.IsResults") && !ui::review::active(), "close releases context and page");
     }
     expect(!ff2_weapon_rows(&weapon).size(), "FF2 weapon buffer cannot apply to other games");
+    // The opt-in exception applies only to essential notification rows, scoped to
+    // one result session. Existing default-off all-six behavior above is unchanged.
+    notifications_once = true;
+    for (int n = 1; n <= 6; ++n) for (bool automatic : {false, true}) {
+        game_id = static_cast<game::Id>(n); detail = automatic;
+        result_reset_state(); spoken.clear(); members.end_count = 0;
+        d_points(&menu,nullptr); tick();
+        expect(contains(L"Cure learned") && contains(L"Job level 2"),"once mode announces each first displayed result notification");
+        expect(std::find(ui::review::g_lines.begin(),ui::review::g_lines.end(),L"Cure learned") != ui::review::g_lines.end(),
+            "first buffer retains notification for deliberate line review");
+        spoken.clear(); d_status(&menu,nullptr); tick();
+        expect(!contains(L"Cure learned") && !contains(L"Job level 2"),"later member buffer omits already-announced notifications in both Autodetail states");
+        expect(std::find(ui::review::g_lines.begin(),ui::review::g_lines.end(),L"Cure learned") == ui::review::g_lines.end(),
+            "repeated notifications are omitted from later review buffers too");
+        learned.row = L"Layla sword levelled up!";
+        spoken.clear(); status_rows(&status); tick();
+        expect(contains(L"Layla sword levelled up!") && !contains(L"Job level 2"),"new notification remains eligible after earlier messages were consumed");
+        spoken.clear(); d_learning(&menu,nullptr); tick();
+        expect(!contains(L"Layla sword levelled up!"),"learning phase uses the same per-battle notification history");
+        spoken.clear(); d_ability(&menu,nullptr); tick();
+        expect(!contains(L"Job level 2") && (n != 2 || contains(L"Gil obtained 50")),"notification filtering never consumes repeated native totals");
+        d_close(&menu,nullptr);
+        spoken.clear(); d_points(&menu,nullptr); tick();
+        expect(contains(L"Layla sword levelled up!") && contains(L"Job level 2"),"closing and starting another battle resets notification history");
+        learned.row = L"Cure learned";
+    }
+    result_reset_state(); detail = false; game_speech = false;
+    d_points(&menu,nullptr); tick();
+    expect(!g_notification_session->history,"muted gameplay speech cannot consume an unannounced notification");
+    game_speech = true; spoken.clear(); d_status(&menu,nullptr); tick();
+    expect(contains(L"Cure learned"),"notification still announces after gameplay speech is re-enabled");
+    result_reset_state(); spoken.clear(); d_points(&menu,nullptr); d_status(&menu,nullptr); tick();
+    expect(contains(L"Cure learned"),"cancelled pending native page cannot consume a notification");
+    notifications_once = false; result_reset_state();
+    {
+        auto first=ui::review::select_result_notifications({L"Same",L"Same"},{});
+        expect(first.lines.size()==2&&first.history->messages.size()==1,
+            "once mode preserves distinct equal rows in their first native buffer");
+        auto repeated=ui::review::select_result_notifications({L"Same"},first.history);
+        expect(repeated.lines.empty(),"only an earlier accepted buffer suppresses equal notification text");
+        std::vector<std::wstring> many;for(int i=0;i<1100;++i)many.push_back(L"Message "+std::to_wstring(i));
+        auto bounded=ui::review::select_result_notifications(many,{});
+        expect(bounded.lines.size()==1100&&bounded.history->messages.size()==1024&&bounded.history->characters<=65536,
+            "large results keep speaking while per-battle retained notification history remains bounded");
+        const std::wstring oversized(4097,L'x');
+        auto long_line=ui::review::select_result_notifications({oversized},{});
+        expect(long_line.lines.size()==1&&long_line.history->messages.empty(),"over-limit notification text speaks without unbounded retention");
+    }
     // A fade longer than the old deadline still reads on the native update event.
     result_reset_state(); spoken.clear(); totals.visible = false; members.visible = false; skill.visible = false; point.texts.clear();
     d_points(&menu, nullptr); for (int i = 0; i < 50; ++i) tick();

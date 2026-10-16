@@ -18,6 +18,7 @@
 #include "say.h"
 #include "mod_ui.h"
 #include "modal_keys.h"
+#include "../input/bindings.h"
 
 namespace ui::confirmation {
 namespace {
@@ -32,6 +33,7 @@ struct State {
     bool input_result = false;
 };
 
+int binding_yes,binding_no,binding_cancel,binding_confirm,binding_left,binding_right;
 State* g_state = nullptr;
 State& st()
 {
@@ -50,7 +52,7 @@ void complete_answer(std::wstring text, Callback callback)
     s.on_yes = nullptr;
     s.on_no = nullptr;
 
-    ffpr::say(text, true);
+    ffpr::say_menu(text, true);
     ffpr::QueuedSpeechScope followup;
     if (callback) callback();
     if (!st().on_yes) close();
@@ -65,22 +67,22 @@ bool handle_input_now()
     using modal_keys::pressed;
 
     // Y - Yes at once
-    if (pressed('Y')) {
+    if (input::bindings::pressed(binding_yes)) {
         complete_answer(T(L"Yes"), s.on_yes);
         return true;
     }
     // N - No at once
-    if (pressed('N')) {
+    if (input::bindings::pressed(binding_no)) {
         complete_answer(T(L"No"), s.on_no);
         return true;
     }
     // Escape - same as No
-    if (pressed(VK_ESCAPE)) {
+    if ((input::bindings::pressed(binding_cancel) || input::bindings::pad("pad.confirmation.cancel"))) {
         complete_answer(T(L"Cancelled"), s.on_no);
         return true;
     }
     // Enter - confirm the current selection
-    if (pressed(VK_RETURN)) {
+    if ((input::bindings::pressed(binding_confirm) || input::bindings::pad("pad.confirmation.confirm"))) {
         if (s.selected_yes)
             complete_answer(T(L"Yes"), s.on_yes);
         else
@@ -88,9 +90,9 @@ bool handle_input_now()
         return true;
     }
     // Left/Right - switch the selection
-    if (pressed(VK_LEFT) || pressed(VK_RIGHT)) {
+    if (input::bindings::pressed(binding_left) || input::bindings::pressed(binding_right)) {
         s.selected_yes = !s.selected_yes;
-        ffpr::say(s.selected_yes ? T(L"Yes") : T(L"No"), true);
+        ffpr::say_menu(s.selected_yes ? T(L"Yes") : T(L"No"), true);
         return true;
     }
     return true;   // consume all input while the dialog is open
@@ -98,6 +100,14 @@ bool handle_input_now()
 
 int install()
 {
+    binding_yes=input::bindings::add("key.confirmation.yes","Answer yes",false,-2,int(input::Key::Y));
+    binding_no=input::bindings::add("key.confirmation.no","Answer no",false,-2,int(input::Key::N));
+    binding_cancel=input::bindings::add("key.confirmation.cancel","Cancel confirmation",false,-2,int(input::Key::Escape));
+    binding_confirm=input::bindings::add("key.confirmation.confirm","Confirm selected answer",false,-2,int(input::Key::Return));
+    binding_left=input::bindings::add("key.confirmation.left","Previous answer",false,-2,int(input::Key::LeftArrow));
+    binding_right=input::bindings::add("key.confirmation.right","Next answer",false,-2,int(input::Key::RightArrow));
+    input::bindings::add("pad.confirmation.confirm","Confirm selected answer",true,-2,0,-1);
+    input::bindings::add("pad.confirmation.cancel","Cancel confirmation",true,-2,1,-1);
     queries::define("ConfirmationDialog.IsOpen", [] { return is_open(); });
     actions::define("ConfirmationDialog.HandleInput", [] { handle_input(); });
     return 0;
@@ -121,7 +131,7 @@ void open(const std::wstring& prompt, Callback on_yes, Callback on_no)
     s.selected_yes = true;   // default to Yes
 
     if (!was_already_open) modal_keys::seed();
-    ffpr::say_sequence({s.prompt, T(L"Yes or No")}, true);
+    ffpr::say_menu_sequence({s.prompt, T(L"Yes or No")}, true);
 }
 
 void close()

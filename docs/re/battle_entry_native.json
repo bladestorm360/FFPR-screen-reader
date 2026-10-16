@@ -1,0 +1,1010 @@
+[
+  {
+    "game": 1,
+    "dump_sha256": "8313bacc58a606108db7dc0786b4fc5bcd57dc07e171cb8b051c2a68cd817740",
+    "game_sha256": "33f001b4420bea06b44740c07c4afcf92547e7196bdfd3ec27ae5feaf0229108",
+    "methods": [
+      {
+        "name": "Last.Battle.BattleController.StartPreeMptiveMes",
+        "argc": 0,
+        "rva": "0x3e6fd0",
+        "unique": true,
+        "signature": "private void StartPreeMptiveMes()",
+        "bytes": 560,
+        "body_sha256": "2cb0e8483ae2c0160506b5d2f03dc8a5b24fc427a9420bf0d99ee822f4f56001"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInit",
+        "argc": 0,
+        "rva": "0x3e69a0",
+        "unique": true,
+        "signature": "private void StartInit()",
+        "bytes": 656,
+        "body_sha256": "878105b1822834bc6b6b7af1e7369960e247928ee0ecfd20b39285d2b0e329d2"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartCreateObj",
+        "argc": 0,
+        "rva": "0x3e6210",
+        "unique": true,
+        "signature": "private void StartCreateObj()",
+        "bytes": 656,
+        "body_sha256": "3a619d1a7508444cfa212b66310816210fbdfcc43aa35cdaec5b1e7925d40845"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInBattle",
+        "argc": 0,
+        "rva": "0x3e67d0",
+        "unique": true,
+        "signature": "private void StartInBattle()",
+        "bytes": 464,
+        "body_sha256": "ef81e3fe2c243d48a5fd1097784df413602eab5dcefa5e818736f3ce20889637"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitBattleData",
+        "argc": 0,
+        "rva": "0x3e2cf0",
+        "unique": true,
+        "signature": "private void InitBattleData()",
+        "bytes": 992,
+        "body_sha256": "7680054daa124e48853373359644f373eab465b7bb3105aee82347fa6dbd3867"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitEnemyStatus",
+        "argc": 0,
+        "rva": "0x3e3310",
+        "unique": true,
+        "signature": "private void InitEnemyStatus()",
+        "bytes": 480,
+        "body_sha256": "391c8a575d07e24a53e112e23c44cd5ac5e5be67d553647fdf15987037211b45"
+      },
+      {
+        "name": "Last.Battle.BattleController.UpdateUI",
+        "argc": 0,
+        "rva": "0x3e9740",
+        "unique": true,
+        "signature": "private void UpdateUI()",
+        "bytes": 144,
+        "body_sha256": "8d47ca774382e3943cef099d1b417c8e2d9c737e750e70079899a2b8411f6c04"
+      },
+      {
+        "name": "Last.UI.BattleUIManager.SetData",
+        "argc": 3,
+        "rva": "0x33f430",
+        "unique": true,
+        "signature": "public void SetData(IEnumerable<BattlePlayerData> players, IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 208,
+        "body_sha256": "e4502b770ca858845d553699463577766febc49c4017e563c92df2be3b59d0ba"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.Initalize",
+        "argc": 0,
+        "rva": "0x3c2b70",
+        "unique": true,
+        "signature": "public void Initalize()",
+        "bytes": 64,
+        "body_sha256": "530e218396da8696dde54f160afa719068c61ed9d2fdf29de1c538c31bd53b37"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.UpdateView",
+        "argc": 2,
+        "rva": "0x3c2fe0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 864,
+        "body_sha256": "1b6d4b3551de6d38c9f011d756ecf5b31243e40006dad07c2e489939bb5552ab"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.GroupingById",
+        "argc": 2,
+        "rva": "0x3c24c0",
+        "unique": true,
+        "signature": "private Dictionary<int, List<BattleEnemyData>> GroupingById(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 1712,
+        "body_sha256": "083307dc20bec4831428f496043015ebd72431081ab247c0836798cf168e2d4c"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationContentController.UpdateView",
+        "argc": 1,
+        "rva": "0x3c1bd0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys)",
+        "bytes": 464,
+        "body_sha256": "2dcf183f45ffc311369ab461234c16e8f4b5b1e551fa93fbafd8880ec81a858f"
+      },
+      {
+        "name": "Last.InGame.Effects.EncountEffectManager.SetAnimation",
+        "argc": 6,
+        "rva": "0xf69730",
+        "unique": true,
+        "signature": "public void SetAnimation(IEntityAccessor entityAccessor, Texture2D texture, int effectId, bool targetVisibility, bool useMapBgm, Action<EncountAnimation> createInstanceCallback)",
+        "bytes": 1056,
+        "body_sha256": "c2c59a611dba5e2ff41e08f84d5ce37d02d6406176f151b202cee24bab219cb6"
+      }
+    ],
+    "fields": {
+      "BattleEnemyInfomationController": {
+        "contentList": {
+          "type": "List<BattleEnemyInfomationContentController>",
+          "offset": "0x28"
+        }
+      },
+      "BattleEnemyInfomationContentController": {
+        "view": {
+          "type": "BattleEnemyInfomationContentView",
+          "offset": "0x18"
+        }
+      },
+      "BattleEnemyInfomationContentView": {
+        "nameText": {
+          "type": "Text",
+          "offset": "0x18"
+        },
+        "countText": {
+          "type": "Text",
+          "offset": "0x20"
+        }
+      }
+    },
+    "opening_phase_enum": {
+      "None": "0",
+      "Init": "1",
+      "CreateObj": "2",
+      "InBattle": "3",
+      "PreeMptiveMes": "4",
+      "Play": "5"
+    },
+    "assets": {
+      "bundle": "key_battle_assets_all_1312346180c6e88413f178ee6f83ad87.bundle",
+      "sha256": "2bcb98a87e7c3828ed0a7417f14ebcde49fd096263a26fac44f687f483ff1e19",
+      "enemy_templates": [
+        {
+          "view_path_id": 3359936798342955278,
+          "controller_and_view_share_game_object": true,
+          "nameText": "UnityEngine.UI.Text",
+          "countText": "UnityEngine.UI.Text"
+        }
+      ]
+    }
+  },
+  {
+    "game": 2,
+    "dump_sha256": "2cd79f198f2792c2a5c274833b94a7daeaa522cf67aff35f2e867d66be6422c4",
+    "game_sha256": "dbc8d9f674d3097b5bfa3c3b3ab877c32d92947bb40df545202ee574f2b0b19b",
+    "methods": [
+      {
+        "name": "Last.Battle.BattleController.StartPreeMptiveMes",
+        "argc": 0,
+        "rva": "0x395490",
+        "unique": true,
+        "signature": "private void StartPreeMptiveMes()",
+        "bytes": 560,
+        "body_sha256": "899f09c83e404b0b8a38761c37566bfb81919738abb69f0cd53199d9642758ed"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInit",
+        "argc": 0,
+        "rva": "0x394e60",
+        "unique": true,
+        "signature": "private void StartInit()",
+        "bytes": 656,
+        "body_sha256": "daf1877936bd8413fd9d09fccc24be8ee1a390dd9c39417a5789041bef6fe990"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartCreateObj",
+        "argc": 0,
+        "rva": "0x394780",
+        "unique": true,
+        "signature": "private void StartCreateObj()",
+        "bytes": 656,
+        "body_sha256": "78b71f5a5ea6fe9f49157ce7cf37bf444d93d2992c93b6874ee0d34e3526c508"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInBattle",
+        "argc": 0,
+        "rva": "0x394d40",
+        "unique": true,
+        "signature": "private void StartInBattle()",
+        "bytes": 288,
+        "body_sha256": "f5a3bf1be06ef1df702b2c489945f657b6ab737550a9dde8dca1b60d9c74cd78"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitBattleData",
+        "argc": 0,
+        "rva": "0x391150",
+        "unique": true,
+        "signature": "private void InitBattleData()",
+        "bytes": 800,
+        "body_sha256": "673d21df56074d48d1b3a8af8fdd5270237a178dee66dc5e16f4c7762c36e9db"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitEnemyStatus",
+        "argc": 0,
+        "rva": "0x3916b0",
+        "unique": true,
+        "signature": "private void InitEnemyStatus()",
+        "bytes": 560,
+        "body_sha256": "96e911e3d18a751d7ff18ff03449c1a16e00bcd2ae66337072be3564b2c9cddc"
+      },
+      {
+        "name": "Last.Battle.BattleController.UpdateUI",
+        "argc": 0,
+        "rva": "0x397e30",
+        "unique": true,
+        "signature": "private void UpdateUI()",
+        "bytes": 144,
+        "body_sha256": "9f8288823c429e9049631224fdb59e687af6f6d096395ed55921b6018eeb9ac8"
+      },
+      {
+        "name": "Last.UI.BattleUIManager.SetData",
+        "argc": 3,
+        "rva": "0x354250",
+        "unique": true,
+        "signature": "public void SetData(IEnumerable<BattlePlayerData> players, IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 208,
+        "body_sha256": "8358ba295a37b6b2c3bef6a17aec9c0a7b37d3421488b605410ff428eff94fb7"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.Initalize",
+        "argc": 0,
+        "rva": "0x43abc0",
+        "unique": true,
+        "signature": "public void Initalize()",
+        "bytes": 64,
+        "body_sha256": "4b7c5584bb9fabdbda35aa15bf7be664ad8a7e601603903aa1c5b6f68c957aed"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.UpdateView",
+        "argc": 2,
+        "rva": "0x43b030",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 864,
+        "body_sha256": "db9f01e2307c6f374a258f1d910ff3bf3cf7ab12f99d657313d120fee2f7ad95"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.GroupingById",
+        "argc": 2,
+        "rva": "0x43a510",
+        "unique": true,
+        "signature": "private Dictionary<int, List<BattleEnemyData>> GroupingById(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 1712,
+        "body_sha256": "f2a9f2359541e8800cd739025057796ef6cef278360b0237c16a977db082e493"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationContentController.UpdateView",
+        "argc": 1,
+        "rva": "0x439bf0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys)",
+        "bytes": 464,
+        "body_sha256": "ae856174b7289442bb049a5ffe09a2a33855b574742964e631f94810c4404904"
+      },
+      {
+        "name": "Last.InGame.Effects.EncountEffectManager.SetAnimation",
+        "argc": 6,
+        "rva": "0xc0ccf0",
+        "unique": true,
+        "signature": "public void SetAnimation(IEntityAccessor entityAccessor, Texture2D texture, int effectId, bool targetVisibility, bool useMapBgm, Action<EncountAnimation> createInstanceCallback)",
+        "bytes": 1056,
+        "body_sha256": "49fc3704540686ab429fe79095f99eabf87091cda8315c8d58f0f81a3ec8d0cc"
+      }
+    ],
+    "fields": {
+      "BattleEnemyInfomationController": {
+        "contentList": {
+          "type": "List<BattleEnemyInfomationContentController>",
+          "offset": "0x28"
+        }
+      },
+      "BattleEnemyInfomationContentController": {
+        "view": {
+          "type": "BattleEnemyInfomationContentView",
+          "offset": "0x18"
+        }
+      },
+      "BattleEnemyInfomationContentView": {
+        "nameText": {
+          "type": "Text",
+          "offset": "0x18"
+        },
+        "countText": {
+          "type": "Text",
+          "offset": "0x20"
+        }
+      }
+    },
+    "opening_phase_enum": {
+      "None": "0",
+      "Init": "1",
+      "CreateObj": "2",
+      "InBattle": "3",
+      "PreeMptiveMes": "4",
+      "Play": "5"
+    },
+    "assets": {
+      "bundle": "key_battle_assets_all_7659a9dbda2e127fe2f2a0941ae4fda4.bundle",
+      "sha256": "e482037e95105cc4f7f0c1d4b535300c764bb4636d7b682e2af6d5ab012e36ed",
+      "enemy_templates": [
+        {
+          "view_path_id": 3359936798342955278,
+          "controller_and_view_share_game_object": true,
+          "nameText": "UnityEngine.UI.Text",
+          "countText": "UnityEngine.UI.Text"
+        }
+      ]
+    }
+  },
+  {
+    "game": 3,
+    "dump_sha256": "cf74887b07f39807182c95701b3888ebfe171f0c9f7afbe8f33811b47c3d4b15",
+    "game_sha256": "8db9ab31a893ca4b13e5e4d2e2b1b086ac6e3fb5699b9be1d8037dafaaa3ae31",
+    "methods": [
+      {
+        "name": "Last.Battle.BattleController.StartPreeMptiveMes",
+        "argc": 0,
+        "rva": "0x3b6330",
+        "unique": true,
+        "signature": "private void StartPreeMptiveMes()",
+        "bytes": 560,
+        "body_sha256": "54fb0034e17965e2242ff8a427a955b7ec01ba70cff6db127b9d0c9636b92bce"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInit",
+        "argc": 0,
+        "rva": "0x3b5d00",
+        "unique": true,
+        "signature": "private void StartInit()",
+        "bytes": 656,
+        "body_sha256": "ff42fd8c776572481298fb90fc720cd42621507be7695a97a5cb9c111349f5f0"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartCreateObj",
+        "argc": 0,
+        "rva": "0x3b54f0",
+        "unique": true,
+        "signature": "private void StartCreateObj()",
+        "bytes": 704,
+        "body_sha256": "85854be45fd08bad345ac8f7d3b81038466b56d9a43a78f03196d4a11e09cde9"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInBattle",
+        "argc": 0,
+        "rva": "0x3b5b30",
+        "unique": true,
+        "signature": "private void StartInBattle()",
+        "bytes": 464,
+        "body_sha256": "89ebcabd0a59680cfc0f62308d8c61a20e479f6a47dc2da58febf9ef889b3fc4"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitBattleData",
+        "argc": 0,
+        "rva": "0x3b1de0",
+        "unique": true,
+        "signature": "private void InitBattleData()",
+        "bytes": 992,
+        "body_sha256": "1c1e1c3f9a3f14a307b6a97925288a92cedcff9694ace8f209653408931194bf"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitEnemyStatus",
+        "argc": 0,
+        "rva": "0x3b2400",
+        "unique": true,
+        "signature": "private void InitEnemyStatus()",
+        "bytes": 480,
+        "body_sha256": "45fc3317df37d0b2d6447559c0f213cd1e9a2337f14e9264e5d3bfc19e7eee95"
+      },
+      {
+        "name": "Last.Battle.BattleController.UpdateUI",
+        "argc": 0,
+        "rva": "0x3b8d30",
+        "unique": true,
+        "signature": "private void UpdateUI()",
+        "bytes": 144,
+        "body_sha256": "c2ad000f59e438fc4971921aa18229c4812d2f3e7bb0ca6a92f8513b57c559c1"
+      },
+      {
+        "name": "Last.UI.BattleUIManager.SetData",
+        "argc": 3,
+        "rva": "0x3d8630",
+        "unique": true,
+        "signature": "public void SetData(IEnumerable<BattlePlayerData> players, IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 208,
+        "body_sha256": "802c47266916268e07ae5698213ef52940e7a64a7a783041633a199b4c62762b"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.Initalize",
+        "argc": 0,
+        "rva": "0x3c6630",
+        "unique": true,
+        "signature": "public void Initalize()",
+        "bytes": 64,
+        "body_sha256": "a7b8aba8d0331db9cfc5a12e9ddb485efbf03691815d8634ae30e739b57033b5"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.UpdateView",
+        "argc": 2,
+        "rva": "0x3c6aa0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 864,
+        "body_sha256": "32add944992fed6e916ca380ec41dbbdd6a15c5e6ba784742b2d9ac58691507f"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.GroupingById",
+        "argc": 2,
+        "rva": "0x3c5f90",
+        "unique": true,
+        "signature": "private Dictionary<int, List<BattleEnemyData>> GroupingById(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 1696,
+        "body_sha256": "10d6ce4c21700d1fee689b46f5936f2bb11bdffd88e5dbb9b63c53253206f6ef"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationContentController.UpdateView",
+        "argc": 1,
+        "rva": "0x3c5610",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys)",
+        "bytes": 464,
+        "body_sha256": "84bb4f2f806c4a0337c35ed72926e4db90d391873a3c6f49446e1a3c6f9b7f84"
+      },
+      {
+        "name": "Last.InGame.Effects.EncountEffectManager.SetAnimation",
+        "argc": 6,
+        "rva": "0xcbca10",
+        "unique": true,
+        "signature": "public void SetAnimation(IEntityAccessor entityAccessor, Texture2D texture, int effectId, bool targetVisibility, bool useMapBgm, Action<EncountAnimation> createInstanceCallback)",
+        "bytes": 1056,
+        "body_sha256": "962fe852ac4ca2bd7ed9490566b42c9ebacf9628df0dd4dadbbbdca1e1484b1d"
+      }
+    ],
+    "fields": {
+      "BattleEnemyInfomationController": {
+        "contentList": {
+          "type": "List<BattleEnemyInfomationContentController>",
+          "offset": "0x28"
+        }
+      },
+      "BattleEnemyInfomationContentController": {
+        "view": {
+          "type": "BattleEnemyInfomationContentView",
+          "offset": "0x18"
+        }
+      },
+      "BattleEnemyInfomationContentView": {
+        "nameText": {
+          "type": "Text",
+          "offset": "0x18"
+        },
+        "countText": {
+          "type": "Text",
+          "offset": "0x20"
+        }
+      }
+    },
+    "opening_phase_enum": {
+      "None": "0",
+      "Init": "1",
+      "CreateObj": "2",
+      "InBattle": "3",
+      "PreeMptiveMes": "4",
+      "Play": "5"
+    },
+    "assets": {
+      "bundle": "key_battle_assets_all_72352c2c301f3f9ab0867ab4ec68956f.bundle",
+      "sha256": "37964cc9b59a21323d62e0692527dd4d91725719000e1d5ad08d08c50e9514c9",
+      "enemy_templates": [
+        {
+          "view_path_id": 3359936798342955278,
+          "controller_and_view_share_game_object": true,
+          "nameText": "UnityEngine.UI.Text",
+          "countText": "UnityEngine.UI.Text"
+        }
+      ]
+    }
+  },
+  {
+    "game": 4,
+    "dump_sha256": "011bc480d50bba3784b001844f854eae9abbe7a0050cb91c6e82146dffacc916",
+    "game_sha256": "bb2f4c9db44c8ee9b065696aeafb77561a1709492130f045433e6d215abc42ed",
+    "methods": [
+      {
+        "name": "Last.Battle.BattleController.StartPreeMptiveMes",
+        "argc": 0,
+        "rva": "0x36a400",
+        "unique": true,
+        "signature": "private void StartPreeMptiveMes()",
+        "bytes": 560,
+        "body_sha256": "35905d78928a7279d41fd244ae804429d63bd0e47d1a5f57ebd48df50ccfb125"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInit",
+        "argc": 0,
+        "rva": "0x369ed0",
+        "unique": true,
+        "signature": "private void StartInit()",
+        "bytes": 448,
+        "body_sha256": "5bfa2bfb7d92b2287937b65533c0e90f08e9ac2c1b452a7cfc3ae70900292fc6"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartCreateObj",
+        "argc": 0,
+        "rva": "0x369740",
+        "unique": true,
+        "signature": "private void StartCreateObj()",
+        "bytes": 656,
+        "body_sha256": "ad7d062d3d4db3473ba955d7a8bef07bcda6ed13f7c3fc7d7a1f32bad8200c76"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInBattle",
+        "argc": 0,
+        "rva": "0x369d00",
+        "unique": true,
+        "signature": "private void StartInBattle()",
+        "bytes": 464,
+        "body_sha256": "613092d8eccb8ad7678e809def25286ea4be9f23fdf582d7756ccf76edcaa22e"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitBattleData",
+        "argc": 0,
+        "rva": "0x3661a0",
+        "unique": true,
+        "signature": "private void InitBattleData()",
+        "bytes": 1008,
+        "body_sha256": "36ab93a1b81711d933b1145fe6db3b6228adf0f8d6402bf49a5c1de33509eea8"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitEnemyStatus",
+        "argc": 0,
+        "rva": "0x3667d0",
+        "unique": true,
+        "signature": "private void InitEnemyStatus()",
+        "bytes": 480,
+        "body_sha256": "eeff5c8bb424504e87eee149dd89ee3073be0c459d043f79c50cc89ba10b1002"
+      },
+      {
+        "name": "Last.Battle.BattleController.UpdateUI",
+        "argc": 0,
+        "rva": "0x36cb90",
+        "unique": true,
+        "signature": "private void UpdateUI()",
+        "bytes": 144,
+        "body_sha256": "8efad2adf0c09c138286304d185cf5013b5b2326078d5768d96d3b901f95a1ff"
+      },
+      {
+        "name": "Last.UI.BattleUIManager.SetData",
+        "argc": 3,
+        "rva": "0x378a80",
+        "unique": true,
+        "signature": "public void SetData(IEnumerable<BattlePlayerData> players, IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 208,
+        "body_sha256": "c8766b2d72e588453557323d919d34ad12eac59aee710bc5db0b957aaec7bb22"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.Initalize",
+        "argc": 0,
+        "rva": "0x96b960",
+        "unique": true,
+        "signature": "public void Initalize()",
+        "bytes": 64,
+        "body_sha256": "1729ec8945d7a99683c7e3bbb5ea688a3828fd8a3f9737b76c24d601754d5c6f"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.UpdateView",
+        "argc": 2,
+        "rva": "0x96bdd0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 864,
+        "body_sha256": "96061558ce2786878925e723b2da3b0b31cb95d26ebd151144d4923cd946059e"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.GroupingById",
+        "argc": 2,
+        "rva": "0x96b180",
+        "unique": true,
+        "signature": "private Dictionary<int, List<BattleEnemyData>> GroupingById(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 2016,
+        "body_sha256": "67233cfaf2b688bd08bc80d1fbd591212a7ed52d58fc7f6db4a6ea6b27b80b62"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationContentController.UpdateView",
+        "argc": 1,
+        "rva": "0x96a8c0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys)",
+        "bytes": 464,
+        "body_sha256": "464a2466b34d9711628f652a579db4533d385e82d9788bc1614793e308ba0484"
+      },
+      {
+        "name": "Last.InGame.Effects.EncountEffectManager.SetAnimation",
+        "argc": 6,
+        "rva": "0xbd5460",
+        "unique": true,
+        "signature": "public void SetAnimation(IEntityAccessor entityAccessor, Texture2D texture, int effectId, bool targetVisibility, bool useMapBgm, Action<EncountAnimation> createInstanceCallback)",
+        "bytes": 1056,
+        "body_sha256": "bff8d158cde3fba4f8fa83f488283dda530c5dca6f3337b9c77d9cd87a7cbaa1"
+      }
+    ],
+    "fields": {
+      "BattleEnemyInfomationController": {
+        "contentList": {
+          "type": "List<BattleEnemyInfomationContentController>",
+          "offset": "0x28"
+        }
+      },
+      "BattleEnemyInfomationContentController": {
+        "view": {
+          "type": "BattleEnemyInfomationContentView",
+          "offset": "0x18"
+        }
+      },
+      "BattleEnemyInfomationContentView": {
+        "nameText": {
+          "type": "Text",
+          "offset": "0x18"
+        },
+        "countText": {
+          "type": "Text",
+          "offset": "0x20"
+        }
+      }
+    },
+    "opening_phase_enum": {
+      "None": "0",
+      "Init": "1",
+      "CreateObj": "2",
+      "InBattle": "3",
+      "PreeMptiveMes": "4",
+      "Play": "5"
+    },
+    "assets": {
+      "bundle": "key_battle_assets_all_958287951e14e2ae364bc23b5d2d8035.bundle",
+      "sha256": "ddbf682c30b822791e7c6808c79cde0b17f3728016f441f82c992d37cb746fc6",
+      "enemy_templates": [
+        {
+          "view_path_id": 3359936798342955278,
+          "controller_and_view_share_game_object": true,
+          "nameText": "UnityEngine.UI.Text",
+          "countText": "UnityEngine.UI.Text"
+        }
+      ]
+    }
+  },
+  {
+    "game": 5,
+    "dump_sha256": "99239a856351c4cc7310bae2679af73085efebc765a00459b4d64cf088ee7aa3",
+    "game_sha256": "355bb0eccd3cf6a2cb70d48f2329379eb98d4b5085971d46985154a882dcfb17",
+    "methods": [
+      {
+        "name": "Last.Battle.BattleController.StartPreeMptiveMes",
+        "argc": 0,
+        "rva": "0x33fad0",
+        "unique": true,
+        "signature": "private void StartPreeMptiveMes()",
+        "bytes": 560,
+        "body_sha256": "92784baa5158d7541638b60b11c3784fe0cd6e620962b0e18516593d816230af"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInit",
+        "argc": 0,
+        "rva": "0x33ef80",
+        "unique": true,
+        "signature": "private void StartInit()",
+        "bytes": 1424,
+        "body_sha256": "ee2723e8817f07bade4bd857ecdbee0de6716dc2e9b177e99d8c3e81a7a2e52f"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartCreateObj",
+        "argc": 0,
+        "rva": "0x33e590",
+        "unique": true,
+        "signature": "private void StartCreateObj()",
+        "bytes": 720,
+        "body_sha256": "1af862b372b27900323fb78fe39e700525a00cd2d351b2293ceed526cf0e6401"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInBattle",
+        "argc": 0,
+        "rva": "0x33ecd0",
+        "unique": true,
+        "signature": "private void StartInBattle()",
+        "bytes": 688,
+        "body_sha256": "9a1008c6ed174432a1e791c22824f06fb5b7e7ccbff268d91cbca3a37a9f2524"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitBattleData",
+        "argc": 0,
+        "rva": "0x33a830",
+        "unique": true,
+        "signature": "private void InitBattleData()",
+        "bytes": 992,
+        "body_sha256": "7bd7901079c58a56232e6c6da9ba3fdb88593c790817ba99d5a288ce1ab2a439"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitEnemyStatus",
+        "argc": 0,
+        "rva": "0x33af70",
+        "unique": true,
+        "signature": "private void InitEnemyStatus()",
+        "bytes": 480,
+        "body_sha256": "4db54d2d4b22fca3f30f25d266af4eb4992f9ab386e1f3d670d47bf469fa46e8"
+      },
+      {
+        "name": "Last.Battle.BattleController.UpdateUI",
+        "argc": 0,
+        "rva": "0x342670",
+        "unique": true,
+        "signature": "private void UpdateUI()",
+        "bytes": 144,
+        "body_sha256": "d24ce35207480cf936c2117f94e6613b0929a365fb4d376136b21893ec80638a"
+      },
+      {
+        "name": "Last.UI.BattleUIManager.SetData",
+        "argc": 3,
+        "rva": "0x3e2410",
+        "unique": true,
+        "signature": "public void SetData(IEnumerable<BattlePlayerData> players, IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 208,
+        "body_sha256": "5fe671c7ca85a67812f12e80fae410fb0bee866456b332a9ed7068c09eb92b7e"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.Initalize",
+        "argc": 0,
+        "rva": "0x3efd20",
+        "unique": true,
+        "signature": "public void Initalize()",
+        "bytes": 64,
+        "body_sha256": "9175dcc2c3349590fcaea18d24d0f2a3881fda3ea8a78600703fa9a63334ad49"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.UpdateView",
+        "argc": 2,
+        "rva": "0x3f0200",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 864,
+        "body_sha256": "0212fb3589f652c142abadab2dc824c7e151836901941064035e3f8478dfc2cb"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.GroupingById",
+        "argc": 2,
+        "rva": "0x3ef630",
+        "unique": true,
+        "signature": "private Dictionary<int, List<BattleEnemyData>> GroupingById(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 1776,
+        "body_sha256": "c2985e4e94ee67f778a51aa4b9d8d5925bd01415a1caa42b4144a791238b654c"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationContentController.UpdateView",
+        "argc": 1,
+        "rva": "0x3eecd0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys)",
+        "bytes": 624,
+        "body_sha256": "6c03323c00580a7991626af2c924b64f3d5d23387a52de362ef6217480b2bf9f"
+      },
+      {
+        "name": "Last.InGame.Effects.EncountEffectManager.SetAnimation",
+        "argc": 6,
+        "rva": "0xebe3b0",
+        "unique": true,
+        "signature": "public void SetAnimation(IEntityAccessor entityAccessor, Texture2D texture, int effectId, bool targetVisibility, bool useMapBgm, Action<EncountAnimation> createInstanceCallback)",
+        "bytes": 1056,
+        "body_sha256": "badca1eb4af8dead3feebd1226ef8cfc0a354cd9f0ba763aca126e3a257ca151"
+      }
+    ],
+    "fields": {
+      "BattleEnemyInfomationController": {
+        "contentList": {
+          "type": "List<BattleEnemyInfomationContentController>",
+          "offset": "0x28"
+        }
+      },
+      "BattleEnemyInfomationContentController": {
+        "view": {
+          "type": "BattleEnemyInfomationContentView",
+          "offset": "0x18"
+        }
+      },
+      "BattleEnemyInfomationContentView": {
+        "nameText": {
+          "type": "Text",
+          "offset": "0x18"
+        },
+        "countText": {
+          "type": "Text",
+          "offset": "0x20"
+        }
+      }
+    },
+    "opening_phase_enum": {
+      "None": "0",
+      "Init": "1",
+      "CreateObj": "2",
+      "InBattle": "3",
+      "PreeMptiveMes": "4",
+      "Play": "5"
+    },
+    "assets": {
+      "bundle": "key_battle_assets_all_e61eafed92d7a2f73ec7b38da8a1d05e.bundle",
+      "sha256": "1109bcf48c5c2e942a6a0e93d5c4d539dba558e8f64fb0bb4ac90d68fa7e7de7",
+      "enemy_templates": [
+        {
+          "view_path_id": 3359936798342955278,
+          "controller_and_view_share_game_object": true,
+          "nameText": "UnityEngine.UI.Text",
+          "countText": "UnityEngine.UI.Text"
+        }
+      ]
+    }
+  },
+  {
+    "game": 6,
+    "dump_sha256": "38aa9c54abe1c712ffd3c6e88a893ea6428f6df7001718b754b21afba7f4a61b",
+    "game_sha256": "0029a22ed933aa3b6ea3b1290060502267f514d61ba6e6619308d844557f2ffd",
+    "methods": [
+      {
+        "name": "Last.Battle.BattleController.StartPreeMptiveMes",
+        "argc": 0,
+        "rva": "0x3bcbc0",
+        "unique": true,
+        "signature": "private void StartPreeMptiveMes()",
+        "bytes": 640,
+        "body_sha256": "8fea12210ecf92fac32f94f56fb20fc3c9f5396c1b9c097ba4dfe231d578e084"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInit",
+        "argc": 0,
+        "rva": "0x3bc6e0",
+        "unique": true,
+        "signature": "private void StartInit()",
+        "bytes": 448,
+        "body_sha256": "6fb86ca9e1a762a2dfb06fd7816082ab028621dc3bf090ede8dca76e307c5bd2"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartCreateObj",
+        "argc": 0,
+        "rva": "0x3bbd10",
+        "unique": true,
+        "signature": "private void StartCreateObj()",
+        "bytes": 800,
+        "body_sha256": "8caaaa32f9029afd34fcafdb0fe616d044ef1a4da71304aa1dbdf14f20a0a37b"
+      },
+      {
+        "name": "Last.Battle.BattleController.StartInBattle",
+        "argc": 0,
+        "rva": "0x3bc410",
+        "unique": true,
+        "signature": "private void StartInBattle()",
+        "bytes": 720,
+        "body_sha256": "a0a58ea68d229eb0422344d1f4e6368ad51f88da18308da11cba283aa73de5cb"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitBattleData",
+        "argc": 0,
+        "rva": "0x3b7600",
+        "unique": true,
+        "signature": "private void InitBattleData()",
+        "bytes": 1008,
+        "body_sha256": "a8d02c523bc705f205df64eb6e8608976820f094a6f4c2baac4a1c7e0fdf4c9b"
+      },
+      {
+        "name": "Last.Battle.BattleController.InitEnemyStatus",
+        "argc": 0,
+        "rva": "0x3b7cc0",
+        "unique": true,
+        "signature": "private void InitEnemyStatus()",
+        "bytes": 464,
+        "body_sha256": "e37ec678b5f3e28b22e7ade1c0b0d6d03d516084202272550087a4f67204291b"
+      },
+      {
+        "name": "Last.Battle.BattleController.UpdateUI",
+        "argc": 0,
+        "rva": "0x3bf620",
+        "unique": true,
+        "signature": "private void UpdateUI()",
+        "bytes": 144,
+        "body_sha256": "3e9177dc3608e93d2fceb29f0998af289d0837878a8e3c8fdf39eb330c78b604"
+      },
+      {
+        "name": "Last.UI.BattleUIManager.SetData",
+        "argc": 3,
+        "rva": "0x3f87c0",
+        "unique": true,
+        "signature": "public void SetData(IEnumerable<BattlePlayerData> players, IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 208,
+        "body_sha256": "2ff32b04a266d51fbfad660b3c7ecdd4c29ec965154fb1b5afedc396c861b1f5"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.Initalize",
+        "argc": 0,
+        "rva": "0x4178e0",
+        "unique": true,
+        "signature": "public void Initalize()",
+        "bytes": 64,
+        "body_sha256": "adab68e06ccff88ef09188eb06d7cb1833a900edc27fbab5d1d27ee3f4588c08"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.UpdateView",
+        "argc": 2,
+        "rva": "0x417dc0",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 864,
+        "body_sha256": "0cc72656a61fcf2f57e39c33641a34f7053152fc34096ba21cf33503db38cb8d"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationController.GroupingById",
+        "argc": 2,
+        "rva": "0x417190",
+        "unique": true,
+        "signature": "private Dictionary<int, List<BattleEnemyData>> GroupingById(IEnumerable<BattleEnemyData> enemys, IEnumerable<BattleEnemyData> startEnemys)",
+        "bytes": 1872,
+        "body_sha256": "b71705c4fd9ebe272cfd18dbf0f89e22cfe6993b8cd10ce10bd4154c9dba6915"
+      },
+      {
+        "name": "Last.UI.KeyInput.BattleEnemyInfomationContentController.UpdateView",
+        "argc": 1,
+        "rva": "0x416690",
+        "unique": true,
+        "signature": "public void UpdateView(IEnumerable<BattleEnemyData> enemys)",
+        "bytes": 768,
+        "body_sha256": "7f997f1a9200a8c429bdb23996c1201dc4f31e9d5ac4a7e85b0754fc4e983614"
+      },
+      {
+        "name": "Last.InGame.Effects.EncountEffectManager.SetAnimation",
+        "argc": 6,
+        "rva": "0xd16770",
+        "unique": true,
+        "signature": "public void SetAnimation(IEntityAccessor entityAccessor, Texture2D texture, int effectId, bool targetVisibility, bool useMapBgm, Action<EncountAnimation> createInstanceCallback)",
+        "bytes": 1056,
+        "body_sha256": "c264f53f510e32e99f449a77fd760407443b1ebc6bda4816161c05669259c8a4"
+      }
+    ],
+    "fields": {
+      "BattleEnemyInfomationController": {
+        "contentList": {
+          "type": "List<BattleEnemyInfomationContentController>",
+          "offset": "0x28"
+        }
+      },
+      "BattleEnemyInfomationContentController": {
+        "view": {
+          "type": "BattleEnemyInfomationContentView",
+          "offset": "0x20"
+        }
+      },
+      "BattleEnemyInfomationContentView": {
+        "nameText": {
+          "type": "Text",
+          "offset": "0x18"
+        },
+        "countText": {
+          "type": "Text",
+          "offset": "0x20"
+        }
+      }
+    },
+    "opening_phase_enum": {
+      "None": "0",
+      "Init": "1",
+      "CreateObj": "2",
+      "InBattle": "3",
+      "PreeMptiveMes": "4",
+      "Play": "5"
+    },
+    "assets": {
+      "bundle": "key_battle_assets_all_b4052038d54b7467b53a823737a89ee6.bundle",
+      "sha256": "9d4d50a561ad82ee1bec5059a14d0583c7b23ef1800052e96fb4e5afd325bc00",
+      "enemy_templates": [
+        {
+          "view_path_id": 3359936798342955278,
+          "controller_and_view_share_game_object": true,
+          "nameText": "UnityEngine.UI.Text",
+          "countText": "UnityEngine.UI.Text"
+        }
+      ]
+    }
+  }
+]

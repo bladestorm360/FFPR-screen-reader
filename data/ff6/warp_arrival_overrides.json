@@ -790,5 +790,43 @@
       16,
       1
     ]
+  },
+  {
+    "submap": "Map_30871_12",
+    "entity_id": 0,
+    "destination_map": 555,
+    "original_point": 1,
+    "continuation": "sc_e_0978_1",
+    "continuation_sha256": "329a848e608d6dd5d781e9131f87497543ffe694b5ab086cedb2fbf7d36b2663",
+    "arrival_cell": [
+      15,
+      11,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      15,
+      11,
+      1
+    ]
+  },
+  {
+    "submap": "Map_30871_14",
+    "entity_id": 0,
+    "destination_map": 557,
+    "original_point": 1,
+    "continuation": "sc_e_0979_1",
+    "continuation_sha256": "e355807886ceddbb7ea743d1fd54a32c0158afd5e53f32a64bcaa3b3024e43d3",
+    "arrival_cell": [
+      54,
+      31,
+      1
+    ],
+    "evidence": "Reviewed player-bound continuation SetPos/Lerp/Move/MoveTo; October16 expanded identifier audit, docs/re/EVENT_CONTEXT.md",
+    "arrival_baked_cell": [
+      7,
+      12,
+      1
+    ]
   }
 ]

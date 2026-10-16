@@ -1,7 +1,9 @@
-// check-sources: audio/cue_bank.cpp
+// check-sources: input/bindings.cpp audio/cue_bank.cpp
 // Offline regression of the real modal sampler and settings menu; no game/window/control.
 #include <windows.h>
+#include "bindings_keys_fixture.h"
 #include <cstdio>
+#include <cstring>
 #include <cstdint>
 #include <functional>
 #include <map>
@@ -51,7 +53,12 @@ void after_seconds(double, Task task, const char*) { fixture::pending.push_back(
 namespace game { Id current() { return static_cast<Id>(fixture::game_id); } }
 namespace fixture { std::vector<int> previews; }
 namespace sound { void preview(cues::Id cue) { fixture::previews.push_back(static_cast<int>(cue)); } }
-namespace input { bool game_window_focused() { return fixture::focused; } }
+namespace input {
+bool game_window_focused(){return fixture::focused;}
+bool key_pressed(Key k){ui::modal_keys::sample();return ui::modal_keys::pressed(fixture::key_vk(k));}
+bool key_held(Key k){ui::modal_keys::sample();return ui::modal_keys::held(fixture::key_vk(k));}
+bool key_in_use(Key k){return key_held(k);}bool shift_held(){return key_held(Key::LeftShift)||key_held(Key::RightShift);}bool ctrl_held(){return key_held(Key::LeftControl)||key_held(Key::RightControl);}bool alt_held(){return key_held(Key::LeftAlt)||key_held(Key::RightAlt);}
+}
 namespace modtext {
 std::wstring T(std::wstring_view key) { return std::wstring(key); }
 std::wstring TF(std::wstring_view key, std::initializer_list<std::wstring> args) {
@@ -73,6 +80,7 @@ void say_menu(std::wstring_view line, bool) { fixture::spoken.emplace_back(line)
 void say_menu_sequence(std::vector<std::wstring> parts, bool, speech::Timing) { for (auto& part : parts) fixture::spoken.push_back(std::move(part)); }
 }
 namespace text {
+std::wstring widen(const char* x){return std::wstring(x,x+std::strlen(x));}
 std::wstring num(long long value) { return std::to_wstring(value); }
 bool is_blank(std::wstring_view value) { return value.empty(); }
 }
@@ -92,11 +100,22 @@ bool toggle(const char* key, bool def) {
 namespace ui {
 std::wstring menu_position(const std::wstring& line, int, int) { return line; }
 namespace text_input { bool is_open() { return false; } bool handle_input() { return false; } }
-namespace confirmation { bool is_open() { return false; } bool handle_input() { return false; } }
+namespace confirmation { bool is_open() { return false; } bool handle_input() { return false; } void open(const std::wstring&,Callback,Callback){} }
+}
+
+namespace input {
+bool gamepad_available(){return false;}bool button_held(int){return false;}bool button_pressed(int){return false;}
+float left_trigger(){return 0;}float right_trigger(){return 0;}float left_stick_x(){return 0;}float left_stick_y(){return 0;}float right_stick_x(){return 0;}float right_stick_y(){return 0;}
+std::wstring button_label(int n){return L"Button "+std::to_wstring(n);}const char* key_name(Key){return "Key";}
+namespace gamepad {
+bool lstick_up_pressed(){return false;}bool lstick_down_pressed(){return false;}bool lstick_left_pressed(){return false;}bool lstick_right_pressed(){return false;}
+bool rstick_up_pressed(){return false;}bool rstick_down_pressed(){return false;}bool rstick_left_pressed(){return false;}bool rstick_right_pressed(){return false;}
+}
 }
 
 int main()
 {
+    ui::mod_menu::install();
     int failures = 0;
     auto expect = [&](bool ok, const char* message) {
         if (!ok) { ++failures; std::printf("FAIL %s\n", message); }
@@ -111,6 +130,7 @@ int main()
     const std::map<std::string, std::wstring> moved_settings = {
         {ui::prefs::kAutowalk, L"Navigation"},
         {ui::prefs::kSpeechEnabled, L"Speech"},
+        {ui::prefs::kResultNotificationsOnce, L"Speech"},
         {ui::prefs::kSpeakAutowalkPath, L"Navigation"},
         {ui::prefs::kNavigationKeymap, L"Navigation"},
         {ui::prefs::kTeleportShortcuts, L"Navigation"},
@@ -160,6 +180,16 @@ int main()
                     ++warning_rows;
                     expect(section == L"Speech" && item.kind == ui::mod_menu::Kind::Toggle && item.bool_def,
                            "Mod warnings is a default-on Speech toggle");
+                }
+                if (std::string(item.key) == ui::prefs::kResultNotificationsOnce) {
+                    expect(section == L"Speech" && item.kind == ui::mod_menu::Kind::Toggle && !item.bool_def &&
+                        i > 0 && items[i-1].key && std::string(items[i-1].key) == ui::prefs::kAutoDetail,
+                        "all-six notifications-once option follows Auto Detail and defaults off");
+                    fixture::values.erase(item.key);
+                    expect(!ui::prefs::result_notifications_once_enabled(),"new option preserves existing repeated notifications by default");
+                    ui::mod_menu::flip(item);
+                    expect(ui::prefs::result_notifications_once_enabled(),"notification toggle uses the saved preference");
+                    ui::mod_menu::flip(item);
                 }
                 const auto expected = moved_settings.find(item.key);
                 if (expected != moved_settings.end()) {

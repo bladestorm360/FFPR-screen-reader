@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include "input_internal.h"
+#include "bindings.h"
 #include "../fieldnav/autowalk.h"
 #include "../field/object_cache.h"
 #include "../core.h"
@@ -43,6 +44,7 @@ ref::Class  kInputField{"UnityEngine.UI", "InputField"};
 struct Binding {
     Key key;
     Mod mod;
+    int binding = -1;
     Context ctx;
     std::function<void()> fn;
     std::string description;
@@ -74,13 +76,22 @@ void register_binding(Key key, Mod mod, Context ctx, std::function<void()> fn, c
         g_bindings.push_back(KeyEntry{key, {}});
         e = &g_bindings.back();
     }
-    Binding b{key, mod, ctx, std::move(fn), description ? description : "", navigation_keymap};
+    const std::string id = "key." + std::to_string(int(ctx)) + "." + (description ? description : "") + "." + std::to_string(navigation_keymap);
+    const int index=bindings::add(id.c_str(),description?description:"",false,int(ctx),int(key),int(mod),navigation_keymap);
+    Binding b{key, mod, index, ctx, std::move(fn), description ? description : "", navigation_keymap};
     auto before = [](const Binding& x, const Binding& y) {
         if (x.mod != y.mod) return static_cast<int>(x.mod) > static_cast<int>(y.mod);
         return static_cast<int>(x.ctx) > static_cast<int>(y.ctx);
     };
     auto pos = std::upper_bound(e->list.begin(), e->list.end(), b, before);
     e->list.insert(pos, std::move(b));
+    if((ctx==Context::Status || ctx==Context::BestiaryDetail || ctx==Context::Results || ctx==Context::KeyHelp) && key>=Key::UpArrow && key<=Key::RightArrow) {
+        const Key aliases[]={Key::W,Key::S,Key::A,Key::D};
+        const auto original=std::find_if(e->list.begin(),e->list.end(),[index](const Binding& x){return x.binding==index;});
+        const auto fn_copy=original->fn;
+        const std::string label=std::string(description?description:"")+" (WASD)";
+        register_binding(aliases[int(key)-int(Key::UpArrow)],mod,ctx,fn_copy,label.c_str(),navigation_keymap);
+    }
 }
 
 void reg(Key key, Mod mod, Context ctx, const char* action, const char* description, int navigation_keymap = -1)
@@ -94,26 +105,6 @@ void reg(Key key, Mod mod, Context ctx, const char* action, const char* descript
 void reg_field(Key key, Mod mod, const char* action, const char* description, int navigation_keymap = -1)
 {
     reg(key, mod, Context::Field, action, description, navigation_keymap);
-}
-
-/// KeyBindingRegistry.TryExecute: the first binding with exactly these modifiers whose context
-/// is Global or the active one.
-bool try_execute(Key key, Mod mods, Context active)
-{
-    if (queries::is("GameStatePatches.IsInputTransitionBlocked")) return false;
-    if (active == Context::Field && mods == Mod::Ctrl &&
-        (key == Key::UpArrow || key == Key::DownArrow || key == Key::LeftArrow || key == Key::RightArrow)
-        && !ui::prefs::teleport_shortcuts_enabled()) return false;
-    KeyEntry* e = entry(key);
-    if (!e) return false;
-    for (const Binding& b : e->list) {
-        if (b.mod != mods) continue;
-        if (b.ctx != Context::Global && b.ctx != active) continue;
-        if (b.navigation_keymap >= 0 && b.navigation_keymap != ui::prefs::navigation_keymap()) continue;
-        b.fn();
-        return true;
-    }
-    return false;
 }
 
 // --- binding bodies that were lambdas or private methods in FF1 -----------------------------------
@@ -139,6 +130,18 @@ void handle_tab_key()
 
 void initialize_bindings()
 {
+    reg(Key::F1,Mod::None,Context::Global,"GameToggles.ReportSpeed","Report game speed");
+    reg(Key::F3,Mod::None,Context::Global,"GameToggles.ReportEncounters","Report encounters");
+    reg(Key::F7,Mod::None,Context::Global,"Mod.ToggleAutoDetail","Toggle automatic details");
+    register_binding(Key::F5,Mod::None,Context::Global,[] {
+        if (!queries::is("BattleStateHelper.IsInBattle")) { speak_mod_menu_unavailable(); return; }
+        const int next=(std::clamp(ui::prefs::enemy_hp_display(),0,2)+1)%3;
+        ui::prefs::set_enemy_hp_display(next);
+        const std::wstring options[]={T(L"Numbers"),T(L"Percentage"),T(L"Hidden")};
+        ffpr::say(TF(L"Enemy HP: {0}",{options[next]}),true);
+        ui::prefs::notify_changed(ui::prefs::kEnemyHPDisplay);
+    },"Cycle enemy HP display");
+    register_binding(Key::F8,Mod::None,Context::Global,[] { if(field_active())ui::mod_menu::open(); else speak_mod_menu_unavailable(); },"Open mod menu");
     reg_field(Key::Semicolon, Mod::Shift, "Soundscape.RangeDown", "Reduce soundscape distance");
     reg_field(Key::Quote, Mod::Shift, "Soundscape.RangeUp", "Increase soundscape distance");
     reg_field(Key::Quote, Mod::Ctrl, "Mod.ToggleSoundscape", "Toggle soundscape");
@@ -276,56 +279,14 @@ Context determine_context(bool on_demand)
     return Context::Global;
 }
 
-Mod current_modifiers()
+void dispatch_registered_bindings(Context active)
 {
-    const bool shift = shift_held();
-    const bool ctrl = ctrl_held();
-    if (ctrl && shift) return Mod::CtrlShift;
-    if (ctrl) return Mod::Ctrl;
-    if (shift) return Mod::Shift;
-    return Mod::None;
-}
-
-bool any_modifier_held() { return shift_held() || ctrl_held() || alt_held(); }
-
-bool is_buffer_context(Context c)
-{
-    return c == Context::Status || c == Context::BestiaryDetail || c == Context::Results || c == Context::KeyHelp;
-}
-
-void dispatch_registered_bindings(Context active, Mod mods)
-{
-    for (size_t i = 0; i < g_bindings.size(); ++i) {
-        const Key k = g_bindings[i].key;
-        if (key_pressed(k)) try_execute(k, mods, active);
-    }
-
-    // WASD as arrow keys, ONLY in the navigation-buffer contexts, so game WASD movement and
-    // letter hotkeys elsewhere are untouched. Modifiers carry (Shift+W = Shift+Up).
-    if (is_buffer_context(active)) {
-        if (key_pressed(Key::W)) try_execute(Key::UpArrow, mods, active);
-        if (key_pressed(Key::S)) try_execute(Key::DownArrow, mods, active);
-        if (key_pressed(Key::A)) try_execute(Key::LeftArrow, mods, active);
-        if (key_pressed(Key::D)) try_execute(Key::RightArrow, mods, active);
-    }
-}
-
-void handle_function_key_input()
-{
-    if (key_pressed(Key::F1)) actions::run("GameToggles.ReportSpeed");
-    if (key_pressed(Key::F3)) actions::run("GameToggles.ReportEncounters");
-    if (key_pressed(Key::F7)) actions::run("Mod.ToggleAutoDetail");
-
-    if (key_pressed(Key::F5)) {
-        if (queries::is("BattleStateHelper.IsInBattle")) {
-            const int next = (std::clamp(ui::prefs::enemy_hp_display(), 0, 2) + 1) % 3;
-            ui::prefs::set_enemy_hp_display(next);
-            const std::wstring options[] = {T(L"Numbers"), T(L"Percentage"), T(L"Hidden")};
-            ffpr::say(TF(L"Enemy HP: {0}", {options[next]}), true);
-            ui::prefs::notify_changed(ui::prefs::kEnemyHPDisplay);
-        } else {
-            speak_mod_menu_unavailable();
-        }
+    for(int pass=0;pass<2;++pass) for(const auto& entry:g_bindings) for(const auto& b:entry.list) {
+        if((pass==0 ? b.ctx!=active : b.ctx!=Context::Global || active==Context::Global))continue;
+        if(b.navigation_keymap>=0 && b.navigation_keymap!=ui::prefs::navigation_keymap())continue;
+        if(!bindings::pressed(b.binding))continue;
+        if(b.description.find("Teleport ")==0 && !ui::prefs::teleport_shortcuts_enabled())continue;
+        b.fn(); return;
     }
 }
 
@@ -364,17 +325,17 @@ void reset_input_axes()
 void update()
 {
     // Gamepad and keyboard state for this frame.
-    gamepad::update();
-    ffpr::fieldnav::autowalk::input_updated();
+    { timing::Scope part("Input physical snapshot"); gamepad::update(); bindings::begin_frame(); }
+    { timing::Scope part("Input autowalk intent"); ffpr::fieldnav::autowalk::input_updated(); }
 
     // Unity legacy Input off while the mod consumes input (the mod reads the keyboard with
     // GetAsyncKeyState, unaffected). With the InputSystemManager hooks: no game keyboard at all.
-    if (suppress_game_input()) reset_input_axes();
+    { timing::Scope part("Input native suppression"); if (suppress_game_input()) reset_input_axes(); }
 
     // Controller routing and IsFieldActive first, every frame.
-    const Context context = determine_context(false);
-    router::update(context);
-    update_native_input_ownership();
+    { timing::Scope part("Input controller dispatch");
+      const Context context = determine_context(false);
+      bindings::context(context);router::update(context);update_native_input_ownership(); }
 
     if (queries::is("GameStatePatches.IsInputTransitionBlocked")) {
         return; // discard input edges; never replay hotkeys when loading finishes
@@ -385,7 +346,7 @@ void update()
 
 
     // The mod's modal windows take all keyboard input while open.
-    if (ui::handle_modal_input()) return;
+    { timing::Scope part("Input modal dispatch"); if (ui::handle_modal_input()) return; }
 
     // Game-context hotkeys only while the game window is the foreground window.
     if (!game_window_focused()) return;
@@ -395,29 +356,12 @@ void update()
     router::notify_keyboard_input();
 
     // No hotkeys while the player types in a text field.
-    if (is_input_field_focused()) return;
-
-    // Bare hotkeys only without modifiers, so OS shortcuts (Alt+F4, Ctrl+F4) do not trigger
-    // them. Shift+M, Shift+K etc. have their own registry entries.
-    const bool modifier_held = any_modifier_held();
-
-    // F8: mod menu, field only (ControllerRouter.IsFieldActive).
-    if (!modifier_held && key_pressed(Key::F8)) {
-        if (field_active()) ui::mod_menu::open();
-        else speak_mod_menu_unavailable();
-        return;
-    }
-
-    // F5 / F7, bare only.
-    if (!modifier_held) handle_function_key_input();
+    const bool typing=is_input_field_focused();
+    bindings::keyboard_allowed(!typing);
+    if(typing)return;
 
     const Context active = determine_context(true);
-    const Mod mods = current_modifiers();
-
-    // Alt held: no Alt bindings exist, so Alt+U must not run U.
-    if (alt_held()) return;
-
-    dispatch_registered_bindings(active, mods);
+    { timing::Scope part("Input keyboard dispatch"); dispatch_registered_bindings(active); }
 }
 
 void tick()

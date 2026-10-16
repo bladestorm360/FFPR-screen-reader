@@ -37,7 +37,7 @@
 
 namespace {
 
-constexpr const char* kBuild = "Final Fantasy Pixel Master Core Screen Reader V0.9.2 (" __DATE__ " " __TIME__ ")";
+constexpr const char* kBuild = "Final Fantasy Pixel Master Core Screen Reader V0.9.3 (" __DATE__ " " __TIME__ ")";
 constexpr int kSpeechWaitMs = 30000;
 constexpr int kMaxWaitMs = 120000;
 constexpr int kPollMs = 50;
@@ -139,6 +139,11 @@ void boot_guarded(bool smoke)
         LOGF("boot: could not bind the IL2CPP API - going quiet");
         return;
     }
+    const auto game_image=GetModuleHandleW(L"GameAssembly.dll");
+    const auto* game_dos=reinterpret_cast<const IMAGE_DOS_HEADER*>(game_image);
+    const auto* game_nt=reinterpret_cast<const IMAGE_NT_HEADERS*>(reinterpret_cast<const uint8_t*>(game_image)+game_dos->e_lfanew);
+    timing::game_size.store(game_nt->OptionalHeader.SizeOfImage);
+    timing::game_base.store(reinterpret_cast<uintptr_t>(game_image));
     if (!gate::arm()) {
         LOGF("boot: could not arm the runtime gate - going quiet");
         return;

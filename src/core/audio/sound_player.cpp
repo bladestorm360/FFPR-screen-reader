@@ -90,6 +90,14 @@ void tick() {
 }
 int install() {
     configure(); frame::subscribe(&tick,"audio.cues.capture");
+    events::on(events::Kind::BattleEntering, [] {
+        // Atomic cancellation only. Keep the owner snapshot for the next normal
+        // tick to return, without touching the mixer/device or freeing rows here.
+        runtime::cancel_field();
+        field_active=false;
+        wall_active=false;
+        runtime::walls(0,0);
+    });
     actions::define("Soundscape.RangeDown",[]{range(-1);});
     actions::define("Soundscape.RangeUp",[]{range(1);});
     actions::define("Audio.RefreshSettings",[]{configure();});

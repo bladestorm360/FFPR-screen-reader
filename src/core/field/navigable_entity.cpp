@@ -268,6 +268,10 @@ bool Entity::is_alive() const
     if (remote()) return true;   // another floor, from the baked data: nothing live to check
     if (!game || !live_entity(game)) return false;
     if (game_class && il2cpp::object_class(game) != game_class) return false;
+    if (kind == Kind::NPC && r::mNonPlayerGetCanAction.get() &&
+        !ref::call<bool>(r::mNonPlayerGetCanAction, game)) return false;
+    if (kind == Kind::Event && r::kFieldMapObjectDefault.is(game) &&
+        !call_virtual_bool(r::mMapObjectGetCanAction, game)) return false;
     return entity_is_present(game);
 }
 

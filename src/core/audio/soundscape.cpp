@@ -1,12 +1,11 @@
 #include "soundscape.h"
+#include "../field/event_semantics.h"
 #include <algorithm>
 #include <cmath>
 #include <cwctype>
 #include <unordered_set>
 namespace sound::scape {
 namespace {
-bool has(const std::wstring& s,const wchar_t* p) { return s.find(p)!=s.npos; }
-std::wstring lower(std::wstring value) { for(auto& c:value) c=wchar_t(towlower(c)); return value; }
 struct Cell { int x,y,layer; bool operator==(const Cell&) const=default; };
 struct Hash { size_t operator()(const Cell& c) const { return (size_t(uint32_t(c.x))*73856093u) ^ (size_t(uint32_t(c.y))*19349663u) ^ size_t(c.layer); } };
 Cell cell(const Row& r) { return {int(std::lround(r.x)),int(std::lround(r.north)),r.layer}; }
@@ -14,13 +13,7 @@ bool coordinate(float value) { return std::isfinite(value) && std::abs(value)<=6
 }
 float wrapped(float d,float width) { return width>0 ? d-std::round(d/width)*width : d; }
 bool trap_hint(std::wstring hint) {
-    hint=lower(std::move(hint));
-    // Explicit environmental failure identifiers only. Warp/battle/teleport are
-    // deliberately absent: trial pads and progress warps remain ordinary events.
-    for(const auto* key:{L"pitfall",L"trapdoor",L"collaps",L"floorbreak",L"bridgebreak",L"bridge_break",
-        L"floor_break",L"crack",L"fall_down",L"falldown",L"falling",L"position_reset",L"reset_position",L"room_reset",L"落とし穴",L"落し穴",L"穴に落ち",L"落下",L"崩落",L"床が抜",L"橋が壊",L"地割れに落"})
-        if(has(hint,key)) return true;
-    return hint.rfind(L"落ちる",0)==0 || hint.rfind(L"fall_",0)==0 || hint==L"fall";
+    return field::event_semantics::trap_identifier(hint);
 }
 std::vector<Emitter> classify(const Snapshot& s,const Options& o) {
     std::vector<Emitter> out;

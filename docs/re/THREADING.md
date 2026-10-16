@@ -1,5 +1,14 @@
 # Read-only snapshots and worker ownership
 
+October15 [persistent-state repair](MAP_STATE.md): the native Flags backing array
+has 128 words, while only 32 words hold the 1,024 logical bits. The shared reader
+now accepts this allocation instead of returning unknown scenario/treasure flags;
+copy bounds and native-owner/worker handoff remain unchanged.
+
+Later October15 [event tracking repair](EVENT_TRACKING.md) corrects the shared omission
+of other-floor events and preserves absolute floor/native identity through transitions.
+It supersedes the earlier unchanged-entity-inclusion statement below for that follow-up.
+
 ## Object browsing floors and direct distance, October 15
 
 `entity_nav.cpp` uses the shared `Entity::format_description` for every category.
@@ -704,7 +713,7 @@ save/bake change or dependency upgrade occurred; public V0.9.2 remains unchanged
 transition costs, modded/unmodded frame/load comparison and audible behavior remain
 unmeasured; guard gameplay confirmation is pending.
 
-### Prioritized remaining world-map fix plan
+### October14 world-map fix plan (superseded by October16 follow-up)
 
 1. Give native battle/map readiness an explicit resumption/dirty-generation contract.
    Cancel obsolete filter work at transition entry; on same-map field readiness start one
@@ -738,3 +747,51 @@ After implementation, run canonical build/smoke and all-six real-bake regression
 then focused user gameplay confirmation in TESTING.md. Existing guards are offline-verified;
 the remaining world-map algorithm/readiness fix and its gameplay/performance acceptance
 are open. No speculative runtime capture or user code/architecture review is requested.
+
+
+## October16 navigation/state follow-up
+
+[Battle-entry follow-up](BATTLE_ENTRY.md): BattleEntering performs flag/epoch
+invalidation only. Existing BattleStart cleanup moves to the native opening
+presentation postfix, after entrance/BGM. Route/scanner callbacks retain native
+ownership through interruption; audio stops through atomic output epochs/masks.
+Opening enemy rows use one bounded native producer snapshot and the existing
+speech worker. Full intermittent-stall causality and audible timing remain open.
+
+Later user report: intermittent severe title/battle stalls reopen runtime acceptance.
+An explicitly authorized45-second FFII profile did not reproduce the problem; the
+user requested automatic per-run evidence instead. [Observation, diagnostic scope,
+bounds and overhead evidence](STALL_2026_10_16.md) distinguish what is measured from
+unattributed engine/frame gaps. No permanent hot engine-invoke hook is introduced.
+
+[Current implementation, bounds and evidence](EVENT_CONTEXT.md) supersedes the open
+October14 world-map plan above. Explicit directions cancel and restart background list
+refresh, nested vehicle searches are cancellable, parked-vehicle exits share owned
+distance maps, and small native route captures avoid an unconditional extra frame.
+The active10ms request is a user target: warm offline processing is below it, while
+some cold full routes/list preparation exceed it. Actual frame/audible costs remain
+user-side; final canonical verification/deployment status is in the linked record.
+
+October 16 input/movement follow-up: current controllers come from the native switch
+postfix and a maximum 32-entry native owner array, not scene scans. The real player is read
+from FieldController before matching a controller. Input capture/catalog/editor own only
+copied values and existing settings; no native pointer is handed to another thread.
+Raw physical input remains separate from effective command dispatch/native consumption.
+Key/airship/touch/turning-mount adapters use original input callbacks and LateUpdate;
+the mod never moves a transform or waits for work on the game thread. Readiness is an
+explicit-request-bound .75-second nonblocking callback that replans, with battle/map/manual
+cancellation. Turning is progress checked and capped at 15 seconds. Binding storage uses
+the existing asynchronous I/O lane. A 242-entry dispatch fixture averages roughly16us for
+polling plus24 command checks with fake physical APIs; this excludes actual engine/frame,
+Windows focus queries and audible response. No actual game probe was performed for this task.
+[Exact native evidence and ownership](AUTOWALK.md), [controls](../INPUT_BINDINGS.md).
+
+Delegation receipt: gpt-6-luna handled only30 mod-text entries in12 locales. Its first two
+text-preserving validation attempts aborted without writes (existing duplicates and a local
+collector-reset bug); the corrected bounded task completed. Sol reviewed the catalog/locale/
+placeholder integration and all code, architecture, native RE, builds and tests independently.
+No Astra delegation. Existing duplicate JSON keys `Status damage` and the long field-control
+help sentence were preserved; no new duplicate introduced. Receipt:
+`build_check/autowalk_controls_2026_10_16/labels_validation.json`. Remaining issues are actual
+gameplay/latency confirmation and the tester's unknown exact game/mode/device, not a code-review
+handoff to the user.

@@ -1,5 +1,117 @@
 # Native FFPR durable memory
 
+- October16 V0.9.3 prepared: [release/package/source record](docs/release.md#v093-preparation-october16).
+  Native opening conditions queue before formation/first turn; explicit Control cancellation
+  retained. Both sticks' held remaps now use positive Y for Up. Actual producer, speech
+  worker/fake SDK, input, canonical build/all checks and smoke pass;6,872 names/zero missing,
+  zero undefined,47 exports. Own FFII recurrence caught243ms result-reset wall time plus
+  larger unobserved gaps; [full cause remains OPEN](docs/re/STALL_2026_10_16.md).
+  Automatic targeted owner CPU/leaf timing added;0.932us/frame warm offline sampling,
+  not an actual-game guarantee. User reports autowalk appears good; remapping still testing.
+  Tested0.9.3 deployed/hash-verified all six closed games:DB672780E4317FEE3A4FB047D9BF99118E7773623FFE823E27FC543A3B9A6F88
+  (9,712,640 bytes); SDL matches, HRTF/Prism/INI/waypoints unchanged. Recovery/receipts:
+  build_check/v093/. Complete28-file ZIP/README/version/pinned dependency checks pass.
+  Sol alone for this follow-up/release; no new game launch/control/probe or dependency install.
+  Publication verification follows in the linked release record.
+
+- October16 autowalk/remapping follow-up: [mode/native evidence](docs/re/AUTOWALK.md),
+  [saved control/editor contract](docs/INPUT_BINDINGS.md), [remaining gameplay checks](docs/TESTING.md).
+  Tester game/mode/device unknown; found narrow controller allowlist and inactive last-Init
+  cache, missing actual-switch observation, and flight-hook failure disabling walking.
+  Current owner selection, all applicable native tile/airship/turning-mount profiles,
+  bounded readiness/replan and immediate transition/manual cancellation are offline verified.
+  All mod keyboard/controller/modal commands are saved/remappable per game, including Mod
+  Mode entry/exit and each field/battle/results/dialogue function. No keyboard mod mode;
+  both navigation layouts retained. Physical input stays separate; consumed controls follow
+  remaps, and global mode/menu buttons participate in chord/function conflicts. Canonical
+  build/all checks/smoke pass:6,872 names, zero missing/undefined,47 exports;540 steering
+  cases. Changed Mod Mode button/functions and freed old button pass actual-router regression.
+  Deployed/hash-verified all six closed games:
+  C302F1010D7C06BE84C6EA0E163D13956D3B0F2471237CD595CCAF6D902D73B5
+  (9,698,816 bytes); SDL matches; HRTF/Prism/INI/waypoints unchanged. Recovery/receipts:
+  build_check/autowalk_controls_2026_10_16/. Durable native receipt:
+  docs/re/autowalk_modes_native.json. Sol owned RE/design/code/review/testing; Luna's bounded
+  30-entry/12-locale text task completed after two validation-only retries, reviewed/validated
+  by Sol. No new runtime probe, game launch/control or publication. Actual gameplay/latency
+  and tester's exact original failure remain unconfirmed. Prior dirty work preserved.
+
+- October16 battle-entry/formation follow-up: [current source, native evidence and
+  limits](docs/re/BATTLE_ENTRY.md). FFII diagnostic run caught40.968ms in entry prefix
+  and837.985ms outside that hook. BattleEntering now changes flags/epochs only;
+  existing cleanup waits for native opening presentation after entrance/BGM.
+  Native-owner callbacks stay owned until safe cancellation; audio stops atomically.
+  All-six opening enemy panels supply names/counts once per encounter; first turn
+  queues behind them. Central speech master/Autodetail semantics preserved.
+  Canonical build/all checks/isolated smoke pass:6,784 names, zero missing/undefined,
+  47 exports. Deployed/hash-verified all six closed games:
+  0222C0EC149EBAD0FEBAAE01671F4FE11BF89C80B0A1352B8CCF2466FE17C17A
+  (9,631,744 bytes); dependencies match, Prism/INI/waypoints unchanged. Recovery/
+  receipts: build_check/battle_entry_*2026_10_16*. Sol alone; full stall cause and
+  audible/game-frame confirmation remain open; no new runtime probe or publication.
+
+- October16 intermittent regression: user reports severe title/battle-entry/every-action
+  stalls in DFDDEFD1. Performance acceptance reopened. [Evidence and exact unresolved
+  trace question](docs/re/STALL_2026_10_16.md). Existing FFII log confirms237ms mod
+  field-setup ticks and~0.4–1.2s battle intervals outside input timing, with no queued
+  navigation work. Static review/comparative logs do not isolate the battle cause.
+  Explicitly authorized45s FFII profile (PID43096) detached; user launched/controlled
+  and confirmed no lag on that run. Cause remains unproven. User requested automatic
+  diagnostics every run; implemented/offline-verified, canonical build/smoke pass.
+  Slow5ms scopes distinguish mod/native-read/original,50ms input gaps plus5s summaries;
+  logger worker formats bounded numeric records, producer never waits. Warm added
+  overhead0.033us/call offline; lock/full-queue pressure checks pass. No permanent hot
+  engine-invoke hook or new key/setting. Deployed/hash-verified all six closed games:
+  17AE6B07EBF8340DE0F2A5F81E21749AF1ACB8E4746D915AE78BAC9A952C3B62
+  (9,621,504 bytes), dependencies match; Prism/settings/waypoints unchanged. Recovery/
+  receipts: build_check/timing_*2026_10_16*. Sol alone; no agent launch/control,
+  save/unrelated-process change, dependency install or new publication. Prior work
+  preserved. Automatic diagnostics await the next real run; intermittent cause open.
+
+- October16 follow-up: results notifications once (default off), all-six
+  event labels/warp-trap classification/consumed events, early transition
+  cancellation, real cross-floor objectives/loop rejection, and FFII Cure target
+  focus. [Current evidence, deployment and remaining user checks](docs/re/EVENT_CONTEXT.md).
+  Expanded work also covers shop prices, refresh cancellation/performance and directional
+  boarding/landing. Pre-bake native presence/action rules are retained: reusable
+  interactions survive script refresh, one-offs follow actual native/flag state.
+  Canonical build, all-six actual-source/bake checks and isolated smoke pass.
+  Deployed/hash-verified all six closed games: DFDDEFD1B4E16DFA33DAEE46914A61F4DB96054C7F0C46F435D26532685576CD
+  (9,578,496 bytes), SDL3/pinned HRTF match; Prism/settings/waypoints unchanged.
+  Recovery and receipts: build_check/event_context_*2026_10_16*; detailed checks/native
+  evidence: build_check/event_audit_2026_10_16. Sol reviewed/verified three bounded
+  Luna gpt-6-luna menu/shop/target handoffs; no remaining handoff issue, no Astra.
+  Warm FFII fake-owner direction pipeline0.191ms; cold vehicle work can exceed10ms.
+  No game launch/probe, dependency install, new commit/push or publication.
+  Prior dirty work preserved; gameplay/audible confirmation remains user-side.
+
+- October15 persistent-state follow-up: cross-floor chests lost Opened because the
+  shared native reader rejected the real 128-word Flags backing arrays in all six
+  games (1,024 logical bits use the first 32 words). Both treasure/story banks were
+  unknown; native current-floor isOpen bypassed the bug. Corrected bounded reader;
+  actual-reader fixture reproduces eight old failures and now verifies 1,886 real
+  chest mappings, unknown/malformed state and zero worker-native calls. Eight
+  unmapped baked chest objects remain unknown. [Native evidence and limits](docs/re/MAP_STATE.md),
+  [first gameplay check](docs/TESTING.md#persistent-cross-floor-chest-state-october-15).
+  Canonical build/isolated smoke pass; deployed/hash-verified all six closed games:
+  A29CADC0C78AB6D51500876F57A1A7894167482B8E397C9528E55F7BA85D8A0D
+  (9,529,344 bytes), protected files unchanged. Recovery/receipts: build_check/chest_state_*2026_10_15*.
+  Sol alone; no game launch/probe or new publication. Gameplay retest pending.
+
+- October15 event tracking follow-up: requested FFII log confirms Conversation belongs
+  to B2 map184 and vanishes from other-floor browsing. Shared projection excluded every
+  event class; fixed across all six bakes with current-state/placeholder guards. Preserve
+  absolute map/native identity/static anchor (-1 unknown, 0 valid), rebind native handles
+  on return, and leave missing targets unselected. Actual route replay is B2–B1–B2 then
+  three steps to the original event; Current map is required for other-floor rows.
+  [Investigation, all-bake coverage, verification and limits](docs/re/EVENT_TRACKING.md),
+  [first gameplay checks](docs/TESTING.md#event-tracking-across-floors-october-15).
+  Canonical build/isolated smoke pass:2,454 map roots/3,859 projected event identities,
+  zero failures; native IDs0/32 live–remote–live and missing-target checks pass.
+  Prior deployment (superseded by persistent-state fix):333F1BFFB9F85FADC8D9747D8CAF503BABD888A5B18A62B55BDEAB95A5C74002
+  (9,529,344 bytes); Prism/settings/waypoints unchanged. Recovery/receipts:
+  build_check/conversation_*2026_10_15*. No launch/probe, delegation or new publication;
+  full in-game traversal remains user-side confirmation.
+
 - October15 browsing follow-up: every other-floor object retains its floor, including
   known opened/unopened chest state. Same-floor cross-floor detours name the first
   required floor; steps/bearing require a direct current-state route without warp,

@@ -82,6 +82,7 @@ R call_m(il2cpp::Method* m, void* self, A... args)
     if (!m) return R{};
     void* fp = il2cpp::method_pointer(m);
     if (!fp) return R{};
+    timing::Scope measured("Unity instance call", timing::Kind::Native, nullptr, reinterpret_cast<uintptr_t>(fp));
     try {
         using F = R (*)(void*, A..., const void*);
         return reinterpret_cast<F>(fp)(self, args..., m);
@@ -97,6 +98,7 @@ R call_static_m(il2cpp::Method* m, A... args)
     if (!m) return R{};
     void* fp = il2cpp::method_pointer(m);
     if (!fp) return R{};
+    timing::Scope measured("Unity static call", timing::Kind::Native, nullptr, reinterpret_cast<uintptr_t>(fp));
     try {
         using F = R (*)(A..., const void*);
         return reinterpret_cast<F>(fp)(args..., m);

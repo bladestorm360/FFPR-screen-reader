@@ -1,4 +1,4 @@
-# Final Fantasy Pixel Master Core Screen Reader V0.9.2
+# Final Fantasy Pixel Master Core Screen Reader V0.9.3
 
 ## Purpose
 
@@ -6,7 +6,9 @@ Adds speech, menu and battle reading, pathfinding, optional autowalk and audio n
 
 ## Known Issues
 
-V0.9.2 is an early combined release. Some game-specific screens, airships and scripted map exits still need gameplay testing. FFIII and FFVI automatic airship boarding is disabled: board and take the wheel manually before requesting a flying route. FFVI flight autowalk has passed offline checks but still needs gameplay confirmation. Report missing or repeated speech with the game's ffpr_screen_reader.log and a short description of what happened.
+V0.9.3 is an early combined release. Some game-specific screens, airships and scripted map exits still need gameplay testing. Intermittent stalls are still under investigation; automatic timing logs remain enabled. FFIII and FFVI automatic airship boarding is disabled: board and take the wheel manually before requesting a flying route. FFVI flight autowalk has passed offline checks but still needs gameplay confirmation. Report missing or repeated speech with the game's ffpr_screen_reader.log and a short description of what happened.
+
+Timing diagnostics run automatically in every session and use that same log. If intermittent lag returns, note what you were doing and report it. The five previous log files are retained as ffpr_screen_reader.1.log through .5.log, so the affected run can still be checked after restarting.
 
 ## Install
 
@@ -26,7 +28,15 @@ To update, close the game and replace the release files. To uninstall, remove hi
 
 ## Keys
 
-Mod keys require the game window to have focus. Field controls require the field to be active with no menu open. Mod keys are disabled while typing in the game's name fields. There is no keyboard mod mode. Shared mod commands use the same keys in all six games.
+Mod keys require the game window to have focus. Field controls require the field to be active with no menu open. Mod keys are disabled while typing in the game's name fields. There is no keyboard mod mode. Shared mod commands use the same defaults in all six games. The lists below describe those defaults.
+
+### Remapping mod controls
+
+Open F8, Navigation, Controls, then Keyboard bindings or Controller bindings. Select a command in its named context to hear its current binding. Each command has Capture, Key or Primary input, Modifiers or Modifier input, Unbind and Reset binding options. Left/Right changes the input fields; select Capture to enter a new binding directly. Keyboard bindings accept Control, Shift and Alt combinations, function keys through F24 and keypad keys. To capture a controller chord, hold the first input and press the second. Release a single controller input to finish capturing it. Buttons, triggers, stick directions and supported extra buttons can be assigned. Escape cancels capture; use the Key field to assign Escape itself.
+
+Conflicts in overlapping contexts are announced; unbind the other command first. Reset all bindings restores every mod binding after a confirmation. Settings remain separate for each game. The Letters and Brackets navigation layouts remain selectable, and each layout has its own editable bindings. Mod-menu, confirmation and text-editing commands can also be changed; actual typed characters retain their normal meaning. The Global controller entry Toggle controller mod mode changes the button that enters and leaves Mod Mode. Each Mod mode context has separate bindings for its individual functions, including field information, battle information, results review and dialogue repeat. The old mode button is freed after reassignment; a function may use it once conflicts are cleared. Controller mod mode remains controller only. Configure the game's own controls in the game menu.
+
+Opening and closing the mod menu have separate entries, both defaulting to F8 on keyboard. Keep a usable way to navigate and close the menu when changing its controls. If needed, with the game closed, remove only the lines beginning with `Binding.` from ffpr_screen_reader.ini to restore control defaults while preserving other settings.
 
 ### Game
 
@@ -80,8 +90,9 @@ Common commands in both layouts:
 - I: read the highlighted item's, spell's or setting's details. In equipment and shops, read the current stats/description panel, following Q or X/Square. In the mod menu, I describes the highlighted setting.
 - Shift+I: read the controls for the current screen.
 
-Current map includes connected dungeon/town floors. Chests use generic labels unless Speech / Spoil treasure chest contents is enabled; opened state is included when known.
+Current map includes connected dungeon/town floors. Chests use generic labels unless Speech / Spoil treasure chest contents is enabled; opened state is included when known. Boat routes include the direction for boarding and landing, for example: 16 North, board the Ship North, 15 West, land South. The boarding and landing steps are not counted twice.
 Every other-floor object keeps its floor name, including known opened/unopened chest state. An object on this floor that needs a detour through another floor says "Requires travelling through [floor] first". Browsing announces steps and direction only when a current route reaches the object directly, without another floor, warp, trap or intervening event.
+Use Current map to keep eligible events and interactive objects available while travelling between floors. Tracking retains the original object and its floor through each leg. If the object becomes unavailable, tracking stops instead of switching to a different object.
 
 World map exit lists include reachable transition trigger tiles. The map exit filter updates the nearest entrance after movement; turn it off to browse individual reachable entrances.
 
@@ -166,10 +177,14 @@ These are all mod-generated sound effects. Native game music, footsteps and menu
 
 ### Battle results and information buffers
 
+At battle entry in all six games, the mod announces the enemy formation with each enemy name and count, for example, "Enemy formation. 3 Goblin. 2 Hornet." Native opening messages such as "Ambushed!" and "Pre-emptive strike!" are spoken before the formation, followed by the first character’s turn and command. Pressing Control can still stop this speech. The formation is announced once per battle, independently of Autodetail; Game speech controls it along with other gameplay speech.
+
 - Up/Down: previous/next line.
 - Left/Right: first/last line.
 - I: details for the current page. On battle growth and weapon-progress pages, read all current-phase deltas.
 - Enter: advance the native results phase normally.
+
+Speech / Battle results: notifications once is off by default. Turn it on to announce a level-up or learned-ability notification once per battle, omitting its repeats from later results buffers. New notifications, displayed totals and manual review of the first buffer are preserved. Shops always announce the highlighted product’s displayed price, regardless of Autodetail or the native description/stat panel toggle.
 
 Equipment replacement comparisons, extra item-detail screens and FFVI Esper information use an arrow-key buffer. W/A/S/D retains native equipment selection. I reads the current item panel for comparisons and the full current buffer on an extra item-detail screen. Equipment slots speak the slot label, displayed Favored Hand and item name; Autodetail adds the current panel. Extra item-detail entry includes the displayed quantity once; its buffer follows the current native page. The old U equipment-information key has been removed.
 

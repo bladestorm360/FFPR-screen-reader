@@ -21,11 +21,13 @@ struct Phase {
 };
 
 inline bool remaining(const std::vector<Phase>& phases, const baked_route::Cell& at,
-                      std::vector<Phase>& out)
+                      std::vector<Phase>& out, const std::function<bool()>& cancelled = {})
 {
     for (size_t pi = phases.size(); pi-- > 0;) {
+        if (cancelled && cancelled()) return false;
         const auto& p = phases[pi];
         for (size_t i = p.cells.size(); i-- > 0;) {
+            if (cancelled && cancelled()) return false;
             if (!(p.cells[i] == at)) continue;
             out.assign(phases.begin() + static_cast<ptrdiff_t>(pi), phases.end());
             out.front().cells.erase(out.front().cells.begin(), out.front().cells.begin() + static_cast<ptrdiff_t>(i));

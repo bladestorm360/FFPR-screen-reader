@@ -1,5 +1,14 @@
 # Trap routing and transition recovery, October 14
 
+October16 follow-up supersedes the narrow identifier survey below. Router and
+soundscape now share `event_semantics.h`; developer tags distinguish environmental
+falls/resets from ordinary warps and narrative actor falls. Additional final player
+positions were reviewed for27 FFV and2 FFVI transitions; FFV/VI now each have40
+reviewed arrival overrides. Metadata-only TelepoPoint records are excluded in all
+six games. Actual all-six fixtures verify labels, masks, arrivals and ordinary-edge
+loop rejection. See [current evidence and verification](EVENT_CONTEXT.md); the
+older investigation below remains the provenance for the original correction.
+
 The user reported a permanent pathfinder failure after Deist Cavern's pitfall,
 requested trap-aware safe routes across floors in every game, and clarified the
 unacceptable loop: fall, route back upstairs to the same trap, fall again. Some

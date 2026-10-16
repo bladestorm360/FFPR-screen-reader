@@ -1,5 +1,55 @@
 # Shared autowalk and simultaneous navigation, 2026-10-11
 
+## October 16 controller/mode audit
+
+The tester's exact game, native mode and input device remain unknown. Two concrete defects
+were found: eligibility accepted only ordinary key controllers and FFVI's key airship;
+the cached controller could be replaced by the last initialized inactive alternative,
+without observing native controller switches. A failed FFVI flight hook also disabled
+ordinary walking. These are fixed independently; they are plausible causes, not a claim
+that the tester's exact failure has been reproduced.
+
+`live_context.cpp` observes native `FieldMap.OnSwitchPlayerController` **after** its original
+and captures the actual current controller. Later inactive Init callbacks cannot overwrite
+a live enabled owner. The fallback reads only the native FieldController player/controller
+array, bounded to 32 entries, matching the real player, active object and InputEnable.
+No scene search or native pointer goes to a worker. Ordinary key, touch route/vector,
+FFIII special-airship, all-six key/touch airship and III/V/VI key/touch ground-bird profiles
+are supported. Capability failure is per profile and cannot disable ordinary walking.
+
+Airship key controls use the native two-shoulder cardinal branch; touch airships retain
+their actual translation-mode setting. Turning mounts and nontranslation touch airships
+use bounded analog steering through their original axis callback and native LateUpdate.
+`native_steering.h` derives countersteering from native acceleration/cap/decay; it waits
+until heading/momentum settle before requesting forward motion. Native collision, speed,
+animation, encounters and position/camera updates remain native. Turning requires observed
+angle progress and has a 15-second ceiling; a stalled turn stops. Native TwoStep controls
+are up/down choices with a no-op movement callback: they ask the player to choose an option,
+rather than inventing a spatial route. Existing manual III/VI airship boarding stays manual.
+
+A request during a temporary input handoff waits at most .75 seconds without movement,
+then requests a fresh worker route from current state. Focus/menu/manual input, map identity,
+settings and BattleEntering invalidate that request. Hook failure, input readiness and
+choice ownership now have distinct feedback. No game-thread wait, sleep, scene scan,
+script execution, transform write, direct MoveTo call or new diagnostic key is introduced.
+Remapped direction requests share the existing start/stop policy.
+
+Offline evidence: `tools/re/autowalk_modes.py` records matching game/dump hashes, all native
+controller declarations, method signatures/body hashes/aliases and actual transportation
+master rows for all six. Outputs are in
+`build_check/autowalk_controls_2026_10_16/native/`. Original native rotation coefficient .2,
+cap 2*scale and decay .1 are preserved in the steering replay. 540 heading/momentum/scale/
+direction cases settle within 122 simulated frames, with no forward movement before alignment.
+`active_controller_check` uses actual lifecycle/selector code; `autowalk_native_check` uses
+actual movement detours with all applicable mode profiles, missing-flight-hook isolation,
+handoff replanning/timeout, and immediate battle/manual cancellation. Existing replay covers
+all six baked map sets. These tests do not establish actual game-frame, collision response,
+audible latency or every mount's gameplay behavior; the targeted user checks are in TESTING.
+
+The durable matching-binary/signature/body-hash/alias/transport receipt is
+[autowalk_modes_native.json](autowalk_modes_native.json); disassembly remains in the local
+build-check record and can be regenerated with the audited offline tool.
+
 User request: autowalk as a core feature for FF1–FF6 on navigable maps, a persistent menu
 toggle, Backslash to walk when enabled, a separate full-route speech toggle, and an option
 to use beacons and spoken directions together. Ordinary autowalk is explicitly authorized;

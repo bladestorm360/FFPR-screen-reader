@@ -6,6 +6,7 @@
 // Not ported: FeedLeftStickToGame (unused in FF1, "kept for potential future use").
 #include <cstring>
 #include "input_internal.h"
+#include "bindings.h"
 #include "../core.h"
 #include "../say.h"
 #include "../modtext.h"
@@ -94,35 +95,21 @@ void release_controller_owned_state()
     std::memset(g_consumed, 0, sizeof g_consumed);
 }
 
-void announce_mod_mode_controls()
-{
-    const std::wstring back = button_label(kBack);
-    const std::wstring west = button_label(kWest);
-    if (in_dialogue()) {
-        ffpr::say(TF(L"{0} to repeat dialogue. {1} to cancel.", {west, back}), true);
-    } else if (queries::is("ReviewBuffer.IsResults") || queries::is("ReviewBuffer.IsActive")) {
-        ffpr::say(TF(L"{0} for displayed result details. Shoulders review lines. {1} to cancel.", {west, back}), true);
-    } else if (in_battle()) {
-        ffpr::say(TF(L"{0} for party HP. {1} to cancel.", {west, back}), true);
-    } else {
-        const std::wstring north = button_label(kNorth);
-        const std::wstring south = button_label(kSouth);
-        ffpr::say(TF(L"{0} for Gil. {1} for location. {2} for vehicle. {3} to cancel.",
-                     {west, north, south, back}), true);
-        if (ui::prefs::teleport_shortcuts_enabled()) ffpr::say(T(L"Right stick to teleport."), false);
-        ffpr::say(TF(L"{0} for the puzzle guide, {1} to stop it.",
-                     {button_label(kRightShoulder), button_label(kLeftShoulder)}), false);
+void announce_bindings(int scope,bool menu) {
+    std::wstring message;
+    const auto& list=bindings::entries();
+    for(size_t i=0;i<list.size();++i) {
+        const auto& e=list[i];if(!e.controller || (e.scope!=scope && e.scope!=-10) || e.primary<0)continue;
+        if(e.id.find("teleport")!=std::string::npos && !ui::prefs::teleport_shortcuts_enabled())continue;
+        if(!message.empty())message+=L". ";
+        message+=T(e.label)+L": "+bindings::value(int(i));
     }
+    if(menu)ffpr::say_menu(message,true);else ffpr::say(message,true);
 }
-
-void announce_mod_menu_controls()
-{
-    const std::wstring confirm = button_label(kSouth);
-    const std::wstring close = button_label(kEast);
-    const std::wstring start = button_label(kStart);
-    ffpr::say(TF(L"D-pad or Left Stick Up, Down to navigate. Left, Right to adjust values. {0} to select. {1} to go back. {2} to close.",
-                 {confirm, close, start}), true);
+void announce_mod_mode_controls() {
+    announce_bindings(in_dialogue()?-14:queries::is("ReviewBuffer.IsResults")||queries::is("ReviewBuffer.IsActive")?-15:in_battle()?-16:-17,false);
 }
+void announce_mod_menu_controls() {announce_bindings(-18,true);}
 
 void open_mod_menu() { ui::mod_menu::open(); }     // speaks; SyncWithModMenuOpen sets ModMenu
 void close_mod_menu() { ui::mod_menu::close(); }   // speaks; SyncWithModMenuClosed sets Normal
@@ -130,8 +117,8 @@ void close_mod_menu() { ui::mod_menu::close(); }   // speaks; SyncWithModMenuClo
 void handle_state_transitions()
 {
     // Start: mod menu toggle. Closing is always allowed; opening only on the active field.
-    if (button_pressed(kStart)) {
-        consume(kStart);
+    if (bindings::pad("pad.menu.toggle")) {
+
         if (g_state == RouterState::ModMenu) close_mod_menu();
         else if (g_field_active) open_mod_menu();
         else speak_mod_menu_unavailable();
@@ -139,8 +126,8 @@ void handle_state_transitions()
     }
 
     // Back/Select: mod mode toggle (Normal <-> ModMode).
-    if (button_pressed(kBack)) {
-        consume(kBack);
+    if (bindings::pad("pad.mode.toggle")) {
+
         if (g_state == RouterState::Normal) {
             g_state = RouterState::ModMode;
             ffpr::say(T(L"Mod"), true);
@@ -161,26 +148,26 @@ void handle_normal_field()
     g_was_left_stick_active = left_stick_active;
 
     const bool any_nav = left_stick_just_moved
-        || gamepad::dpad_up_pressed() || gamepad::dpad_down_pressed()
-        || gamepad::dpad_left_pressed() || gamepad::dpad_right_pressed()
-        || gamepad::rstick_up_pressed() || gamepad::rstick_down_pressed()
-        || gamepad::rstick_left_pressed() || gamepad::rstick_right_pressed();
+        || bindings::pad("pad.field.waypoint.previous") || bindings::pad("pad.field.waypoint.next")
+        || bindings::pad("pad.field.waypoint.category.previous") || bindings::pad("pad.field.waypoint.category.next")
+        || bindings::pad("pad.field.entity.previous") || bindings::pad("pad.field.entity.next")
+        || bindings::pad("pad.field.entity.category.previous") || bindings::pad("pad.field.entity.category.next");
     if (any_nav) ffpr::silence();
 
     // D-pad: waypoint navigation (consumed). The callees mark the navigation target.
-    if (gamepad::dpad_up_pressed()) { consume(kDpadUp); run_action("WaypointHandler.CyclePrevious"); }
-    if (gamepad::dpad_down_pressed()) { consume(kDpadDown); run_action("WaypointHandler.CycleNext"); }
-    if (gamepad::dpad_left_pressed()) { consume(kDpadLeft); run_action("WaypointHandler.CyclePreviousCategory"); }
-    if (gamepad::dpad_right_pressed()) { consume(kDpadRight); run_action("WaypointHandler.CycleNextCategory"); }
+    if (bindings::pad("pad.field.waypoint.previous")) {  run_action("WaypointHandler.CyclePrevious"); }
+    if (bindings::pad("pad.field.waypoint.next")) {  run_action("WaypointHandler.CycleNext"); }
+    if (bindings::pad("pad.field.waypoint.category.previous")) {  run_action("WaypointHandler.CyclePreviousCategory"); }
+    if (bindings::pad("pad.field.waypoint.category.next")) {  run_action("WaypointHandler.CycleNextCategory"); }
 
     // Right stick: entity scanner.
-    if (gamepad::rstick_up_pressed()) run_action("Mod.CyclePrevious");
-    if (gamepad::rstick_down_pressed()) run_action("Mod.CycleNext");
-    if (gamepad::rstick_left_pressed()) run_action("Mod.CyclePreviousCategory");
-    if (gamepad::rstick_right_pressed()) run_action("Mod.CycleNextCategory");
+    if (bindings::pad("pad.field.entity.previous")) run_action("Mod.CyclePrevious");
+    if (bindings::pad("pad.field.entity.next")) run_action("Mod.CycleNext");
+    if (bindings::pad("pad.field.entity.category.previous")) run_action("Mod.CyclePreviousCategory");
+    if (bindings::pad("pad.field.entity.category.next")) run_action("Mod.CycleNextCategory");
 
     // Left trigger: pathfind to the last selected target (or restart the beacon).
-    if (left_trigger() > 0.5f && !g_left_trigger_was_active) {
+    if (bindings::pad("pad.field.route")) {
         if (queries::is("NavigationTargetTracker.IsWaypoint")) {
             run_action("WaypointHandler.PathfindToCurrentWaypoint");
         } else if (queries::is("NavigationTargetTracker.IsEntity")) {
@@ -195,9 +182,9 @@ void handle_normal_field()
 void handle_normal_non_field(Context context)
 {
     // Right stick up: read description (I key).
-    if (gamepad::rstick_up_pressed()) global_hotkeys::handle_item_details_key();
+    if (bindings::pad("pad.other.details")) global_hotkeys::handle_item_details_key();
     // Right stick down: read controls (Shift+I).
-    if (gamepad::rstick_down_pressed()) run_action("KeyHelpReader.AnnounceKeyHelp");
+    if (bindings::pad("pad.other.help")) run_action("KeyHelpReader.AnnounceKeyHelp");
     // D-pad and left stick: virtual buffer navigation in Status / Bestiary / key help.
     const char* prev = nullptr;
     const char* next = nullptr;
@@ -212,8 +199,8 @@ void handle_normal_non_field(Context context)
         next = "KeyHelpReader.NavigateNext";
     }
     if (!prev) return;
-    if (gamepad::dpad_up_pressed() || gamepad::lstick_up_pressed()) { consume(kDpadUp); run_action(prev); }
-    if (gamepad::dpad_down_pressed() || gamepad::lstick_down_pressed()) { consume(kDpadDown); run_action(next); }
+    if (bindings::pad("pad.other.previous") || bindings::pad("pad.other.previous.stick")) {  run_action(prev); }
+    if (bindings::pad("pad.other.next") || bindings::pad("pad.other.next.stick")) {  run_action(next); }
 }
 
 void handle_normal_state(Context context)
@@ -224,7 +211,7 @@ void handle_normal_state(Context context)
 
     // 15-puzzle: right stick up reads the cursor row/column, whatever the context.
     if (puzzle_active()) {
-        if (gamepad::rstick_up_pressed()) run_action("PuzzlePatches.AnnouncePosition");
+        if (bindings::pad("pad.puzzle.position")) run_action("PuzzlePatches.AnnouncePosition");
         return;
     }
 
@@ -242,48 +229,17 @@ void handle_normal_state(Context context)
 /// the field in Normal. Mod mode and every other screen keep their own stick-click handling.
 void update_stick_clicks()
 {
-    // Retire the previous synthetic press: down -> up -> none.
-    if (g_pulse_button >= 0) {
-        if (g_pulse_down_phase) g_pulse_down_phase = false;
-        else g_pulse_button = -1;
-    }
-
-    if (g_stick_click_button < 0) {
-        const bool l3_down = button_pressed(kLeftStick);
-        if (!l3_down && !button_pressed(kRightStick)) return;
-        if (g_state != RouterState::Normal || !g_field_active || puzzle_active()) return;
-        g_stick_click_button = l3_down ? kLeftStick : kRightStick;
-        g_stick_chord_fired = false;
-    }
-
-    consume(kLeftStick);
-    consume(kRightStick);
-
-    const bool l3_held = button_held(kLeftStick);
-    const bool r3_held = button_held(kRightStick);
-    const bool can_act = g_state == RouterState::Normal && g_field_active;
-
-    if (l3_held && r3_held) {
-        if (!g_stick_chord_fired && can_act) {
-            g_stick_chord_fired = true;
-            run_action("Mod.ToggleStickClickNormalization");
-        }
-        return;
-    }
-    if (l3_held || r3_held) return;
-
-    // Both up: the press is over.
-    const int button = g_stick_click_button;
-    g_stick_click_button = -1;
-    if (g_stick_chord_fired || !can_act) return;
-
-    if (ui::prefs::stick_click_normalization_enabled()) {
-        g_pulse_button = button;
-        g_pulse_down_phase = true;
-    } else if (button == kLeftStick) {
-        run_action("Mod.ToggleAudioBeacons");
-    } else {
-        run_action("Mod.TogglePathfindingFilter");
+    if(g_pulse_button>=0) { if(g_pulse_down_phase)g_pulse_down_phase=false;else g_pulse_button=-1; }
+    if(g_state!=RouterState::Normal || !g_field_active || puzzle_active())return;
+    const bool beacon=bindings::pad_held("pad.field.beacon"), filter=bindings::pad_held("pad.field.filter");
+    if(bindings::pad("pad.field.normalize")) { g_stick_chord_fired=true; run_action("Mod.ToggleStickClickNormalization"); }
+    if(beacon || filter)return;
+    if(g_stick_chord_fired) {g_stick_chord_fired=false;return;}
+    for(const auto& item:{std::pair{"pad.field.beacon",kLeftStick},std::pair{"pad.field.filter",kRightStick}}) {
+        if(!bindings::pad(item.first,true))continue;
+        if(ui::prefs::stick_click_normalization_enabled()) {
+            g_pulse_button=item.second;g_pulse_down_phase=true;
+        } else run_action(item.second==kLeftStick?"Mod.ToggleAudioBeacons":"Mod.TogglePathfindingFilter");
     }
 }
 
@@ -294,44 +250,44 @@ void handle_mod_mode_state()
 
     // Dialogue first: with a message window up the player wants the message again.
     if (in_dialogue()) {
-        if (button_pressed(kWest)) { run_action("MessageWindowPatches.RepeatLastDialogue"); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.dialogue.repeat")) { run_action("MessageWindowPatches.RepeatLastDialogue"); g_state = RouterState::Normal; return; }
     } else if (queries::is("ReviewBuffer.IsResults") || queries::is("ReviewBuffer.IsActive")) {
-        if (button_pressed(kWest)) { run_action("ReviewBuffer.Details"); return; }
-        if (button_pressed(kRightShoulder) || button_pressed(kDpadDown)) { run_action("ReviewBuffer.Next"); return; }
-        if (button_pressed(kLeftShoulder) || button_pressed(kDpadUp)) { run_action("ReviewBuffer.Previous"); return; }
-        if (button_pressed(kDpadLeft)) { run_action("ReviewBuffer.First"); return; }
-        if (button_pressed(kDpadRight)) { run_action("ReviewBuffer.Last"); return; }
+        if (bindings::pad("pad.mode.results.details")) { run_action("ReviewBuffer.Details"); return; }
+        if (bindings::pad("pad.mode.results.next") || bindings::pad("pad.mode.results.next.dpad")) { run_action("ReviewBuffer.Next"); return; }
+        if (bindings::pad("pad.mode.results.previous") || bindings::pad("pad.mode.results.previous.dpad")) { run_action("ReviewBuffer.Previous"); return; }
+        if (bindings::pad("pad.mode.results.first")) { run_action("ReviewBuffer.First"); return; }
+        if (bindings::pad("pad.mode.results.last")) { run_action("ReviewBuffer.Last"); return; }
     } else if (in_battle()) {
         // Battle mod mode: X = party HP.
-        if (button_pressed(kWest)) { run_action("Mod.AnnounceCharacterStatus"); g_state = RouterState::Normal; return; }
-        if (button_pressed(kNorth)) { run_action("BattleParty.ActiveTurn"); g_state = RouterState::Normal; return; }
-        if (button_pressed(kRightShoulder)) { run_action("BattleParty.Next"); return; }
-        if (button_pressed(kLeftShoulder)) { run_action("BattleParty.Previous"); return; }
+        if (bindings::pad("pad.mode.battle.hp")) { run_action("Mod.AnnounceCharacterStatus"); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.battle.turn")) { run_action("BattleParty.ActiveTurn"); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.battle.next")) { run_action("BattleParty.Next"); return; }
+        if (bindings::pad("pad.mode.battle.previous")) { run_action("BattleParty.Previous"); return; }
     } else {
         // Field mod mode: X = Gil, Y = location, A = vehicle, RB = puzzle guide, LB = stop it.
-        if (button_pressed(kWest)) { run_action("Mod.AnnounceGilAmount"); g_state = RouterState::Normal; return; }
-        if (button_pressed(kNorth)) { run_action("Mod.AnnounceCurrentMap"); g_state = RouterState::Normal; return; }
-        if (button_pressed(kSouth)) { global_hotkeys::announce_current_vehicle(); g_state = RouterState::Normal; return; }
-        if (button_pressed(kRightShoulder)) { run_action("PuzzleGuide.Next"); g_state = RouterState::Normal; return; }
-        if (button_pressed(kLeftShoulder)) { run_action("PuzzleGuide.Stop"); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.field.gil")) { run_action("Mod.AnnounceGilAmount"); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.field.map")) { run_action("Mod.AnnounceCurrentMap"); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.field.vehicle")) { global_hotkeys::announce_current_vehicle(); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.field.puzzle")) { run_action("PuzzleGuide.Next"); g_state = RouterState::Normal; return; }
+        if (bindings::pad("pad.mode.field.puzzle.stop")) { run_action("PuzzleGuide.Stop"); g_state = RouterState::Normal; return; }
 
         // With Stick Click Normalization on, the stick-click functions move here.
         if (ui::prefs::stick_click_normalization_enabled()) {
-            if (button_pressed(kRightStick)) { run_action("Mod.TogglePathfindingFilter"); g_state = RouterState::Normal; return; }
-            if (button_pressed(kLeftStick)) { run_action("Mod.ToggleAudioBeacons"); g_state = RouterState::Normal; return; }
+            if (bindings::pad("pad.mode.field.filter")) { run_action("Mod.TogglePathfindingFilter"); g_state = RouterState::Normal; return; }
+            if (bindings::pad("pad.mode.field.beacon")) { run_action("Mod.ToggleAudioBeacons"); g_state = RouterState::Normal; return; }
         }
 
         // Right stick: teleport (field only).
         if (ui::prefs::teleport_shortcuts_enabled()) {
-            if (gamepad::rstick_up_pressed()) { run_action("Mod.TeleportNorth"); g_state = RouterState::Normal; return; }
-            if (gamepad::rstick_down_pressed()) { run_action("Mod.TeleportSouth"); g_state = RouterState::Normal; return; }
-            if (gamepad::rstick_left_pressed()) { run_action("Mod.TeleportWest"); g_state = RouterState::Normal; return; }
-            if (gamepad::rstick_right_pressed()) { run_action("Mod.TeleportEast"); g_state = RouterState::Normal; return; }
+            if (bindings::pad("pad.mode.field.teleport.north")) { run_action("Mod.TeleportNorth"); g_state = RouterState::Normal; return; }
+            if (bindings::pad("pad.mode.field.teleport.south")) { run_action("Mod.TeleportSouth"); g_state = RouterState::Normal; return; }
+            if (bindings::pad("pad.mode.field.teleport.west")) { run_action("Mod.TeleportWest"); g_state = RouterState::Normal; return; }
+            if (bindings::pad("pad.mode.field.teleport.east")) { run_action("Mod.TeleportEast"); g_state = RouterState::Normal; return; }
         }
     }
 
     // Right stick down: mod mode controls (in the field it teleports south above).
-    if (in_battle() && gamepad::rstick_down_pressed())
+    if (in_battle() && bindings::pad("pad.mode.battle.help"))
         announce_mod_mode_controls();
 }
 
@@ -345,21 +301,21 @@ void handle_mod_menu_state()
         return;
     }
 
-    const bool up = gamepad::dpad_up_pressed() || gamepad::lstick_up_pressed();
-    const bool down = gamepad::dpad_down_pressed() || gamepad::lstick_down_pressed();
-    const bool left = gamepad::dpad_left_pressed() || gamepad::lstick_left_pressed();
-    const bool right = gamepad::dpad_right_pressed() || gamepad::lstick_right_pressed();
+    const bool up = bindings::pad("pad.menu.previous") || bindings::pad("pad.menu.previous.stick");
+    const bool down = bindings::pad("pad.menu.next") || bindings::pad("pad.menu.next.stick");
+    const bool left = bindings::pad("pad.menu.decrease") || bindings::pad("pad.menu.decrease.stick");
+    const bool right = bindings::pad("pad.menu.increase") || bindings::pad("pad.menu.increase.stick");
 
     if (up) ui::mod_menu::navigate_previous();
     if (down) ui::mod_menu::navigate_next();
     if (left) ui::mod_menu::adjust_current_item(-1);
     if (right) ui::mod_menu::adjust_current_item(1);
 
-    if (button_pressed(kSouth)) ui::mod_menu::toggle_current_item();
-    if (button_pressed(kEast)) ui::mod_menu::back();
+    if (bindings::pad("pad.menu.select")) ui::mod_menu::toggle_current_item();
+    if (bindings::pad("pad.menu.back")) ui::mod_menu::back();
 
     // Right stick down: mod menu controls.
-    if (gamepad::rstick_down_pressed()) announce_mod_menu_controls();
+    if (bindings::pad("pad.menu.help")) announce_mod_menu_controls();
 }
 
 std::wstring text_state()
@@ -373,6 +329,62 @@ std::wstring text_state()
 
 int install()
 {
+    bindings::add("pad.menu.toggle","Open or close mod menu",true,-10,kStart,-1);
+    bindings::add("pad.mode.toggle","Toggle controller mod mode",true,-10,kBack,-1);
+    bindings::add("pad.field.waypoint.previous","Previous waypoint",true,-11,kDpadUp,-1);
+    bindings::add("pad.field.waypoint.next","Next waypoint",true,-11,kDpadDown,-1);
+    bindings::add("pad.field.waypoint.category.previous","Previous waypoint category",true,-11,kDpadLeft,-1);
+    bindings::add("pad.field.waypoint.category.next","Next waypoint category",true,-11,kDpadRight,-1);
+    bindings::add("pad.field.entity.previous","Previous object",true,-11,bindings::kRightUp,-1);
+    bindings::add("pad.field.entity.next","Next object",true,-11,bindings::kRightDown,-1);
+    bindings::add("pad.field.entity.category.previous","Previous object category",true,-11,bindings::kRightLeft,-1);
+    bindings::add("pad.field.entity.category.next","Next object category",true,-11,bindings::kRightRight,-1);
+    bindings::add("pad.field.route","Navigate to selected destination",true,-11,bindings::kLeftTrigger,-1);
+    bindings::add("pad.other.details","Read item details",true,-12,bindings::kRightUp,-1);
+    bindings::add("pad.other.help","Read controls",true,-12,bindings::kRightDown,-1);
+    bindings::add("pad.other.previous","Previous information line",true,-12,kDpadUp,-1);
+    bindings::add("pad.other.next","Next information line",true,-12,kDpadDown,-1);
+    bindings::add("pad.other.previous.stick","Previous information line (stick)",true,-12,bindings::kLeftUp,-1);
+    bindings::add("pad.other.next.stick","Next information line (stick)",true,-12,bindings::kLeftDown,-1);
+    bindings::add("pad.puzzle.position","Read puzzle position",true,-13,bindings::kRightUp,-1);
+    bindings::add("pad.mode.dialogue.repeat","Repeat dialogue",true,-14,kWest,-1);
+    bindings::add("pad.mode.results.details","Read result details",true,-15,kWest,-1);
+    bindings::add("pad.mode.results.next","Next result line",true,-15,kRightShoulder,-1);
+    bindings::add("pad.mode.results.next.dpad","Next result line (D-pad)",true,-15,kDpadDown,-1);
+    bindings::add("pad.mode.results.previous","Previous result line",true,-15,kLeftShoulder,-1);
+    bindings::add("pad.mode.results.previous.dpad","Previous result line (D-pad)",true,-15,kDpadUp,-1);
+    bindings::add("pad.mode.results.first","First result line",true,-15,kDpadLeft,-1);
+    bindings::add("pad.mode.results.last","Last result line",true,-15,kDpadRight,-1);
+    bindings::add("pad.mode.battle.hp","Read party HP",true,-16,kWest,-1);
+    bindings::add("pad.mode.battle.turn","Read active turn",true,-16,kNorth,-1);
+    bindings::add("pad.mode.battle.next","Next party member",true,-16,kRightShoulder,-1);
+    bindings::add("pad.mode.battle.previous","Previous party member",true,-16,kLeftShoulder,-1);
+    bindings::add("pad.mode.field.gil","Read Gil",true,-17,kWest,-1);
+    bindings::add("pad.mode.field.map","Read location",true,-17,kNorth,-1);
+    bindings::add("pad.mode.field.vehicle","Read vehicle",true,-17,kSouth,-1);
+    bindings::add("pad.mode.field.puzzle","Puzzle guide next step",true,-17,kRightShoulder,-1);
+    bindings::add("pad.mode.field.puzzle.stop","Stop puzzle guide",true,-17,kLeftShoulder,-1);
+    bindings::add("pad.mode.field.filter","Toggle pathfinding filter",true,-17,kRightStick,-1);
+    bindings::add("pad.mode.field.beacon","Toggle audio beacon",true,-17,kLeftStick,-1);
+    bindings::add("pad.mode.field.teleport.north","Teleport north",true,-17,bindings::kRightUp,-1);
+    bindings::add("pad.mode.field.teleport.south","Teleport south",true,-17,bindings::kRightDown,-1);
+    bindings::add("pad.mode.field.teleport.west","Teleport west",true,-17,bindings::kRightLeft,-1);
+    bindings::add("pad.mode.field.teleport.east","Teleport east",true,-17,bindings::kRightRight,-1);
+    bindings::add("pad.mode.battle.help","Read mod mode controls",true,-16,bindings::kRightDown,-1);
+    bindings::add("pad.menu.previous","Previous mod setting",true,-18,kDpadUp,-1);
+    bindings::add("pad.menu.next","Next mod setting",true,-18,kDpadDown,-1);
+    bindings::add("pad.menu.decrease","Decrease mod setting",true,-18,kDpadLeft,-1);
+    bindings::add("pad.menu.increase","Increase mod setting",true,-18,kDpadRight,-1);
+    bindings::add("pad.menu.previous.stick","Previous mod setting (stick)",true,-18,bindings::kLeftUp,-1);
+    bindings::add("pad.menu.next.stick","Next mod setting (stick)",true,-18,bindings::kLeftDown,-1);
+    bindings::add("pad.menu.decrease.stick","Decrease mod setting (stick)",true,-18,bindings::kLeftLeft,-1);
+    bindings::add("pad.menu.increase.stick","Increase mod setting (stick)",true,-18,bindings::kLeftRight,-1);
+    bindings::add("pad.menu.select","Select mod setting",true,-18,kSouth,-1);
+    bindings::add("pad.menu.back","Back in mod menu",true,-18,kEast,-1);
+    bindings::add("pad.menu.help","Read mod setting help",true,-18,bindings::kRightDown,-1);
+    bindings::add("pad.field.beacon","Toggle audio beacon",true,-11,kLeftStick,-1);
+    bindings::add("pad.field.filter","Toggle pathfinding filter",true,-11,kRightStick,-1);
+    bindings::add("pad.field.normalize","Toggle stick click normalization",true,-11,kRightStick,kLeftStick);
     queries::define("ControllerRouter.IsFieldActive", [] { return g_field_active; });
     queries::define("ControllerRouter.SuppressGameInput", [] { return suppress_game_input(); });
     queries::define("ControllerRouter.IsNormal", [] { return g_state == RouterState::Normal; });
@@ -469,7 +481,10 @@ void update(Context game_context)
     // Every button starts as "pass to game".
     std::memset(g_consumed, 0, sizeof g_consumed);
 
+    if(bindings::capturing() || ui::confirmation::is_open() || ui::text_input::is_open()) {consume_all();return;}
+    const auto old_state=g_state;
     handle_state_transitions();
+    if(old_state!=g_state)return;
     update_stick_clicks();
 
     switch (g_state) {
@@ -487,7 +502,7 @@ void reset()
 
 void notify_keyboard_input() { g_last_device = LastDevice::Keyboard; }
 
-bool is_button_consumed(int b) { return b >= 0 && b < kButtonCount && g_consumed[b]; }
+bool is_button_consumed(int b) { return bindings::consumed(b) || (b >= 0 && b < kButtonCount && g_consumed[b]); }
 bool is_stick_pulse_down(int b) { return b >= 0 && b == g_pulse_button && g_pulse_down_phase; }
 bool is_stick_pulse_up(int b) { return b >= 0 && b == g_pulse_button && !g_pulse_down_phase; }
 

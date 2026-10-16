@@ -53,6 +53,7 @@ void add(Pending&& p)
 void run_tick()
 {
     ++g_frame;
+    timing::frame.store(g_frame, std::memory_order_relaxed);
     g_in_tick = true;
 
     for (const Sub& s : g_subs)
@@ -122,12 +123,16 @@ void d_Update(void* self, const void* mi)
     static double previous = 0;
     const double gap_ms = previous ? (before - previous) * 1000 : 0;
     previous = before;
-    hooks::guarded("frame.tick", [] { run_tick(); });
+    timing::observe_gap(gap_ms/1000);
+    { timing::Scope cpu("Input dispatch",timing::Kind::Mod,nullptr,0,true);
+      hooks::guarded("frame.tick", [] { run_tick(); }); }
     const double native_started = now();
-    o_Update(self, mi);
+    { timing::Scope cpu("Native input update",timing::Kind::Original,nullptr,0,true);
+      o_Update(self, mi); }
     const double finished = now();
     const double mod_ms = (native_started - before) * 1000;
     const double native_ms = (finished - native_started) * 1000;
+    timing::summarize();
     if (mod_ms >= 1 || native_ms >= 25 || gap_ms >= 250)
         LOGF("[FrameTiming] frame %llu: mod %.3f ms, native %.3f ms, interval %.3f ms, %zu owner tasks, %zu ready posts",
             static_cast<unsigned long long>(g_frame), mod_ms, native_ms, gap_ms,

@@ -25,7 +25,9 @@ int main() {
                 field::baked_route::Request request;
                 request.submap=map; request.ignore_hazards=true;
                 const Cell at{object.layer,object.tx,object.ty};
-                expect(field::baked_route::trap_cell(request,grid,at), "trap mask includes its exact native layer");
+                for(int y=object.ty;y<object.ty+object.th;++y)for(int x=object.tx;x<object.tx+object.tw;++x)
+                    if(field::baked::in_bounds(grid,x,y))
+                        expect(field::baked_route::trap_cell(request,grid,{object.layer,x,y}), "trap mask includes its exact native layer within the actual map bounds");
                 expect(!field::baked_route::trap_cell(request,grid,{(object.layer+1)%3,object.tx,object.ty}) ||
                     std::any_of(grid.objects.begin(),grid.objects.end(),[&](const auto& other) { return other.layer==(object.layer+1)%3 && field::baked::is_trap(other) && other.contains(at.x,at.y); }),
                     "trap mask does not bleed across layers");

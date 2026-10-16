@@ -328,8 +328,8 @@ void d_SetCommandData(void* self, void* data, void* targets, void* items, const 
         state_set(menu_state::BATTLE_MAGIC, false);
         state_set(menu_state::BATTLE_ITEM, false);
 
-        // Turn announcements interrupt.
-        ffpr::say(TF(L"{0}'s turn", {character_name_v}), true);
+        // Preserve the opening roster; subsequent turns retain their interruption.
+        ffpr::say(TF(L"{0}'s turn", {character_name_v}), !formation_first_turn());
     });
 }
 

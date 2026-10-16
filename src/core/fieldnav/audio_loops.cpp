@@ -243,6 +243,7 @@ void beacon_iteration(double now)
     TargetRef target;
     unity::Vec3 target_pos{};
     int remote_map_id = 0;   // the selected entity is on another floor (baked data): routed by its cell
+    int remote_entity_id = -1;
     ::field::baked_route::Cell remote_cell;
     switch (nav_target::last_kind()) {
     case nav_target::Kind::Entity: {
@@ -253,6 +254,7 @@ void beacon_iteration(double now)
             target.route_kind = route_kind_of_category(e.category);
             target_pos = e.position;
             remote_map_id = e.remote_map_id;
+            remote_entity_id = e.entity_id;
             remote_cell = ::field::baked_route::Cell{e.cell_layer, e.cell_x, e.cell_y};
         }
         break;
@@ -336,13 +338,14 @@ void beacon_iteration(double now)
             ::field::baked_nav::MapGoal goal;
             goal.map_id = remote_map_id;
             goal.cell = remote_cell;
+            goal.entity_id = remote_entity_id;
             path_valid = ::field::baked_nav::follow_goal(map, player, goal, target.route_kind, corner);
             if (!path_valid) {
                 g_next_beacon_time = now + 0.5;
                 return;
             }
         } else {
-            path_valid = ::field::baked_nav::follow(map, player, target_pos, target.route_kind, corner);
+            path_valid = ::field::baked_nav::follow(map, player, target_pos, target.route_kind, corner, remote_entity_id);
         }
         if (path_valid) {
             if (corner.arrived) {
@@ -642,7 +645,14 @@ int install()
 
     events::on(events::Kind::SceneLoaded, [] { on_scene_loaded(); });
     events::on(events::Kind::MapChanged, [] { start_if_enabled(); });
+    events::on(events::Kind::BattleEntering, [] {
+        g_wall_running = g_beacon_running = g_landing_running = false;
+        g_landing_mask = 0;
+        // SoundPlayer owns immediate atomic output cancellation. Retain the
+        // last target until ordinary ready-phase cleanup, with no destructor here.
+    });
     events::on(events::Kind::BattleStart, [] { stop_all(); });
+    events::on(events::Kind::MapChanging, [] { stop_all(); });
     events::on(events::Kind::BattleEnd, [] { start_if_enabled(); });
 
     // Loops are NOT started here: they start at native field readiness, or from the

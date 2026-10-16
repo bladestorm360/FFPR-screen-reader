@@ -12,6 +12,8 @@ void native_init(void* self, void* player, const void*) { ++original_calls; stat
 }
 namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
 namespace ref {
+Field::Field(Class&c,const char*n,const char*a):cls(c),name(n),alt(a){}
+int32_t Field::get(){return -1;}
 Class::Class(const char* n, const char* c, uint8_t g, const char* a) : ns(n), name(c), games(g), assembly(a) {}
 Method::Method(Class& c, const char* n, int a) : cls(c), name(n), argc(a) {}
 il2cpp::Class* Class::get() {
@@ -26,6 +28,8 @@ bool Class::is(void* object) { return object && static_cast<fixture::Object*>(ob
 namespace field::r {
 ref::Class kFieldMap{"", "FieldMap"};
 ref::Class kFieldPlayerController{"Last.Map", "FieldPlayerController"};
+ref::Class kFieldController{"Last.Map","FieldController"};
+ref::Field fFieldPlayer{kFieldPlayerController,"fieldPlayer"},fFieldController{kFieldMap,"fieldController"};
 }
 namespace hooks {
 bool attach_raw(ref::Method& m, void*, void** original) {
@@ -35,6 +39,8 @@ bool attach_raw(ref::Method& m, void*, void** original) {
 void note_fault(const char*) { std::abort(); }
 }
 namespace unity {
+bool active_in_hierarchy(void*p){return p!=nullptr;}
+int array_length(void*){return 0;}void* array_at(void*,int){return nullptr;}
 bool alive(void* object) { return object && static_cast<fixture::Object*>(object)->alive; }
 void* game_object(void* object) { return object && static_cast<fixture::Object*>(object)->attached ? object : nullptr; }
 }

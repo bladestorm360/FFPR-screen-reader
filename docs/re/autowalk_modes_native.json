@@ -1,0 +1,4005 @@
+[
+  {
+    "game": 1,
+    "game_sha256": "33f001b4420bea06b44740c07c4afcf92547e7196bdfd3ec27ae5feaf0229108",
+    "dump_sha256": "8313bacc58a606108db7dc0786b4fc5bcd57dc07e171cb8b051c2a68cd817740",
+    "controller_classes": {
+      "FieldPlayerController": {
+        "declaration": "public class FieldPlayerController : MonoBehaviour, IInputDeviceListener // TypeDefIndex: 6461",
+        "fields": [
+          "protected readonly Vector3[] SearchDirections; // 0x18",
+          "protected FieldPlayer fieldPlayer; // 0x20",
+          "protected IMapAccessor mapHandle; // 0x28",
+          "protected IEventAccessor eventHandle; // 0x30",
+          "protected IEntityAccessor entityHandle; // 0x38",
+          "protected IPlayerAccessor playerHandle; // 0x40",
+          "private bool <InputEnable>k__BackingField; // 0x48",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x4C"
+        ]
+      },
+      "FieldPlayerKeyAirshipController": {
+        "declaration": "public class FieldPlayerKeyAirshipController : FieldPlayerController // TypeDefIndex: 6462",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private float riseAndFallAccelerator; // 0x54",
+          "private Vector2 inputAxis; // 0x58",
+          "private float leftFastRotateScale; // 0x60",
+          "private float rightFastRotateScale; // 0x64",
+          "private bool isDownShiftDown; // 0x68",
+          "private bool isDownShiftUp; // 0x69",
+          "private bool isMoveForward; // 0x6A",
+          "private float lookUpValue; // 0x6C",
+          "private float bankValue; // 0x70",
+          "private string selectedAnimKey; // 0x78",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x80"
+        ]
+      },
+      "FieldPlayerKeyController": {
+        "declaration": "public class FieldPlayerKeyController : FieldPlayerController // TypeDefIndex: 6463",
+        "fields": [
+          "private bool pressDashKey; // 0x50"
+        ]
+      },
+      "FieldPlayerKeyTwoStepController": {
+        "declaration": "public class FieldPlayerKeyTwoStepController : FieldPlayerController // TypeDefIndex: 6466",
+        "fields": [
+          "private FieldSpriteEntity upArrowResidentEntity; // 0x50",
+          "private FieldSpriteEntity downArrowResidentEntity; // 0x58",
+          "private Action upAction; // 0x60",
+          "private Action downAction; // 0x68",
+          "private Action closeAction; // 0x70",
+          "private bool selectedUp; // 0x78",
+          "private int upArrowEntityId; // 0x7C",
+          "private int downArrowEntityId; // 0x80"
+        ]
+      },
+      "FieldPlayerTouchAirshipController": {
+        "declaration": "public class FieldPlayerTouchAirshipController : FieldPlayerTouchBaseController // TypeDefIndex: 6467",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float riseAndFallAccelerator; // 0x7C",
+          "private float lookUpValue; // 0x80",
+          "private float bankValue; // 0x84",
+          "private Vector2 inputAxis; // 0x88",
+          "private bool isTranslationMode; // 0x90"
+        ]
+      },
+      "FieldPlayerTouchBaseController": {
+        "declaration": "public abstract class FieldPlayerTouchBaseController : FieldPlayerController // TypeDefIndex: 6468",
+        "fields": [
+          "protected ManipulatePad manipulatePadHandle; // 0x50",
+          "protected Vector2 touchDownFieldScreenPos; // 0x58",
+          "protected bool isDash; // 0x60"
+        ]
+      },
+      "FieldPlayerTouchRouteMoveController": {
+        "declaration": "public class FieldPlayerTouchRouteMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6469",
+        "fields": [
+          "private FieldCursorFinger fieldCursorFinger; // 0x68",
+          "private TouchMovementLineEntity touchMovementLineEntity; // 0x70",
+          "private Vector3 touchedCellPosition; // 0x78",
+          "private List<Vector3> showedTempRoutePositions; // 0x88",
+          "private FieldTapAnimation tapAnimationEntity; // 0x90",
+          "private Animator tapAnimator; // 0x98",
+          "private bool needCanceledWaitTapAnimation; // 0xA0",
+          "private IInteractiveEntity preTouchedInteractiveTarget; // 0xA8",
+          "private float touchMovementStartRadius; // 0xB0",
+          "private Vector2 lastMoveDirection; // 0xB4",
+          "private float researchCoolTimeRemainingSeconds; // 0xBC",
+          "private readonly Vector3[] actionableDirection; // 0xC0"
+        ]
+      },
+      "FieldPlayerTouchVectorMoveController": {
+        "declaration": "public class FieldPlayerTouchVectorMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6473",
+        "fields": [
+          "private IInteractiveEntity nearestInteractiveTargetEntity; // 0x68",
+          "private float pressElapsedSeconds; // 0x70"
+        ]
+      }
+    },
+    "native_methods": [
+      {
+        "name": ".FieldMap.OnSwitchPlayerController",
+        "rva": 3111904,
+        "signature": "public void OnSwitchPlayerController(FieldPlayerController currentPlayerController)",
+        "alias_count": 1,
+        "body_sha256": "4b500973eaa47e4e538dd6f8be25292ea04bc6be183f00f00412406e43c63ca3",
+        "bytes": 64
+      },
+      {
+        "name": "Last.Map.FieldController.SwitchPlayerController",
+        "rva": 2676624,
+        "signature": "public void SwitchPlayerController(bool isTapModeOn)",
+        "alias_count": 1,
+        "body_sha256": "789285811f2c32782385c4803d85da6c1202de776631d10254bf415a8cea221b",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldController.GetZAxisRotateBirdCamera",
+        "rva": 2604672,
+        "signature": "public float GetZAxisRotateBirdCamera()",
+        "alias_count": 1,
+        "body_sha256": "9479faa86fe9d8bc811c11f66b314152f10f450c4ecebaffee2633ef6b7a650c",
+        "bytes": 176
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.Init",
+        "rva": 2523696,
+        "signature": "public virtual void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 145,
+        "body_sha256": "92b91d1b72413392305684ba6f2d3aed3fcdf19723e3440d86e3eb7b071cef91",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.LateUpdateObserveInput",
+        "rva": 2529520,
+        "signature": "public virtual void LateUpdateObserveInput()",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnTouchPadCallback",
+        "rva": 2529520,
+        "signature": "public virtual void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKeyUp",
+        "rva": 2529520,
+        "signature": "public virtual void OnKeyUp(FieldInputKey key)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKey",
+        "rva": 2529520,
+        "signature": "public virtual void OnKey(FieldInputKey key)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.SwtichInputEnable",
+        "rva": 2559968,
+        "signature": "public virtual void SwtichInputEnable(bool enable)",
+        "alias_count": 15,
+        "body_sha256": "135ada1e136a2ef91caca3b528d03d73a65f7fcf5752a24e0a38f7c894decad6",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.Init",
+        "rva": 9838672,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "a0fa5b02c7d7c9bf97b59f61b6b7b4acf81cc74f33a28d4f41241486f9726896",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnTouchPadCallback",
+        "rva": 9840288,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "ba98b8f21aca0a614c3bbaec8482e3fa71e1c5fa25b2ac0b33c04794e0f25d66",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.LateUpdateObserveInput",
+        "rva": 9838720,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "98b03963b0d82604683aee7c1c43e33dae4d150d2fad56b8c64a60cd04cf2cf9",
+        "bytes": 832
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.UpdateRotateAccelerator",
+        "rva": 9841472,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "f6d028cdc5c39deeafa734d7bc7e615f5698a79b879d161420cf0616a6e49944",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.MoveToAxis",
+        "rva": 9839552,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "b894d9a6d5548da32c914d58263ae42798495815de677e7dbac860f0a5e867d6",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKey",
+        "rva": 9840240,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "90906853eb141e3b45b2d3bcd6d4cb7f997c849d45ecfdbba43ff53f95952c2a",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKeyUp",
+        "rva": 9840192,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "ff7a2209bd61442f9a6edec05b724c67b59622db7cdf958c80fe3b27be000350",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.SwtichInputEnable",
+        "rva": 9840672,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "04c6e5184ac4cb4b47a2b528b4a0b47d079f034b876749f93c20ea42426386ae",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.Init",
+        "rva": 9842416,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "37f7bfd593a8594ea8bb606c16ced8286a0e4846a1aa80cd691185410fb21162",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnTouchPadCallback",
+        "rva": 9844064,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "75093e6c2edb915148ac8cd8013e41ad9fef458b2247dae8ae9a6b84370862d7",
+        "bytes": 864
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKey",
+        "rva": 9843968,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "7507e7699e1abd246d059af2c77c19d44b8ac0ac88a31261bf4295cc73f2e14a",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKeyUp",
+        "rva": 9843872,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "efd9f9f31caa8303b3442364f6c837dd46e378a19f005c67c22fe4f18e2460a3",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.Init",
+        "rva": 9844944,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "fd9561b2a2fac1fadcdccc84fb57e1ea949608e652491c6dd39f5471e67d285b",
+        "bytes": 288
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.OnTouchPadCallback",
+        "rva": 2529520,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.SwtichInputEnable",
+        "rva": 9846240,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "22e2b86f9bd571195b3ebae620f2bba8ddac12bdec11bd8d98a888e06929dd83",
+        "bytes": 800
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.Init",
+        "rva": 9847056,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "8d435cf1aef7d3ccf2b6bbb2fdf99205b0bdddb390e3fa970a91cea85d65abf4",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.OnTouchPadCallback",
+        "rva": 9848688,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "dd821bbfea1b901970b1540c4917928bc22da55a98b23d2957b31a8544535c6b",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.LateUpdateObserveInput",
+        "rva": 9847264,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "ff829fbf2e80638f22f00f42a8c0e00e95a24526f478eb7ec9793a3e8387bae3",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.UpdateRotateAccelerator",
+        "rva": 9851200,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "8bbf9c877bf85ea0b63a36c6858dea66dbe068476cd594f7dfa3db499fe386c0",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.MoveToAxis",
+        "rva": 9848032,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "d2812ca515eaeb20653293fc5d7362932531a86df761e68c662b86cb95fd5d2e",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.SwtichInputEnable",
+        "rva": 9849872,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "ac2112882e1f30ffe1579ea4b84d0ceec1936d04e8bb36a01ee8d48a8433f03c",
+        "bytes": 464
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.Init",
+        "rva": 2523696,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 145,
+        "body_sha256": "92b91d1b72413392305684ba6f2d3aed3fcdf19723e3440d86e3eb7b071cef91",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.OnTouchPadCallback",
+        "rva": 9852144,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "362a6195c39cdb9abacf79edcf168b10e29f5a5075d1c858f5d65a083128d0ef",
+        "bytes": 704
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.Init",
+        "rva": 9854880,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "717cd5369ff634e5eabf593e3ac825da179687f71256c6ac55b4a003b61df9c9",
+        "bytes": 400
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.OnTouchPadCallback",
+        "rva": 9863184,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "f5ff7be20c9e1fb3b57a7bfcbb5fc4ba67e8d442c102eb55ecbaae1634b01c4f",
+        "bytes": 128
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.SwtichInputEnable",
+        "rva": 9867648,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "285c2865320d054d04c5b9d15f30545b085db3c46fb2db30a4b2f0b3d6fe43a6",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchVectorMoveController.SwtichInputEnable",
+        "rva": 6543344,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "799be7715a439f6ac2249a1956d6b594a283ae61313ac1da26e6bf603f469037",
+        "bytes": 128
+      }
+    ],
+    "transports": [
+      {
+        "id": "1",
+        "transportation_group_id": "1",
+        "landing_group_id": "0",
+        "asset_id": "0",
+        "release_flag": "519",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "1",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "2",
+        "transportation_group_id": "2",
+        "landing_group_id": "0",
+        "asset_id": "14",
+        "release_flag": "516",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "5",
+        "encounter_flag": "1",
+        "message_id": "MSG_KEY_NAME_17",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "3",
+        "transportation_group_id": "3",
+        "landing_group_id": "1",
+        "asset_id": "13",
+        "release_flag": "518",
+        "bgm_id": "76",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_230",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "4",
+        "transportation_group_id": "4",
+        "landing_group_id": "2",
+        "asset_id": "15",
+        "release_flag": "517",
+        "bgm_id": "4",
+        "se_id": "38",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_229",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      }
+    ]
+  },
+  {
+    "game": 2,
+    "game_sha256": "dbc8d9f674d3097b5bfa3c3b3ab877c32d92947bb40df545202ee574f2b0b19b",
+    "dump_sha256": "2cd79f198f2792c2a5c274833b94a7daeaa522cf67aff35f2e867d66be6422c4",
+    "controller_classes": {
+      "FieldPlayerController": {
+        "declaration": "public class FieldPlayerController : MonoBehaviour, IInputDeviceListener // TypeDefIndex: 6489",
+        "fields": [
+          "protected readonly Vector3[] SearchDirections; // 0x18",
+          "protected FieldPlayer fieldPlayer; // 0x20",
+          "protected IMapAccessor mapHandle; // 0x28",
+          "protected IEventAccessor eventHandle; // 0x30",
+          "protected IEntityAccessor entityHandle; // 0x38",
+          "protected IPlayerAccessor playerHandle; // 0x40",
+          "private bool <InputEnable>k__BackingField; // 0x48",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x4C"
+        ]
+      },
+      "FieldPlayerKeyAirshipController": {
+        "declaration": "public class FieldPlayerKeyAirshipController : FieldPlayerController // TypeDefIndex: 6490",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private float riseAndFallAccelerator; // 0x54",
+          "private Vector2 inputAxis; // 0x58",
+          "private float leftFastRotateScale; // 0x60",
+          "private float rightFastRotateScale; // 0x64",
+          "private bool isDownShiftDown; // 0x68",
+          "private bool isDownShiftUp; // 0x69",
+          "private bool isMoveForward; // 0x6A",
+          "private float lookUpValue; // 0x6C",
+          "private float bankValue; // 0x70",
+          "private string selectedAnimKey; // 0x78",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x80"
+        ]
+      },
+      "FieldPlayerKeyController": {
+        "declaration": "public class FieldPlayerKeyController : FieldPlayerController // TypeDefIndex: 6491",
+        "fields": [
+          "private bool pressDashKey; // 0x50"
+        ]
+      },
+      "FieldPlayerKeyTwoStepController": {
+        "declaration": "public class FieldPlayerKeyTwoStepController : FieldPlayerController // TypeDefIndex: 6494",
+        "fields": [
+          "private FieldSpriteEntity upArrowResidentEntity; // 0x50",
+          "private FieldSpriteEntity downArrowResidentEntity; // 0x58",
+          "private Action upAction; // 0x60",
+          "private Action downAction; // 0x68",
+          "private Action closeAction; // 0x70",
+          "private bool selectedUp; // 0x78",
+          "private int upArrowEntityId; // 0x7C",
+          "private int downArrowEntityId; // 0x80"
+        ]
+      },
+      "FieldPlayerTouchAirshipController": {
+        "declaration": "public class FieldPlayerTouchAirshipController : FieldPlayerTouchBaseController // TypeDefIndex: 6495",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float riseAndFallAccelerator; // 0x7C",
+          "private float lookUpValue; // 0x80",
+          "private float bankValue; // 0x84",
+          "private Vector2 inputAxis; // 0x88",
+          "private bool isTranslationMode; // 0x90"
+        ]
+      },
+      "FieldPlayerTouchBaseController": {
+        "declaration": "public abstract class FieldPlayerTouchBaseController : FieldPlayerController // TypeDefIndex: 6496",
+        "fields": [
+          "protected ManipulatePad manipulatePadHandle; // 0x50",
+          "protected Vector2 touchDownFieldScreenPos; // 0x58",
+          "protected bool isDash; // 0x60"
+        ]
+      },
+      "FieldPlayerTouchRouteMoveController": {
+        "declaration": "public class FieldPlayerTouchRouteMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6497",
+        "fields": [
+          "private FieldCursorFinger fieldCursorFinger; // 0x68",
+          "private TouchMovementLineEntity touchMovementLineEntity; // 0x70",
+          "private Vector3 touchedCellPosition; // 0x78",
+          "private List<Vector3> showedTempRoutePositions; // 0x88",
+          "private FieldTapAnimation tapAnimationEntity; // 0x90",
+          "private Animator tapAnimator; // 0x98",
+          "private bool needCanceledWaitTapAnimation; // 0xA0",
+          "private IInteractiveEntity preTouchedInteractiveTarget; // 0xA8",
+          "private float touchMovementStartRadius; // 0xB0",
+          "private Vector2 lastMoveDirection; // 0xB4",
+          "private float researchCoolTimeRemainingSeconds; // 0xBC",
+          "private readonly Vector3[] actionableDirection; // 0xC0"
+        ]
+      },
+      "FieldPlayerTouchVectorMoveController": {
+        "declaration": "public class FieldPlayerTouchVectorMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6501",
+        "fields": [
+          "private IInteractiveEntity nearestInteractiveTargetEntity; // 0x68",
+          "private float pressElapsedSeconds; // 0x70"
+        ]
+      }
+    },
+    "native_methods": [
+      {
+        "name": ".FieldMap.OnSwitchPlayerController",
+        "rva": 3302000,
+        "signature": "public void OnSwitchPlayerController(FieldPlayerController currentPlayerController)",
+        "alias_count": 1,
+        "body_sha256": "85354ed139b77364a412023cab666ea737ba3147eb5df99cb9a27980474068f7",
+        "bytes": 64
+      },
+      {
+        "name": "Last.Map.FieldController.SwitchPlayerController",
+        "rva": 2676640,
+        "signature": "public void SwitchPlayerController(bool isTapModeOn)",
+        "alias_count": 1,
+        "body_sha256": "279a6b8122c9f2301f75986346de6caf784ca13e0d5a5c499cbe8ead8d3734bb",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldController.GetZAxisRotateBirdCamera",
+        "rva": 2604640,
+        "signature": "public float GetZAxisRotateBirdCamera()",
+        "alias_count": 1,
+        "body_sha256": "0d1123276953557e10efab253a4cc98ffc07f969646f3dadfbe3185ff3f50ff5",
+        "bytes": 176
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.Init",
+        "rva": 2523696,
+        "signature": "public virtual void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 145,
+        "body_sha256": "8d6ab4d44aba1551135c9fa5aca80b62e46163a86db02ee6843ee2cae55d1058",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.LateUpdateObserveInput",
+        "rva": 2529520,
+        "signature": "public virtual void LateUpdateObserveInput()",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnTouchPadCallback",
+        "rva": 2529520,
+        "signature": "public virtual void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKeyUp",
+        "rva": 2529520,
+        "signature": "public virtual void OnKeyUp(FieldInputKey key)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKey",
+        "rva": 2529520,
+        "signature": "public virtual void OnKey(FieldInputKey key)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.SwtichInputEnable",
+        "rva": 2559984,
+        "signature": "public virtual void SwtichInputEnable(bool enable)",
+        "alias_count": 15,
+        "body_sha256": "135ada1e136a2ef91caca3b528d03d73a65f7fcf5752a24e0a38f7c894decad6",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.Init",
+        "rva": 9746208,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "074782cb7fa1c8bbf3626648731f648a2715a32471d2aaaede1d1d6cb920d7e5",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnTouchPadCallback",
+        "rva": 9747824,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "ba98b8f21aca0a614c3bbaec8482e3fa71e1c5fa25b2ac0b33c04794e0f25d66",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.LateUpdateObserveInput",
+        "rva": 9746256,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "d71a4de8d8b222c8aa63ad9f501c28f223d9e5394286c43ed24b92cb887ceb5d",
+        "bytes": 832
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.UpdateRotateAccelerator",
+        "rva": 9749008,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "39080b946547315e55690160ab4dcca006402c0d49082a382a3c18471d5115cd",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.MoveToAxis",
+        "rva": 9747088,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "aa607df4f2de07ebe17cad2a1408337e2ebe634855153b30746b1ea085c3f9cd",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKey",
+        "rva": 9747776,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "90906853eb141e3b45b2d3bcd6d4cb7f997c849d45ecfdbba43ff53f95952c2a",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKeyUp",
+        "rva": 9747728,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "ff7a2209bd61442f9a6edec05b724c67b59622db7cdf958c80fe3b27be000350",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.SwtichInputEnable",
+        "rva": 9748208,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "04c6e5184ac4cb4b47a2b528b4a0b47d079f034b876749f93c20ea42426386ae",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.Init",
+        "rva": 9749952,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "269935cb8823eabc0b892fe872116779f0a3b57e43ccffc5f820e7f52cb67fc2",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnTouchPadCallback",
+        "rva": 9751600,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "4aa93714f64382ebc4910293d28bd6bdc36493b06b1f8a473fcf2491b3f313a7",
+        "bytes": 864
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKey",
+        "rva": 9751504,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "6a0aa961b17e2a12b4aec27de5ec50260077a3da7b2a6e225d2acbf28ab087b5",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKeyUp",
+        "rva": 9751408,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "e0ef95ffe54e3b0a390714ddf0b426be0e722c136c50fdc8af16c675235f733e",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.Init",
+        "rva": 9752480,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "77e4d2abdc62601ba0fa4f0f832f30ec0c07db87744ff869bf9bad75dc39bf1f",
+        "bytes": 288
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.OnTouchPadCallback",
+        "rva": 2529520,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2399,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.SwtichInputEnable",
+        "rva": 9753776,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "5b78cf24e896c2f1c218aeee47b1c41a76382138d7caaa50a4045a7951ec4c7d",
+        "bytes": 800
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.Init",
+        "rva": 9754592,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "165bfb553f63b364abc208936c719378dc6ea5b35aaa6b4b7123a70869a16451",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.OnTouchPadCallback",
+        "rva": 9756224,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "dd821bbfea1b901970b1540c4917928bc22da55a98b23d2957b31a8544535c6b",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.LateUpdateObserveInput",
+        "rva": 9754800,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "33ba4f8c5f20d89b2511ef8bf3215a2810202310b638affc88eee87779cc33ba",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.UpdateRotateAccelerator",
+        "rva": 9758720,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "6899168d558b0a818471d262f3398f63e6ad13e0750c6f7eb55f2df1870d7678",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.MoveToAxis",
+        "rva": 9755568,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "0e0d5a667943f73a0af4d1b532a2c9c695b4dd7fdb75ec9fa189068b96430db3",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.SwtichInputEnable",
+        "rva": 9757392,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "94f8ff4a3855416eb14e4750ac38bc13c091784ffa8470f2eab5a36bd11480eb",
+        "bytes": 464
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.Init",
+        "rva": 2523696,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 145,
+        "body_sha256": "8d6ab4d44aba1551135c9fa5aca80b62e46163a86db02ee6843ee2cae55d1058",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.OnTouchPadCallback",
+        "rva": 9759664,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "270c31cf663a37fc245f77f71a2a6c4a14aeca71d43fa19a6e01509e6ddd30a3",
+        "bytes": 704
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.Init",
+        "rva": 9762400,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "2e63f8c2df01d3e964a40a5093535e5efbc6bdb3b7f9ed2ca51ddf19128aaa5f",
+        "bytes": 400
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.OnTouchPadCallback",
+        "rva": 9770704,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "2c2eedc9ee055b6c081d73debb794178b745c4c437a8bf841c38bed431a0196c",
+        "bytes": 128
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.SwtichInputEnable",
+        "rva": 9775168,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "285c2865320d054d04c5b9d15f30545b085db3c46fb2db30a4b2f0b3d6fe43a6",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchVectorMoveController.SwtichInputEnable",
+        "rva": 6033312,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "4de95ec9b715dd8e6d656708059d6e1313988f98c69adc02ccd0b39bb4d861ca",
+        "bytes": 128
+      }
+    ],
+    "transports": [
+      {
+        "id": "1",
+        "transportation_group_id": "1",
+        "landing_group_id": "0",
+        "asset_id": "0",
+        "release_flag": "900",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "1",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "2",
+        "transportation_group_id": "2",
+        "landing_group_id": "0",
+        "asset_id": "11",
+        "release_flag": "901",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "5",
+        "encounter_flag": "0",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "3",
+        "transportation_group_id": "3",
+        "landing_group_id": "1",
+        "asset_id": "16",
+        "release_flag": "902",
+        "bgm_id": "0",
+        "se_id": "913",
+        "type_id": "3",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_202",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "4",
+        "transportation_group_id": "4",
+        "landing_group_id": "2",
+        "asset_id": "12",
+        "release_flag": "903",
+        "bgm_id": "0",
+        "se_id": "38",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_200",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "5",
+        "transportation_group_id": "5",
+        "landing_group_id": "3",
+        "asset_id": "13",
+        "release_flag": "904",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "5",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "6",
+        "transportation_group_id": "6",
+        "landing_group_id": "4",
+        "asset_id": "14",
+        "release_flag": "905",
+        "bgm_id": "9",
+        "se_id": "0",
+        "type_id": "9",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_255",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "7",
+        "transportation_group_id": "3",
+        "landing_group_id": "1",
+        "asset_id": "19",
+        "release_flag": "906",
+        "bgm_id": "0",
+        "se_id": "913",
+        "type_id": "3",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_202",
+        "start_takeoff": "1000",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      }
+    ]
+  },
+  {
+    "game": 3,
+    "game_sha256": "8db9ab31a893ca4b13e5e4d2e2b1b086ac6e3fb5699b9be1d8037dafaaa3ae31",
+    "dump_sha256": "cf74887b07f39807182c95701b3888ebfe171f0c9f7afbe8f33811b47c3d4b15",
+    "controller_classes": {
+      "FieldPlayerController": {
+        "declaration": "public class FieldPlayerController : MonoBehaviour, IInputDeviceListener // TypeDefIndex: 6820",
+        "fields": [
+          "protected readonly Vector3[] SearchDirections; // 0x18",
+          "protected FieldPlayer fieldPlayer; // 0x20",
+          "protected IMapAccessor mapHandle; // 0x28",
+          "protected IEventAccessor eventHandle; // 0x30",
+          "protected IEntityAccessor entityHandle; // 0x38",
+          "protected IPlayerAccessor playerHandle; // 0x40",
+          "private bool <InputEnable>k__BackingField; // 0x48",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x4C"
+        ]
+      },
+      "FieldPlayerKeyAirshipController": {
+        "declaration": "public class FieldPlayerKeyAirshipController : FieldPlayerController // TypeDefIndex: 6821",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private float riseAndFallAccelerator; // 0x54",
+          "private Vector2 inputAxis; // 0x58",
+          "private float leftFastRotateScale; // 0x60",
+          "private float rightFastRotateScale; // 0x64",
+          "private bool isDownShiftDown; // 0x68",
+          "private bool isDownShiftUp; // 0x69",
+          "private bool isMoveForward; // 0x6A",
+          "private float lookUpValue; // 0x6C",
+          "private float bankValue; // 0x70",
+          "private string selectedAnimKey; // 0x78",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x80"
+        ]
+      },
+      "FieldPlayerKeyController": {
+        "declaration": "public class FieldPlayerKeyController : FieldPlayerController // TypeDefIndex: 6822",
+        "fields": [
+          "private Dictionary<FieldInputKey, Action> requestTask; // 0x50",
+          "private bool pressDashKey; // 0x58"
+        ]
+      },
+      "FieldPlayerKeyGroundBirdController": {
+        "declaration": "public class FieldPlayerKeyGroundBirdController : FieldPlayerController // TypeDefIndex: 6827",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private Vector2 inputAxis; // 0x54",
+          "private float leftFastRotateScale; // 0x5C",
+          "private float rightFastRotateScale; // 0x60",
+          "private bool isDownShiftDown; // 0x64",
+          "private bool isDownShiftUp; // 0x65",
+          "private bool isMoveForward; // 0x66",
+          "private float lookUpValue; // 0x68",
+          "private float bankValue; // 0x6C",
+          "private string selectedAnimKey; // 0x70",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x78"
+        ]
+      },
+      "FieldPlayerKeySpecialAirshipController": {
+        "declaration": "public class FieldPlayerKeySpecialAirshipController : FieldPlayerKeyController // TypeDefIndex: 6828",
+        "fields": [
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x60"
+        ]
+      },
+      "FieldPlayerKeyTwoStepController": {
+        "declaration": "public class FieldPlayerKeyTwoStepController : FieldPlayerController // TypeDefIndex: 6829",
+        "fields": [
+          "private FieldSpriteEntity upArrowResidentEntity; // 0x50",
+          "private FieldSpriteEntity downArrowResidentEntity; // 0x58",
+          "private Action upAction; // 0x60",
+          "private Action downAction; // 0x68",
+          "private Action closeAction; // 0x70",
+          "private bool selectedUp; // 0x78",
+          "private int upArrowEntityId; // 0x7C",
+          "private int downArrowEntityId; // 0x80"
+        ]
+      },
+      "FieldPlayerTouchAirshipController": {
+        "declaration": "public class FieldPlayerTouchAirshipController : FieldPlayerTouchBaseController // TypeDefIndex: 6830",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float riseAndFallAccelerator; // 0x7C",
+          "private float lookUpValue; // 0x80",
+          "private float bankValue; // 0x84",
+          "private Vector2 inputAxis; // 0x88",
+          "private bool isTranslationMode; // 0x90"
+        ]
+      },
+      "FieldPlayerTouchBaseController": {
+        "declaration": "public abstract class FieldPlayerTouchBaseController : FieldPlayerController // TypeDefIndex: 6831",
+        "fields": [
+          "protected ManipulatePad manipulatePadHandle; // 0x50",
+          "protected Vector2 touchDownFieldScreenPos; // 0x58",
+          "protected bool isDash; // 0x60"
+        ]
+      },
+      "FieldPlayerTouchGroundBirdController": {
+        "declaration": "public class FieldPlayerTouchGroundBirdController : FieldPlayerTouchBaseController // TypeDefIndex: 6832",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float lookUpValue; // 0x7C",
+          "private float bankValue; // 0x80",
+          "private Vector2 inputAxis; // 0x84"
+        ]
+      },
+      "FieldPlayerTouchRouteMoveController": {
+        "declaration": "public class FieldPlayerTouchRouteMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6833",
+        "fields": [
+          "private FieldCursorFinger fieldCursorFinger; // 0x68",
+          "private TouchMovementLineEntity touchMovementLineEntity; // 0x70",
+          "private Vector3 touchedCellPosition; // 0x78",
+          "private List<Vector3> showedTempRoutePositions; // 0x88",
+          "private FieldTapAnimation tapAnimationEntity; // 0x90",
+          "private Animator tapAnimator; // 0x98",
+          "private bool needCanceledWaitTapAnimation; // 0xA0",
+          "private IInteractiveEntity preTouchedInteractiveTarget; // 0xA8",
+          "private float touchMovementStartRadius; // 0xB0",
+          "private Vector2 lastMoveDirection; // 0xB4",
+          "private float researchCoolTimeRemainingSeconds; // 0xBC",
+          "private readonly Vector3[] actionableDirection; // 0xC0"
+        ]
+      },
+      "FieldPlayerTouchVectorMoveController": {
+        "declaration": "public class FieldPlayerTouchVectorMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6837",
+        "fields": [
+          "private IInteractiveEntity nearestInteractiveTargetEntity; // 0x68",
+          "private float pressElapsedSeconds; // 0x70"
+        ]
+      }
+    },
+    "native_methods": [
+      {
+        "name": ".FieldMap.OnSwitchPlayerController",
+        "rva": 3470096,
+        "signature": "public void OnSwitchPlayerController(FieldPlayerController currentPlayerController)",
+        "alias_count": 1,
+        "body_sha256": "a45f477c57dcc893852e3aee4d9459b35e346622866a1e462ae6a5680054e9ed",
+        "bytes": 64
+      },
+      {
+        "name": "Last.Map.FieldController.SwitchPlayerController",
+        "rva": 2703072,
+        "signature": "public void SwitchPlayerController(bool isTapModeOn)",
+        "alias_count": 1,
+        "body_sha256": "859a96ff36c535e11a21171c24c40f6205beaed67cb9f2dd11e7580ce7bb38b8",
+        "bytes": 320
+      },
+      {
+        "name": "Last.Map.FieldController.GetZAxisRotateBirdCamera",
+        "rva": 2626432,
+        "signature": "public float GetZAxisRotateBirdCamera()",
+        "alias_count": 1,
+        "body_sha256": "074be1fdbf7a7ab259a2dba26ee5dc4b1eed8843e0f54c8ba5e522259165c718",
+        "bytes": 176
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.Init",
+        "rva": 2540080,
+        "signature": "public virtual void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 147,
+        "body_sha256": "8550f17583563a89f0a3e2d03a55e82b414c58e55a70521540a7f1bcebc571ae",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.LateUpdateObserveInput",
+        "rva": 2545904,
+        "signature": "public virtual void LateUpdateObserveInput()",
+        "alias_count": 2495,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnTouchPadCallback",
+        "rva": 2545904,
+        "signature": "public virtual void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2495,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKeyUp",
+        "rva": 2545904,
+        "signature": "public virtual void OnKeyUp(FieldInputKey key)",
+        "alias_count": 2495,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKey",
+        "rva": 2545904,
+        "signature": "public virtual void OnKey(FieldInputKey key)",
+        "alias_count": 2495,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.SwitchInputEnable",
+        "rva": 3084352,
+        "signature": "public virtual void SwitchInputEnable(bool enable)",
+        "alias_count": 15,
+        "body_sha256": "135ada1e136a2ef91caca3b528d03d73a65f7fcf5752a24e0a38f7c894decad6",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.Init",
+        "rva": 7447728,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "21c2a1213930a865a7fc9f5d141840c45f18556deb99da2446a70daa6a2fe888",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnTouchPadCallback",
+        "rva": 7449344,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "ba98b8f21aca0a614c3bbaec8482e3fa71e1c5fa25b2ac0b33c04794e0f25d66",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.LateUpdateObserveInput",
+        "rva": 7447776,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "6592c3bdf6843046b493116b73f2622be154ab86fd30ad1807d65dd664fb6706",
+        "bytes": 832
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.UpdateRotateAccelerator",
+        "rva": 7450736,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "5b559e7746bd3e668f0201a76b79ef75fadd996d5f4679fdc7c1c0c5997d7bc4",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.MoveToAxis",
+        "rva": 7448608,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "8305b2312699656d91707c9401ee2ea1a9f0ecbeb29948537104f570734f9c0b",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKey",
+        "rva": 7449296,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "90906853eb141e3b45b2d3bcd6d4cb7f997c849d45ecfdbba43ff53f95952c2a",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKeyUp",
+        "rva": 7449248,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "ff7a2209bd61442f9a6edec05b724c67b59622db7cdf958c80fe3b27be000350",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.SwitchInputEnable",
+        "rva": 7449728,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "859179fe323ee5e6f2dc202fba8512b6a46058cf92167397650475bdec21748c",
+        "bytes": 256
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.Init",
+        "rva": 7451680,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 2,
+        "body_sha256": "dd374c884bf2f6b139f9526aefc9589a090b41ce2f452b9aed0a8b4b0fe5cd68",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnTouchPadCallback",
+        "rva": 7454288,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "1f81ff2403df6c428582c18ccfc87e032a167d64b34ac5064726e50ec48668aa",
+        "bytes": 864
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKey",
+        "rva": 7454192,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "92cea6582e3009e75ceb7a37cbaf1a00c72c695cb64393bce7d8af14985dbc76",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKeyUp",
+        "rva": 7454096,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "94d360020af33fc49fb5b893951b7bab4c5586e6bfaeeadac2de58b0933199da",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.LateUpdateObserveInput",
+        "rva": 7451712,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "0144da29884decd4493d10e74b85f021d292232bd76f43ae1bb92d88f532dc03",
+        "bytes": 176
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.Init",
+        "rva": 7455264,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "2ab59f5a86c532ae3025b67af944fb4bcbad115bab18e978c10f8e9b45e65e8c",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnTouchPadCallback",
+        "rva": 7456496,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "a4fc8ed7e72e16f655b6febfd06d6ac47c7c4ad9291979602bbfd8b8174306cb",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.LateUpdateObserveInput",
+        "rva": 7455312,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "eaf6c850f87467f162c9f8ccdddf512d95176c345f5781973784b87015b6730d",
+        "bytes": 416
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.UpdateRotateAccelerator",
+        "rva": 7457072,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "261d961c7e1913c1d6fe5fe1703bf055ca61c8abc40a954dcd7b95e7b3623ec9",
+        "bytes": 784
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.MoveToAxis",
+        "rva": 7455728,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "280130f8feb46a5ecf9a733a3f741f5b3f395f58a2c2f14bff3a01fc6ae36467",
+        "bytes": 672
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnKey",
+        "rva": 7456448,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "c186559067ea7ae2a4cd45b96c6192060581b86cc1250e23119c8f6f0082b2bf",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnKeyUp",
+        "rva": 7456400,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "8eb9e74302c700791728a30555066cb74d5080c3724fc591e4308a22d74c6400",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.SwitchInputEnable",
+        "rva": 7456816,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "e17b668e003c7de109ffee69efffc43d6cb16d4c9d547bb8316ad30f5ef55819",
+        "bytes": 256
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeySpecialAirshipController.Init",
+        "rva": 7451680,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 2,
+        "body_sha256": "dd374c884bf2f6b139f9526aefc9589a090b41ce2f452b9aed0a8b4b0fe5cd68",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.Init",
+        "rva": 7458144,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "b87693e8991f7a371ab3e275f155fc397ee44ffd481ac906a811712f96cfebbd",
+        "bytes": 288
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.OnTouchPadCallback",
+        "rva": 2545904,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2495,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.SwitchInputEnable",
+        "rva": 7458832,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "75abcf7b64ff800082d9ec746e269b0bcecd1abeaeaadbd515527505a27bbbf8",
+        "bytes": 800
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.Init",
+        "rva": 7460256,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "331d695490a9a3529291b0e7a326a4a8f4911e53c69ba8c569fc7382f84577c4",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.OnTouchPadCallback",
+        "rva": 7461888,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "5a038452ed8aa430906c9d772909b0cd08721e18ba68e194dbfc7058fc9d29af",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.LateUpdateObserveInput",
+        "rva": 7460464,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "fe557415eb90bddf7315b631c3304e4d1b75d5fdeda783212c06c1eb1ebac2d6",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.UpdateRotateAccelerator",
+        "rva": 7464384,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "9f78062ea5ef15b64d36d3b0b65ca79d380b6285a67d683bffb1a324ab248a2e",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.MoveToAxis",
+        "rva": 7461232,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "5d9fdc600a4c5c2ade79fd79d3a1c50cbf38d88cd007aa18e794fc9796df3b66",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.SwitchInputEnable",
+        "rva": 7462944,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "701226d6ff16bc6641d90006f8080506f3476d039591067bae2886c762318e41",
+        "bytes": 560
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.Init",
+        "rva": 2540080,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 147,
+        "body_sha256": "8550f17583563a89f0a3e2d03a55e82b414c58e55a70521540a7f1bcebc571ae",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.OnTouchPadCallback",
+        "rva": 7465328,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "04ce9c54284e47ff9f37ff8ceac8594d8568ddcd1a2bfdde1f61c9141672be9f",
+        "bytes": 704
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.Init",
+        "rva": 7466176,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "7930578c30feab04c7b4f38f273e0bbc80d02fba6666228088e80dc077168e85",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.OnTouchPadCallback",
+        "rva": 7467440,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "91fb89a1d1333e517e5a6c7d65e9404bd9da78710f0cf22392c3e20a02ecd26b",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.LateUpdateObserveInput",
+        "rva": 7466224,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "75cf7d8f0a98b7e6372cf34503391d4a2abf4b992bc31caa00ade461e1fb3200",
+        "bytes": 544
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.UpdateRotateAccelerator",
+        "rva": 7468736,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "6ae23b23521452b08a47c790d17a0c969525ebf540b9c3f031ad20185ffa55ed",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.MoveToAxis",
+        "rva": 7466768,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "a094c0e0624c584d3c9bbecde2f3a74d3bf914803fcdd31546adb9528e102582",
+        "bytes": 672
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.SwitchInputEnable",
+        "rva": 7468400,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "ec7da819f0b2e330c0f5e9d856499ca5ae2034001ebdf711905912c350641dd7",
+        "bytes": 336
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.Init",
+        "rva": 7471552,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "f7049499ac8b6e150c02a7bbbb8018c1f116bfedf254841316fe768357cf98df",
+        "bytes": 400
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.OnTouchPadCallback",
+        "rva": 7479984,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "cac7170481111ca96778916700faff34a5f1caefbec482f7710046b6c30291c4",
+        "bytes": 128
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.SwitchInputEnable",
+        "rva": 7484448,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "285c2865320d054d04c5b9d15f30545b085db3c46fb2db30a4b2f0b3d6fe43a6",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchVectorMoveController.SwitchInputEnable",
+        "rva": 5974608,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "d23d27661aaaaf481435c302263be623dbf1df32cab45caae6aea01686ffc253",
+        "bytes": 144
+      }
+    ],
+    "transports": [
+      {
+        "id": "1",
+        "transportation_group_id": "1",
+        "landing_group_id": "0",
+        "asset_id": "0",
+        "release_flag": "900",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "1",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "2",
+        "transportation_group_id": "3",
+        "landing_group_id": "0",
+        "asset_id": "26",
+        "release_flag": "901",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "5",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "3",
+        "transportation_group_id": "6",
+        "landing_group_id": "6",
+        "asset_id": "27",
+        "release_flag": "902",
+        "bgm_id": "24",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_421",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "5",
+        "transportation_group_id": "5",
+        "landing_group_id": "7",
+        "asset_id": "28",
+        "release_flag": "903",
+        "bgm_id": "14",
+        "se_id": "38",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_420",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "6",
+        "transportation_group_id": "6",
+        "landing_group_id": "5",
+        "asset_id": "29",
+        "release_flag": "904",
+        "bgm_id": "24",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_420",
+        "start_takeoff": "0",
+        "end_landing": "850",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      },
+      {
+        "id": "8",
+        "transportation_group_id": "6",
+        "landing_group_id": "6",
+        "asset_id": "31",
+        "release_flag": "905",
+        "bgm_id": "24",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_418",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "9",
+        "transportation_group_id": "6",
+        "landing_group_id": "10",
+        "asset_id": "40",
+        "release_flag": "906",
+        "bgm_id": "24",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_418",
+        "start_takeoff": "0",
+        "end_landing": "358",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      },
+      {
+        "id": "10",
+        "transportation_group_id": "6",
+        "landing_group_id": "8",
+        "asset_id": "32",
+        "release_flag": "907",
+        "bgm_id": "39",
+        "se_id": "951",
+        "type_id": "8",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_419",
+        "start_takeoff": "332",
+        "end_landing": "0",
+        "start_landing": "333",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "11",
+        "transportation_group_id": "6",
+        "landing_group_id": "8",
+        "asset_id": "45",
+        "release_flag": "908",
+        "bgm_id": "39",
+        "se_id": "951",
+        "type_id": "8",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_419",
+        "start_takeoff": "328",
+        "end_landing": "0",
+        "start_landing": "330",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "12",
+        "transportation_group_id": "2",
+        "landing_group_id": "2",
+        "asset_id": "44",
+        "release_flag": "909",
+        "bgm_id": "17",
+        "se_id": "0",
+        "type_id": "9",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_522",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "13",
+        "transportation_group_id": "5",
+        "landing_group_id": "7",
+        "asset_id": "46",
+        "release_flag": "910",
+        "bgm_id": "14",
+        "se_id": "38",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_420",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "851",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "14",
+        "transportation_group_id": "7",
+        "landing_group_id": "9",
+        "asset_id": "47",
+        "release_flag": "911",
+        "bgm_id": "34",
+        "se_id": "156",
+        "type_id": "6",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_418",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "360",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "15",
+        "transportation_group_id": "6",
+        "landing_group_id": "5",
+        "asset_id": "48",
+        "release_flag": "912",
+        "bgm_id": "25",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_420",
+        "start_takeoff": "0",
+        "end_landing": "852",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      },
+      {
+        "id": "16",
+        "transportation_group_id": "5",
+        "landing_group_id": "7",
+        "asset_id": "49",
+        "release_flag": "913",
+        "bgm_id": "25",
+        "se_id": "38",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_420",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "853",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      }
+    ]
+  },
+  {
+    "game": 4,
+    "game_sha256": "bb2f4c9db44c8ee9b065696aeafb77561a1709492130f045433e6d215abc42ed",
+    "dump_sha256": "011bc480d50bba3784b001844f854eae9abbe7a0050cb91c6e82146dffacc916",
+    "controller_classes": {
+      "FieldPlayerController": {
+        "declaration": "public class FieldPlayerController : MonoBehaviour, IInputDeviceListener // TypeDefIndex: 6749",
+        "fields": [
+          "protected readonly Vector3[] SearchDirections; // 0x18",
+          "protected FieldPlayer fieldPlayer; // 0x20",
+          "protected IMapAccessor mapHandle; // 0x28",
+          "protected IEventAccessor eventHandle; // 0x30",
+          "protected IEntityAccessor entityHandle; // 0x38",
+          "protected IPlayerAccessor playerHandle; // 0x40",
+          "private bool <InputEnable>k__BackingField; // 0x48",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x4C"
+        ]
+      },
+      "FieldPlayerKeyAirshipController": {
+        "declaration": "public class FieldPlayerKeyAirshipController : FieldPlayerController // TypeDefIndex: 6750",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private float riseAndFallAccelerator; // 0x54",
+          "private Vector2 inputAxis; // 0x58",
+          "private float leftFastRotateScale; // 0x60",
+          "private float rightFastRotateScale; // 0x64",
+          "private bool isDownShiftDown; // 0x68",
+          "private bool isDownShiftUp; // 0x69",
+          "private bool isMoveForward; // 0x6A",
+          "private float lookUpValue; // 0x6C",
+          "private float bankValue; // 0x70",
+          "private string selectedAnimKey; // 0x78",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x80"
+        ]
+      },
+      "FieldPlayerKeyController": {
+        "declaration": "public class FieldPlayerKeyController : FieldPlayerController // TypeDefIndex: 6751",
+        "fields": [
+          "private bool pressDashKey; // 0x50"
+        ]
+      },
+      "FieldPlayerKeyTwoStepController": {
+        "declaration": "public class FieldPlayerKeyTwoStepController : FieldPlayerController // TypeDefIndex: 6754",
+        "fields": [
+          "private FieldSpriteEntity upArrowResidentEntity; // 0x50",
+          "private FieldSpriteEntity downArrowResidentEntity; // 0x58",
+          "private Action upAction; // 0x60",
+          "private Action downAction; // 0x68",
+          "private Action closeAction; // 0x70",
+          "private Action cancelAction; // 0x78",
+          "private bool selectedUp; // 0x80",
+          "private int upArrowEntityId; // 0x84",
+          "private int downArrowEntityId; // 0x88"
+        ]
+      },
+      "FieldPlayerTouchAirshipController": {
+        "declaration": "public class FieldPlayerTouchAirshipController : FieldPlayerTouchBaseController // TypeDefIndex: 6755",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float riseAndFallAccelerator; // 0x7C",
+          "private float lookUpValue; // 0x80",
+          "private float bankValue; // 0x84",
+          "private Vector2 inputAxis; // 0x88",
+          "private bool isTranslationMode; // 0x90"
+        ]
+      },
+      "FieldPlayerTouchBaseController": {
+        "declaration": "public abstract class FieldPlayerTouchBaseController : FieldPlayerController // TypeDefIndex: 6756",
+        "fields": [
+          "protected ManipulatePad manipulatePadHandle; // 0x50",
+          "protected Vector2 touchDownFieldScreenPos; // 0x58",
+          "protected bool isDash; // 0x60"
+        ]
+      },
+      "FieldPlayerTouchRouteMoveController": {
+        "declaration": "public class FieldPlayerTouchRouteMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6757",
+        "fields": [
+          "private FieldCursorFinger fieldCursorFinger; // 0x68",
+          "private TouchMovementLineEntity touchMovementLineEntity; // 0x70",
+          "private Vector3 touchedCellPosition; // 0x78",
+          "private List<Vector3> showedTempRoutePositions; // 0x88",
+          "private FieldTapAnimation tapAnimationEntity; // 0x90",
+          "private Animator tapAnimator; // 0x98",
+          "private bool needCanceledWaitTapAnimation; // 0xA0",
+          "private IInteractiveEntity preTouchedInteractiveTarget; // 0xA8",
+          "private float touchMovementStartRadius; // 0xB0",
+          "private Vector2 lastMoveDirection; // 0xB4",
+          "private float researchCoolTimeRemainingSeconds; // 0xBC",
+          "private readonly Vector3[] actionableDirection; // 0xC0"
+        ]
+      },
+      "FieldPlayerTouchVectorMoveController": {
+        "declaration": "public class FieldPlayerTouchVectorMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6761",
+        "fields": [
+          "private IInteractiveEntity nearestInteractiveTargetEntity; // 0x68",
+          "private float pressElapsedSeconds; // 0x70"
+        ]
+      }
+    },
+    "native_methods": [
+      {
+        "name": ".FieldMap.OnSwitchPlayerController",
+        "rva": 3000736,
+        "signature": "public void OnSwitchPlayerController(FieldPlayerController currentPlayerController)",
+        "alias_count": 1,
+        "body_sha256": "7e0440c6e1bd29967066df9f5217dae08b20ecabe4bcafc3ede12287866f267b",
+        "bytes": 64
+      },
+      {
+        "name": "Last.Map.FieldController.SwitchPlayerController",
+        "rva": 2685088,
+        "signature": "public void SwitchPlayerController(bool isTapModeOn)",
+        "alias_count": 1,
+        "body_sha256": "5f834c9d50bc9891f050cc96d4bf20b1d8f0ace1ec75197bce81f78c1b6f63e6",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldController.GetZAxisRotateBirdCamera",
+        "rva": 2612912,
+        "signature": "public float GetZAxisRotateBirdCamera()",
+        "alias_count": 1,
+        "body_sha256": "a97bdf9a80b226a1909e041befc4922831074589e29a1255498226fd0d2aff5a",
+        "bytes": 176
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.Init",
+        "rva": 2531888,
+        "signature": "public virtual void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 149,
+        "body_sha256": "eea845b7a6c8e756d949332df3330da2e23f46f719096fea28815e881830e15c",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.LateUpdateObserveInput",
+        "rva": 2537712,
+        "signature": "public virtual void LateUpdateObserveInput()",
+        "alias_count": 2416,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnTouchPadCallback",
+        "rva": 2537712,
+        "signature": "public virtual void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2416,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKeyUp",
+        "rva": 2537712,
+        "signature": "public virtual void OnKeyUp(FieldInputKey key)",
+        "alias_count": 2416,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKey",
+        "rva": 2537712,
+        "signature": "public virtual void OnKey(FieldInputKey key)",
+        "alias_count": 2416,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.SwtichInputEnable",
+        "rva": 2568176,
+        "signature": "public virtual void SwtichInputEnable(bool enable)",
+        "alias_count": 17,
+        "body_sha256": "135ada1e136a2ef91caca3b528d03d73a65f7fcf5752a24e0a38f7c894decad6",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.Init",
+        "rva": 9229600,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "7180d1c3be994f91d97cdc53a47868dbaff2f9074e1676a87d6d294e4488a062",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnTouchPadCallback",
+        "rva": 9231216,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "ba98b8f21aca0a614c3bbaec8482e3fa71e1c5fa25b2ac0b33c04794e0f25d66",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.LateUpdateObserveInput",
+        "rva": 9229648,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "033ecb2b5fa0af690aa10336f8c5a761e33dd59faccce683d3ba49fc3d7b6604",
+        "bytes": 832
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.UpdateRotateAccelerator",
+        "rva": 9232400,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "16d44b950b59a35342d84cd862d5f87318587e818f978718a9f5e6ba7a4d46bd",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.MoveToAxis",
+        "rva": 9230480,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "b0771466efc4e143494fddd52eacc01bbb73de8b2c644d263fc5f6200796ce91",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKey",
+        "rva": 9231168,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "90906853eb141e3b45b2d3bcd6d4cb7f997c849d45ecfdbba43ff53f95952c2a",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKeyUp",
+        "rva": 9231120,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "ff7a2209bd61442f9a6edec05b724c67b59622db7cdf958c80fe3b27be000350",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.SwtichInputEnable",
+        "rva": 9231600,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "04c6e5184ac4cb4b47a2b528b4a0b47d079f034b876749f93c20ea42426386ae",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.Init",
+        "rva": 9233344,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "21f91d0c01b15daa7e203ef2bfc4b1abfd5d7152b62423b11996c5d57aade73c",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnTouchPadCallback",
+        "rva": 9234992,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "5987731ad78ae8803fdbd0c5ec999cb18d0775a062060159fbc30a1893e94f1e",
+        "bytes": 864
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKey",
+        "rva": 9234896,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "e42337b1fed15e02d9a0efe4a284bcf3e65368b5ed0d4f021d227bf4acf1c7bd",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKeyUp",
+        "rva": 9234800,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "e1d5f13a1878ba3a8ea67ce5f614771ebb4aa7cf15d79a8178606c3033de4bdb",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.Init",
+        "rva": 9235872,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "a541fe350ffc8b15be21a90f30490a0f2999fdf393d072385c36c39fdc850035",
+        "bytes": 288
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.OnTouchPadCallback",
+        "rva": 2537712,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2416,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.SwtichInputEnable",
+        "rva": 9237200,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "d7dbf8c79f106b2502156c480ff303b86fadc8f122f86e79ce74d72bb0beaafc",
+        "bytes": 800
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.Init",
+        "rva": 9238016,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "610b32dd4b723ec03d28db589eb221b259922d4b9d8e64f898d9d1d91cb561f5",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.OnTouchPadCallback",
+        "rva": 9239648,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "dd821bbfea1b901970b1540c4917928bc22da55a98b23d2957b31a8544535c6b",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.LateUpdateObserveInput",
+        "rva": 9238224,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "a20a16b96c84ad6f35e7cef5757acf46212359aecdbb24705c288c7685ae330a",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.UpdateRotateAccelerator",
+        "rva": 9242160,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "30369e78a2ac8b15183f0cc79e2d378c95d3c92606459027067c52a84de73f50",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.MoveToAxis",
+        "rva": 9238992,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "e9262eaa3e14f868a6aace2b90a1383be02f6554e0f7365f8cdf4f41cc7d4fad",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.SwtichInputEnable",
+        "rva": 9240832,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "d7501d0ebc0b140b0fe8f84cb0265300f30fc632d5c5609b69b1aacb82672515",
+        "bytes": 464
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.Init",
+        "rva": 2531888,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 149,
+        "body_sha256": "eea845b7a6c8e756d949332df3330da2e23f46f719096fea28815e881830e15c",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.OnTouchPadCallback",
+        "rva": 9243104,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "d25484e1e72123b437ec21c447de55460960ca8ef35ef3d43be1791374134863",
+        "bytes": 704
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.Init",
+        "rva": 9245840,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "19d1a0c4ba472ad87f606a3ead3a03ff065ddbb4e6779192cbeaa73ad778a59b",
+        "bytes": 400
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.OnTouchPadCallback",
+        "rva": 9254144,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "431a62eb0ecff3475cc9b04b775de80ff5921268a6375d1aaf5a840111708dbe",
+        "bytes": 128
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.SwtichInputEnable",
+        "rva": 9258608,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "285c2865320d054d04c5b9d15f30545b085db3c46fb2db30a4b2f0b3d6fe43a6",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchVectorMoveController.SwtichInputEnable",
+        "rva": 6769984,
+        "signature": "public override void SwtichInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "a70cb7367283183b31d507a9945574db7e7408077c51f687c3c61332d9a29556",
+        "bytes": 128
+      }
+    ],
+    "transports": [
+      {
+        "id": "1",
+        "transportation_group_id": "1",
+        "landing_group_id": "0",
+        "asset_id": "0",
+        "release_flag": "900",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "1",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "2",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "16",
+        "release_flag": "901",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "7",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_288",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "3",
+        "transportation_group_id": "3",
+        "landing_group_id": "2",
+        "asset_id": "17",
+        "release_flag": "902",
+        "bgm_id": "28",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_286",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "4",
+        "transportation_group_id": "4",
+        "landing_group_id": "3",
+        "asset_id": "18",
+        "release_flag": "903",
+        "bgm_id": "28",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_287",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "5",
+        "transportation_group_id": "5",
+        "landing_group_id": "4",
+        "asset_id": "19",
+        "release_flag": "904",
+        "bgm_id": "38",
+        "se_id": "0",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_289",
+        "start_takeoff": "345",
+        "end_landing": "349",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "6",
+        "transportation_group_id": "6",
+        "landing_group_id": "5",
+        "asset_id": "20",
+        "release_flag": "905",
+        "bgm_id": "10",
+        "se_id": "0",
+        "type_id": "9",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_343",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "7",
+        "transportation_group_id": "7",
+        "landing_group_id": "6",
+        "asset_id": "21",
+        "release_flag": "906",
+        "bgm_id": "30",
+        "se_id": "0",
+        "type_id": "10",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_285",
+        "start_takeoff": "395",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "8",
+        "transportation_group_id": "8",
+        "landing_group_id": "7",
+        "asset_id": "23",
+        "release_flag": "907",
+        "bgm_id": "28",
+        "se_id": "941",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_287",
+        "start_takeoff": "1586",
+        "end_landing": "0",
+        "start_landing": "1584",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "9",
+        "transportation_group_id": "9",
+        "landing_group_id": "8",
+        "asset_id": "24",
+        "release_flag": "908",
+        "bgm_id": "28",
+        "se_id": "941",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_287",
+        "start_takeoff": "1586",
+        "end_landing": "0",
+        "start_landing": "1584",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "10",
+        "transportation_group_id": "10",
+        "landing_group_id": "9",
+        "asset_id": "25",
+        "release_flag": "909",
+        "bgm_id": "28",
+        "se_id": "941",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_286",
+        "start_takeoff": "1585",
+        "end_landing": "0",
+        "start_landing": "1584",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "11",
+        "transportation_group_id": "11",
+        "landing_group_id": "10",
+        "asset_id": "26",
+        "release_flag": "910",
+        "bgm_id": "38",
+        "se_id": "0",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_289",
+        "start_takeoff": "346",
+        "end_landing": "350",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      }
+    ]
+  },
+  {
+    "game": 5,
+    "game_sha256": "355bb0eccd3cf6a2cb70d48f2329379eb98d4b5085971d46985154a882dcfb17",
+    "dump_sha256": "99239a856351c4cc7310bae2679af73085efebc765a00459b4d64cf088ee7aa3",
+    "controller_classes": {
+      "FieldPlayerController": {
+        "declaration": "public class FieldPlayerController : MonoBehaviour, IInputDeviceListener // TypeDefIndex: 6684",
+        "fields": [
+          "protected readonly Vector3[] SearchDirections; // 0x18",
+          "protected FieldPlayer fieldPlayer; // 0x20",
+          "protected IMapAccessor mapHandle; // 0x28",
+          "protected IEventAccessor eventHandle; // 0x30",
+          "protected IEntityAccessor entityHandle; // 0x38",
+          "protected IPlayerAccessor playerHandle; // 0x40",
+          "private bool <InputEnable>k__BackingField; // 0x48",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x4C"
+        ]
+      },
+      "FieldPlayerKeyAirshipController": {
+        "declaration": "public class FieldPlayerKeyAirshipController : FieldPlayerController // TypeDefIndex: 6685",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private float riseAndFallAccelerator; // 0x54",
+          "private Vector2 inputAxis; // 0x58",
+          "private float leftFastRotateScale; // 0x60",
+          "private float rightFastRotateScale; // 0x64",
+          "private bool isDownShiftDown; // 0x68",
+          "private bool isDownShiftUp; // 0x69",
+          "private bool isMoveForward; // 0x6A",
+          "private float lookUpValue; // 0x6C",
+          "private float bankValue; // 0x70",
+          "private string selectedAnimKey; // 0x78",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x80"
+        ]
+      },
+      "FieldPlayerKeyController": {
+        "declaration": "public class FieldPlayerKeyController : FieldPlayerController // TypeDefIndex: 6686",
+        "fields": [
+          "private bool pressDashKey; // 0x50"
+        ]
+      },
+      "FieldPlayerKeyGroundBirdController": {
+        "declaration": "public class FieldPlayerKeyGroundBirdController : FieldPlayerController // TypeDefIndex: 6689",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private Vector2 inputAxis; // 0x54",
+          "private float leftFastRotateScale; // 0x5C",
+          "private float rightFastRotateScale; // 0x60",
+          "private bool isDownShiftDown; // 0x64",
+          "private bool isDownShiftUp; // 0x65",
+          "private bool isMoveForward; // 0x66",
+          "private float lookUpValue; // 0x68",
+          "private float bankValue; // 0x6C",
+          "private string selectedAnimKey; // 0x70",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x78"
+        ]
+      },
+      "FieldPlayerKeyTwoStepController": {
+        "declaration": "public class FieldPlayerKeyTwoStepController : FieldPlayerController // TypeDefIndex: 6690",
+        "fields": [
+          "private FieldSpriteEntity upArrowResidentEntity; // 0x50",
+          "private FieldSpriteEntity downArrowResidentEntity; // 0x58",
+          "private Action upAction; // 0x60",
+          "private Action downAction; // 0x68",
+          "private Action closeAction; // 0x70",
+          "private Action cancelAction; // 0x78",
+          "private bool selectedUp; // 0x80",
+          "private int upArrowEntityId; // 0x84",
+          "private int downArrowEntityId; // 0x88"
+        ]
+      },
+      "FieldPlayerTouchAirshipController": {
+        "declaration": "public class FieldPlayerTouchAirshipController : FieldPlayerTouchBaseController // TypeDefIndex: 6691",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float riseAndFallAccelerator; // 0x7C",
+          "private float lookUpValue; // 0x80",
+          "private float bankValue; // 0x84",
+          "private Vector2 inputAxis; // 0x88",
+          "private bool isTranslationMode; // 0x90"
+        ]
+      },
+      "FieldPlayerTouchBaseController": {
+        "declaration": "public abstract class FieldPlayerTouchBaseController : FieldPlayerController // TypeDefIndex: 6692",
+        "fields": [
+          "protected ManipulatePad manipulatePadHandle; // 0x50",
+          "protected Vector2 touchDownFieldScreenPos; // 0x58",
+          "protected bool isDash; // 0x60"
+        ]
+      },
+      "FieldPlayerTouchGroundBirdController": {
+        "declaration": "public class FieldPlayerTouchGroundBirdController : FieldPlayerTouchBaseController // TypeDefIndex: 6693",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float lookUpValue; // 0x7C",
+          "private float bankValue; // 0x80",
+          "private Vector2 inputAxis; // 0x84"
+        ]
+      },
+      "FieldPlayerTouchRouteMoveController": {
+        "declaration": "public class FieldPlayerTouchRouteMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6694",
+        "fields": [
+          "private FieldCursorFinger fieldCursorFinger; // 0x68",
+          "private TouchMovementLineEntity touchMovementLineEntity; // 0x70",
+          "private Vector3 touchedCellPosition; // 0x78",
+          "private List<Vector3> showedTempRoutePositions; // 0x88",
+          "private FieldTapAnimation tapAnimationEntity; // 0x90",
+          "private Animator tapAnimator; // 0x98",
+          "private bool needCanceledWaitTapAnimation; // 0xA0",
+          "private IInteractiveEntity preTouchedInteractiveTarget; // 0xA8",
+          "private float touchMovementStartRadius; // 0xB0",
+          "private Vector2 lastMoveDirection; // 0xB4",
+          "private float researchCoolTimeRemainingSeconds; // 0xBC",
+          "private readonly Vector3[] actionableDirection; // 0xC0"
+        ]
+      },
+      "FieldPlayerTouchVectorMoveController": {
+        "declaration": "public class FieldPlayerTouchVectorMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 6698",
+        "fields": [
+          "private IInteractiveEntity nearestInteractiveTargetEntity; // 0x68",
+          "private float pressElapsedSeconds; // 0x70"
+        ]
+      }
+    },
+    "native_methods": [
+      {
+        "name": ".FieldMap.OnSwitchPlayerController",
+        "rva": 3658176,
+        "signature": "public void OnSwitchPlayerController(FieldPlayerController currentPlayerController)",
+        "alias_count": 1,
+        "body_sha256": "92a4f84bc40b85c3c8e0853360ac12b9329784c7f2a8d8a5b9f8dc1a781348de",
+        "bytes": 64
+      },
+      {
+        "name": "Last.Map.FieldController.SwitchPlayerController",
+        "rva": 2679072,
+        "signature": "public void SwitchPlayerController(bool isTapModeOn)",
+        "alias_count": 1,
+        "body_sha256": "4b9143d211a6fccd24ef7ad604b3e7a9eb0844b3e3026eff799324ed118eaf1e",
+        "bytes": 320
+      },
+      {
+        "name": "Last.Map.FieldController.GetZAxisRotateBirdCamera",
+        "rva": 2600544,
+        "signature": "public float GetZAxisRotateBirdCamera()",
+        "alias_count": 1,
+        "body_sha256": "c76c0f7054b99d15a47f1c32e6d5156f98835ebb8bfa8f82eec0a0c32ffc0ccb",
+        "bytes": 176
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.Init",
+        "rva": 2702352,
+        "signature": "public virtual void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 148,
+        "body_sha256": "248b2b873487696e432b0d136fdb1905adbb830f73b7a6f27dcb30507f4145d1",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.LateUpdateObserveInput",
+        "rva": 2561440,
+        "signature": "public virtual void LateUpdateObserveInput()",
+        "alias_count": 2612,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnTouchPadCallback",
+        "rva": 2561440,
+        "signature": "public virtual void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2612,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKeyUp",
+        "rva": 2561440,
+        "signature": "public virtual void OnKeyUp(FieldInputKey key)",
+        "alias_count": 2612,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKey",
+        "rva": 2561440,
+        "signature": "public virtual void OnKey(FieldInputKey key)",
+        "alias_count": 2612,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.SwitchInputEnable",
+        "rva": 3065024,
+        "signature": "public virtual void SwitchInputEnable(bool enable)",
+        "alias_count": 15,
+        "body_sha256": "135ada1e136a2ef91caca3b528d03d73a65f7fcf5752a24e0a38f7c894decad6",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.Init",
+        "rva": 8146768,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "c9e0cb1c9c3859b15234a4d75cf9022e67ef05380b2312b47964d77d6e536eab",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnTouchPadCallback",
+        "rva": 8148384,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "ba98b8f21aca0a614c3bbaec8482e3fa71e1c5fa25b2ac0b33c04794e0f25d66",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.LateUpdateObserveInput",
+        "rva": 8146816,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "20eb9c828564319a3117b6418f447d3beab573dd20998adaf52b9a96427df127",
+        "bytes": 832
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.UpdateRotateAccelerator",
+        "rva": 8149776,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "8932df4af7076f73095a17df136f663ce353925bd7d5a83d62d80ef796152611",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.MoveToAxis",
+        "rva": 8147648,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "87ce090b5ee8efc1d0c158a1c2962d449ec1e44c1e4d0035687b93dc4572b895",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKey",
+        "rva": 8148336,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "90906853eb141e3b45b2d3bcd6d4cb7f997c849d45ecfdbba43ff53f95952c2a",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKeyUp",
+        "rva": 8148288,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "ff7a2209bd61442f9a6edec05b724c67b59622db7cdf958c80fe3b27be000350",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.SwitchInputEnable",
+        "rva": 8148768,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "06e4148dff8cac685f11804e3a807fb03dbff19de3a32b7917cae8b316e8a3f6",
+        "bytes": 256
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.Init",
+        "rva": 8150720,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "3c4857a76a6d86b5d06387280c52a9ae32dabf0a0cf7789f89a69f02603e13da",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnTouchPadCallback",
+        "rva": 8152368,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "c851864a89448951388c1a09a248d17b44498872f3e9e5485977430418021171",
+        "bytes": 864
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKey",
+        "rva": 8152272,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "500fcc983566ac2113fa91fc6a08ce06cf5cded4a8331d1442acd866d016a6c3",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKeyUp",
+        "rva": 8152176,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "90a04958bbc173acea8f19d943c15d0015003895ac4738c8e36e45b166b20c3c",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.Init",
+        "rva": 8153248,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "301e657ab1fa933907c927a175299b4f252225116fe7b4687050e07e675bbdc6",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnTouchPadCallback",
+        "rva": 8154480,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "a4fc8ed7e72e16f655b6febfd06d6ac47c7c4ad9291979602bbfd8b8174306cb",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.LateUpdateObserveInput",
+        "rva": 8153296,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "3b7b8e7fc9885f0ce45181962591a4f1cafb2a050e2eb8eb3d9227e6efaf717a",
+        "bytes": 416
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.UpdateRotateAccelerator",
+        "rva": 8155056,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "df51c6eeddbbd6b1b69d058f0fae6642a8e0118573b5e2c27737e1263ecdbe3f",
+        "bytes": 784
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.MoveToAxis",
+        "rva": 8153712,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "a3188ff31005a1d465841ad77da786b9dd134ca023aec74d65189e1326d02a4f",
+        "bytes": 672
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnKey",
+        "rva": 8154432,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "c186559067ea7ae2a4cd45b96c6192060581b86cc1250e23119c8f6f0082b2bf",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnKeyUp",
+        "rva": 8154384,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "8eb9e74302c700791728a30555066cb74d5080c3724fc591e4308a22d74c6400",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.SwitchInputEnable",
+        "rva": 8154800,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "93d47c5f5bd27dd53f39169dc7215b6c7b2684e420a5d5c404b8c45247abb32d",
+        "bytes": 256
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.Init",
+        "rva": 8156016,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "3e109131c452a1fcd433516be528830fd4bd2a930848f90f0285046c1bd58e78",
+        "bytes": 288
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.OnTouchPadCallback",
+        "rva": 2561440,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2612,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.SwitchInputEnable",
+        "rva": 8156736,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "f89d1f1b303aff94dd23749c6e72584aa89eefc5c6a30ec71b2160e1f6403e77",
+        "bytes": 800
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.Init",
+        "rva": 8158160,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "282e3c74054a9d0f3465df36237b30e98f59248af9174bd1c00316ab471643cf",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.OnTouchPadCallback",
+        "rva": 8159792,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "5a038452ed8aa430906c9d772909b0cd08721e18ba68e194dbfc7058fc9d29af",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.LateUpdateObserveInput",
+        "rva": 8158368,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "1959e574d6f0a62a2b8a7ab29899323838057367d21cc138bf08d26558d5f26e",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.UpdateRotateAccelerator",
+        "rva": 8162288,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "1549e53d1588ad001f9d2ee2202f331f81f88e350bad8cb2847c1f3a0ba3da91",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.MoveToAxis",
+        "rva": 8159136,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "36623da4f5484af5cb690d1a00016f53a3c18a55fcc4f9ebeb6a681cadb9dc51",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.SwitchInputEnable",
+        "rva": 8160848,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "5e0616473006d46ae5550c392b1737a835546d0226f8a9ff5e42d91e660905d9",
+        "bytes": 560
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.Init",
+        "rva": 2702352,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 148,
+        "body_sha256": "248b2b873487696e432b0d136fdb1905adbb830f73b7a6f27dcb30507f4145d1",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.OnTouchPadCallback",
+        "rva": 8163232,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "745e14455d893fbde1b24e1a6353ab29207837673de03e316f238dc3a6792292",
+        "bytes": 704
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.Init",
+        "rva": 8164080,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "1741fd943f23f5dfe3ffd157ec33ac22cce50cdf3c8e8bd04779a85ad3ce0b4f",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.OnTouchPadCallback",
+        "rva": 8165344,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "91fb89a1d1333e517e5a6c7d65e9404bd9da78710f0cf22392c3e20a02ecd26b",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.LateUpdateObserveInput",
+        "rva": 8164128,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "57fe91f7751cf889a14ce24274b64480acd8d42c2d5d9eb38cbf82808ce0dfc0",
+        "bytes": 544
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.UpdateRotateAccelerator",
+        "rva": 8166640,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "506834adcfc15523c782c9d6feeb92c57f8f81f9ad36c51a141528593b227b26",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.MoveToAxis",
+        "rva": 8164672,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "9e7c8517247aee155647dae76a8e27de81e80c14caa8fd82e4bd86e56bb9a4a7",
+        "bytes": 672
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.SwitchInputEnable",
+        "rva": 8166304,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "2f802aa42dd0f87dc698943aef618bf4cbb45001907709a462a29264743c2cca",
+        "bytes": 336
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.Init",
+        "rva": 8169456,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "fd6f64c9e5c6eea6e773efdfdbb9a90ea7323cc9a94bf3d4bbe01cf6768dbc4b",
+        "bytes": 400
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.OnTouchPadCallback",
+        "rva": 8177888,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "380c3ef65ab21c5c4c7ac3a778f4bce7ae99909849706f4e5e202d8b49a9b080",
+        "bytes": 128
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.SwitchInputEnable",
+        "rva": 8182352,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "285c2865320d054d04c5b9d15f30545b085db3c46fb2db30a4b2f0b3d6fe43a6",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchVectorMoveController.SwitchInputEnable",
+        "rva": 9417296,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "8f2acde1715edd6a43c7b5e7d0918766ab42f2448a2b24a623060b36c0c6dd3b",
+        "bytes": 144
+      }
+    ],
+    "transports": [
+      {
+        "id": "1",
+        "transportation_group_id": "1",
+        "landing_group_id": "0",
+        "asset_id": "0",
+        "release_flag": "900",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "1",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "2",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "6",
+        "release_flag": "901",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_MAP_NAME_13",
+        "start_takeoff": "64",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "3",
+        "transportation_group_id": "3",
+        "landing_group_id": "8",
+        "asset_id": "17",
+        "release_flag": "902",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "11",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_390",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "4",
+        "transportation_group_id": "4",
+        "landing_group_id": "3",
+        "asset_id": "7",
+        "release_flag": "903",
+        "bgm_id": "19",
+        "se_id": "0",
+        "type_id": "7",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_392",
+        "start_takeoff": "0",
+        "end_landing": "1088",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "5",
+        "transportation_group_id": "5",
+        "landing_group_id": "4",
+        "asset_id": "19",
+        "release_flag": "904",
+        "bgm_id": "30",
+        "se_id": "0",
+        "type_id": "10",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_391",
+        "start_takeoff": "0",
+        "end_landing": "1088",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "6",
+        "transportation_group_id": "6",
+        "landing_group_id": "5",
+        "asset_id": "9",
+        "release_flag": "905",
+        "bgm_id": "33",
+        "se_id": "941",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_02",
+        "start_takeoff": "0",
+        "end_landing": "1131",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      },
+      {
+        "id": "7",
+        "transportation_group_id": "6",
+        "landing_group_id": "6",
+        "asset_id": "14",
+        "release_flag": "906",
+        "bgm_id": "45",
+        "se_id": "941",
+        "type_id": "3",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_02",
+        "start_takeoff": "0",
+        "end_landing": "1131",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      },
+      {
+        "id": "8",
+        "transportation_group_id": "7",
+        "landing_group_id": "7",
+        "asset_id": "23",
+        "release_flag": "907",
+        "bgm_id": "41",
+        "se_id": "0",
+        "type_id": "6",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_60",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "9",
+        "transportation_group_id": "3",
+        "landing_group_id": "2",
+        "asset_id": "18",
+        "release_flag": "908",
+        "bgm_id": "44",
+        "se_id": "0",
+        "type_id": "9",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_390",
+        "start_takeoff": "0",
+        "end_landing": "1088",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "10",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "8",
+        "release_flag": "909",
+        "bgm_id": "21",
+        "se_id": "0",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_MAP_NAME_27",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "11",
+        "transportation_group_id": "6",
+        "landing_group_id": "5",
+        "asset_id": "13",
+        "release_flag": "910",
+        "bgm_id": "33",
+        "se_id": "941",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_02",
+        "start_takeoff": "0",
+        "end_landing": "1131",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "221",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      },
+      {
+        "id": "12",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "20",
+        "release_flag": "911",
+        "bgm_id": "27",
+        "se_id": "941",
+        "type_id": "2",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_02",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "13",
+        "transportation_group_id": "7",
+        "landing_group_id": "7",
+        "asset_id": "21",
+        "release_flag": "912",
+        "bgm_id": "41",
+        "se_id": "0",
+        "type_id": "6",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_60",
+        "start_takeoff": "0",
+        "end_landing": "1148",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "14",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "12",
+        "release_flag": "913",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_393",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "1135",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "15",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "22",
+        "release_flag": "914",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_393",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "1135",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "17",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "24",
+        "release_flag": "916",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_393",
+        "start_takeoff": "427",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "1135",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "18",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "25",
+        "release_flag": "917",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_SYSTEM_393",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "1135",
+        "down_script": "1149",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "19",
+        "transportation_group_id": "6",
+        "landing_group_id": "6",
+        "asset_id": "26",
+        "release_flag": "918",
+        "bgm_id": "0",
+        "se_id": "941",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_02",
+        "start_takeoff": "0",
+        "end_landing": "1131",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      },
+      {
+        "id": "20",
+        "transportation_group_id": "6",
+        "landing_group_id": "5",
+        "asset_id": "36",
+        "release_flag": "919",
+        "bgm_id": "33",
+        "se_id": "941",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_02",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "2763",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "16"
+      }
+    ]
+  },
+  {
+    "game": 6,
+    "game_sha256": "0029a22ed933aa3b6ea3b1290060502267f514d61ba6e6619308d844557f2ffd",
+    "dump_sha256": "38aa9c54abe1c712ffd3c6e88a893ea6428f6df7001718b754b21afba7f4a61b",
+    "controller_classes": {
+      "FieldPlayerController": {
+        "declaration": "public class FieldPlayerController : MonoBehaviour, IInputDeviceListener // TypeDefIndex: 7234",
+        "fields": [
+          "protected readonly Vector3[] SearchDirections; // 0x18",
+          "protected FieldPlayer fieldPlayer; // 0x20",
+          "protected IMapAccessor mapHandle; // 0x28",
+          "protected IEventAccessor eventHandle; // 0x30",
+          "protected IEntityAccessor entityHandle; // 0x38",
+          "protected IPlayerAccessor playerHandle; // 0x40",
+          "private bool <InputEnable>k__BackingField; // 0x48",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x4C"
+        ]
+      },
+      "FieldPlayerKeyAirshipController": {
+        "declaration": "public class FieldPlayerKeyAirshipController : FieldPlayerController // TypeDefIndex: 7235",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private float riseAndFallAccelerator; // 0x54",
+          "private Vector2 inputAxis; // 0x58",
+          "private float leftFastRotateScale; // 0x60",
+          "private float rightFastRotateScale; // 0x64",
+          "private bool isDownShiftDown; // 0x68",
+          "private bool isDownShiftUp; // 0x69",
+          "private bool isDownPageUp; // 0x6A",
+          "private bool isMoveForward; // 0x6B",
+          "private float lookUpValue; // 0x6C",
+          "private float bankValue; // 0x70",
+          "private float resumeLookUpValue; // 0x74",
+          "private float resumeBankValue; // 0x78",
+          "private string selectedAnimKey; // 0x80",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x88"
+        ]
+      },
+      "FieldPlayerKeyController": {
+        "declaration": "public class FieldPlayerKeyController : FieldPlayerController // TypeDefIndex: 7236",
+        "fields": [
+          "private bool pressDashKey; // 0x50"
+        ]
+      },
+      "FieldPlayerKeyGroundBirdController": {
+        "declaration": "public class FieldPlayerKeyGroundBirdController : FieldPlayerController // TypeDefIndex: 7239",
+        "fields": [
+          "private float rotateAccelerator; // 0x50",
+          "private Vector2 inputAxis; // 0x54",
+          "private float leftFastRotateScale; // 0x5C",
+          "private float rightFastRotateScale; // 0x60",
+          "private bool isDownShiftDown; // 0x64",
+          "private bool isDownShiftUp; // 0x65",
+          "private bool isMoveForward; // 0x66",
+          "private float lookUpValue; // 0x68",
+          "private float bankValue; // 0x6C",
+          "private string selectedAnimKey; // 0x70",
+          "private readonly MapInputFormat <InputFormat>k__BackingField; // 0x78"
+        ]
+      },
+      "FieldPlayerKeyTwoStepController": {
+        "declaration": "public class FieldPlayerKeyTwoStepController : FieldPlayerController // TypeDefIndex: 7240",
+        "fields": [
+          "private FieldSpriteEntity upArrowResidentEntity; // 0x50",
+          "private FieldSpriteEntity downArrowResidentEntity; // 0x58",
+          "private Action upAction; // 0x60",
+          "private Action downAction; // 0x68",
+          "private Action closeAction; // 0x70",
+          "private Action cancelAction; // 0x78",
+          "private bool selectedUp; // 0x80",
+          "private int upArrowEntityId; // 0x84",
+          "private int downArrowEntityId; // 0x88"
+        ]
+      },
+      "FieldPlayerTouchAirshipController": {
+        "declaration": "public class FieldPlayerTouchAirshipController : FieldPlayerTouchBaseController // TypeDefIndex: 7241",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float riseAndFallAccelerator; // 0x7C",
+          "private float lookUpValue; // 0x80",
+          "private float bankValue; // 0x84",
+          "private float resumeLookUpValue; // 0x88",
+          "private float resumeBankValue; // 0x8C",
+          "private Vector2 inputAxis; // 0x90",
+          "private bool isTranslationMode; // 0x98"
+        ]
+      },
+      "FieldPlayerTouchBaseController": {
+        "declaration": "public abstract class FieldPlayerTouchBaseController : FieldPlayerController // TypeDefIndex: 7242",
+        "fields": [
+          "protected ManipulatePad manipulatePadHandle; // 0x50",
+          "protected Vector2 touchDownFieldScreenPos; // 0x58",
+          "protected bool isDash; // 0x60"
+        ]
+      },
+      "FieldPlayerTouchGroundBirdController": {
+        "declaration": "public class FieldPlayerTouchGroundBirdController : FieldPlayerTouchBaseController // TypeDefIndex: 7243",
+        "fields": [
+          "private float pressElapsedSeconds; // 0x68",
+          "private string selectedAnimKey; // 0x70",
+          "private float rotateAccelerator; // 0x78",
+          "private float lookUpValue; // 0x7C",
+          "private float bankValue; // 0x80",
+          "private Vector2 inputAxis; // 0x84"
+        ]
+      },
+      "FieldPlayerTouchRouteMoveController": {
+        "declaration": "public class FieldPlayerTouchRouteMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 7244",
+        "fields": [
+          "private FieldCursorFinger fieldCursorFinger; // 0x68",
+          "private TouchMovementLineEntity touchMovementLineEntity; // 0x70",
+          "private Vector3 touchedCellPosition; // 0x78",
+          "private List<Vector3> showedTempRoutePositions; // 0x88",
+          "private FieldTapAnimation tapAnimationEntity; // 0x90",
+          "private Animator tapAnimator; // 0x98",
+          "private bool needCanceledWaitTapAnimation; // 0xA0",
+          "private IInteractiveEntity preTouchedInteractiveTarget; // 0xA8",
+          "private float touchMovementStartRadius; // 0xB0",
+          "private Vector2 lastMoveDirection; // 0xB4",
+          "private float researchCoolTimeRemainingSeconds; // 0xBC",
+          "private readonly Vector3[] actionableDirection; // 0xC0"
+        ]
+      },
+      "FieldPlayerTouchVectorMoveController": {
+        "declaration": "public class FieldPlayerTouchVectorMoveController : FieldPlayerTouchBaseController // TypeDefIndex: 7248",
+        "fields": [
+          "private IInteractiveEntity nearestInteractiveTargetEntity; // 0x68",
+          "private float pressElapsedSeconds; // 0x70"
+        ]
+      }
+    },
+    "native_methods": [
+      {
+        "name": ".FieldMap.OnSwitchPlayerController",
+        "rva": 3487120,
+        "signature": "public void OnSwitchPlayerController(FieldPlayerController currentPlayerController)",
+        "alias_count": 1,
+        "body_sha256": "4eb48c7385040e696f6079ecdd68240ac35fc843ee6fd26a1fbbb136178e5b9f",
+        "bytes": 240
+      },
+      {
+        "name": "Last.Map.FieldController.SwitchPlayerController",
+        "rva": 3249488,
+        "signature": "public void SwitchPlayerController(bool isTapModeOn)",
+        "alias_count": 1,
+        "body_sha256": "7fa44098d35198f47d34cea2c4a0a9da8d74ce691445d3f87d3a47899892ab11",
+        "bytes": 336
+      },
+      {
+        "name": "Last.Map.FieldController.GetZAxisRotateBirdCamera",
+        "rva": 3155520,
+        "signature": "public float GetZAxisRotateBirdCamera()",
+        "alias_count": 1,
+        "body_sha256": "37f8c7e3fdabae8c6c7e7e7b7823cfc48d850469b57d73d06473e9e7ef670028",
+        "bytes": 176
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.Init",
+        "rva": 3102384,
+        "signature": "public virtual void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 154,
+        "body_sha256": "1455536162aca01f1279d9f943737cd17548800a2b1432ef144b4530b06492bc",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.LateUpdateObserveInput",
+        "rva": 3084448,
+        "signature": "public virtual void LateUpdateObserveInput()",
+        "alias_count": 2790,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnTouchPadCallback",
+        "rva": 3084448,
+        "signature": "public virtual void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2790,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKeyUp",
+        "rva": 3084448,
+        "signature": "public virtual void OnKeyUp(FieldInputKey key)",
+        "alias_count": 2790,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.OnKey",
+        "rva": 3084448,
+        "signature": "public virtual void OnKey(FieldInputKey key)",
+        "alias_count": 2790,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerController.SwitchInputEnable",
+        "rva": 3085216,
+        "signature": "public virtual void SwitchInputEnable(bool enable)",
+        "alias_count": 17,
+        "body_sha256": "135ada1e136a2ef91caca3b528d03d73a65f7fcf5752a24e0a38f7c894decad6",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.Init",
+        "rva": 6242208,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "2f55b326f32298457370691ac06c21ceb9530803d3d9f46a5609f57721bca82c",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnTouchPadCallback",
+        "rva": 6243952,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "d45775082c69923b19877c0c8a602280ced5bd29feeb1ad2319fe7849cb7a81a",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.LateUpdateObserveInput",
+        "rva": 6242256,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "a50a4409a2930181b0bf635c7dd212bfc535cc07d6dcbe8c2c8b8f1547a13474",
+        "bytes": 848
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.UpdateRotateAccelerator",
+        "rva": 6245264,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "29cb395937bc2dbf0c9f65da4e2482c00f4ce6c04ccfb40577bbbf5e634dcfb9",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.MoveToAxis",
+        "rva": 6243120,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "ce1309fab004d899e70b30a9ca8d0d93234151ff17b4517bc8b981db3f8a1382",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKey",
+        "rva": 6243856,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "8b30c1fd0992869135862e1585c05fcc00d572a7abfa8d52143d6623c74c1723",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.OnKeyUp",
+        "rva": 6243760,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "8fe09cf272bdb509628185283d079cda6bcb1d0d31a8984910651ffc502d81ea",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyAirshipController.SwitchInputEnable",
+        "rva": 6244464,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "bda30afa770aee2bd38c9b24ad343372c91cd0e4a11b84d7da91841e0c5e424d",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.Init",
+        "rva": 6246208,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "2f9a304fff3c7e8cabc29c8804659ad46127c50fbc965abec5ccd2e6166e1da0",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnTouchPadCallback",
+        "rva": 6247856,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "ebf6a9f09f436f956b69a229f356e990f1f4d87a6ceb40920a6f53a69ec67bcc",
+        "bytes": 864
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKey",
+        "rva": 6247760,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "c3580fae42c5df55face7b86cd2ad9dc7ec0300f618c39532eed27d70810126d",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyController.OnKeyUp",
+        "rva": 6247664,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "7ea91094d558d9b7233fdd9ea819ba0df2e5cf73b17309915a40f3f1a673c6c9",
+        "bytes": 96
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.Init",
+        "rva": 6248736,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "e00cfdbc65dd5c50129033bc2f0577c7d6c8ad70a098ad1a6ddf4acffd621cab",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnTouchPadCallback",
+        "rva": 6249984,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "a4fc8ed7e72e16f655b6febfd06d6ac47c7c4ad9291979602bbfd8b8174306cb",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.LateUpdateObserveInput",
+        "rva": 6248784,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "86785e325b4ff6b45dcef2b3d7a139b022fea49040888fb1b574f56de5e51daf",
+        "bytes": 416
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.UpdateRotateAccelerator",
+        "rva": 6250656,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "09f1265c6586e3e66bddb088e0cf5a51c5b22d670618d2c9f65c24d732c70003",
+        "bytes": 784
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.MoveToAxis",
+        "rva": 6249216,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "550db069e59e4ae9a59d227e0697f61df8a171e4c056d5741a111fa89f871404",
+        "bytes": 672
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnKey",
+        "rva": 6249936,
+        "signature": "public override void OnKey(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "c186559067ea7ae2a4cd45b96c6192060581b86cc1250e23119c8f6f0082b2bf",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.OnKeyUp",
+        "rva": 6249888,
+        "signature": "public override void OnKeyUp(FieldInputKey key)",
+        "alias_count": 1,
+        "body_sha256": "8eb9e74302c700791728a30555066cb74d5080c3724fc591e4308a22d74c6400",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyGroundBirdController.SwitchInputEnable",
+        "rva": 6250400,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "11adbdb0ba2ed3b4dd5f2d36bf099391cbc2e449dc30fbce6da0f18087e0b1c6",
+        "bytes": 256
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.Init",
+        "rva": 6251616,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "85a59a3c8a80930b0d248921a87fe20e9c098ee8e9c83857d01907da6426f7e5",
+        "bytes": 288
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.OnTouchPadCallback",
+        "rva": 3084448,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 2790,
+        "body_sha256": "28f844b5972c241e804231b0e41b93e13696e59b98dde74f19029386db5da0c5",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerKeyTwoStepController.SwitchInputEnable",
+        "rva": 6252336,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "cdeb5d2b450e3c254bbbec0efb7f40ca679068ad0be00166cd2225b44e2e0c6a",
+        "bytes": 800
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.Init",
+        "rva": 6253760,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "8bef0939f3945ee3488dc34c6bd981ebfcfcdff4ebf4d2477fd38ef9e5bfa3ef",
+        "bytes": 208
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.OnTouchPadCallback",
+        "rva": 6255616,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "3328c87b6bf2f043a69220d45146316f0ebe24961b859af773b4f5d013b35e72",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.LateUpdateObserveInput",
+        "rva": 6253968,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "6b22b2c4b718e12b9d124f49fa746d6b24c0b223d21ef2c2774091d43bffdec3",
+        "bytes": 992
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.UpdateRotateAccelerator",
+        "rva": 6258128,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "8508a56cf98e6d997639b326d891b3d53135f528d54ef95b900fc2ace184a1d7",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.MoveToAxis",
+        "rva": 6254960,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "6b554b2270f05d28140b10b13b065c5d2ee1c66b720a45e8c683a7c50e239520",
+        "bytes": 640
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchAirshipController.SwitchInputEnable",
+        "rva": 6256832,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "cf98cb05f16cc233406051faf9ffbcf3b5dab8377a72d1b87fffbe5aa22f4cd3",
+        "bytes": 416
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.Init",
+        "rva": 3102384,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 154,
+        "body_sha256": "1455536162aca01f1279d9f943737cd17548800a2b1432ef144b4530b06492bc",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchBaseController.OnTouchPadCallback",
+        "rva": 6259072,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "2dfd995157413bf7de7d539363f5f1960e70200c42e0e9cf0a8a5f5bbc2ac613",
+        "bytes": 704
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.Init",
+        "rva": 6259920,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "a81c094bb5e0c4eb2ff17623ca32d5304ed7d36ccedb0754b66c26732d1ab4f0",
+        "bytes": 48
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.OnTouchPadCallback",
+        "rva": 6261184,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "91fb89a1d1333e517e5a6c7d65e9404bd9da78710f0cf22392c3e20a02ecd26b",
+        "bytes": 16
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.LateUpdateObserveInput",
+        "rva": 6259968,
+        "signature": "public override void LateUpdateObserveInput()",
+        "alias_count": 1,
+        "body_sha256": "8d2235fa942ad6c453e5722019e4e6773af020cbf5d4591e6800cbec3c6bdeeb",
+        "bytes": 544
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.UpdateRotateAccelerator",
+        "rva": 6262592,
+        "signature": "private void UpdateRotateAccelerator()",
+        "alias_count": 1,
+        "body_sha256": "1b9b5fc53f9963ca527926e4425bb7226afd2f363ca32af5e83c5c8ca97a763f",
+        "bytes": 768
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.MoveToAxis",
+        "rva": 6260512,
+        "signature": "private void MoveToAxis(Vector2 axis, FieldEntityConstants.FieldSpriteSpeedID speedId)",
+        "alias_count": 1,
+        "body_sha256": "33e4ce5922715aceaef60c108877f2fb65a7251f72e50865a2318d9e7dd1c0fb",
+        "bytes": 672
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchGroundBirdController.SwitchInputEnable",
+        "rva": 6262256,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "4aaa7c2d1a10c1feca862b0e24fc6fc9e448eea37a18183ed2a1827ded3c3c9f",
+        "bytes": 336
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.Init",
+        "rva": 6265408,
+        "signature": "public override void Init(FieldPlayer fieldPlayer)",
+        "alias_count": 1,
+        "body_sha256": "1135279bbc1f947a898910ddc4e2473f43a578946b6d87c02b7f416b3d30f920",
+        "bytes": 400
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.OnTouchPadCallback",
+        "rva": 6274224,
+        "signature": "public override void OnTouchPadCallback(Vector2 axis)",
+        "alias_count": 1,
+        "body_sha256": "2f1e63ffcecd6005ef1106afeba1aa0a0d1bdb46b73040c9fa22c106764c9969",
+        "bytes": 128
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchRouteMoveController.SwitchInputEnable",
+        "rva": 6278688,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "285c2865320d054d04c5b9d15f30545b085db3c46fb2db30a4b2f0b3d6fe43a6",
+        "bytes": 32
+      },
+      {
+        "name": "Last.Map.FieldPlayerTouchVectorMoveController.SwitchInputEnable",
+        "rva": 8917216,
+        "signature": "public override void SwitchInputEnable(bool enable)",
+        "alias_count": 1,
+        "body_sha256": "6fe1deb6335120cc5ea888eea6039e44e8e5ab6d171f16f59ae77bab6b2ec800",
+        "bytes": 144
+      }
+    ],
+    "transports": [
+      {
+        "id": "1",
+        "transportation_group_id": "1",
+        "landing_group_id": "0",
+        "asset_id": "0",
+        "release_flag": "900",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "1",
+        "encounter_flag": "1",
+        "message_id": "None",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "2",
+        "transportation_group_id": "2",
+        "landing_group_id": "1",
+        "asset_id": "33",
+        "release_flag": "901",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "2",
+        "encounter_flag": "1",
+        "message_id": "MSG_MAP_NAME_58",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "3",
+        "transportation_group_id": "3",
+        "landing_group_id": "2",
+        "asset_id": "34",
+        "release_flag": "902",
+        "bgm_id": "29",
+        "se_id": "0",
+        "type_id": "9",
+        "encounter_flag": "0",
+        "message_id": "MSG_SYSTEM_449",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "4",
+        "transportation_group_id": "4",
+        "landing_group_id": "3",
+        "asset_id": "36",
+        "release_flag": "903",
+        "bgm_id": "46",
+        "se_id": "951",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_04",
+        "start_takeoff": "7000",
+        "end_landing": "0",
+        "start_landing": "7001",
+        "transition_inboard": "7003",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "5",
+        "transportation_group_id": "5",
+        "landing_group_id": "4",
+        "asset_id": "37",
+        "release_flag": "904",
+        "bgm_id": "58",
+        "se_id": "951",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_MAP_NAME_07",
+        "start_takeoff": "7010",
+        "end_landing": "0",
+        "start_landing": "7011",
+        "transition_inboard": "7013",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "6",
+        "transportation_group_id": "6",
+        "landing_group_id": "5",
+        "asset_id": "38",
+        "release_flag": "905",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "12",
+        "encounter_flag": "1",
+        "message_id": "MSG_MON_NAME_67",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "7",
+        "transportation_group_id": "7",
+        "landing_group_id": "6",
+        "asset_id": "35",
+        "release_flag": "906",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_CMD_NAME_04",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      },
+      {
+        "id": "8",
+        "transportation_group_id": "7",
+        "landing_group_id": "6",
+        "asset_id": "47",
+        "release_flag": "907",
+        "bgm_id": "0",
+        "se_id": "0",
+        "type_id": "8",
+        "encounter_flag": "0",
+        "message_id": "MSG_CMD_NAME_04",
+        "start_takeoff": "0",
+        "end_landing": "0",
+        "start_landing": "0",
+        "transition_inboard": "0",
+        "up_script": "0",
+        "down_script": "0",
+        "confirm_landing_foot_id": "0"
+      }
+    ]
+  }
+]

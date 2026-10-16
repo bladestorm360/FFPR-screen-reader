@@ -19,6 +19,9 @@ namespace ffpr::fieldnav::map_transition {
 /// True while the screen is fading (FadeManager.Instance.IsFadeFinish() is false). Read when
 /// asked, as FF1 did (the wall-tone loop reads it every 100 ms).
 bool is_screen_fading();
+/// Pure native-owner gate for the complete outer ChangeState detour, including
+/// its prefix before another chained observer has entered.
+bool is_state_changing();
 
 /// MapTransitionPatches.ResetMapTracking (no caller in FF1): resets the location tracker.
 /// FF1 also cleared EntityTranslator's untranslated-name log; that belongs to the entity area.

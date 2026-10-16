@@ -11,6 +11,7 @@
 #include "../unity.h"
 
 namespace field {
+void* current_native_player();
 
 // --- game names (field_refs.cpp) ----------------------------------------------------------
 namespace r {
@@ -181,6 +182,8 @@ enum class Kind { TreasureChest, NPC, MapExit, SavePoint, Event, ScriptTrigger, 
 
 struct Entity {
     Kind kind = Kind::Event;
+    bool raw_name_known = false;
+    int entity_id = -1;            // native identity; zero is valid, -1 means unavailable
     void* game = nullptr;          // the FieldEntity (null for a ScriptTrigger)
     void* game_class = nullptr;    // its class when converted (a reused address is not the same entity)
     unity::Vec3 pos{};             // position when converted
@@ -204,6 +207,7 @@ struct Entity {
     int remote_map_id = 0;         // that floor's map id; 0 = a live entity on this floor
     int cell_layer = 1, cell_x = 0, cell_y = 0;
     std::wstring floor_name;       // the floor's title, spoken after the name
+    std::wstring vehicle_pad;      // remote event's pad grouping identity; never spoken
 
     bool remote() const { return remote_map_id > 0; }
     Category category() const;
@@ -240,7 +244,10 @@ namespace scanner {
 void when_filter_ready(std::function<void()> ready, bool existing_selection = false);
 void scan_entities();
 void schedule_scan();
+void refresh_state(); // script completion: revalidate actions and remote story/chest state
 void cancel_scan();
+void cancel_navigation_work();
+void interrupt_navigation_work(); // epoch/flags only, safe before native loading
 void invalidate_map();
 bool needs_scan(int map_id);
 void force_rescan();

@@ -268,3 +268,60 @@ source/tag/download URL, uploaded asset state, 4,081,872-byte size and SHA256 di
 Receipts: v092_draft_release.json, v092_draft_verification.json, v092_public_release.json
 and v092_latest_release.json under build_check. Final publication records follow the
 release source tag without changing tagged code or distributed bytes.
+
+
+## V0.9.3 preparation, October16
+
+User requested release0.9.3 after the battle-opening speech correction. Verified
+user-owned public repository bladestorm360/FFPRCore-Screen-Reader, ID R_kgDOVFGmTg,
+master and named remote. Published0.9–0.9.2 are preserved; no v0.9.3 tag/release
+existed. All pending source/data/documentation changes since0.9.2 are included:
+soundscape/HRTF/custom sounds, independent masters/volume memories and beacon modes,
+control cleanup/full remapping/alternative keymaps, safe teleport, autowalk native
+modes and transition cancellation, floor objectives/labels/events/chest state,
+FFII targeting/shop speech, results notification option, formations and diagnostics.
+Earlier bounded Luna work and Sol reviews remain recorded in the feature records;
+Sol alone performed this opening fix, recurrence analysis, integration and release.
+No new agent/runtime probe/game launch/control or dependency install occurred.
+
+The own FFII recurrence trace caught243ms wall time within result reset and larger
+unobserved intervals. Full intermittent stall cause remains OPEN; user reports
+current autowalk appears good and continues remap testing. Opening condition text
+now bypasses action pairing only during its synchronous native producer, so it
+queues before formation and the first native turn. Explicit Control still stops
+speech. Both held stick Y directions follow the physical positive-up convention.
+Details: [opening/native/order](re/BATTLE_ENTRY.md), [stall evidence/limits](re/STALL_2026_10_16.md),
+[binding contract](INPUT_BINDINGS.md), [remaining gameplay checks](TESTING.md).
+
+Canonical build/all offline checks and isolated DLL smoke pass:6,872 native-name
+checks/zero missing,119 used/323 defined names/zero undefined,47/47 proxy exports.
+Opening producer/pairing and real front end/worker/fake SDK order, central mute,
+Control cancellation, all eight held stick directions, CPU/wall diagnostics,
+queue/lock overload and prior route/controller/audio/results regressions pass.
+Selected owner CPU sampling adds0.932us/frame warm fixture average; ordinary timing
+adds0.045us/call. These do not certify actual game-frame/audible response or identify
+the intermittent stall. Numeric/string x64 file/product version0.9.3.0 and boot
+stampV0.9.3 are independently verified. README controls/known issues/credits reviewed;
+ReadMe.txt exactly agrees with its final Markdown conversion.
+
+All six games were closed before recovery/deployment of this tested build.
+Installed hashes match; SDL matches; pinned HRTF, Prism, INI and waypoint checks are
+unchanged. Recovery/protected-file receipts:build_check/v093/{recovery,before_deploy.json,after_deploy.json}.
+No save or game-binary change. Release preparation separately packages existing
+locked dependencies; deployment did not install/upgrade/repair Prism.
+
+Folder/ZIP: releases/Final Fantasy Pixel Master Core Screen Reader V0.9.3[.zip].
+7-Zip creates/tests the5,876,783-byte complete bundle. Independent verification
+passes CRCs, exact28-file single-root payload (including the eight OpenAL Soft
+runtime/HRTF/license/source-notice files), source/folder/archive byte equality,
+README conversion, full SHA256 manifest, locked Prism and HRTF payload hashes,
+corresponding-source attribution and x64 version/build metadata. The previous20-file
+release inventory is historical;0.9.3 explicitly includes the private HRTF payload.
+
+- DLL SHA256: `db672780e4317fee3a4fb047d9bf99118e7773623ffe823e27fc543a3b9a6f88` (9,712,640 bytes).
+- ZIP SHA256: `8f147dfebcc16994dfc0ea5a14495ce0d8999abc5a63549a92346991f465639a`.
+
+Evidence:build_check/v093_build_console.txt,v093_smoke_console.txt,v093_version.json,
+v093_package_verification.json,verify_v093_package.py and v093/final_checks.
+Source/annotated tag, uploaded draft verification and publication are recorded below
+when complete. Gameplay confirmation is separate from these offline/package checks.

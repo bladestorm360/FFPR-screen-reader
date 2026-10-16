@@ -19,6 +19,7 @@ namespace {
 
 // BattleStateHelper.IsInBattle: set on battle start, cleared on battle end.
 bool g_in_battle = false;
+bool g_battle_ready = false;
 int g_main_state = -1;
 // BattleCommandState.LastSelectedCommandIndex (0 Attack, 1 Magic, 2 Items, 3 Defend/Run).
 int g_last_selected_command_index = -1;
@@ -54,6 +55,7 @@ void force_clear_battle_state()
 {
     if (g_in_battle) {
         g_in_battle = false;
+        g_battle_ready = false;
         clear_all_battle_menu_flags();
         events::fire(events::Kind::BattleEnd);
     }
@@ -194,11 +196,16 @@ void clear_other_menu_states(const char* except_key)
 
 void on_battle_start()
 {
-    if (g_in_battle) return;
-    g_in_battle = true;
+    if (g_battle_ready) return;
+    if (!g_in_battle) {
+        g_in_battle = true;
+        events::fire(events::Kind::BattleEntering);
+    }
+    g_battle_ready = true;
+    timing::Scope ready("Battle ready cleanup");
     g_current_actor = nullptr;
-    result_reset_state();
-    removal_reset_state();
+    { timing::Scope reset("Battle result reset",timing::Kind::Mod,nullptr,0,true); result_reset_state(); }
+    { timing::Scope reset("Battle removal reset"); removal_reset_state(); }
     events::fire(events::Kind::BattleStart);
 }
 
@@ -216,6 +223,7 @@ void try_clear_on_battle_end()
     // Not in battle: skip (prevents loops during game initialization).
     if (!g_in_battle) return;
     g_in_battle = false;
+    g_battle_ready = false;
     g_current_actor = nullptr;
     clear_all_battle_menu_flags();
     result_reset_state();   // BattleStartPatches.ResetState
@@ -232,7 +240,14 @@ void main_game_transition(int state)
     g_main_state = state;
     // This enum is identical in all six matching dumps. Battle covers the transition,
     // combat and results; return to a native field/title state ends the context.
-    if (state == 13) on_battle_start();
+    if (state == 13 && !g_in_battle) {
+        // Only constant-time admission/cancellation here. Native battle loading
+        // and its initial audio must run before resetting readers/route caches.
+        g_in_battle = true;
+        g_battle_ready = false;
+        g_current_actor = nullptr;
+        events::fire(events::Kind::BattleEntering);
+    }
     else if ((state >= 0 && state <= 4) || state == 14) try_clear_on_battle_end();
 }
 

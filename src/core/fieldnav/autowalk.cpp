@@ -2,10 +2,12 @@
 #include "autowalk.h"
 #include "autowalk_route.h"
 #include "autowalk_transition.h"
+#include "native_steering.h"
 #include "../core.h"
 #include "../frame.h"
 #include "../hooks.h"
 #include "../input/input.h"
+#include "../input/bindings.h"
 #include "../modtext.h"
 #include "../say.h"
 #include "../field/object_cache.h"
@@ -20,23 +22,53 @@ ref::Class kInputDevice{"", "InputDevice"};
 ref::Method mInputAxis{kInputDevice, "get_InputAxis", 0};
 ref::Class kController{"Last.Map", "FieldPlayerController"};
 ref::Class kKeyController{"Last.Map", "FieldPlayerKeyController"};
-ref::Class kAirshipController{"Last.Map", "FieldPlayerKeyAirshipController", game::kFF6};
+ref::Class kAirshipController{"Last.Map", "FieldPlayerKeyAirshipController"};
 ref::Method mAirshipUpdate{kAirshipController, "LateUpdateObserveInput", 0};
 ref::Method mAirshipKey{kAirshipController, "OnKey", 1}, mAirshipKeyUp{kAirshipController, "OnKeyUp", 1};
 ref::Method mAirshipAxis{kAirshipController, "OnTouchPadCallback", 1};
 ref::Field fShiftUp{kAirshipController, "isDownShiftUp"}, fShiftDown{kAirshipController, "isDownShiftDown"};
-ref::Class kFieldMap{"", "FieldMap", game::kFF6};
+ref::Class kFieldMap{"", "FieldMap"};
 ref::Field fFieldController{kFieldMap, "fieldController"};
-ref::Class kFieldController{"Last.Map", "FieldController", game::kFF6};
+ref::Class kFieldController{"Last.Map", "FieldController"};
 ref::Method mRotation{kFieldController, "GetZAxisRotateBirdCamera", 0};
 ref::Field fInputEnable{kController, "<InputEnable>k__BackingField"};
 ref::Field fPlayer{kController, "fieldPlayer"};
+ref::Class kTouch{"Last.Map","FieldPlayerTouchBaseController"};
+ref::Class kChoice{"Last.Map","FieldPlayerKeyTwoStepController"};
+using AirshipUpdate = void (*)(void*, const void*);
+struct Profile {
+    ref::Class& cls;
+    ref::Method update, axis;
+    ref::Field acceleration;
+    ref::Field* translation=nullptr;
+    ref::Field* left_scale=nullptr;
+    ref::Field* right_scale=nullptr;
+    AirshipUpdate original=nullptr;
+    bool hooked=false, touch_airship=false, key_bird=false;
+    Profile(ref::Class& type,bool air=false,bool key=false):
+        cls(type), update(cls,"LateUpdateObserveInput",0),axis(cls,"OnTouchPadCallback",1),
+        acceleration(cls,"rotateAccelerator"),touch_airship(air),key_bird(key) {}
+};
+ref::Class kTouchAirship{"Last.Map","FieldPlayerTouchAirshipController"};
+ref::Class kKeyBird{"Last.Map","FieldPlayerKeyGroundBirdController",game::kFF3|game::kFF5|game::kFF6};
+ref::Class kTouchBird{"Last.Map","FieldPlayerTouchGroundBirdController",game::kFF3|game::kFF5|game::kFF6};
+ref::Field fTranslation{kTouchAirship,"isTranslationMode"};
+ref::Field fLeftScale{kKeyBird,"leftFastRotateScale"},fRightScale{kKeyBird,"rightFastRotateScale"};
+Profile g_touch_airship{kTouchAirship,true};
+Profile g_key_bird{kKeyBird,false,true};
+Profile g_touch_bird{kTouchBird};
+bool g_airship_hooked=false;
+Profile* profile(void* c) {
+    for(auto* p:{&g_touch_airship,&g_key_bird,&g_touch_bird})if(p->cls.is(c))return p;
+    return nullptr;
+}
 ref::Class kEntity{"Last.Entity.Field", "FieldEntity"};
 ref::Method mIsMoving{kEntity, "get_IsMoving", 0};
 using AxisFn = unity::Vec2 (*)(void*, const void*);
 AxisFn o_InputAxis = nullptr;
 bool g_hooked = false, g_active = false, g_has_goal = false;
 bool g_planning = false;
+bool g_battle_interrupted = false;
 bool g_exit_approach = false;
 Transition g_transition;
 int g_map = 0, g_next_map = 0, g_width = 0, g_height = 0;
@@ -45,6 +77,9 @@ field::baked_nav::MapGoal* g_goal = nullptr;
 field::TargetKind g_kind = field::TargetKind::Spot;
 std::wstring* g_name = nullptr;
 double g_progress_at = 0;
+double g_turn_started=0;
+float g_turn_angle=0;
+bool g_turning=false;
 Cell g_last_cell;
 bool g_have_cell = false;
 VehicleAction g_vehicle_action = VehicleAction::None;
@@ -72,10 +107,15 @@ bool context_ok()
         && !queries::is("MapTransitionPatches.IsScreenFading");
 }
 
+bool controller_supported(void* pc)
+{
+    const auto p=profile(pc);
+    return p?p->hooked : kAirshipController.is(pc)?g_airship_hooked : kKeyController.is(pc)||kTouch.is(pc);
+}
 bool controller_ok(void* player)
 {
-    void* pc = field::cache::get_or_refresh(kController);
-    return player && pc && unity::active_in_hierarchy(pc) && (kKeyController.is(pc) || kAirshipController.is(pc))
+    void* pc = field::player_controller();
+    return player && pc && unity::active_in_hierarchy(pc) && controller_supported(pc)
         && ref::rd<void*>(pc, fPlayer) == player && ref::rd<bool>(pc, fInputEnable);
 }
 
@@ -186,10 +226,25 @@ unity::Vec2 axis(unity::Vec2 native)
             g_boundary_target = step.next; g_boundary_action = step.vehicle_action; g_boundary_vehicle = step.transportation_id;
         }
         unity::Vec2 wanted{static_cast<float>(step.x), static_cast<float>(step.y)};
-        if (game::is(game::Id::FF6) && kAirshipController.is(field::cache::get(kController))) {
+        void* controller=field::player_controller();
+        auto* special=profile(controller);
+        if (special || kAirshipController.is(controller)) {
             void* fc = ref::rd<void*>(field::cache::get(kFieldMap), fFieldController);
             const float angle = fc ? ref::call<float>(mRotation, fc) : NAN;
             if (!std::isfinite(angle)) { cancel(); return {}; }
+            if(special && (!special->touch_airship || !ref::rd<bool>(controller,*special->translation))) {
+                const float a=ref::rd<float>(controller,special->acceleration);
+                const float l=special->key_bird?ref::rd<float>(controller,*special->left_scale):1.f;
+                const float r=special->key_bird?ref::rd<float>(controller,*special->right_scale):1.f;
+                if(!std::isfinite(a)||!std::isfinite(l)||!std::isfinite(r)) {cancel();return {};}
+                const auto result=steer(wanted.x,wanted.y,angle,a,l,r);
+                if(!result.y) {
+                    if(!g_turning) {g_turning=true;g_turn_started=frame::now();g_turn_angle=angle;}
+                    if(std::fabs(std::remainder(angle-g_turn_angle,360.f))>.01f) {g_turn_angle=angle;g_progress_at=frame::now();}
+                    if(frame::now()-g_turn_started>15 || frame::now()-g_progress_at>2) {cancel();ffpr::say(T(L"Autowalk blocked"));return {};}
+                } else g_turning=false;
+                return {result.x,result.y};
+            }
             const float radians = angle * 0.017453292519943295f;
             // Native MoveToAxis rotates its input by the bird camera angle.
             wanted = {wanted.x * std::cos(radians) + wanted.y * std::sin(radians),
@@ -227,13 +282,12 @@ unity::Vec2 d_InputAxis(void* self, const void* mi)
     catch (...) { cancel(); ref::call_failed_note("Autowalk.InputAxis"); return native; }
 }
 
-using AirshipUpdate = void (*)(void*, const void*);
 AirshipUpdate o_airship_update;
 void d_airship_update(void* self, const void* mi)
 {
     // Only the native input route is changed. Both shoulder inputs select the
     // game's cardinal-movement branch; its collision, speed and animation remain native.
-    const bool eligible = kAirshipController.is(self) && self == field::cache::get(kController);
+    const bool eligible = kAirshipController.is(self) && self == field::player_controller();
     if (eligible && (g_active || g_flight_axis_owner == self)) {
         // LateUpdate consumes the axis cached by the PREVIOUS input observation
         // before reading InputDevice again. Publish this frame's route intent through
@@ -254,19 +308,43 @@ void d_airship_update(void* self, const void* mi)
     }
 }
 
+void special_update(Profile& p,void* self,const void* mi) {
+    const bool eligible=p.cls.is(self) && self==field::player_controller();
+    if(eligible && (g_active || g_flight_axis_owner==self)) {
+        const auto wanted=axis(o_InputAxis(nullptr,nullptr));
+        ref::call<void>(p.axis,self,wanted);
+        g_flight_axis_owner=g_active?self:nullptr;
+    }
+    p.original(self,mi);
+}
+void d_touch_airship(void* self,const void* mi) {special_update(g_touch_airship,self,mi);}
+void d_key_bird(void* self,const void* mi) {special_update(g_key_bird,self,mi);}
+void d_touch_bird(void* self,const void* mi) {special_update(g_touch_bird,self,mi);}
+
 int install()
 {
+    g_touch_airship.translation=&fTranslation;
+    g_key_bird.left_scale=&fLeftScale;g_key_bird.right_scale=&fRightScale;
     g_hooked = mIsMoving.ptr() && hooks::attach(mInputAxis, &d_InputAxis, &o_InputAxis);
-    const bool flight_hooked = hooks::attach(mAirshipUpdate, &d_airship_update, &o_airship_update);
-    if (game::is(game::Id::FF6) && (!flight_hooked || !mAirshipAxis.ptr())) g_hooked = false;
+    g_airship_hooked = hooks::attach(mAirshipUpdate, &d_airship_update, &o_airship_update) && mAirshipAxis.ptr();
+    g_touch_airship.hooked=hooks::attach(g_touch_airship.update,&d_touch_airship,&g_touch_airship.original) && g_touch_airship.axis.ptr();
+    if(game::in(game::kFF3|game::kFF5|game::kFF6)) {
+        g_key_bird.hooked=hooks::attach(g_key_bird.update,&d_key_bird,&g_key_bird.original) && g_key_bird.axis.ptr();
+        g_touch_bird.hooked=hooks::attach(g_touch_bird.update,&d_touch_bird,&g_touch_bird.original) && g_touch_bird.axis.ptr();
+    }
     actions::define("Settings.Changed.Autowalk", [] { if (!ui::prefs::autowalk_enabled()) cancel(); });
     queries::define("Autowalk.IsActive", [] { return active(); });
     actions::define("Autowalk.Cancel", [] { cancel(); });
+    events::on(events::Kind::BattleEntering, [] {
+        g_battle_interrupted = active();
+        g_active = g_planning = false;
+        g_key_action = -1;
+    });
     events::on(events::Kind::BattleStart, [] { cancel(); });
     events::on(events::Kind::MenuOpened, [] { cancel(); });
     events::on(events::Kind::SceneLoaded, [] { if (field::scene_name() == L"Title") cancel(); });
     events::on(events::Kind::MapChanging, [] {
-        if (!g_active) return;
+        if (!g_active) {g_planning=false;return;}
         if (g_next_map > 0 && g_has_goal) {
             g_transition.begin(frame::now());
         } else cancel();
@@ -302,10 +380,12 @@ core::Install s_install{"Autowalk", &install, 120};
 bool active() { return g_active || g_planning; }
 void cancel(bool announce)
 {
-    const bool was_active = active();
+    const bool was_active = active() || g_battle_interrupted;
+    g_battle_interrupted = false;
     if (g_planning) field::baked_nav::cancel_requests();
     g_planning = false;
     g_active = false;
+    g_turning=false;
     g_vehicle_action = VehicleAction::None; g_key_action = -1; g_key_frame = 0; g_boundary_deadline = 0;
     g_transition.clear();
     frame::cancel_label("Autowalk.");
@@ -343,9 +423,29 @@ void start(const field::PathInfo& path, const field::baked_nav::MapGoal* goal, f
         ffpr::say(!path.reason.empty() ? path.reason : T(L"No path")); return;
     }
     void* pl = field::player();
+    void* controller=field::player_controller();
+    if(g_hooked && context_ok() && pl && !controller_ok(pl) && (!controller || controller_supported(controller)) && goal) {
+        const auto target=*goal;
+        const auto requested_map=field::current_map_id();
+        const double deadline=frame::now()+.75;
+        g_planning=true;
+        ffpr::say(T(L"Autowalk is waiting for player input."));
+        frame::every_frame([target,kind,name,requested_map,deadline] {
+            if(!g_planning)return false;
+            if(!safe_context() || requested_map!=field::current_map_id()) {cancel();return false;}
+            if(context_ok() && controller_ok(field::player())) {request(target,kind,name);return false;}
+            if(frame::now()>=deadline) {cancel();ffpr::say(T(L"Autowalk could not start. Player input is disabled."));return false;}
+            return true;
+        },"Autowalk.InputReady",120);
+        return;
+    }
     if (!g_hooked || !context_ok() || !pl || !controller_ok(pl)) {
         field::baked_nav::clear_pending();
-        ffpr::say(T(L"Autowalk unavailable in this movement mode")); return;
+        const wchar_t* reason=kChoice.is(controller)?L"Choose an option before starting autowalk.":
+            !g_hooked || (controller && !controller_supported(controller))?L"Autowalk input hook is unavailable.":
+            !context_ok()?L"Autowalk is waiting for player input.":L"Autowalk could not start. Player input is disabled.";
+        LOGF("[Autowalk] start rejected hook=%d context=%d player=%d controller=%d",g_hooked,context_ok(),pl!=nullptr,field::player_controller()!=nullptr);
+        ffpr::say(T(reason)); return;
     }
     if (ref::call<bool>(mIsMoving, pl)) {
         field::baked_nav::clear_pending();
@@ -373,19 +473,26 @@ void input_updated()
         cancel(); return;
     }
     using K = input::Key;
-    const K entity_request = ui::prefs::navigation_keymap() == 0 ? K::P : K::Backslash;
-    const bool request_key = !input::shift_held() && !input::ctrl_held() && !input::alt_held()
-        && (input::key_pressed(entity_request) || input::key_pressed(K::Slash));
-    const bool manual_key = input::any_key_pressed() && !request_key;
-    bool manual_pad = input::left_stick_x() != 0 || input::left_stick_y() != 0
-        || input::right_stick_x() != 0 || input::right_stick_y() != 0 || input::right_trigger() > .5f;
-    for (int i = 0; i < input::kButtonCount; ++i) manual_pad |= input::button_pressed(i);
-    if (manual_key || manual_pad) { cancel(true); return; }
+    const bool request_key=input::bindings::navigation_request_pressed();
+    bool manual_key=false;
+    if(!request_key)for(int i=0;i<int(K::Count);++i)
+        if((i<int(K::LeftShift)||i>int(K::RightWindows)) && input::key_pressed(K(i))) {manual_key=true;break;}
+    namespace b=input::bindings;
+    auto stick_manual=[](float x,float y,int base) {
+        return (y<-.5f&&!b::navigation_controller_input(base)) || (y>.5f&&!b::navigation_controller_input(base+1))
+            || (x<-.5f&&!b::navigation_controller_input(base+2)) || (x>.5f&&!b::navigation_controller_input(base+3));
+    };
+    bool manual_pad=stick_manual(input::left_stick_x(),input::left_stick_y(),b::kLeftUp)
+        || stick_manual(input::right_stick_x(),input::right_stick_y(),b::kRightUp)
+        || (input::left_trigger()>.5f&&!b::navigation_controller_input(b::kLeftTrigger))
+        || (input::right_trigger()>.5f&&!b::navigation_controller_input(b::kRightTrigger));
+    for(int i=0;i<input::kButtonCount;++i)manual_pad|=input::button_pressed(i)&&!b::navigation_controller_input(i);
+    if (manual_key || (manual_pad && !request_key)) { cancel(true); return; }
     if (queries::is("BattleStateHelper.IsInBattle") || menu_state::any_active()
         || queries::is("MessageWindowPatches.IsInDialogue") || queries::is("PuzzleGameState.IsActive")) {
         cancel(); return;
     }
-    if (g_planning && !g_active) return; // no native movement while worker plans
+    if (g_planning && !g_active) return; // no native movement while worker plans or input handoff settles
     if (g_transition.waiting()) {
         if (g_transition.expired(frame::now())) { cancel(); ffpr::say(T(L"Autowalk stopped. Route changed.")); }
     } else if (g_vehicle_action == VehicleAction::None && g_boundary_deadline <= frame::now() && (!context_ok() || !controller_ok(field::player()))) {

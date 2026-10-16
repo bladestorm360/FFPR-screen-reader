@@ -61,6 +61,7 @@ import hashlib
 import os
 import struct
 import sys
+from audit_event_labels import trap_identifier
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MAPDUMP = os.path.abspath(os.path.join(HERE, "..", "..", "tools", "mapdump"))
@@ -343,7 +344,7 @@ def bake_game(game, out_dir, check=False):
     def shared_trap_script(obj, name):
         script = scripts_by_key.get((obj['submap'], name))
         raw = obj.get('name') or ''
-        if script or not any(word in raw for word in ('落とし穴','落し穴','穴に落ちる','地割れに落ちる','pitfall','trapdoor')):
+        if script or not trap_identifier(raw):
             return script
         # FF5 FieldController.GetScriptData tries MapModel.GetScript then
         # MapManager's resident name bank. Accept only one same-package script.

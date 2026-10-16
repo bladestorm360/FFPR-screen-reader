@@ -71,12 +71,15 @@ Void_t o_InitializeExtra;
 
 void d_InitSelect(void* self, const void* mi)
 {
-    o_InitSelect(self, mi);
+    timing::mark("Title select begin");
+    { timing::Scope native("Title InitSelect",timing::Kind::Original);
+      o_InitSelect(self, mi); }
     hooks::guarded("Title.InitSelect", [&] {
         if (!kTitleWindow.is(self)) return;
         dismiss_press_prompt();
         announce_focus(self, "InitSelect");
     });
+    timing::mark("Title select ready");
 }
 
 void d_InitializeOption(void* self, const void* mi)
@@ -162,7 +165,8 @@ void d_InitShortcut(void* self, const void* mi)
 
 void d_UpdateNone(void* self, const void* mi)
 {
-    o_UpdateNone(self, mi);
+    { timing::Scope native("Title UpdateNone",timing::Kind::Original);
+      o_UpdateNone(self, mi); }
     if (!g_press_prompt_armed || (g_prompt_controller && self != g_prompt_controller)) return;
     hooks::guarded("Title.UpdateNone", [=] {
         if (!kTitleWindow.is(self)) return;

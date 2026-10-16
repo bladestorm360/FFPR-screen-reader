@@ -67,6 +67,7 @@ constexpr uint8_t kVk[static_cast<int>(Key::Count)] = {
     0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0x5B, 0x5C,
     0xBD, 0xBB, 0xDB, 0xDD, 0xDC, 0xBA, 0xDE, 0xC0, // - = [ ] \ ; ' `
     0xBC, 0xBE, 0xBF,                           // , . /
+    0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x2d, 0x2e, 0x21, 0x22, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6d, 0x6e, 0x6f,
 };
 
 const char* const kKeyNames[static_cast<int>(Key::Count)] = {
@@ -80,6 +81,7 @@ const char* const kKeyNames[static_cast<int>(Key::Count)] = {
     "LeftShift", "RightShift", "LeftControl", "RightControl", "LeftAlt", "RightAlt", "LeftWindows", "RightWindows",
     "Minus", "Equals", "LeftBracket", "RightBracket", "Backslash", "Semicolon", "Quote", "BackQuote",
     "Comma", "Period", "Slash",
+    "F9", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17", "F18", "F19", "F20", "F21", "F22", "F23", "F24", "Insert", "Delete", "PageUp", "PageDown", "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4", "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9", "KeypadMultiply", "KeypadPlus", "KeypadMinus", "KeypadPeriod", "KeypadDivide",
 };
 
 // --- WindowsFocusHelper -------------------------------------------------------------------------

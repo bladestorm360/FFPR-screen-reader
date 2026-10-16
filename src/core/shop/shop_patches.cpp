@@ -107,7 +107,7 @@ std::wstring extract_price(void* content)
     if (!view) return {};
     void* price_text = ref::rd<void*>(view, fPriceText);
     if (!price_text) return {};
-    return unity::ui_text(price_text);
+    return displayed::text(price_text);
 }
 
 /// ResolveShopItemType: 2 = weapon, 3 = armor, -1 = unknown.
@@ -130,8 +130,8 @@ std::wstring command_name(int command_id)
     }
 }
 
-/// AnnounceFocusedItem: name, then current info panel with Autodetail. Price stays cached
-/// for native quantity/cost controls; I reads the currently toggled panel.
+/// AnnounceFocusedItem: rendered name and price, then the current info panel with Autodetail.
+/// Price also stays cached for native quantity/cost controls; I reads the currently toggled panel.
 /// Empty slots announce "Empty" but keep the cache, so those keys still describe the last real
 /// item while the cursor passes gaps in the sell inventory.
 void announce_focused_item(void* content, int index, int count)
@@ -155,6 +155,7 @@ void announce_focused_item(void* content, int index, int count)
     set_last_item(item_name, price, content_id, resolve_shop_item_type(content_id));
 
     std::vector<std::wstring> parts{item_name};
+    if (!text::is_blank(price)) parts.push_back(std::move(price));
     if (ui::prefs::auto_detail_enabled()) {
         std::wstring detail = description_from_ui();
         if (!text::is_blank(detail)) parts.push_back(std::move(detail));

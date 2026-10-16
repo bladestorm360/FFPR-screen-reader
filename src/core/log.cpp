@@ -6,6 +6,7 @@
 #include <array>
 #include <atomic>
 #include "log.h"
+#include "timing.h"
 
 // ---------------------------------------------------------------------------
 // Win32 file I/O ONLY — deliberately no CRT stdio.
@@ -31,7 +32,16 @@ HANDLE           g_file  = INVALID_HANDLE_VALUE;
 SRWLOCK          g_lock = SRWLOCK_INIT;
 std::atomic<bool> g_ready{false}, g_stopping{false};
 HANDLE           g_wake = nullptr, g_worker = nullptr;
-struct Line { DWORD size = 0; char bytes[2048]{}; };
+struct TimingLine {
+    timing::Kind kind{};
+    char name[96]{}, detail[96]{}, parent[96]{};
+    uint64_t frame=0,span=0,parent_span=0,count=0,stamp=0;
+    int64_t started=0,elapsed=0,self=0,cpu=-1;
+    uintptr_t code=0;
+    DWORD thread=0;
+    int value=0;
+};
+struct Line { DWORD size = 0; char bytes[2048]{}; bool is_timing=false; TimingLine timing; };
 constexpr size_t kQueueSize = 2048;
 std::array<Line, kQueueSize> g_queue;
 size_t g_head = 0, g_count = 0;
@@ -111,11 +121,58 @@ void emit_utf8(const char* utf8_line)
     if (!TryAcquireSRWLockExclusive(&g_lock)) { ++g_dropped; return; }
     if (g_count < kQueueSize) {
         auto& line = g_queue[(g_head + g_count++) % kQueueSize];
+        line.is_timing=false;
         line.size = static_cast<DWORD>(n);
         memcpy(line.bytes, out, n);
     } else ++g_dropped;
     ReleaseSRWLockExclusive(&g_lock);
     SetEvent(g_wake);
+}
+
+void timing_text(char (&out)[96],const char* text) {
+    size_t i=0;if(text)for(;i<sizeof(out)-1&&text[i];++i)out[i]=text[i];out[i]=0;
+}
+void emit_timing(const timing::Event& event) {
+    if(!g_ready.load(std::memory_order_acquire))return;
+    if(!TryAcquireSRWLockExclusive(&g_lock)){++g_dropped;return;}
+    if(g_count<kQueueSize) {
+        auto& line=g_queue[(g_head+g_count++)%kQueueSize];line.is_timing=true;
+        auto& row=line.timing;
+        row.kind=event.kind;row.frame=event.frame;row.span=event.span;row.parent_span=event.parent_span;
+        row.count=event.count;row.stamp=GetTickCount64();row.started=event.started;
+        row.elapsed=event.elapsed;row.self=event.self;row.cpu=event.cpu;row.code=event.code;row.thread=event.thread;row.value=event.value;
+        timing_text(row.name,event.name);timing_text(row.detail,event.detail);timing_text(row.parent,event.parent);
+    } else ++g_dropped;
+    ReleaseSRWLockExclusive(&g_lock);
+    SetEvent(g_wake);
+}
+void write_timing(const TimingLine& row) {
+    // Logger worker only: no formatting, module lookup or I/O on the producer.
+    char bytes[2048];const double ms=1000.0/timing::frequency;
+    int size=0;
+    if(row.kind==timing::Kind::Summary) {
+        size=_snprintf_s(bytes,sizeof(bytes),_TRUNCATE,
+            "[%7llu.%03llu] [Timing] summary %s: calls=%llu observed=%.3fms exclusive=%.3fms max=%.3fms thread=%lu frame=%llu\r\n",
+            row.stamp/1000,row.stamp%1000,row.name,row.count,row.elapsed*ms,row.self*ms,row.code*ms,row.thread,row.frame);
+    } else if(row.kind==timing::Kind::Marker) {
+        size=_snprintf_s(bytes,sizeof(bytes),_TRUNCATE,
+            "[%7llu.%03llu] [Timing] context %s value=%d thread=%lu frame=%llu\r\n",
+            row.stamp/1000,row.stamp%1000,row.name,row.value,row.thread,row.frame);
+    } else if(row.kind==timing::Kind::Gap) {
+        size=_snprintf_s(bytes,sizeof(bytes),_TRUNCATE,
+            "[%7llu.%03llu] [Timing] input interval %.3fms owner-cpu=%.3fms thread=%lu frame=%llu; includes native engine and unobserved time; cpu=-1 if unavailable\r\n",
+            row.stamp/1000,row.stamp%1000,row.elapsed*ms,row.cpu<0?-1.0:row.cpu/10000.0,row.thread,row.frame);
+    } else {
+        const auto base=timing::game_base.load(),extent=timing::game_size.load();
+        const bool game_code=row.code>=base&&row.code-base<extent;
+        const char* kind=row.kind==timing::Kind::Mod?"mod":row.kind==timing::Kind::Native?"native-read":"native-original";
+        size=_snprintf_s(bytes,sizeof(bytes),_TRUNCATE,
+            "[%7llu.%03llu] [Timing] slow %s %s%s%s: %.3fms exclusive=%.3fms owner-cpu=%.3fms qpc=%.6f thread=%lu frame=%llu span=%llu parent=%llu/%s code=%s0x%llX\r\n",
+            row.stamp/1000,row.stamp%1000,kind,row.name,row.detail[0]?".":"",row.detail,
+            row.elapsed*ms,row.self*ms,row.cpu<0?-1.0:row.cpu/10000.0,static_cast<double>(row.started)/timing::frequency,
+            row.thread,row.frame,row.span,row.parent_span,row.parent,game_code?"GameAssembly+":"",static_cast<unsigned long long>(game_code?row.code-base:row.code));
+    }
+    if(size>0)write_bytes(bytes,size);
 }
 
 DWORD WINAPI writer(void*)
@@ -136,7 +193,8 @@ DWORD WINAPI writer(void*)
             }
             ReleaseSRWLockExclusive(&g_lock);
             if (!have) break;
-            write_bytes(line.bytes, static_cast<int>(line.size));
+            if(line.is_timing)write_timing(line.timing);
+            else write_bytes(line.bytes, static_cast<int>(line.size));
         }
         const unsigned lost = g_dropped.exchange(0);
         if (lost) {
@@ -174,6 +232,7 @@ void init()
     g_worker = CreateThread(nullptr, 0, writer, nullptr, 0, nullptr);
     if (!g_worker) { CloseHandle(g_wake); g_wake = nullptr; return; }
     g_ready.store(true, std::memory_order_release);
+    timing::enable(&emit_timing);
 
     // Name the host process in the header. Only the game boots the mod now (see
     // host_is_game in dllmain.cpp), but if a log ever turns up that was written by something
@@ -190,6 +249,7 @@ void init()
     write("=== FFPR native screen reader - %04d-%02d-%02d %02d:%02d:%02d - %s pid=%lu ===",
           st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond,
           host[0] ? host : "?", GetCurrentProcessId());
+    write("[Timing] automatic diagnostics: slow scopes >=5ms, input gaps >=50ms, observed-scope summaries every5s; selected/input-interval owner CPU time (-1 unmeasured); bounded queue, no producer waits");
 }
 
 void write(const char* fmt, ...)
@@ -223,6 +283,7 @@ void shutdown()
 {
     // Explicit offline-host teardown only. DllMain intentionally does not call this.
     // Keep immutable locale/event storage alive for any producer already formatting.
+    timing::sink.store(nullptr,std::memory_order_release);
     if (!g_ready.exchange(false)) return;
     g_stopping.store(true, std::memory_order_release);
     SetEvent(g_wake);

@@ -4,6 +4,7 @@
 #include <map>
 #include <unordered_map>
 #include "baked_map.h"
+#include "event_semantics.h"
 
 namespace field::baked {
 namespace {
@@ -312,11 +313,12 @@ bool is_trap(const Object& object)
 {
     if (!((object.type == ObjType::Warp && object.d == 1) ||
           ((object.type == ObjType::Event || object.type == ObjType::RandomEvent) && (object.a || object.b)))) return false;
-    const auto name = str(object.name);
-    return name.find(L"落とし穴") != std::wstring::npos || name.find(L"落し穴") != std::wstring::npos ||
-        name.find(L"穴に落ちる") != std::wstring::npos || name.find(L"地割れに落ちる") != std::wstring::npos ||
-        name.find(L"pitfall") != std::wstring::npos || name.find(L"trapdoor") != std::wstring::npos ||
-        (name.rfind(L"落ちる", 0) == 0 && name.find_first_not_of(L"0123456789０１２３４５６７８９", 3) == std::wstring::npos);
+    return event_semantics::trap_identifier(str(object.name));
+}
+std::wstring object_identifier(const Object& object) {
+    auto name=str(object.name);
+    if(object.type==ObjType::TransportationEventAction)if(const auto at=name.find(L'|');at!=name.npos)name.erase(0,at+1);
+    return name;
 }
 
 int attribute(const Grids& g, int x, int y)

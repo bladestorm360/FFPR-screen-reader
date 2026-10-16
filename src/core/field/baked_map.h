@@ -80,6 +80,7 @@ bool load(const void* data, size_t size);
 bool loaded();
 /// Native object identifiers for an environmental pitfall; no dialogue/outcome inference.
 bool is_trap(const Object& object);
+std::wstring object_identifier(const Object& object); // original developer name, without baked transport prefix
 /// The game byte of the file (1-6), 0 when not loaded.
 int game_number();
 

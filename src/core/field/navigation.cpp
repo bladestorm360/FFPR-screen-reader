@@ -80,7 +80,7 @@ bool position_walkable(void* player, Vec3 position)
 
 // --- internal ------------------------------------------------------------------------------
 
-void* player_controller() { return cache::get_or_refresh(r::kFieldPlayerController); }
+
 void* field_map() { return cache::get_or_refresh(r::kFieldMap); }
 
 bool vehicle_type_of(void* fe, int& type, int& transportation_id, std::wstring& message_id)
@@ -140,12 +140,7 @@ VehicleState current_vehicle()
 
 void* player()
 {
-    // FFI_ScreenReaderMod.GetFieldPlayer: the cached controller, then a refreshed one.
-    if (void* pc = cache::get(r::kFieldPlayerController))
-        if (void* p = ref::rd<void*>(pc, r::fFieldPlayer)) return p;
-    if (void* pc = cache::refresh(r::kFieldPlayerController))
-        if (void* p = ref::rd<void*>(pc, r::fFieldPlayer)) return p;
-    return nullptr;
+    return current_native_player();
 }
 
 void* map_handle()

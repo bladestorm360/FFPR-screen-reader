@@ -2,6 +2,7 @@
 #include "field_internal.h"
 #include "npc_names.h"
 #include "baked_nav.h"
+#include "map_state.h"
 #include <array>
 namespace field::filter_worker {
 using Vec3 = unity::Vec3;
@@ -14,8 +15,11 @@ struct FilterRow {
     std::wstring name, pad, event_type;
     npc_names::Label label;
     bool selected = false;
+    bool available = true;
+    std::wstring raw_name;
     bool cell_valid = false;
     int route_distance = -1;
+    int entity_id = -1;
 };
 struct FilterInput {
     std::vector<FilterRow> rows;
@@ -27,8 +31,12 @@ struct FilterInput {
     bool continued_goal = false;
     int continued_map = 0, continued_x = 0, continued_y = 0, current_map = 0;
     bool world = false;
+    int selected_entity_id = -1, continued_entity_id = -1;
+    int selected_map = 0;
+    std::wstring selected_raw,continued_raw;
     std::shared_ptr<baked_nav::ExitSnapshot> navigation;
     std::function<bool()> cancelled;
+    std::shared_ptr<map_state::Resolver> state;
 };
 struct Filtered {
     std::vector<size_t> order;

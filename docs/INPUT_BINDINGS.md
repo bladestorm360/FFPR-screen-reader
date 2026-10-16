@@ -8,6 +8,39 @@ the exact name below. An undefined action logs "not available"; an undefined que
 
 ## Shared audit additions, October 11
 
+October 16: every command below is a **default**. The shared per-command catalog in
+`src/core/input/bindings.cpp` now owns keyboard/controller remapping, capture, conflicts,
+unbind/reset and saved `Binding.<stable-id>.Input/.Modifier` values. Navigate through
+F8 → Navigation → Controls. Context-specific commands, both alternative navigation layouts,
+buffer WASD aliases, formerly hardcoded function keys, controller gestures and modal
+controls are independently editable. Keyboard supports exact Ctrl/Shift/Alt masks;
+controller supports SDL's 26 buttons, two triggers, eight stick directions and an optional
+second input. Native game configuration and literal text entry keep native ownership.
+There is no keyboard mod mode. Controller help reports current bindings.
+
+`Toggle controller mod mode` owns both entry and cancellation. Its former physical input
+is freed after changing it, and may then be assigned to a mode function. Mod-mode field,
+battle, results and dialogue actions each have their own editable entry. Global mode/menu
+buttons conflict with overlapping functions and with chords containing that input;
+swapping chord order cannot hide a duplicate. The deliberate default deferred L3/R3/chord
+gesture remains supported. A mode transition cannot execute a function on the same press.
+`transition_input_check` exercises the actual router with changed mode entry/exit, freed
+Back assigned to Gil, remapped battle HP, held/release ownership and restoration conflicts.
+
+Raw keyboard/gamepad APIs stay physical. Dispatch uses the effective catalog entry;
+native passthrough reserves the configured physical inputs, including modifiers, releases
+and changed keyboard keys. Unused original controller defaults pass through normally.
+Focus/hotplug require a neutral pad before accepting a new gesture; capture also seeds
+the opening input and waits for release. Resetting one command refuses a conflicting
+custom assignment; Reset all restores the complete default map. Contextual default
+overrides (for example Results I versus global I) retain their native priority.
+
+The catalog is populated only by compiled registrations, never by arbitrary INI keys.
+Input polling/lookup is bounded, owner-thread only, with settings writes using the existing
+asynchronous I/O service. `bindings_check`, `transition_input_check`, and `modal_input_check`
+exercise production dispatch/editor code; native-reader fixtures retain their narrower
+fake binding boundary. All-six name checks and gameplay checks remain distinct.
+
 Battle: T reads the active turn, H the active member's rendered statistics, and 1–9 the
 visible party rows. Enemy HP's optional Numbers/Percentage/Hidden modes remain on F5.
 Controller mod mode: North (Y/Triangle) reads the turn; shoulders review party members.
@@ -58,8 +91,9 @@ FF3 job I/Autodetail names its rendered Equippable weapon/armor icons.
    If a modal is open, no hotkey runs this frame.
 6. Hotkeys run only while the game window is focused, a key went down, and no Unity
    `InputField` is selected.
-7. F8, then F5 / F7 (no modifier held), then the registry. With Alt held, the registry is
-   skipped.
+7. Dispatch effective bindings, with the exact configured modifiers and the active
+   navigation layout. The active context takes priority over Global. F1/F3/F5/F7/F8
+   use the same registry; Alt participates only when explicitly assigned.
 
 The registry matches the modifier exactly (None, Shift, Ctrl, Ctrl+Shift). A binding runs when
 its context is Global or the active context.
@@ -336,3 +370,15 @@ and makes no follow/route/quick-search request. Another-floor projected entities
 local bearing; an explicit navigation request explains the current-floor requirement.
 Follow route preserves its current route-corner/cross-floor behavior. Mode is shared
 across the HRTF/stereo volume banks. [Evidence](re/SOUNDSCAPE.md#beacon-targeting-modes--october-15).
+
+
+## Held stick remapping correction, October16
+
+Physical SDL snapshots already normalize Y positive for Up. Binding edge derivation
+incorrectly used negative Y as Up, while the retained short-press edge used the
+correct direction. A held input could therefore switch to Down on the next frame.
+The binding service now follows the physical snapshot convention for both sticks.
+Actual catalog tests cover all eight directions: press once, retain direction and
+route ownership for five held frames without an opposite edge, then release at
+neutral. Defaults, saved remaps, layout choice and native physical input are unchanged.
+This is a concrete input bug, separate from the unresolved intermittent battle stall.

@@ -27,6 +27,7 @@ enum class Key : uint8_t {
     LeftShift, RightShift, LeftControl, RightControl, LeftAlt, RightAlt, LeftWindows, RightWindows,
     Minus, Equals, LeftBracket, RightBracket, Backslash, Semicolon, Quote, BackQuote,
     Comma, Period, Slash,
+    F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24, Insert, Delete, PageUp, PageDown, Keypad0, Keypad1, Keypad2, Keypad3, Keypad4, Keypad5, Keypad6, Keypad7, Keypad8, Keypad9, KeypadMultiply, KeypadPlus, KeypadMinus, KeypadPeriod, KeypadDivide,
     Count
 };
 
@@ -51,8 +52,8 @@ const char* key_name(Key k);
 bool game_window_focused();
 
 // --- gamepad (SDL3) ------------------------------------------------------------------------
-/// SDL3 button indices (SDL_GAMEPAD_BUTTON_SOUTH = 0 .. DPAD_RIGHT = 14); the mod tracks 15.
-constexpr int kButtonCount = 15;
+/// SDL3 button indices: 15 standard positions plus supported extra buttons, 26 total.
+constexpr int kButtonCount = 26;
 
 /// GamepadManager.IsAvailable: SDL3 loaded and a gamepad is open.
 bool gamepad_available();
@@ -95,7 +96,7 @@ void speak_mod_menu_unavailable();
 void announce_context_controls();
 
 // --- key bindings --------------------------------------------------------------------------
-enum class Mod : uint8_t { None = 0, Shift = 1, Ctrl = 2, CtrlShift = 3 };
+enum class Mod : uint8_t { None = 0, Shift = 1, Ctrl = 2, CtrlShift = 3, Alt = 4, ShiftAlt = 5, CtrlAlt = 6, CtrlShiftAlt = 7 };
 /// KeyContext, in FF1's order (the registry sorts the higher value first). Shop is the native
 /// mod's own (2026-10-10): the shop is open (ShopMenuTracker), for the number row.
 enum class Context : uint8_t { Global, Field, Battle, Shop, Status, BestiaryDetail, Results, KeyHelp, Information };

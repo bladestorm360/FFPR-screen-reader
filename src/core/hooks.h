@@ -1,6 +1,7 @@
 #pragma once
 #include "refs.h"
 #include "log.h"
+#include "timing.h"
 
 // The hook registry.
 //
@@ -66,6 +67,7 @@ void note_fault(const char* where);
 template <typename F>
 inline void guarded(const char* where, F&& fn)
 {
+    timing::Scope measured(where);
     try { fn(); } catch (...) { note_fault(where); }
 }
 
@@ -73,6 +75,7 @@ inline void guarded(const char* where, F&& fn)
 template <typename R, typename F>
 inline R guarded_r(const char* where, R fallback, F&& fn)
 {
+    timing::Scope measured(where);
     try { return fn(); } catch (...) { note_fault(where); return fallback; }
 }
 

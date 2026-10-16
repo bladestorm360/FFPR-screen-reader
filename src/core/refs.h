@@ -3,6 +3,7 @@
 #include <string>
 #include "il2cpp.h"
 #include "game.h"
+#include "timing.h"
 
 // Declarative game-code names.
 //
@@ -120,6 +121,7 @@ inline R call(Method& m, void* self, A... args)
     void* fp = m.ptr();
     if (!fp) return R{};
     il2cpp::Method* mi = m.get();
+    timing::Scope measured(m.cls.name, timing::Kind::Native, m.name, reinterpret_cast<uintptr_t>(fp));
     try {
         using F = R (*)(void*, A..., const void*);
         return reinterpret_cast<F>(fp)(self, args..., mi);
@@ -136,6 +138,7 @@ inline R call_static(Method& m, A... args)
     void* fp = m.ptr();
     if (!fp) return R{};
     il2cpp::Method* mi = m.get();
+    timing::Scope measured(m.cls.name, timing::Kind::Native, m.name, reinterpret_cast<uintptr_t>(fp));
     try {
         using S = R (*)(A..., const void*);
         return reinterpret_cast<S>(fp)(args..., mi);
@@ -151,6 +154,7 @@ inline void call_void(Method& m, void* self, A... args)
     void* fp = m.ptr();
     if (!fp) return;
     il2cpp::Method* mi = m.get();
+    timing::Scope measured(m.cls.name, timing::Kind::Native, m.name, reinterpret_cast<uintptr_t>(fp));
     try {
         using F = void (*)(void*, A..., const void*);
         reinterpret_cast<F>(fp)(self, args..., mi);

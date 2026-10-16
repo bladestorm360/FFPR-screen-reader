@@ -137,6 +137,7 @@ void call_failed_note(const char* name)
 
 void* instance(Class& c)
 {
+    timing::Scope measured("Singleton lookup", timing::Kind::Native, c.name);
     il2cpp::Class* k = c.get();
     if (!k) return nullptr;
     il2cpp::Method* m = il2cpp::find_method(k, "get_Instance", 0);

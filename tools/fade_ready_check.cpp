@@ -28,7 +28,8 @@ namespace field::scanner {bool needs_scan(int){return false;} void invalidate_ma
 namespace ffpr {void say(std::wstring_view,bool){} }
 namespace modtext {std::wstring T(std::wstring_view s){return std::wstring(s);} std::wstring TF(std::wstring_view s,std::initializer_list<std::wstring>){return std::wstring(s);} }
 namespace text {std::wstring trim(std::wstring_view s){return std::wstring(s);} bool is_blank(std::wstring_view s){return s.empty();}}
-void native_change(void*,int32_t,const void*){}
+bool outer_blocked=false;
+void native_change(void*,int32_t,const void*){outer_blocked=ffpr::fieldnav::map_transition::is_state_changing();}
 int main(){
     int failures=0;
     auto expect=[&](bool v,const char* m){if(!v){++failures;std::printf("FAIL %s\n",m);}};
@@ -42,6 +43,7 @@ int main(){
     using namespace ffpr::fieldnav::map_transition;
     fixture::alpha=0;fixture::map_id=407;o_ChangeState=&native_change;
     d_ChangeState(nullptr,3,nullptr);
+    expect(outer_blocked && !is_state_changing(),"outer transition detour gates its entire prefix/original/postfix without leaving a stale gate");
     const int initial_scans=fixture::scans, initial_arrivals=fixture::arrivals;
     d_ChangeState(nullptr,12,nullptr); d_ChangeState(nullptr,3,nullptr);
     expect(fixture::scans==initial_scans+1 && fixture::arrivals==initial_arrivals,"scripted same-map return refreshes without inventing a floor change");

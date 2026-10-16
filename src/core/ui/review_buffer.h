@@ -2,6 +2,7 @@
 #include <string>
 #include <optional>
 #include <vector>
+#include "result_notifications.h"
 
 // Current displayed page/phase only. Consumers supply renderer-backed lines.
 namespace ui::review {
@@ -13,6 +14,10 @@ struct Options {
     // Essential displayed totals are announced in either Autodetail state and
     // retained as individual review lines. Detailed rows are separate.
     std::vector<std::wstring> summary;
+    // Essential rendered result notifications, separate from totals/stat tables.
+    // A session opts into per-battle filtering; absent preserves every repeat.
+    std::vector<std::wstring> notifications;
+    std::shared_ptr<ResultNotificationSession> notification_session;
     bool include_headline = false;
     // Current-phase changes for both automatic summaries and manual I/West.
     // Separate from the full displayed table kept for arrows/Autodetail.

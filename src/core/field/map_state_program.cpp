@@ -110,6 +110,37 @@ bool Resolver::active(const baked::Submap& sm, const baked::Object& object, bool
     return selected.known ? group == selected.group : obstacle;
 }
 bool Resolver::known(const baked::Submap& sm) { return selection(sm).known; }
+bool Resolver::consumed(const baked::Submap& sm, const baked::Object& object) {
+    if (const auto it=consumed_.find(&object);it!=consumed_.end()) return it->second;
+    const auto* record=records_.get(baked::name_of(sm));
+    const auto* guards=record?record->get(L"events"):nullptr;
+    bool found=false,all=true;
+    if (guards) for (const auto& guard:guards->arr) {
+        const auto* id=guard.get(L"id"),*group=guard.get(L"group"),*type=guard.get(L"type"),*cell=guard.get(L"cell"),*raw=guard.get(L"raw"),*code=guard.get(L"code");
+        if (!id||!group||!type||!cell||cell->arr.size()!=3||!raw||!code||code->arr.empty()) continue;
+        const int native_type=number(*type);
+        const bool same_type=static_cast<int>(object.type)==native_type ||
+            (object.type==baked::ObjType::Warp && (object.d==1 ? native_type==2||native_type==28 : native_type==5));
+        auto name=baked::object_identifier(object);
+        if (!same_type||number(*id)!=object.entity_id()||group->s!=baked::str(object.group)||raw->s!=name||
+            cell->arr[0].n!=object.layer||cell->arr[1].n!=object.tx||cell->arr[2].n!=object.ty) continue;
+        found=true;
+        const auto availability=project(guard,flags_);
+        all &= availability.known&&availability.group.empty();
+    }
+    return consumed_[&object]=found&&all;
+}
+uint64_t Resolver::signature() const {
+    uint64_t hash = 1469598103934665603ull;
+    const auto bank = [&](const auto& values) {
+        for (const auto& value : values) {
+            hash ^= value ? (static_cast<uint64_t>(static_cast<uint32_t>(*value)) << 1) | 1 : 0;
+            hash *= 1099511628211ull;
+        }
+    };
+    bank(flags_.scenario); bank(flags_.treasure); bank(flags_.global);
+    return hash;
+}
 std::optional<bool> Resolver::treasure_opened(const baked::Submap& sm, const baked::Object& object) const
 {
     if (object.type != baked::ObjType::TreasureBox) return {};
@@ -138,7 +169,8 @@ void add_obstacles(Resolver& resolver, const baked::Submap& sm, baked_route::Req
             (npc && (o.d & 1)) ||
             (gates && ((o.type == baked::ObjType::Entity || o.type == baked::ObjType::AnimEntity) && (o.d & 1)));
         const bool collider = gates && o.type == baked::ObjType::CollisionEntity;
-        const bool trigger = baked_route::step_event(o);
+        const bool used=resolver.consumed(sm,o);
+        const bool trigger = baked_route::step_event(o)&&!used;
         if (!solid && !collider && !trigger) continue;
         for (int y = o.ty; y < o.ty + o.th; ++y) for (int x = o.tx; x < o.tx + o.tw; ++x) {
             baked_route::Cell cell{sm.world || (npc && (o.d & 2)) ? -1 : o.layer, x, y};
@@ -148,7 +180,7 @@ void add_obstacles(Resolver& resolver, const baked::Submap& sm, baked_route::Req
                 else request.blocked.push_back(cell);
             }
             if (trigger) request.hazards.push_back(cell);
-            if (baked::is_trap(o)) request.traps.push_back(cell);
+            if (!used&&baked::is_trap(o)) request.traps.push_back(cell);
         }
     }
 }

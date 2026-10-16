@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "../src/core/battle/battle_state.cpp"
 #include "../src/core/system/game_state.cpp"
-namespace fixture { int calls = 0, scans = 0, starts = 0, ends = 0, resets = 0, state = 3; bool prefix_ready = false, fade = false, input_blocked = false, dialogue = false; }
+namespace fixture { int calls = 0, scans = 0, starts = 0, entering = 0, ends = 0, resets = 0, state = 3; bool prefix_ready = false, fade = false, input_blocked = false, dialogue = false, queue_only = false, navigation_inside = false, cleaned_inside = false; }
 int native_state(void*, const void*) { return fixture::state; }
 namespace core { Install::Install(const char* n, int (*f)(), int o, uint8_t g) : name(n), fn(f), order(o), games(g) {} }
 namespace ref {
@@ -22,10 +22,10 @@ namespace fixture { std::wstring scene = L"Title"; }
 namespace field { const std::wstring& scene_name() { return fixture::scene; } }
 namespace actions { bool defined(const char*) { return false; } bool run(const char*) { return false; } void define(const char*, Fn) {} }
 namespace queries { bool defined(const char*) { return false; } bool is(const char*) { return fixture::dialogue; } void define(const char*, std::function<bool()>) {} }
-namespace ffpr::fieldnav::map_transition { bool is_screen_fading() { return fixture::fade; } }
+namespace ffpr::fieldnav::map_transition { bool is_screen_fading() { return fixture::fade; } bool is_state_changing() { return false; } }
 namespace events {
 void on(Kind, Handler) {}
-void fire(Kind kind) { if (kind == Kind::BattleStart) ++fixture::starts; if (kind == Kind::BattleEnd) ++fixture::ends; }
+void fire(Kind kind) { if (kind == Kind::BattleEntering) ++fixture::entering; if (kind == Kind::BattleStart) ++fixture::starts; if (kind == Kind::BattleEnd) ++fixture::ends; }
 }
 namespace menu_state {
 void reset_all() {} void reset(const char*) {} void set_active(const char*, bool) {} bool is_active(const char*) { return false; }
@@ -35,7 +35,9 @@ namespace ffpr::battle { void pause_reset() {} void clear_cached_target_controll
 namespace game { Id current() { return Id::FF2; } }
 void native_transition(void*, int state, const void*) {
     ++fixture::calls;
-    fixture::state = state;
+    if (state == 13) fixture::cleaned_inside = fixture::resets || fixture::starts;
+    fixture::navigation_inside = ffpr::system::is_field_navigation_ready();
+    if (!fixture::queue_only) fixture::state = state;
     fixture::input_blocked = ffpr::system::input_transition_blocked();
     fixture::prefix_ready = state == 13 ? ffpr::battle::in_battle() : !ffpr::battle::in_battle();
 }
@@ -45,27 +47,44 @@ int main() {
     ffpr::system::o_ChangeState = &native_transition;
     void* manager = &failures;
     ffpr::system::d_ChangeState(manager, 13, nullptr);
-    expect(fixture::prefix_ready && fixture::calls == 1 && fixture::starts == 1, "battle flag gates features before native transition continues");
+    expect(fixture::prefix_ready && fixture::calls == 1 && fixture::entering == 1, "battle flag and worker epochs gate features before native transition continues");
+    expect(!fixture::cleaned_inside && fixture::resets == 0 && fixture::starts == 0,
+        "native loading and opening audio proceed before any result/navigation/lifecycle cleanup");
     expect(fixture::input_blocked, "mod input is blocked inside native battle entry even before fading begins");
     for (int i = 0; i < 100; ++i) ffpr::battle::main_game_transition(13);
+    expect(fixture::entering == 1 && fixture::resets == 0 && fixture::starts == 0,
+        "repeated pending transition never starts heavy cleanup");
+    ffpr::battle::on_battle_start(); // native opening presentation postfix
+    for (int i = 0; i < 100; ++i) ffpr::battle::on_battle_start();
     expect(fixture::starts == 1 && fixture::resets == 1, "steady battle detection performs no repeated cleanup");
     ffpr::battle::try_clear_on_battle_end();
     expect(ffpr::battle::in_battle() && fixture::ends == 0, "fade/results callbacks cannot clear the native battle context early");
     ffpr::system::d_ChangeState(manager, 1, nullptr);
     expect(fixture::prefix_ready && fixture::calls == 2 && fixture::ends == 1, "native return releases context exactly once");
     expect(fixture::input_blocked, "native map/return loading blocks mod input before its original body returns");
+    expect(!fixture::navigation_inside,"capture readiness is false inside native transition even while the old field state is still reported");
+    fixture::state=3; fixture::queue_only=true;
+    ffpr::system::d_ChangeState(manager,1,nullptr);
+    expect(!ffpr::system::is_field_navigation_ready() && ffpr::system::input_transition_blocked(),
+        "queued map transition remains blocked after ChangeState returns with old field state");
+    ffpr::system::d_ChangeState(manager,13,nullptr);
+    expect(!ffpr::system::is_field_navigation_ready(),"queued battle transition cannot reopen capture from old GetCurrentState");
+    fixture::queue_only=false;ffpr::system::d_ChangeState(manager,3,nullptr);
+    expect(ffpr::system::is_field_navigation_ready(),"only a new native field-ready transition resumes navigation");
     for (int state : {0, 1, 2, 12, 14}) {
         fixture::state = state;
+        ffpr::system::g_requested_state = state;
         expect(ffpr::system::input_transition_blocked(), "native loading/encounter/title transition state blocks hotkeys");
     }
     for (int state : {3, 4, 5, 8, 9, 10, 13}) {
         fixture::state = state;
+        ffpr::system::g_requested_state = state;
         expect(!ffpr::system::input_transition_blocked(), "stable field/vehicle/menu/dialogue/battle keeps mod controls");
         fixture::fade = true;
         expect(ffpr::system::input_transition_blocked(), "fade blocks controls even if native state still reports the old ready screen");
         fixture::fade = false;
     }
-    fixture::state = 12; fixture::dialogue = true;
+    fixture::state = 12; fixture::dialogue = true; ffpr::system::g_requested_state = 12;
     expect(!ffpr::system::input_transition_blocked(), "visible scripted dialogue remains manually reviewable");
     ffpr::system::reset_main_game_state(); fixture::scene=L"Boot";
     expect(ffpr::system::input_transition_blocked(),"boot loading blocks input before the main-game manager exists");

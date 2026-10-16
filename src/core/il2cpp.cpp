@@ -1,6 +1,7 @@
 #include "text_util.h"
 #include "il2cpp.h"
 #include "log.h"
+#include "timing.h"
 #include <cstring>
 #include <cwchar>
 
@@ -286,6 +287,7 @@ il2cpp::Class* resolve_nested(il2cpp::Image* img, const char* name_space, const 
 Class* find_class(const char* assembly, const char* name_space, const char* name)
 {
     if (!g_bound) return nullptr;
+    timing::Scope measured("Metadata class lookup",timing::Kind::Native,name);
     auto* domain = p_domain_get();
     if (!domain) return nullptr;
 
@@ -343,6 +345,7 @@ Class* find_nested_prefix_field(Class* outer, const char* prefix, const char* fi
 Method* find_method(Class* klass, const char* name, int argc)
 {
     if (!g_bound || !klass) return nullptr;
+    timing::Scope measured("Metadata method lookup",timing::Kind::Native,name);
     return const_cast<Method*>(p_class_get_method(klass, name, argc));
 }
 
@@ -377,6 +380,7 @@ Method* find_method_overload_param(Class* klass, const char* name, int argc, Cla
 int32_t field_offset(Class* klass, const char* name)
 {
     if (!g_bound || !klass) return -1;
+    timing::Scope measured("Metadata field lookup",timing::Kind::Native,name);
     Field* f = p_class_get_field(klass, name);
     if (!f) return -1;
     return static_cast<int32_t>(p_field_get_offset(f));
@@ -391,6 +395,7 @@ void* method_pointer(Method* m)
 void* class_type_object(Class* k)
 {
     if (!g_bound || !k || !p_class_get_type || !p_type_get_object) return nullptr;
+    timing::Scope measured("Metadata type object",timing::Kind::Native);
     void* t = p_class_get_type(k);
     return t ? p_type_get_object(t) : nullptr;
 }
@@ -401,10 +406,11 @@ void* invoke_raw(Method* m, void* obj, void** args, int argc)
     (void)argc;
     void* exc = nullptr;
     void* result = nullptr;
-    __try {
+    try {
+        timing::Scope measured("Mod runtime invoke", timing::Kind::Native, nullptr, reinterpret_cast<uintptr_t>(method_pointer(m)));
         result = p_runtime_invoke(m, obj, args, &exc);
     }
-    __except (EXCEPTION_EXECUTE_HANDLER) {
+    catch (...) { // /EHa retains the existing native-fault boundary and unwinds the timer
         return nullptr;
     }
     if (exc) return nullptr;   // managed exception: treat as "no value", never propagate

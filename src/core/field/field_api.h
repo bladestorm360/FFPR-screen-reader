@@ -14,6 +14,8 @@
 // Ports FF1 Field/FieldNavigationHelper.cs (public API) and the entity-selection parts of
 // Core/FFI_ScreenReaderMod.cs and Core/EntityNavigationManager.cs.
 namespace field {
+// Current input-enabled controller from the native field owner (bounded list fallback).
+void* player_controller();
 
 // Bounded capture over the published pathfinder All view. No new scene/database
 // scan. Native pointers stay here; output contains only owned values. 1 complete,
@@ -35,6 +37,7 @@ struct PathInfo {
     std::wstring warning;         // optional mod warning; distinct from usable directions/failure
     bool required_trap = false, event_on_route = false;
     bool trap_repeat_blocked = false;
+    bool transition_repeat_blocked = false;
     int map_width = 0, map_height = 0;
     bool wraps = false;
     int next_map_id = 0;          // the route continues on this map after its last leg ("take
@@ -58,6 +61,7 @@ struct Target {
                                   // 2026-10-11): that floor's map id, 0 = on this map. The
                                   // position is then meaningless; route by the cell below.
     int cell_layer = 1, cell_x = 0, cell_y = 0;
+    int entity_id = -1;
 };
 
 // --- player and map ---------------------------------------------------------------------
