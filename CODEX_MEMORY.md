@@ -1,6 +1,6 @@
 # Native FFPR durable memory
 
-- October16 V0.9.3 prepared: [release/package/source record](docs/release.md#v093-preparation-october16).
+- October16 V0.9.3 published as Latest: [release/package/source record](docs/release.md#v093-preparation-and-publication-october16).
   Native opening conditions queue before formation/first turn; explicit Control cancellation
   retained. Both sticks' held remaps now use positive Y for Up. Actual producer, speech
   worker/fake SDK, input, canonical build/all checks and smoke pass;6,872 names/zero missing,
@@ -12,7 +12,10 @@
   (9,712,640 bytes); SDL matches, HRTF/Prism/INI/waypoints unchanged. Recovery/receipts:
   build_check/v093/. Complete28-file ZIP/README/version/pinned dependency checks pass.
   Sol alone for this follow-up/release; no new game launch/control/probe or dependency install.
-  Publication verification follows in the linked release record.
+  [Public release](https://github.com/bladestorm360/FFPRCore-Screen-Reader/releases/tag/v0.9.3)
+  uses annotated source 9298f14407f6a28fbfd14a9a3a37294e916f19da. Uploaded draft ZIP was
+  downloaded/hash-matched before publication; public source/asset/Latest verified.
+  ZIP SHA256: 8f147dfebcc16994dfc0ea5a14495ce0d8999abc5a63549a92346991f465639a.
 
 - October16 autowalk/remapping follow-up: [mode/native evidence](docs/re/AUTOWALK.md),
   [saved control/editor contract](docs/INPUT_BINDINGS.md), [remaining gameplay checks](docs/TESTING.md).
